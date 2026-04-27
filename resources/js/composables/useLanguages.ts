@@ -28,6 +28,9 @@ export function useLanguages() {
     }
 
     function localeName(locale: string): string {
+        if (locale === 'ckb') {
+             return 'کوردی'
+         }
         try {
             return new Intl.DisplayNames([locale], { type: 'language' }).of(locale) ?? locale
         } catch {
