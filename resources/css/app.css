@@ -1,0 +1,678 @@
+@import "tailwindcss";
+@import "@vue-flow/core/dist/style.css";
+@import "@vue-flow/core/dist/theme-default.css";
+@import "vue-sonner/style.css";
+
+/*
+ * ═══════════════════════════════════════════════════════════════
+ *  DAREJER — LEDGER DESIGN SYSTEM
+ *  Tokens only. Every component is styled via Tailwind classes.
+ *  The RichTextEditor is the sole exception — its TipTap content
+ *  styles live in `.darejer-rte-*` because the editor renders
+ *  uncontrolled <p>/<h1>/<blockquote> nodes we don't own.
+ * ═══════════════════════════════════════════════════════════════
+ */
+
+@theme {
+
+    /* ── Brand: Deep Emerald ─────────────────────────────────────── */
+    --color-brand-50:  oklch(97% 0.014 252.08);
+    --color-brand-100: oklch(92.742% 0.0248 253.06);
+    --color-brand-200: oklch(87.284% 0.0446 251.6);
+    --color-brand-300: oklch(79.526% 0.0834 249.29);
+    --color-brand-400: oklch(68.868% 0.1362 252.1);
+    --color-brand-500: oklch(60.01% 0.178 257.29);
+    --color-brand-600: oklch(52.768% 0.2162 260.36);
+    --color-brand-700: oklch(47.426% 0.2214 261.85);
+    --color-brand-800: oklch(41.484% 0.1846 263.11);
+    --color-brand-900: oklch(37.442% 0.1388 263);
+    --color-brand-950: oklch(28.2% 0.091 265.41);
+
+    /* ── Paper — warm off-whites ─────────────────────────────────── */
+    --color-paper-50:  #fcfbf7;
+    --color-paper-75:  #f7f5ee;
+    --color-paper-100: #f1ede3;
+    --color-paper-150: #ebe6d9;
+    --color-paper-200: #e3dfd1;
+    --color-paper-300: #cfc9b8;
+    --color-paper-400: #a89f89;
+
+    /* ── Ink — cool near-black ───────────────────────────────────── */
+    --color-ink-50:  #f5f6f8;
+    --color-ink-100: #e7e9ee;
+    --color-ink-200: #c9cdd6;
+    --color-ink-300: #979dab;
+    --color-ink-400: #656c7d;
+    --color-ink-500: #494f5e;
+    --color-ink-600: #323847;
+    --color-ink-700: #212735;
+    --color-ink-800: #151a25;
+    --color-ink-900: #0b0f17;
+    --color-ink-950: #05080d;
+
+    /* ── Legacy slate/gray tokens aliased to paper/ink ───────────── */
+    --color-slate-50:  var(--color-ink-50);
+    --color-slate-75:  var(--color-paper-75);
+    --color-slate-100: var(--color-ink-100);
+    --color-slate-150: var(--color-paper-150);
+    --color-slate-200: var(--color-ink-200);
+    --color-slate-300: var(--color-ink-300);
+    --color-slate-400: var(--color-ink-400);
+    --color-slate-500: var(--color-ink-500);
+    --color-slate-600: var(--color-ink-600);
+    --color-slate-700: var(--color-ink-700);
+    --color-slate-800: var(--color-ink-800);
+    --color-slate-900: var(--color-ink-900);
+    --color-slate-950: var(--color-ink-950);
+
+    --color-gray-50:  var(--color-paper-50);
+    --color-gray-75:  var(--color-paper-75);
+    --color-gray-100: var(--color-paper-100);
+    --color-gray-150: var(--color-paper-150);
+    --color-gray-200: var(--color-paper-200);
+    --color-gray-300: var(--color-ink-300);
+    --color-gray-400: var(--color-ink-400);
+    --color-gray-500: var(--color-ink-500);
+    --color-gray-600: var(--color-ink-600);
+    --color-gray-700: var(--color-ink-700);
+    --color-gray-800: var(--color-ink-800);
+    --color-gray-900: var(--color-ink-900);
+    --color-gray-950: var(--color-ink-950);
+
+    /* ── Semantic ────────────────────────────────────────────────── */
+    --color-success-50:  #ecf6ef;
+    --color-success-100: #d1e9d9;
+    --color-success-500: #2e8b57;
+    --color-success-600: #257047;
+    --color-success-700: #1c5836;
+
+    --color-warning-50:  #fbf3dd;
+    --color-warning-100: #f3e4bb;
+    --color-warning-500: #b58700;
+    --color-warning-600: #9b7300;
+    --color-warning-700: #775900;
+
+    --color-danger-50:  #fbeadf;
+    --color-danger-100: #f5d1b7;
+    --color-danger-500: #c2410c;
+    --color-danger-600: #a8380a;
+    --color-danger-700: #8a2e08;
+
+    --color-info-50:    var(--color-brand-50);
+    --color-info-500:   var(--color-brand-500);
+    --color-info-600:   var(--color-brand-600);
+
+    /* ── Typography ──────────────────────────────────────────────── */
+    --font-sans:    'Inter', system-ui, -apple-system, sans-serif;
+    --font-serif:   'Instrument Serif', Georgia, serif;
+    --font-mono:    'JetBrains Mono', 'Fira Code', ui-monospace, monospace;
+
+    /* ── Type scale ──────────────────────────────────────────────── */
+    --text-2xs:  0.625rem;
+    --text-xs:   0.75rem;
+    --text-sm:   0.8125rem;
+    --text-base: 0.875rem;
+    --text-md:   1rem;
+    --text-lg:   1.125rem;
+    --text-xl:   1.375rem;
+    --text-2xl:  1.75rem;
+    --text-3xl:  2.25rem;
+
+    /* ── Radius ──────────────────────────────────────────────────── */
+    --radius-none: 0;
+    --radius-xs:   0.125rem;
+    --radius-sm:   0.1875rem;
+    --radius-md:   0.25rem;
+    --radius-lg:   0.375rem;
+    --radius-full: 9999px;
+
+    /* ── Layout ──────────────────────────────────────────────────── */
+    --sidebar-width:          3.5rem;
+    --sidebar-expanded-width: 15rem;
+    --flyout-width:           16rem;
+    --topbar-height:          3rem;
+    --action-pane-height:     2.75rem;
+    --content-padding:        1.5rem;
+}
+
+/* Bridge shadcn semantic tokens so `bg-background` etc. resolve */
+@theme inline {
+    --color-background:            var(--background);
+    --color-foreground:            var(--foreground);
+    --color-card:                  var(--card);
+    --color-card-foreground:       var(--card-foreground);
+    --color-popover:               var(--popover);
+    --color-popover-foreground:    var(--popover-foreground);
+    --color-primary:               var(--primary);
+    --color-primary-foreground:    var(--primary-foreground);
+    --color-secondary:             var(--secondary);
+    --color-secondary-foreground:  var(--secondary-foreground);
+    --color-muted:                 var(--muted);
+    --color-muted-foreground:      var(--muted-foreground);
+    --color-accent:                var(--accent);
+    --color-accent-foreground:     var(--accent-foreground);
+    --color-destructive:           var(--destructive);
+    --color-destructive-foreground:var(--destructive-foreground);
+    --color-border:                var(--border);
+    --color-input:                 var(--input);
+    --color-ring:                  var(--ring);
+}
+
+/*
+ * ─── Semantic tokens ────────────────────────────────────────────────────────
+ */
+:root {
+    --background:           var(--color-paper-50);
+    --foreground:           var(--color-ink-900);
+
+    --card:                 #ffffff;
+    --card-foreground:      var(--color-ink-900);
+    --card-border:          var(--color-paper-200);
+
+    --popover:              #ffffff;
+    --popover-foreground:   var(--color-ink-900);
+
+    --primary:              var(--color-brand-600);
+    --primary-foreground:   #ffffff;
+
+    --secondary:            var(--color-paper-100);
+    --secondary-foreground: var(--color-ink-700);
+    --muted:                var(--color-paper-100);
+    --muted-foreground:     var(--color-ink-400);
+    --accent:               var(--color-paper-100);
+    --accent-foreground:    var(--color-ink-800);
+
+    --destructive:          var(--color-danger-600);
+    --destructive-foreground:#ffffff;
+
+    --border:               var(--color-paper-200);
+    --input:                #ffffff;
+    --input-border:         var(--color-paper-300);
+    --input-border-focus:   var(--color-brand-500);
+    --ring:                 var(--color-brand-500);
+    --radius:               var(--radius-md);
+
+    /* Chrome (sidebar + topbar) — dark ink rail, paper topbar. */
+    --sidebar-bg:             var(--color-ink-900);
+    --sidebar-border:         var(--color-ink-800);
+    --sidebar-item-bg-active: color-mix(in srgb, var(--color-brand-500) 18%, transparent);
+
+    --topbar-bg:              #ffffff;
+    --topbar-border:          var(--color-paper-200);
+}
+
+.dark {
+    --background:           var(--color-ink-950);
+    --foreground:           var(--color-paper-50);
+    --card:                 var(--color-ink-900);
+    --card-foreground:      var(--color-paper-50);
+    --card-border:          var(--color-ink-800);
+    --popover:              var(--color-ink-900);
+    --popover-foreground:   var(--color-paper-50);
+    --primary:              var(--color-brand-400);
+    --primary-foreground:   #ffffff;
+    --secondary:            var(--color-ink-800);
+    --secondary-foreground: var(--color-paper-100);
+    --muted:                var(--color-ink-800);
+    --muted-foreground:     var(--color-ink-300);
+    --accent:               var(--color-ink-800);
+    --accent-foreground:    var(--color-paper-100);
+    --destructive:          var(--color-danger-500);
+    --destructive-foreground:#ffffff;
+    --border:               var(--color-ink-800);
+    --input:                var(--color-ink-900);
+    --input-border:         var(--color-ink-700);
+
+    --sidebar-bg:             var(--color-ink-950);
+    --sidebar-border:         var(--color-ink-800);
+    --sidebar-item-bg-active: color-mix(in srgb, var(--color-brand-400) 22%, transparent);
+
+    --topbar-bg:              var(--color-ink-900);
+    --topbar-border:          var(--color-ink-800);
+}
+
+/*
+ * ─── Base reset ─────────────────────────────────────────────────────────────
+ */
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+html {
+    font-size: 16px;
+    -webkit-text-size-adjust: 100%;
+}
+
+body {
+    background: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-sans);
+    font-size: var(--text-base);
+    font-feature-settings: 'cv11', 'ss01', 'ss03';
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+::selection { background: var(--color-brand-200); color: var(--color-brand-900); }
+
+::-webkit-scrollbar         { width: 6px; height: 6px; }
+::-webkit-scrollbar-track   { background: transparent; }
+::-webkit-scrollbar-thumb   { background: var(--color-paper-300); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--color-ink-300); }
+
+/*
+ * ─── TipTap RichTextEditor ───────────────────────────────────────────────────
+ *  TipTap renders <p>, <h1>, <blockquote>, <code>, etc. inside a contenteditable
+ *  element we don't control — so these styles are necessary CSS (not Tailwind).
+ */
+
+.darejer-rte {
+    border: 1px solid var(--input-border);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    background: var(--input);
+    transition: border-color 120ms ease;
+}
+
+.darejer-rte:focus-within {
+    border-color: var(--input-border-focus);
+}
+
+.darejer-rte.is-disabled {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+.darejer-rte-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 2px;
+    padding: 0.3rem 0.5rem;
+    background: var(--color-paper-75);
+    border-bottom: 1px solid var(--color-paper-200);
+}
+
+.darejer-rte-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    border: none;
+    background: transparent;
+    border-radius: var(--radius-sm);
+    color: var(--color-ink-500);
+    cursor: pointer;
+    transition: background 100ms, color 100ms;
+    padding: 0;
+    font-size: var(--text-xs);
+    flex-shrink: 0;
+}
+
+.darejer-rte-btn:hover {
+    background: var(--color-paper-200);
+    color: var(--color-ink-800);
+}
+
+.darejer-rte-btn.is-active {
+    background: var(--color-brand-50);
+    color: var(--color-brand-600);
+}
+
+.darejer-rte-divider {
+    width: 1px;
+    height: 1.375rem;
+    background: var(--color-paper-200);
+    margin: 0 0.25rem;
+}
+
+.darejer-rte-content {
+    padding: 0.625rem 0.75rem;
+    overflow-y: auto;
+}
+
+.darejer-rte-content:focus {
+    outline: none;
+}
+
+.darejer-rte-content .tiptap {
+    outline: none;
+    font-size: var(--text-base);
+    font-family: var(--font-sans);
+    line-height: 1.6;
+    color: var(--foreground);
+}
+
+.darejer-rte-content .tiptap p { margin: 0 0 0.5rem; }
+.darejer-rte-content .tiptap p:last-child { margin-bottom: 0; }
+
+.darejer-rte-content .tiptap h1 { font-size: var(--text-xl);  font-weight: 600; margin: 0.75rem 0 0.375rem; font-family: var(--font-serif); letter-spacing: -0.01em; }
+.darejer-rte-content .tiptap h2 { font-size: var(--text-lg);  font-weight: 600; margin: 0.625rem 0 0.3rem;   font-family: var(--font-serif); letter-spacing: -0.005em; }
+.darejer-rte-content .tiptap h3 { font-size: var(--text-md);  font-weight: 600; margin: 0.5rem 0 0.25rem;    font-family: var(--font-serif); }
+
+.darejer-rte-content .tiptap ul,
+.darejer-rte-content .tiptap ol {
+    padding-left: 1.25rem;
+    margin: 0.375rem 0;
+}
+
+.darejer-rte-content .tiptap li { margin: 0.125rem 0; }
+
+.darejer-rte-content .tiptap blockquote {
+    border-left: 3px solid var(--color-brand-300);
+    padding-left: 0.75rem;
+    margin: 0.5rem 0;
+    color: var(--color-ink-500);
+    font-style: italic;
+}
+
+.darejer-rte-content .tiptap code {
+    background: var(--color-paper-100);
+    border: 1px solid var(--color-paper-200);
+    border-radius: var(--radius-xs);
+    padding: 0.1rem 0.3rem;
+    font-size: var(--text-sm);
+    font-family: var(--font-mono);
+}
+
+.darejer-rte-content .tiptap pre {
+    background: var(--color-paper-100);
+    border: 1px solid var(--color-paper-200);
+    border-radius: var(--radius-md);
+    padding: 0.625rem 0.875rem;
+    overflow-x: auto;
+    margin: 0.5rem 0;
+}
+
+.darejer-rte-content .tiptap pre code {
+    background: none;
+    border: none;
+    padding: 0;
+}
+
+.darejer-rte-content .tiptap a {
+    color: var(--color-brand-600);
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.darejer-rte-content .tiptap .is-editor-empty::before {
+    content: attr(data-placeholder);
+    color: var(--color-ink-400);
+    pointer-events: none;
+    float: left;
+    height: 0;
+}
+
+.darejer-rte-footer {
+    display: flex;
+    justify-content: flex-end;
+    padding: 0.25rem 0.625rem;
+    background: var(--color-paper-75);
+    border-top: 1px solid var(--color-paper-200);
+    font-size: var(--text-2xs);
+    color: var(--color-ink-400);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.04em;
+}
+
+.darejer-rte-footer.is-over-limit {
+    color: var(--color-danger-600);
+}
+
+/*
+ * ─── Vue Flow — theme overrides to match Ledger palette ─────────────────────
+ *  Vue Flow renders DOM nodes it controls, so these are necessary CSS rules
+ *  (not Tailwind utilities on our own markup).
+ */
+
+.vue-flow__node {
+    font-family: var(--font-sans) !important;
+    font-size: 0.8125rem !important;
+}
+
+.vue-flow__node-default,
+.vue-flow__node-input,
+.vue-flow__node-output {
+    border-radius: var(--radius-md) !important;
+    border: 1px solid var(--color-paper-300) !important;
+    background: #ffffff !important;
+    padding: 0.5rem 0.875rem !important;
+    font-size: 0.8125rem !important;
+    color: var(--color-ink-800) !important;
+}
+
+.vue-flow__node-input {
+    border-color: var(--color-brand-400) !important;
+    background: var(--color-brand-50) !important;
+    color: var(--color-brand-800) !important;
+}
+
+.vue-flow__node-output {
+    border-color: var(--color-paper-400) !important;
+    background: var(--color-paper-100) !important;
+}
+
+.vue-flow__node.selected .vue-flow__node-default,
+.vue-flow__node.selected > div {
+    border-color: var(--color-brand-500) !important;
+    outline: 2px solid var(--color-brand-200) !important;
+}
+
+.vue-flow__edge-path {
+    stroke: var(--color-ink-400) !important;
+    stroke-width: 1.5 !important;
+}
+
+.vue-flow__edge.selected .vue-flow__edge-path {
+    stroke: var(--color-brand-500) !important;
+}
+
+.vue-flow__edge-label {
+    font-size: 0.6875rem !important;
+    font-family: var(--font-sans) !important;
+    fill: var(--color-ink-600) !important;
+}
+
+.vue-flow__controls {
+    border: 1px solid var(--color-paper-200) !important;
+    border-radius: var(--radius-md) !important;
+    overflow: hidden !important;
+}
+
+.vue-flow__controls-button {
+    border: none !important;
+    border-bottom: 1px solid var(--color-paper-200) !important;
+    background: #ffffff !important;
+    color: var(--color-ink-500) !important;
+    width: 1.75rem !important;
+    height: 1.75rem !important;
+    padding: 0 !important;
+}
+
+.vue-flow__controls-button:hover {
+    background: var(--color-paper-50) !important;
+    color: var(--color-ink-800) !important;
+}
+
+.vue-flow__minimap {
+    border: 1px solid var(--color-paper-200) !important;
+    border-radius: var(--radius-md) !important;
+}
+
+.vue-flow__background {
+    background-color: var(--color-paper-50) !important;
+}
+
+/*
+ * ─── FullCalendar overrides ─────────────────────────────────────────────────
+ */
+
+.fc {
+    font-family: var(--font-sans) !important;
+    font-size: 0.8125rem !important;
+}
+
+.fc-toolbar-title {
+    font-size: 0.9375rem !important;
+    font-weight: 600 !important;
+    color: var(--color-ink-800) !important;
+}
+
+.fc-button {
+    background: #ffffff !important;
+    border: 1px solid var(--color-paper-300) !important;
+    color: var(--color-ink-600) !important;
+    font-size: 0.75rem !important;
+    font-weight: 500 !important;
+    padding: 0.25rem 0.625rem !important;
+    border-radius: var(--radius-md) !important;
+    height: 2rem !important;
+    box-shadow: none !important;
+    transition: background 100ms, border-color 100ms !important;
+}
+
+.fc-button:hover {
+    background: var(--color-paper-75) !important;
+    border-color: var(--color-paper-400) !important;
+    color: var(--color-ink-800) !important;
+}
+
+.fc-button-primary:not(:disabled).fc-button-active,
+.fc-button-primary:not(:disabled):active {
+    background: var(--color-brand-600) !important;
+    border-color: var(--color-brand-600) !important;
+    color: #ffffff !important;
+}
+
+.fc-button-group .fc-button {
+    border-radius: 0 !important;
+}
+
+.fc-button-group .fc-button:first-child {
+    border-radius: var(--radius-md) 0 0 var(--radius-md) !important;
+}
+
+.fc-button-group .fc-button:last-child {
+    border-radius: 0 var(--radius-md) var(--radius-md) 0 !important;
+}
+
+.fc-col-header-cell-cushion {
+    font-size: 0.6875rem !important;
+    font-weight: 600 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.04em !important;
+    color: var(--color-ink-400) !important;
+    text-decoration: none !important;
+}
+
+.fc-daygrid-day-number {
+    font-size: 0.75rem !important;
+    color: var(--color-ink-500) !important;
+    text-decoration: none !important;
+}
+
+.fc-day-today {
+    background: var(--color-brand-50) !important;
+}
+
+.fc-day-today .fc-daygrid-day-number {
+    color: var(--color-brand-700) !important;
+    font-weight: 600 !important;
+}
+
+.fc-event {
+    border-radius: var(--radius-sm) !important;
+    border: none !important;
+    font-size: 0.6875rem !important;
+    font-weight: 500 !important;
+    padding: 1px 4px !important;
+    cursor: pointer !important;
+}
+
+.fc-event-title {
+    font-weight: 500 !important;
+}
+
+.fc-list-event-title a {
+    font-size: 0.8125rem !important;
+    text-decoration: none !important;
+    color: var(--color-ink-800) !important;
+}
+
+.fc-list-event:hover td {
+    background: var(--color-paper-75) !important;
+}
+
+.fc th, .fc td {
+    border-color: var(--color-paper-200) !important;
+}
+
+.fc-scrollgrid {
+    border-color: var(--color-paper-200) !important;
+}
+
+/*
+ * ─── dhtmlx-gantt overrides ─────────────────────────────────────────────────
+ */
+
+.gantt_container {
+    font-family: var(--font-sans) !important;
+    font-size: 0.8125rem !important;
+    border: 1px solid var(--color-paper-200) !important;
+    border-radius: var(--radius-md) !important;
+    overflow: hidden !important;
+}
+
+.gantt_grid_head_cell,
+.gantt_scale_cell {
+    font-size: 0.6875rem !important;
+    font-weight: 600 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.04em !important;
+    color: var(--color-ink-400) !important;
+    background: var(--color-paper-75) !important;
+    border-color: var(--color-paper-200) !important;
+}
+
+.gantt_row {
+    border-color: var(--color-paper-100) !important;
+}
+
+.gantt_row:hover,
+.gantt_row.odd:hover {
+    background: var(--color-paper-50) !important;
+}
+
+.gantt_row.odd {
+    background: var(--color-paper-75) !important;
+}
+
+.gantt_task_line {
+    border-radius: var(--radius-sm) !important;
+    border: none !important;
+    background: var(--color-brand-500) !important;
+}
+
+.gantt_task_line .gantt_task_content {
+    font-size: 0.6875rem !important;
+    font-weight: 500 !important;
+}
+
+.gantt_task_progress {
+    border-radius: var(--radius-sm) 0 0 var(--radius-sm) !important;
+    opacity: 0.35 !important;
+}
+
+.gantt_link_arrow,
+.gantt_line_wrapper div {
+    background: var(--color-ink-400) !important;
+}
+
+.gantt_grid_data .gantt_cell {
+    font-size: 0.8125rem !important;
+    color: var(--color-ink-700) !important;
+    border-color: var(--color-paper-100) !important;
+}
