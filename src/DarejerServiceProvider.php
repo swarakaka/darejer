@@ -73,6 +73,20 @@ class DarejerServiceProvider extends ServiceProvider
         $this->loadRoutesFrom(__DIR__.'/../routes/darejer.php');
         $this->loadTranslationsFrom(__DIR__.'/../lang', 'darejer');
 
+        // Zero-config: auto-load shipped migrations (alerts, etc.) so host
+        // apps just `php artisan migrate` — no `vendor:publish` needed.
+        $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
+
+        // Broadcast channels for package features (per-user alert websocket
+        // channel). Wired after the framework boots so Laravel's
+        // BroadcastServiceProvider has registered the BroadcastManager —
+        // host apps don't need to touch their own `routes/channels.php`.
+        $this->app->booted(function () {
+            if (file_exists($channels = __DIR__.'/../routes/channels.php')) {
+                require $channels;
+            }
+        });
+
         // Register Spatie's Role/Permission models against the data slug
         // registry so the package's Admin screens (and any host code) can
         // fetch them via `/darejer/data/role` & `/darejer/data/permission`

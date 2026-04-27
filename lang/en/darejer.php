@@ -315,4 +315,17 @@ return [
     ':n events' => ':n events',
     'No audit events match the current filters.' => 'No audit events match the current filters.',
     'Showing the most recent :n events. Narrow the filters to see older entries.' => 'Showing the most recent :n events. Narrow the filters to see older entries.',
+
+    // Notifications
+    'Recent alerts and updates for your account.' => 'Recent alerts and updates for your account.',
+    'Mark all read' => 'Mark all read',
+    'Clear all' => 'Clear all',
+    'You\'re all caught up' => 'You\'re all caught up',
+    'New notifications will appear here.' => 'New notifications will appear here.',
+    'Delete notification' => 'Delete notification',
+    'Open' => 'Open',
+    'just now' => 'just now',
+    ':n min ago' => ':n min ago',
+    ':n h ago' => ':n h ago',
+    ':n d ago' => ':n d ago',
 ];
