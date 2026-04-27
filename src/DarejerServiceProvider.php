@@ -5,12 +5,15 @@ namespace Darejer;
 use Darejer\Console\Commands\InstallCommand;
 use Darejer\Console\Commands\LanguageCommand;
 use Darejer\Console\Commands\LanguageExportCommand;
+use Darejer\Data\ModelRegistry;
 use Darejer\Http\Middleware\HandleInertiaRequests;
 use Darejer\Routing\ControllerRouteRegistrar;
 use Illuminate\Contracts\Http\Kernel;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
+use Spatie\Permission\Models\Permission as SpatiePermission;
+use Spatie\Permission\Models\Role as SpatieRole;
 
 class DarejerServiceProvider extends ServiceProvider
 {
@@ -70,6 +73,15 @@ class DarejerServiceProvider extends ServiceProvider
         $this->loadRoutesFrom(__DIR__.'/../routes/darejer.php');
         $this->loadTranslationsFrom(__DIR__.'/../lang', 'darejer');
 
+        // Register Spatie's Role/Permission models against the data slug
+        // registry so the package's Admin screens (and any host code) can
+        // fetch them via `/darejer/data/role` & `/darejer/data/permission`
+        // through Combobox without needing them under `App\Models`.
+        ModelRegistry::register([
+            'role' => SpatieRole::class,
+            'permission' => SpatiePermission::class,
+        ]);
+
         // Discover controllers extending `Darejer\Http\Controllers\DarejerController`
         // and auto-register their routes. Honours Laravel's route cache.
         if (! $this->app->routesAreCached()) {
@@ -78,6 +90,13 @@ class DarejerServiceProvider extends ServiceProvider
             ]);
 
             ControllerRouteRegistrar::discover($mapping)->register();
+
+            // The package ships its own Admin controllers (Users, Roles,
+            // Permissions). Discover them after the host so host-defined
+            // routes win on conflict.
+            ControllerRouteRegistrar::discover([
+                __DIR__.'/Http/Controllers/Admin' => 'Darejer\\Http\\Controllers\\Admin',
+            ])->register();
         }
 
         // @darejerAssets Blade directive — emits <link> + <script> tags from
