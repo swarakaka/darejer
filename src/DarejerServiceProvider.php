@@ -4,6 +4,7 @@ namespace Darejer;
 
 use Darejer\Console\Commands\InstallCommand;
 use Darejer\Console\Commands\LanguageCommand;
+use Darejer\Console\Commands\LanguageExportCommand;
 use Darejer\Http\Middleware\HandleInertiaRequests;
 use Darejer\Routing\ControllerRouteRegistrar;
 use Illuminate\Contracts\Http\Kernel;
@@ -36,6 +37,7 @@ class DarejerServiceProvider extends ServiceProvider
             $this->commands([
                 InstallCommand::class,
                 LanguageCommand::class,
+                LanguageExportCommand::class,
             ]);
         }
     }
