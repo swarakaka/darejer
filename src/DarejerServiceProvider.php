@@ -92,10 +92,11 @@ class DarejerServiceProvider extends ServiceProvider
             ControllerRouteRegistrar::discover($mapping)->register();
 
             // The package ships its own Admin controllers (Users, Roles,
-            // Permissions). Discover them after the host so host-defined
-            // routes win on conflict.
+            // Permissions) and Governance controllers (Audit Log). Discover
+            // them after the host so host-defined routes win on conflict.
             ControllerRouteRegistrar::discover([
                 __DIR__.'/Http/Controllers/Admin' => 'Darejer\\Http\\Controllers\\Admin',
+                __DIR__.'/Http/Controllers/Governance' => 'Darejer\\Http\\Controllers\\Governance',
             ])->register();
         }
 
