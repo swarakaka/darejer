@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { ref }                     from 'vue'
 import { usePage, router }         from '@inertiajs/vue3'
 import { Avatar, AvatarFallback }  from '@/components/ui/avatar'
 import {
@@ -10,7 +11,9 @@ import {
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { LogOut, Search, Bell, Command, Globe } from 'lucide-vue-next'
+import AppNotifications            from '@/components/darejer/AppNotifications.vue'
 import { useLanguages }            from '@/composables/useLanguages'
+import { useAlerts }               from '@/composables/useAlerts'
 import useTranslation              from '@/composables/useTranslation'
 import type { DarejerSharedProps } from '@/types/darejer'
 
@@ -24,6 +27,11 @@ const { __ } = useTranslation()
 // implementation read `window.location.search` which is NOT reactive — the
 // label only updated on a full reload.
 const { languages, currentLocale, isMultilingual, localeLabel, localeName } = useLanguages()
+
+// Notifications: bell badge reflects the live unread count maintained by
+// the shared `useAlerts` store (Reverb push + initial REST hydration).
+const { unreadCount, hasUnread } = useAlerts()
+const notificationsOpen = ref(false)
 
 function switchLanguage(locale: string) {
     router.get(
@@ -76,13 +84,25 @@ function logout() {
 
             <button
                 type="button"
-                class="relative flex items-center justify-center w-8 h-8 rounded-sm text-ink-500
-                       hover:text-ink-800 hover:bg-paper-100 transition-colors"
+                class="relative flex items-center justify-center w-8 h-8 rounded-sm transition-colors"
+                :class="hasUnread
+                    ? 'text-brand-600 hover:text-brand-700 hover:bg-brand-50'
+                    : 'text-ink-500 hover:text-ink-800 hover:bg-paper-100'"
                 :aria-label="__('Notifications')"
+                @click="notificationsOpen = true"
             >
                 <Bell class="w-4 h-4" />
-                <span class="absolute top-1.5 end-1.5 w-1.5 h-1.5 rounded-full bg-danger-500" />
+                <span
+                    v-if="hasUnread"
+                    class="absolute -top-0.5 -end-0.5 inline-flex items-center justify-center
+                           min-w-[1rem] h-4 px-1 rounded-full bg-danger-500 text-white
+                           text-[9px] font-semibold tabular-nums leading-none"
+                >
+                    {{ unreadCount > 99 ? '99+' : unreadCount }}
+                </span>
             </button>
+
+            <AppNotifications v-model:open="notificationsOpen" />
 
             <!-- Language switcher (only when multiple languages configured) -->
             <DropdownMenu v-if="isMultilingual">
