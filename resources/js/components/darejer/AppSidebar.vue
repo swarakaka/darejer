@@ -296,7 +296,7 @@ function badgeClass(color?: string): string {
                                     type="button"
                                     class="flex items-center justify-center w-9 h-9 rounded-sm text-ink-200 hover:!text-brand-300 hover:bg-brand-500/15 transition-colors"
                                 >
-                                    <LifeBuoy class="w-[18px] h-[18px]" />
+                                    <LifeBuoy class="w-4.5 h-4.5" />
                                 </button>
                             </TooltipTrigger>
                             <TooltipContent side="right" :side-offset="10" class="text-xs">{{ __('Help') }}</TooltipContent>
@@ -307,7 +307,7 @@ function badgeClass(color?: string): string {
                                     type="button"
                                     class="flex items-center justify-center w-9 h-9 rounded-sm text-ink-200 hover:!text-brand-300 hover:bg-brand-500/15 transition-colors"
                                 >
-                                    <Settings class="w-[18px] h-[18px]" />
+                                    <Settings class="w-4.5 h-4.5" />
                                 </button>
                             </TooltipTrigger>
                             <TooltipContent side="right" :side-offset="10" class="text-xs">{{ __('Settings') }}</TooltipContent>
@@ -319,10 +319,10 @@ function badgeClass(color?: string): string {
                         <TooltipTrigger as-child>
                             <button
                                 type="button"
-                                class="flex items-center justify-center w-9 h-9 rounded-sm text-ink-200 hover:!text-brand-300 hover:bg-brand-500/15 transition-colors"
+                                class="flex items-center justify-center w-9 h-9 rounded-sm text-ink-200 hover:text-brand-300! hover:bg-brand-500/15 transition-colors"
                                 @click="toggleCollapsed"
                             >
-                                <component :is="collapsed ? PanelLeftOpen : PanelLeftClose" class="w-[18px] h-[18px]" />
+                                <component :is="collapsed ? PanelLeftOpen : PanelLeftClose" class="w-4.5 h-4.5 rtl:rotate-180" />
                             </button>
                         </TooltipTrigger>
                         <TooltipContent side="right" :side-offset="10" class="text-xs">

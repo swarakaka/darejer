@@ -43,23 +43,15 @@ function logout() {
 
 <template>
     <header
-        class="flex items-center bg-[color:var(--topbar-bg)] border-b border-[color:var(--topbar-border)]
+        class="flex items-center bg-(--topbar-bg) border-b border-(--topbar-border)
                shrink-0 px-4 gap-4"
         :style="{ height: 'var(--topbar-height)' }"
     >
-        <!-- Wordmark -->
-        <div class="flex items-baseline gap-2 shrink-0 select-none">
-            <span class="font-serif text-lg leading-none text-ink-900 tracking-tight">Darejer</span>
-            <span class="text-[10px] font-semibold uppercase tracking-[0.18em] text-ink-300 tabular-nums">v0.1</span>
-        </div>
-
-        <span class="h-4 w-px bg-paper-300 shrink-0" />
-
         <!-- Search -->
         <div class="flex-1 max-w-md">
             <div class="relative group">
                 <Search
-                    class="absolute start-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5
+                    class="absolute inset-s-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5
                            text-ink-400 group-focus-within:text-brand-600 transition-colors"
                 />
                 <input
@@ -70,9 +62,9 @@ function logout() {
                            focus:ring-1 focus:ring-brand-500/50 transition-all"
                 />
                 <kbd
-                    class="absolute end-2 top-1/2 -translate-y-1/2 hidden md:flex items-center gap-1
-                           text-[10px] font-medium text-ink-400 bg-paper-200/70
-                           border border-paper-300 rounded-sm px-1 h-[18px] tabular-nums"
+                    class="absolute inset-e-2 top-1/2 -translate-y-1/2 hidden md:flex items-center gap-1
+                           text-2xs font-medium text-ink-400 bg-paper-200/70
+                           border border-paper-300 rounded-sm px-1 h-4.5 tabular-nums"
                 >
                     <Command class="w-2.5 h-2.5" />K
                 </kbd>
