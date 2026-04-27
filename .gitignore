@@ -6,3 +6,5 @@ composer.lock
 
 CLAUDE.md
 /darejer-prompts
+
+.phpunit.cache/
