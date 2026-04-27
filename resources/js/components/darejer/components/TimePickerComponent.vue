@@ -7,7 +7,10 @@ import {
 }                           from '@/components/ui/popover'
 import { Clock, ChevronUp, ChevronDown } from 'lucide-vue-next'
 import FieldWrapper         from '@/components/darejer/FieldWrapper.vue'
+import useTranslation       from '@/composables/useTranslation'
 import type { DarejerComponent } from '@/types/darejer'
+
+const { __ } = useTranslation()
 
 const props = defineProps<{
     component: DarejerComponent
@@ -136,7 +139,7 @@ function onUnitInput(unit: 'h' | 'm' | 's', e: Event) {
                             <button type="button" class="p-0.5 text-slate-400 hover:text-slate-700" @click="decrement('h')">
                                 <ChevronDown class="w-4 h-4" />
                             </button>
-                            <span class="text-xs text-slate-400">hr</span>
+                            <span class="text-xs text-slate-400">{{ __('hr') }}</span>
                         </div>
 
                         <span class="text-slate-400 font-mono text-lg mb-4">:</span>
@@ -157,7 +160,7 @@ function onUnitInput(unit: 'h' | 'm' | 's', e: Event) {
                             <button type="button" class="p-0.5 text-slate-400 hover:text-slate-700" @click="decrement('m')">
                                 <ChevronDown class="w-4 h-4" />
                             </button>
-                            <span class="text-xs text-slate-400">min</span>
+                            <span class="text-xs text-slate-400">{{ __('min') }}</span>
                         </div>
 
                         <!-- Seconds -->
@@ -178,7 +181,7 @@ function onUnitInput(unit: 'h' | 'm' | 's', e: Event) {
                                 <button type="button" class="p-0.5 text-slate-400 hover:text-slate-700" @click="decrement('s')">
                                     <ChevronDown class="w-4 h-4" />
                                 </button>
-                                <span class="text-xs text-slate-400">sec</span>
+                                <span class="text-xs text-slate-400">{{ __('sec') }}</span>
                             </div>
                         </template>
 
@@ -192,7 +195,7 @@ function onUnitInput(unit: 'h' | 'm' | 's', e: Event) {
                                     : 'bg-slate-100 text-slate-500 hover:bg-slate-200'"
                                 @click="meridiem !== 'AM' && toggleMeridiem()"
                             >
-                                AM
+                                {{ __('AM') }}
                             </button>
                             <button
                                 type="button"
@@ -202,7 +205,7 @@ function onUnitInput(unit: 'h' | 'm' | 's', e: Event) {
                                     : 'bg-slate-100 text-slate-500 hover:bg-slate-200'"
                                 @click="meridiem !== 'PM' && toggleMeridiem()"
                             >
-                                PM
+                                {{ __('PM') }}
                             </button>
                         </div>
 

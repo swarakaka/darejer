@@ -16,7 +16,10 @@ import {
     Undo, Redo,
 } from 'lucide-vue-next'
 import FieldWrapper from '@/components/darejer/FieldWrapper.vue'
+import useTranslation from '@/composables/useTranslation'
 import type { DarejerComponent } from '@/types/darejer'
+
+const { __ } = useTranslation()
 
 const props = defineProps<{
     component: DarejerComponent
@@ -49,7 +52,7 @@ const editor = useEditor({
         TextAlign.configure({ types: ['heading', 'paragraph'] }),
         Link.configure({ openOnClick: false }),
         Placeholder.configure({
-            placeholder: (props.component.placeholder as string) ?? 'Enter text…',
+            placeholder: (props.component.placeholder as string) ?? __('Enter text…'),
         }),
         ...(maxChars.value ? [CharacterCount.configure({ limit: maxChars.value })] : []),
     ],
@@ -114,11 +117,11 @@ const isOverLimit = computed(() => maxChars.value ? charCount.value > maxChars.v
                 >
                     <!-- History -->
                     <template v-if="toolAllowed('undo')">
-                        <button type="button" class="darejer-rte-btn" title="Undo"
+                        <button type="button" class="darejer-rte-btn" :title="__('Undo')"
                             @click="editor?.chain().focus().undo().run()">
                             <Undo class="w-4 h-4" />
                         </button>
-                        <button type="button" class="darejer-rte-btn" title="Redo"
+                        <button type="button" class="darejer-rte-btn" :title="__('Redo')"
                             @click="editor?.chain().focus().redo().run()">
                             <Redo class="w-4 h-4" />
                         </button>
@@ -127,17 +130,17 @@ const isOverLimit = computed(() => maxChars.value ? charCount.value > maxChars.v
 
                     <!-- Headings -->
                     <template v-if="toolAllowed('heading')">
-                        <button type="button" class="darejer-rte-btn" title="Heading 1"
+                        <button type="button" class="darejer-rte-btn" :title="__('Heading 1')"
                             :class="{ 'is-active': editor?.isActive('heading', { level: 1 }) }"
                             @click="editor?.chain().focus().toggleHeading({ level: 1 }).run()">
                             <Heading1 class="w-4 h-4" />
                         </button>
-                        <button type="button" class="darejer-rte-btn" title="Heading 2"
+                        <button type="button" class="darejer-rte-btn" :title="__('Heading 2')"
                             :class="{ 'is-active': editor?.isActive('heading', { level: 2 }) }"
                             @click="editor?.chain().focus().toggleHeading({ level: 2 }).run()">
                             <Heading2 class="w-4 h-4" />
                         </button>
-                        <button type="button" class="darejer-rte-btn" title="Heading 3"
+                        <button type="button" class="darejer-rte-btn" :title="__('Heading 3')"
                             :class="{ 'is-active': editor?.isActive('heading', { level: 3 }) }"
                             @click="editor?.chain().focus().toggleHeading({ level: 3 }).run()">
                             <Heading3 class="w-4 h-4" />
@@ -146,25 +149,25 @@ const isOverLimit = computed(() => maxChars.value ? charCount.value > maxChars.v
                     </template>
 
                     <!-- Inline formatting -->
-                    <button type="button" class="darejer-rte-btn" title="Bold"
+                    <button type="button" class="darejer-rte-btn" :title="__('Bold')"
                         :class="{ 'is-active': editor?.isActive('bold') }"
                         @click="editor?.chain().focus().toggleBold().run()">
                         <Bold class="w-4 h-4" />
                     </button>
-                    <button type="button" class="darejer-rte-btn" title="Italic"
+                    <button type="button" class="darejer-rte-btn" :title="__('Italic')"
                         :class="{ 'is-active': editor?.isActive('italic') }"
                         @click="editor?.chain().focus().toggleItalic().run()">
                         <Italic class="w-4 h-4" />
                     </button>
                     <template v-if="toolAllowed('underline')">
-                        <button type="button" class="darejer-rte-btn" title="Underline"
+                        <button type="button" class="darejer-rte-btn" :title="__('Underline')"
                             :class="{ 'is-active': editor?.isActive('underline') }"
                             @click="editor?.chain().focus().toggleUnderline().run()">
                             <UnderlineIcon class="w-4 h-4" />
                         </button>
                     </template>
                     <template v-if="toolAllowed('strike')">
-                        <button type="button" class="darejer-rte-btn" title="Strikethrough"
+                        <button type="button" class="darejer-rte-btn" :title="__('Strikethrough')"
                             :class="{ 'is-active': editor?.isActive('strike') }"
                             @click="editor?.chain().focus().toggleStrike().run()">
                             <Strikethrough class="w-4 h-4" />
@@ -174,28 +177,28 @@ const isOverLimit = computed(() => maxChars.value ? charCount.value > maxChars.v
 
                     <!-- Lists -->
                     <template v-if="toolAllowed('bulletList')">
-                        <button type="button" class="darejer-rte-btn" title="Bullet list"
+                        <button type="button" class="darejer-rte-btn" :title="__('Bullet list')"
                             :class="{ 'is-active': editor?.isActive('bulletList') }"
                             @click="editor?.chain().focus().toggleBulletList().run()">
                             <List class="w-4 h-4" />
                         </button>
                     </template>
                     <template v-if="toolAllowed('orderedList')">
-                        <button type="button" class="darejer-rte-btn" title="Numbered list"
+                        <button type="button" class="darejer-rte-btn" :title="__('Numbered list')"
                             :class="{ 'is-active': editor?.isActive('orderedList') }"
                             @click="editor?.chain().focus().toggleOrderedList().run()">
                             <ListOrdered class="w-4 h-4" />
                         </button>
                     </template>
                     <template v-if="toolAllowed('blockquote')">
-                        <button type="button" class="darejer-rte-btn" title="Blockquote"
+                        <button type="button" class="darejer-rte-btn" :title="__('Blockquote')"
                             :class="{ 'is-active': editor?.isActive('blockquote') }"
                             @click="editor?.chain().focus().toggleBlockquote().run()">
                             <Quote class="w-4 h-4" />
                         </button>
                     </template>
                     <template v-if="toolAllowed('code')">
-                        <button type="button" class="darejer-rte-btn" title="Code"
+                        <button type="button" class="darejer-rte-btn" :title="__('Code')"
                             :class="{ 'is-active': editor?.isActive('code') }"
                             @click="editor?.chain().focus().toggleCode().run()">
                             <Code class="w-4 h-4" />
@@ -205,17 +208,17 @@ const isOverLimit = computed(() => maxChars.value ? charCount.value > maxChars.v
 
                     <!-- Alignment -->
                     <template v-if="toolAllowed('align')">
-                        <button type="button" class="darejer-rte-btn" title="Align left"
+                        <button type="button" class="darejer-rte-btn" :title="__('Align left')"
                             :class="{ 'is-active': editor?.isActive({ textAlign: 'left' }) }"
                             @click="editor?.chain().focus().setTextAlign('left').run()">
                             <AlignLeft class="w-4 h-4" />
                         </button>
-                        <button type="button" class="darejer-rte-btn" title="Align center"
+                        <button type="button" class="darejer-rte-btn" :title="__('Align center')"
                             :class="{ 'is-active': editor?.isActive({ textAlign: 'center' }) }"
                             @click="editor?.chain().focus().setTextAlign('center').run()">
                             <AlignCenter class="w-4 h-4" />
                         </button>
-                        <button type="button" class="darejer-rte-btn" title="Align right"
+                        <button type="button" class="darejer-rte-btn" :title="__('Align right')"
                             :class="{ 'is-active': editor?.isActive({ textAlign: 'right' }) }"
                             @click="editor?.chain().focus().setTextAlign('right').run()">
                             <AlignRight class="w-4 h-4" />
@@ -225,7 +228,7 @@ const isOverLimit = computed(() => maxChars.value ? charCount.value > maxChars.v
 
                     <!-- Link -->
                     <template v-if="toolAllowed('link')">
-                        <button type="button" class="darejer-rte-btn" title="Link"
+                        <button type="button" class="darejer-rte-btn" :title="__('Link')"
                             :class="{ 'is-active': editor?.isActive('link') }"
                             @click="openLinkDialog">
                             <LinkIcon class="w-4 h-4" />
@@ -262,7 +265,7 @@ const isOverLimit = computed(() => maxChars.value ? charCount.value > maxChars.v
                 @click.self="linkDialogOpen = false"
             >
                 <div class="bg-white border border-paper-200 rounded-md p-4 w-80 flex flex-col gap-3">
-                    <p class="text-sm font-semibold text-ink-800">Insert link</p>
+                    <p class="text-sm font-semibold text-ink-800">{{ __('Insert link') }}</p>
                     <input
                         v-model="linkUrl"
                         type="url"
@@ -276,14 +279,14 @@ const isOverLimit = computed(() => maxChars.value ? charCount.value > maxChars.v
                             class="h-8 px-3 text-sm border border-paper-300 rounded-sm hover:bg-paper-100"
                             @click="linkDialogOpen = false"
                         >
-                            Cancel
+                            {{ __('Cancel') }}
                         </button>
                         <button
                             type="button"
                             class="h-8 px-3 text-sm bg-brand-600 text-white rounded-sm hover:bg-brand-700"
                             @click="applyLink"
                         >
-                            Apply
+                            {{ __('Apply') }}
                         </button>
                     </div>
                 </div>

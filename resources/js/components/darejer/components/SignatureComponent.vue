@@ -3,7 +3,10 @@ import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import SignaturePad from 'signature_pad'
 import { Eraser, Download } from 'lucide-vue-next'
 import FieldWrapper from '@/components/darejer/FieldWrapper.vue'
+import useTranslation from '@/composables/useTranslation'
 import type { DarejerComponent } from '@/types/darejer'
+
+const { __ } = useTranslation()
 
 const props = defineProps<{
     component: DarejerComponent
@@ -127,7 +130,7 @@ function download() {
                         class="absolute bottom-8 left-6 right-6 pointer-events-none"
                     >
                         <div class="border-b border-dashed border-paper-300" />
-                        <p class="text-xs text-ink-300 mt-1 tracking-wider uppercase">Sign here</p>
+                        <p class="text-xs text-ink-300 mt-1 tracking-wider uppercase">{{ __('Sign here') }}</p>
                     </div>
 
                     <!-- Empty state hint -->
@@ -135,14 +138,14 @@ function download() {
                         v-if="!hasSignature && !showGuide"
                         class="absolute inset-0 flex items-center justify-center pointer-events-none"
                     >
-                        <p class="text-sm text-ink-300">Draw your signature</p>
+                        <p class="text-sm text-ink-300">{{ __('Draw your signature') }}</p>
                     </div>
                 </div>
 
                 <!-- Footer controls -->
                 <div class="flex items-center justify-between px-3 py-1.5 bg-paper-75 border-t border-paper-200">
                     <p class="text-xs text-ink-400">
-                        {{ hasSignature ? 'Signature captured' : 'No signature yet' }}
+                        {{ hasSignature ? __('Signature captured') : __('No signature yet') }}
                     </p>
                     <div class="flex items-center gap-1">
                         <button
@@ -153,7 +156,7 @@ function download() {
                             @click="download"
                         >
                             <Download class="w-3 h-3" />
-                            Save
+                            {{ __('Save') }}
                         </button>
                         <button
                             v-if="!(component.disabled as boolean)"
@@ -163,7 +166,7 @@ function download() {
                             @click="clear"
                         >
                             <Eraser class="w-3 h-3" />
-                            Clear
+                            {{ __('Clear') }}
                         </button>
                     </div>
                 </div>

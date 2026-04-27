@@ -19,7 +19,10 @@ import {
 } from '@/components/ui/dialog'
 import { Button }                from '@/components/ui/button'
 import FieldWrapper              from '@/components/darejer/FieldWrapper.vue'
+import useTranslation            from '@/composables/useTranslation'
 import type { DarejerComponent } from '@/types/darejer'
+
+const { __ } = useTranslation()
 
 const props = defineProps<{
     component: DarejerComponent
@@ -68,7 +71,7 @@ const confirmRow    = ref<TreeRow | null>(null)
 const columns    = computed((): TreeCol[] => (props.component.treeColumns as TreeCol[]) ?? [])
 const rowActions = computed((): RowAct[]  => (props.component.rowActions  as RowAct[])  ?? [])
 const expandAll  = computed(() => !!props.component.expandAll)
-const emptyMsg   = computed(() => (props.component.emptyMessage as string) ?? 'No records found.')
+const emptyMsg   = computed(() => (props.component.emptyMessage as string) ?? __('No records found.'))
 const keyField   = computed(() => (props.component.keyField as string) ?? 'id')
 
 async function fetchData() {
@@ -291,13 +294,13 @@ const treeCol = computed(() => columns.value.find(c => c.isTree) ?? columns.valu
     <Dialog :open="confirmOpen" @update:open="confirmOpen = $event">
         <DialogContent class="max-w-sm p-0 overflow-hidden">
             <DialogHeader class="px-4 py-3 border-b border-paper-200 bg-paper-75">
-                <DialogTitle class="font-serif text-lg">Confirm</DialogTitle>
+                <DialogTitle class="font-serif text-lg">{{ __('Confirm') }}</DialogTitle>
             </DialogHeader>
             <div class="px-4 py-4">
                 <DialogDescription class="text-sm text-ink-600">{{ confirmMsg }}</DialogDescription>
             </div>
             <DialogFooter class="flex justify-end gap-2 px-4 py-3 border-t border-paper-200 bg-paper-75">
-                <Button variant="outline" class="h-8 text-sm" @click="confirmOpen = false">Cancel</Button>
+                <Button variant="outline" class="h-8 text-sm" @click="confirmOpen = false">{{ __('Cancel') }}</Button>
                 <Button
                     class="h-8 text-sm bg-danger-600 hover:bg-danger-700 text-white border-transparent"
                     @click="executeConfirmed"

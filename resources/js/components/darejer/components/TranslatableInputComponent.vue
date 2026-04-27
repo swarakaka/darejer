@@ -13,7 +13,10 @@ import { Label }            from '@/components/ui/label'
 import { Globe }            from 'lucide-vue-next'
 import FieldWrapper         from '@/components/darejer/FieldWrapper.vue'
 import { useLanguages }     from '@/composables/useLanguages'
+import useTranslation       from '@/composables/useTranslation'
 import type { DarejerComponent } from '@/types/darejer'
+
+const { __ } = useTranslation()
 
 const props = defineProps<{
     component: DarejerComponent
@@ -129,7 +132,7 @@ function saveDialog() {
                     class="absolute end-0 flex items-center justify-center w-9 h-full
                            text-slate-400 hover:text-brand-600 transition-colors duration-100
                            border-s border-slate-200 rounded-e"
-                    :title="`Translate (${filledCount}/${languages.length - 1} filled)`"
+                    :title="__('Translate (:filled/:total filled)', { filled: filledCount, total: languages.length - 1 })"
                     @click="dialogOpen = true"
                 >
                     <Globe class="w-3.5 h-3.5" />
@@ -145,7 +148,7 @@ function saveDialog() {
                 <DialogContent class="max-w-lg p-0 overflow-hidden">
                     <DialogHeader class="px-4 py-3 border-b border-slate-200 bg-slate-75">
                         <DialogTitle class="text-base font-semibold">
-                            {{ component.label }} — Translations
+                            {{ __(':label — Translations', { label: component.label ?? '' }) }}
                         </DialogTitle>
                     </DialogHeader>
 
@@ -164,7 +167,7 @@ function saveDialog() {
                                     {{ localeLabel(locale) }}
                                 </span>
                                 {{ localeName(locale) }}
-                                <span v-if="locale === defaultLanguage" class="text-xs text-slate-400">(default)</span>
+                                <span v-if="locale === defaultLanguage" class="text-xs text-slate-400">{{ __('(default)') }}</span>
                             </Label>
                             <Input
                                 :id="`${component.name}-${locale}`"
@@ -182,13 +185,13 @@ function saveDialog() {
                             class="h-[2.125rem] text-sm"
                             @click="dialogOpen = false"
                         >
-                            Cancel
+                            {{ __('Cancel') }}
                         </Button>
                         <Button
                             class="h-[2.125rem] text-sm bg-brand-600 hover:bg-brand-700 text-white border-none"
                             @click="saveDialog"
                         >
-                            Apply
+                            {{ __('Apply') }}
                         </Button>
                     </DialogFooter>
                 </DialogContent>

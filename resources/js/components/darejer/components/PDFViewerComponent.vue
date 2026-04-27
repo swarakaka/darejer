@@ -2,7 +2,10 @@
 import { ref, computed } from 'vue'
 import { Download, ZoomIn, ZoomOut, RotateCw, Maximize2, FileText } from 'lucide-vue-next'
 import FieldWrapper from '@/components/darejer/FieldWrapper.vue'
+import useTranslation from '@/composables/useTranslation'
 import type { DarejerComponent } from '@/types/darejer'
+
+const { __ } = useTranslation()
 
 const props = defineProps<{
     component: DarejerComponent
@@ -84,7 +87,7 @@ const iframeSrc = computed(() => {
                 :style="{ height: height }"
             >
                 <FileText class="w-8 h-8" />
-                <span class="text-sm">No PDF file specified.</span>
+                <span class="text-sm">{{ __('No PDF file specified.') }}</span>
             </div>
 
             <!-- PDF viewer -->
@@ -97,7 +100,7 @@ const iframeSrc = computed(() => {
                         type="button"
                         class="flex items-center justify-center w-7 h-7 rounded-sm text-ink-500 hover:bg-paper-200 transition-colors disabled:opacity-40"
                         :disabled="zoom <= minZoom"
-                        title="Zoom out"
+                        :title="__('Zoom out')"
                         @click="zoomOut"
                     >
                         <ZoomOut class="w-3.5 h-3.5" />
@@ -111,7 +114,7 @@ const iframeSrc = computed(() => {
                         type="button"
                         class="flex items-center justify-center w-7 h-7 rounded-sm text-ink-500 hover:bg-paper-200 transition-colors disabled:opacity-40"
                         :disabled="zoom >= maxZoom"
-                        title="Zoom in"
+                        :title="__('Zoom in')"
                         @click="zoomIn"
                     >
                         <ZoomIn class="w-3.5 h-3.5" />
@@ -120,7 +123,7 @@ const iframeSrc = computed(() => {
                     <button
                         type="button"
                         class="flex items-center justify-center w-7 h-7 rounded-sm text-xs text-ink-500 hover:bg-paper-200 transition-colors"
-                        title="Reset zoom"
+                        :title="__('Reset zoom')"
                         @click="resetZoom"
                     >
                         <RotateCw class="w-3 h-3" />
@@ -131,7 +134,7 @@ const iframeSrc = computed(() => {
                     <button
                         type="button"
                         class="flex items-center justify-center w-7 h-7 rounded-sm text-ink-500 hover:bg-paper-200 transition-colors"
-                        title="Fullscreen"
+                        :title="__('Fullscreen')"
                         @click="toggleFullscreen"
                     >
                         <Maximize2 class="w-3.5 h-3.5" />
@@ -144,7 +147,7 @@ const iframeSrc = computed(() => {
                         @click="download"
                     >
                         <Download class="w-3.5 h-3.5" />
-                        Download
+                        {{ __('Download') }}
                     </button>
                 </div>
 
@@ -165,7 +168,7 @@ const iframeSrc = computed(() => {
                             :src="iframeSrc"
                             class="w-full h-full border-none"
                             :style="{ height: height }"
-                            title="PDF Viewer"
+                            :title="__('PDF Viewer')"
                             loading="lazy"
                         />
                     </div>

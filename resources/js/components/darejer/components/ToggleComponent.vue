@@ -2,7 +2,10 @@
 import { ref }          from 'vue'
 import { Switch }       from '@/components/ui/switch'
 import FieldWrapper     from '@/components/darejer/FieldWrapper.vue'
+import useTranslation   from '@/composables/useTranslation'
 import type { DarejerComponent } from '@/types/darejer'
+
+const { __ } = useTranslation()
 
 const props = defineProps<{
     component: DarejerComponent
@@ -39,8 +42,8 @@ function onChange(val: boolean) {
                     class="text-sm text-ink-700 cursor-pointer select-none"
                 >
                     {{ checked
-                        ? ((component.onLabel as string) ?? 'Yes')
-                        : ((component.offLabel as string) ?? 'No') }}
+                        ? ((component.onLabel as string) ?? __('Yes'))
+                        : ((component.offLabel as string) ?? __('No')) }}
                 </label>
             </div>
         </template>

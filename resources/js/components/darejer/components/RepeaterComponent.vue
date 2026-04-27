@@ -7,7 +7,10 @@ import {
 } from 'lucide-vue-next'
 import FieldWrapper         from '@/components/darejer/FieldWrapper.vue'
 import DarejerComponent     from '@/components/darejer/DarejerComponent.vue'
+import useTranslation       from '@/composables/useTranslation'
 import type { DarejerComponent as DarejerComponentType } from '@/types/darejer'
+
+const { __ } = useTranslation()
 
 const props = defineProps<{
     component: DarejerComponentType
@@ -27,8 +30,8 @@ const isSortable     = computed(() => !!props.component.sortable)
 const startCollapsed = computed(() => !!props.component.collapsed)
 const maxItems       = computed(() => props.component.maxItems as number | undefined)
 const minItems       = computed(() => props.component.minItems as number | undefined)
-const addLabel       = computed(() => (props.component.addLabel as string)  ?? 'Add item')
-const itemLabel      = computed(() => (props.component.itemLabel as string) ?? 'Item')
+const addLabel       = computed(() => (props.component.addLabel as string)  ?? __('Add item'))
+const itemLabel      = computed(() => (props.component.itemLabel as string) ?? __('Item'))
 const itemLabelField = computed(() => props.component.itemLabelField as string | undefined)
 const defaultItem    = computed(() => (props.component.defaultItem as Record<string, unknown>) ?? {})
 
@@ -205,7 +208,7 @@ const atMin = computed(() => minItems.value ? items.value.length <= minItems.val
                     v-if="items.length === 0"
                     class="flex items-center justify-center py-8 border border-dashed border-paper-300 rounded-md text-sm text-ink-400"
                 >
-                    No items yet. Click "{{ addLabel }}" to add one.
+                    {{ __('No items yet. Click ":label" to add one.', { label: addLabel }) }}
                 </div>
 
                 <!-- Add button -->
@@ -221,7 +224,7 @@ const atMin = computed(() => minItems.value ? items.value.length <= minItems.val
 
                 <!-- Max notice -->
                 <p v-if="atMax && maxItems" class="text-xs text-ink-400">
-                    Maximum {{ maxItems }} items reached.
+                    {{ __('Maximum :max items reached.', { max: maxItems }) }}
                 </p>
 
             </div>

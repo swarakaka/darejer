@@ -4,7 +4,10 @@ import { Plus, Trash2, GripVertical } from 'lucide-vue-next'
 import { VueDraggable } from 'vue-draggable-plus'
 import FieldWrapper from '@/components/darejer/FieldWrapper.vue'
 import EditableTableComboboxCell from '@/components/darejer/components/EditableTableComboboxCell.vue'
+import useTranslation from '@/composables/useTranslation'
 import type { DarejerComponent } from '@/types/darejer'
+
+const { __ } = useTranslation()
 
 const props = defineProps<{
     component: DarejerComponent
@@ -289,7 +292,7 @@ const gridTemplate = computed(() => [
                         @click="addRow"
                     >
                         <Plus class="w-3 h-3" />
-                        Add row
+                        {{ __('Add row') }}
                     </button>
                     <span
                         v-if="maxRows"

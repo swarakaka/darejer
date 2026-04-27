@@ -3,7 +3,10 @@ import { ref, computed }  from 'vue'
 import { router }         from '@inertiajs/vue3'
 import { X }              from 'lucide-vue-next'
 import { Button }         from '@/components/ui/button'
+import useTranslation     from '@/composables/useTranslation'
 import type { DarejerComponent } from '@/types/darejer'
+
+const { __ } = useTranslation()
 
 const props = defineProps<{
     component: DarejerComponent
@@ -75,7 +78,7 @@ function onFilterChange() {
                     v-if="filter.type === 'text'"
                     v-model="values[filter.field]"
                     type="text"
-                    :placeholder="filter.placeholder ?? `Filter ${filter.label}…`"
+                    :placeholder="filter.placeholder ?? __('Filter :label…', { label: filter.label })"
                     class="h-8 px-2.5 text-sm border border-paper-300 rounded-sm bg-white
                            placeholder:text-ink-400 focus:outline-none focus:border-brand-500 transition-colors"
                     @input="onFilterChange"
@@ -88,7 +91,7 @@ function onFilterChange() {
                            focus:outline-none focus:border-brand-500 transition-colors"
                     @change="onFilterChange"
                 >
-                    <option value="">All</option>
+                    <option value="">{{ __('All') }}</option>
                     <option v-for="opt in filter.options" :key="opt.value" :value="opt.value">
                         {{ opt.label }}
                     </option>
@@ -110,9 +113,9 @@ function onFilterChange() {
                            focus:outline-none focus:border-brand-500 transition-colors"
                     @change="onFilterChange"
                 >
-                    <option value="">All</option>
-                    <option value="1">Yes</option>
-                    <option value="0">No</option>
+                    <option value="">{{ __('All') }}</option>
+                    <option value="1">{{ __('Yes') }}</option>
+                    <option value="0">{{ __('No') }}</option>
                 </select>
             </div>
 
@@ -123,7 +126,7 @@ function onFilterChange() {
                 @click="reset"
             >
                 <X class="w-3.5 h-3.5" />
-                Clear ({{ activeCount }})
+                {{ __('Clear (:count)', { count: activeCount }) }}
             </Button>
         </div>
 
@@ -134,14 +137,14 @@ function onFilterChange() {
                 class="w-52 shrink-0 flex flex-col gap-3 p-3 border border-paper-200 rounded-md bg-paper-75 self-start"
             >
                 <div class="flex items-center justify-between">
-                    <span class="text-xs font-semibold text-ink-600 uppercase tracking-wide">Filters</span>
+                    <span class="text-xs font-semibold text-ink-600 uppercase tracking-wide">{{ __('Filters') }}</span>
                     <button
                         v-if="activeCount > 0"
                         type="button"
                         class="text-xs text-brand-600 hover:text-brand-700"
                         @click="reset"
                     >
-                        Clear all
+                        {{ __('Clear all') }}
                     </button>
                 </div>
 
@@ -169,7 +172,7 @@ function onFilterChange() {
                                focus:outline-none focus:border-brand-500"
                         @change="onFilterChange"
                     >
-                        <option value="">All</option>
+                        <option value="">{{ __('All') }}</option>
                         <option v-for="opt in filter.options" :key="opt.value" :value="opt.value">
                             {{ opt.label }}
                         </option>

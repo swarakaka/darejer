@@ -18,7 +18,10 @@ import { Badge }            from '@/components/ui/badge'
 import { Check, ChevronsUpDown, Plus, X, Loader2 } from 'lucide-vue-next'
 import FieldWrapper         from '@/components/darejer/FieldWrapper.vue'
 import CreateInDialog       from '@/components/darejer/CreateInDialog.vue'
+import useTranslation       from '@/composables/useTranslation'
 import type { DarejerComponent } from '@/types/darejer'
+
+const { __ } = useTranslation()
 
 const props = defineProps<{
     component: DarejerComponent
@@ -133,10 +136,10 @@ const selectedLabels = computed(() =>
 
 const triggerLabel = computed(() => {
     if (selected.value.length === 0) {
-        return (props.component.placeholder as string) ?? 'Select…'
+        return (props.component.placeholder as string) ?? __('Select…')
     }
     if (!isMultiple.value) return selectedLabels.value[0]
-    return `${selected.value.length} selected`
+    return __(':count selected_short', { count: selected.value.length })
 })
 
 const isClearable = computed(() =>
@@ -270,7 +273,7 @@ async function onCreateDialogSaved(payload: { url: string | null; flash: unknown
                     <button
                         v-if="canShowClear"
                         type="button"
-                        :aria-label="'Clear'"
+                        :aria-label="__('Clear')"
                         class="absolute right-2 top-1/2 -translate-y-1/2 p-0.5 rounded-sm
                                text-ink-400 hover:text-ink-700 hover:bg-paper-100
                                transition-colors focus:outline-none"
@@ -286,16 +289,16 @@ async function onCreateDialogSaved(payload: { url: string | null; flash: unknown
                         <CommandInput
                             v-if="component.searchable !== false"
                             v-model="search"
-                            placeholder="Search…"
+                            :placeholder="__('Search…')"
                             class="text-sm h-8 border-b border-slate-200"
                         />
 
                         <CommandList class="max-h-56 overflow-y-auto">
                             <CommandEmpty class="py-4 text-center text-sm text-slate-400">
                                 <span v-if="http.processing" class="flex items-center justify-center gap-2">
-                                    <Loader2 class="w-3.5 h-3.5 animate-spin" /> Loading…
+                                    <Loader2 class="w-3.5 h-3.5 animate-spin" /> {{ __('Loading…') }}
                                 </span>
-                                <span v-else>No results found.</span>
+                                <span v-else>{{ __('No results found.') }}</span>
                             </CommandEmpty>
 
                             <CommandGroup>
@@ -320,7 +323,7 @@ async function onCreateDialogSaved(payload: { url: string | null; flash: unknown
                                     class="text-xs text-slate-400 h-7 px-2.5 cursor-pointer justify-center"
                                     @select="fetchOptions(false)"
                                 >
-                                    Load more…
+                                    {{ __('Load more…') }}
                                 </CommandItem>
                             </CommandGroup>
                         </CommandList>
@@ -336,7 +339,7 @@ async function onCreateDialogSaved(payload: { url: string | null; flash: unknown
                             @click="openAddDialog"
                         >
                             <Plus class="w-3.5 h-3.5" />
-                            Add new…
+                            {{ __('Add new…') }}
                         </button>
                     </Command>
                 </PopoverContent>

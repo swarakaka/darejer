@@ -23,7 +23,10 @@ import {
     DialogDescription,
     DialogFooter,
 } from '@/components/ui/dialog'
+import useTranslation from '@/composables/useTranslation'
 import type { DarejerComponent } from '@/types/darejer'
+
+const { __ } = useTranslation()
 
 const props = defineProps<{
     component: DarejerComponent
@@ -81,7 +84,7 @@ const rowActions = computed((): GridRowAction[] =>
 
 const perPage      = computed(() => (props.component.perPage as number) ?? 15)
 const isSelectable = computed(() => !!props.component.selectable)
-const emptyMsg     = computed(() => (props.component.emptyMessage as string) ?? 'No records found.')
+const emptyMsg     = computed(() => (props.component.emptyMessage as string) ?? __('No records found.'))
 
 const allSelected = computed(() =>
     rows.value.length > 0 && rows.value.every(r => selected.value.has(r.id ?? r))
@@ -250,7 +253,7 @@ const pages = computed(() => {
                 <input
                     v-model="globalSearch"
                     type="search"
-                    placeholder="Search…"
+                    :placeholder="__('Search…')"
                     class="w-full h-8 pl-8 pr-3 text-sm bg-white border border-paper-300 rounded-sm
                            placeholder:text-ink-400 focus:outline-none focus:border-brand-500
                            transition-colors duration-100"
@@ -258,7 +261,7 @@ const pages = computed(() => {
             </div>
 
             <div class="ml-auto flex items-center gap-2 text-xs text-ink-400 tabular-nums">
-                <span v-if="total > 0">{{ from }}–{{ to }} of {{ total }}</span>
+                <span v-if="total > 0">{{ __(':from–:to of :total', { from, to, total }) }}</span>
                 <Loader2 v-if="http.processing" class="w-3.5 h-3.5 animate-spin text-brand-500" />
             </div>
         </div>
@@ -467,7 +470,7 @@ const pages = computed(() => {
             class="flex items-center justify-between px-3 py-2 bg-paper-75 border-t border-paper-200"
         >
             <span class="text-xs text-ink-400 tabular-nums">
-                Showing {{ from }}–{{ to }} of {{ total }} records
+                {{ __('Showing :from–:to of :total records', { from, to, total }) }}
             </span>
 
             <div class="flex items-center gap-1">
@@ -521,7 +524,7 @@ const pages = computed(() => {
     <Dialog :open="confirmOpen" @update:open="confirmOpen = $event">
         <DialogContent class="max-w-sm p-0 overflow-hidden">
             <DialogHeader class="px-4 py-3 border-b border-paper-200 bg-paper-75">
-                <DialogTitle class="font-serif text-lg">Confirm</DialogTitle>
+                <DialogTitle class="font-serif text-lg">{{ __('Confirm') }}</DialogTitle>
             </DialogHeader>
             <div class="px-4 py-4">
                 <DialogDescription class="text-sm text-ink-600">
@@ -530,7 +533,7 @@ const pages = computed(() => {
             </div>
             <DialogFooter class="flex justify-end gap-2 px-4 py-3 border-t border-paper-200 bg-paper-75">
                 <Button variant="outline" class="h-8 text-sm" @click="confirmOpen = false">
-                    Cancel
+                    {{ __('Cancel') }}
                 </Button>
                 <Button
                     class="h-8 text-sm bg-danger-600 hover:bg-danger-700 text-white border-transparent"
