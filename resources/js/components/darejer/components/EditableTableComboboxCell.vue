@@ -145,7 +145,7 @@ function formatPrice(v: unknown): string {
                 <span class="truncate" :class="selectedKey ? 'text-ink-900' : 'text-ink-400'">
                     {{ triggerLabel }}
                 </span>
-                <ChevronsUpDown class="w-3.5 h-3.5 text-ink-300 shrink-0 ml-1" />
+                <ChevronsUpDown class="w-3.5 h-3.5 text-ink-300 shrink-0 ms-1" />
             </button>
         </PopoverTrigger>
 

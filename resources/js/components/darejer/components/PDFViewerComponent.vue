@@ -143,7 +143,7 @@ const iframeSrc = computed(() => {
                     <button
                         v-if="canDownload"
                         type="button"
-                        class="ml-auto flex items-center gap-1.5 h-7 px-2.5 text-xs text-brand-600 font-medium hover:bg-brand-50 rounded-sm transition-colors"
+                        class="ms-auto flex items-center gap-1.5 h-7 px-2.5 text-xs text-brand-600 font-medium hover:bg-brand-50 rounded-sm transition-colors"
                         @click="download"
                     >
                         <Download class="w-3.5 h-3.5" />

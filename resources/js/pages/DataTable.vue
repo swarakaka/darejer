@@ -383,7 +383,7 @@ const resolveIcon = (name?: string) => name ? (iconMap[name] ?? null) : null
                     >
                         {{ __('Clear') }}
                     </button>
-                    <div class="ml-auto">
+                    <div class="ms-auto">
                         <DarejerActions
                             :actions="bulkActions ?? []"
                             :selected="selectedIds"
@@ -396,16 +396,16 @@ const resolveIcon = (name?: string) => name ? (iconMap[name] ?? null) : null
                 <!-- Table toolbar -->
                 <div class="flex items-center gap-2 px-3 py-2 bg-paper-75 border-b border-paper-200">
                     <div class="relative max-w-xs flex-1">
-                        <Search class="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-ink-400" />
+                        <Search class="absolute start-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-ink-400" />
                         <input
                             v-model="globalSearch"
                             type="search"
                             :placeholder="__('Search…')"
-                            class="w-full h-8 pl-8 pr-3 text-sm bg-white border border-paper-300 rounded-sm
+                            class="w-full h-8 ps-8 pe-3 text-sm bg-white border border-paper-300 rounded-sm
                                    placeholder:text-ink-400 focus:outline-none focus:border-brand-500 transition-colors"
                         />
                     </div>
-                    <span class="ml-auto text-xs text-ink-400 tabular-nums">
+                    <span class="ms-auto text-xs text-ink-400 tabular-nums">
                         {{ tableData.from }}–{{ tableData.to }} {{ __('of') }} {{ tableData.total }}
                     </span>
                 </div>
@@ -427,10 +427,10 @@ const resolveIcon = (name?: string) => name ? (iconMap[name] ?? null) : null
                                 <th
                                     v-for="col in visibleColumns"
                                     :key="col.field"
-                                    class="px-3 h-9 text-left whitespace-nowrap"
+                                    class="px-3 h-9 text-start whitespace-nowrap"
                                     :class="[
                                         col.sortable ? 'cursor-pointer hover:bg-paper-100 select-none transition-colors' : '',
-                                        col.align === 'right'  ? 'text-right'  : '',
+                                        col.align === 'right'  ? 'text-end'  : '',
                                         col.align === 'center' ? 'text-center' : '',
                                     ]"
                                     :style="col.width ? { width: col.width } : {}"
@@ -487,7 +487,7 @@ const resolveIcon = (name?: string) => name ? (iconMap[name] ?? null) : null
                                     :key="col.field"
                                     class="px-3 h-9 text-sm text-ink-800"
                                     :class="[
-                                        col.align === 'right'  ? 'text-right tabular-nums'  : '',
+                                        col.align === 'right'  ? 'text-end tabular-nums'  : '',
                                         col.align === 'center' ? 'text-center'              : '',
                                     ]"
                                 >

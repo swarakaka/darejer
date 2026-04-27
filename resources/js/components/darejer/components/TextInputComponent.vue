@@ -51,9 +51,9 @@ const inputPaddingRight = computed(() =>
                 <span
                     v-if="component.prefix"
                     ref="prefixEl"
-                    class="absolute left-0 flex items-center h-full px-2 text-sm
-                           text-ink-500 border-r border-paper-300 bg-paper-75
-                           rounded-l-sm pointer-events-none select-none whitespace-nowrap z-10"
+                    class="absolute start-0 flex items-center h-full px-2 text-sm
+                           text-ink-500 border-e border-paper-300 bg-paper-75
+                           rounded-s-sm pointer-events-none select-none whitespace-nowrap z-10"
                 >
                     {{ component.prefix }}
                 </span>
@@ -81,9 +81,9 @@ const inputPaddingRight = computed(() =>
                 <span
                     v-if="component.suffix"
                     ref="suffixEl"
-                    class="absolute right-0 flex items-center h-full px-2 text-sm
-                           text-ink-500 border-l border-paper-300 bg-paper-75
-                           rounded-r-sm pointer-events-none select-none whitespace-nowrap z-10"
+                    class="absolute end-0 flex items-center h-full px-2 text-sm
+                           text-ink-500 border-s border-paper-300 bg-paper-75
+                           rounded-e-sm pointer-events-none select-none whitespace-nowrap z-10"
                 >
                     {{ component.suffix }}
                 </span>

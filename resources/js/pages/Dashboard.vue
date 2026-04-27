@@ -158,7 +158,7 @@ withDefaults(defineProps<{
                                     v-for="col in panel.columns"
                                     :key="col.key"
                                     class="px-4 py-2 font-semibold"
-                                    :class="col.align === 'right' ? 'text-right' : 'text-left'"
+                                    :class="col.align === 'right' ? 'text-end' : 'text-start'"
                                 >
                                     {{ col.label }}
                                 </th>
@@ -174,7 +174,7 @@ withDefaults(defineProps<{
                                     v-for="col in panel.columns"
                                     :key="col.key"
                                     class="px-4 py-2 text-ink-700 tabular-nums"
-                                    :class="col.align === 'right' ? 'text-right' : 'text-left'"
+                                    :class="col.align === 'right' ? 'text-end' : 'text-start'"
                                 >
                                     {{ row[col.key] ?? '—' }}
                                 </td>

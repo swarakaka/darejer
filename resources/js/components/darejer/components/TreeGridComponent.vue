@@ -199,8 +199,8 @@ const treeCol = computed(() => columns.value.find(c => c.isTree) ?? columns.valu
                             <th
                                 v-for="col in columns"
                                 :key="col.field"
-                                class="px-3 h-9 text-left whitespace-nowrap"
-                                :class="col.align === 'right' ? 'text-right' : col.align === 'center' ? 'text-center' : ''"
+                                class="px-3 h-9 text-start whitespace-nowrap"
+                                :class="col.align === 'right' ? 'text-end' : col.align === 'center' ? 'text-center' : ''"
                                 :style="col.width ? { width: col.width } : {}"
                             >
                                 <span class="text-[10px] font-semibold uppercase tracking-[0.08em] text-ink-400">
@@ -221,7 +221,7 @@ const treeCol = computed(() => columns.value.find(c => c.isTree) ?? columns.valu
                                 v-for="col in columns"
                                 :key="col.field"
                                 class="px-3 h-9 text-sm text-ink-800"
-                                :class="col.align === 'right' ? 'text-right tabular-nums' : col.align === 'center' ? 'text-center' : ''"
+                                :class="col.align === 'right' ? 'text-end tabular-nums' : col.align === 'center' ? 'text-center' : ''"
                             >
                                 <div
                                     v-if="col.field === treeCol?.field"

@@ -197,7 +197,7 @@ const dialogSizeMap: Record<string, string> = {
                 />
                 <span
                     v-if="isDirty && !processing"
-                    class="ml-auto text-[11px] font-medium uppercase tracking-[0.12em] text-warning-600"
+                    class="ms-auto text-[11px] font-medium uppercase tracking-[0.12em] text-warning-600"
                 >
                     {{ __('Unsaved changes') }}
                 </span>
