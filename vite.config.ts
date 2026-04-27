@@ -28,6 +28,7 @@ export default defineConfig({
         alias: {
             '@': resolve(__dirname, 'resources/js'),
             '@darejer': resolve(__dirname, 'resources/js'),
+            '@lang': resolve(__dirname, 'lang'),
         },
     },
     build: {

@@ -11,8 +11,10 @@
         "ignoreDeprecations": "6.0",
         "paths": {
             "@/*": ["resources/js/*"],
-            "@darejer/*": ["resources/js/*"]
+            "@darejer/*": ["resources/js/*"],
+            "@lang/*": ["lang/*"]
         },
+        "resolveJsonModule": true,
         "skipLibCheck": true
     },
     "include": ["resources/js/**/*"],
