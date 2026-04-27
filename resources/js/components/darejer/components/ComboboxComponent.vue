@@ -233,7 +233,7 @@ async function onCreateDialogSaved(payload: { url: string | null; flash: unknown
                             :class="[
                                 hasError ? 'border-danger-600' : 'border-paper-300',
                                 open ? 'border-brand-500' : '',
-                                canShowClear ? 'pr-7' : '',
+                                canShowClear ? 'pe-7' : '',
                             ]"
                         >
                             <!-- Single selected -->
@@ -262,7 +262,7 @@ async function onCreateDialogSaved(payload: { url: string | null; flash: unknown
 
                             <ChevronsUpDown
                                 v-if="!canShowClear"
-                                class="w-3.5 h-3.5 text-slate-400 shrink-0 ml-1"
+                                class="w-3.5 h-3.5 text-slate-400 shrink-0 ms-1"
                             />
                         </button>
                     </PopoverTrigger>
@@ -274,7 +274,7 @@ async function onCreateDialogSaved(payload: { url: string | null; flash: unknown
                         v-if="canShowClear"
                         type="button"
                         :aria-label="__('Clear')"
-                        class="absolute right-2 top-1/2 -translate-y-1/2 p-0.5 rounded-sm
+                        class="absolute end-2 top-1/2 -translate-y-1/2 p-0.5 rounded-sm
                                text-ink-400 hover:text-ink-700 hover:bg-paper-100
                                transition-colors focus:outline-none"
                         @mousedown.stop.prevent
@@ -333,7 +333,7 @@ async function onCreateDialogSaved(payload: { url: string | null; flash: unknown
                         <button
                             v-if="component.addable"
                             type="button"
-                            class="flex items-center gap-2 text-sm h-8 px-2.5 w-full text-left
+                            class="flex items-center gap-2 text-sm h-8 px-2.5 w-full text-start
                                    cursor-pointer text-brand-600 font-medium border-t border-slate-200
                                    bg-white hover:bg-paper-50 shrink-0 focus:outline-none"
                             @click="openAddDialog"

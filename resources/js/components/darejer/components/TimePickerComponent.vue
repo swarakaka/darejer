@@ -186,7 +186,7 @@ function onUnitInput(unit: 'h' | 'm' | 's', e: Event) {
                         </template>
 
                         <!-- AM/PM toggle -->
-                        <div v-if="is12h" class="flex flex-col gap-1 ml-1">
+                        <div v-if="is12h" class="flex flex-col gap-1 ms-1">
                             <button
                                 type="button"
                                 class="px-2 py-1 text-xs font-semibold rounded transition-colors"

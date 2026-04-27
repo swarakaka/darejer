@@ -295,27 +295,27 @@ watch(() => props.filters, (next) => {
                     <table class="w-full border-collapse">
                         <thead>
                             <tr class="bg-paper-75 border-b border-paper-200">
-                                <th class="px-3 h-9 text-left whitespace-nowrap w-44">
+                                <th class="px-3 h-9 text-start whitespace-nowrap w-44">
                                     <span class="text-[10px] font-semibold uppercase tracking-[0.08em] text-ink-400">
                                         {{ __('When') }}
                                     </span>
                                 </th>
-                                <th class="px-3 h-9 text-left whitespace-nowrap">
+                                <th class="px-3 h-9 text-start whitespace-nowrap">
                                     <span class="text-[10px] font-semibold uppercase tracking-[0.08em] text-ink-400">
                                         {{ __('What happened') }}
                                     </span>
                                 </th>
-                                <th class="px-3 h-9 text-left whitespace-nowrap">
+                                <th class="px-3 h-9 text-start whitespace-nowrap">
                                     <span class="text-[10px] font-semibold uppercase tracking-[0.08em] text-ink-400">
                                         {{ __('User') }}
                                     </span>
                                 </th>
-                                <th class="px-3 h-9 text-left whitespace-nowrap">
+                                <th class="px-3 h-9 text-start whitespace-nowrap">
                                     <span class="text-[10px] font-semibold uppercase tracking-[0.08em] text-ink-400">
                                         {{ __('Reason') }}
                                     </span>
                                 </th>
-                                <th class="px-3 h-9 text-left whitespace-nowrap w-28">
+                                <th class="px-3 h-9 text-start whitespace-nowrap w-28">
                                     <span class="text-[10px] font-semibold uppercase tracking-[0.08em] text-ink-400">
                                         {{ __('IP') }}
                                     </span>
@@ -354,7 +354,7 @@ watch(() => props.filters, (next) => {
                                         >
                                             {{ row.event }}
                                         </span>
-                                        <span v-if="row.subject_type" class="ml-2 text-ink-700">
+                                        <span v-if="row.subject_type" class="ms-2 text-ink-700">
                                             {{ shortType(row.subject_type) }}<span
                                                 v-if="row.subject_id"
                                                 class="text-ink-400 tabular-nums"
@@ -381,7 +381,7 @@ watch(() => props.filters, (next) => {
         <!-- Slideover with full event details -->
         <Sheet :open="sheetOpen" @update:open="sheetOpen = $event">
             <SheetContent class="w-full sm:max-w-xl flex flex-col gap-0 p-0 overflow-hidden" side="right">
-                <SheetHeader class="shrink-0 px-5 py-4 border-b border-paper-200 bg-paper-75 text-left">
+                <SheetHeader class="shrink-0 px-5 py-4 border-b border-paper-200 bg-paper-75 text-start">
                     <SheetTitle class="font-serif text-xl text-ink-900">
                         {{ __('Audit Event') }}
                         <span v-if="selected" class="text-ink-400 tabular-nums">#{{ selected.id }}</span>

@@ -88,7 +88,7 @@ const valueLabel = (props.component.valueLabel as string) ?? __('Value')
                     <div class="px-2.5 py-1.5 text-xs font-semibold text-slate-500 uppercase tracking-wide">
                         {{ keyLabel }}
                     </div>
-                    <div class="px-2.5 py-1.5 text-xs font-semibold text-slate-500 uppercase tracking-wide border-l border-slate-200">
+                    <div class="px-2.5 py-1.5 text-xs font-semibold text-slate-500 uppercase tracking-wide border-s border-slate-200">
                         {{ valueLabel }}
                     </div>
                     <div />
@@ -109,7 +109,7 @@ const valueLabel = (props.component.valueLabel as string) ?? __('Value')
                             @input="onKeyInput(row.id, $event)"
                         />
                     </div>
-                    <div class="flex items-center border-l border-slate-200">
+                    <div class="flex items-center border-s border-slate-200">
                         <Input
                             :value="row.value"
                             :disabled="(component.disabled as boolean)"
@@ -118,7 +118,7 @@ const valueLabel = (props.component.valueLabel as string) ?? __('Value')
                             @input="onValueInput(row.id, $event)"
                         />
                     </div>
-                    <div class="flex items-center justify-center border-l border-slate-200">
+                    <div class="flex items-center justify-center border-s border-slate-200">
                         <button
                             type="button"
                             :disabled="(component.disabled as boolean)"

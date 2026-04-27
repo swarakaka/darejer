@@ -135,14 +135,14 @@ const atMax = computed(() =>
                 <!-- Suggestions dropdown -->
                 <div
                     v-if="showSuggest && filtered.length > 0"
-                    class="absolute z-50 top-full left-0 right-0 mt-1 bg-white border
+                    class="absolute z-50 top-full start-0 end-0 mt-1 bg-white border
                            border-slate-200 rounded overflow-hidden"
                 >
                     <button
                         v-for="s in filtered.slice(0, 8)"
                         :key="s"
                         type="button"
-                        class="flex items-center w-full h-8 px-3 text-sm text-left
+                        class="flex items-center w-full h-8 px-3 text-sm text-start
                                hover:bg-slate-50 transition-colors"
                         @mousedown.prevent="addTag(s)"
                     >

@@ -182,7 +182,7 @@ const gridTemplate = computed(() => [
                     <div
                         v-for="col in columns"
                         :key="col.field"
-                        class="flex items-center px-2.5 h-8 text-[10px] font-semibold uppercase tracking-[0.08em] text-ink-400 border-r border-paper-200 last:border-r-0"
+                        class="flex items-center px-2.5 h-8 text-[10px] font-semibold uppercase tracking-[0.08em] text-ink-400 border-e border-paper-200 last:border-e-0"
                     >
                         {{ col.label }}
                     </div>
@@ -212,7 +212,7 @@ const gridTemplate = computed(() => [
                         <div
                             v-for="col in columns"
                             :key="col.field"
-                            class="flex items-center border-r border-paper-100 last:border-r-0 h-8"
+                            class="flex items-center border-e border-paper-100 last:border-e-0 h-8"
                         >
                             <input
                                 v-if="col.type === 'text' || col.type === 'number' || col.type === 'date'"
@@ -296,7 +296,7 @@ const gridTemplate = computed(() => [
                     </button>
                     <span
                         v-if="maxRows"
-                        class="ml-auto text-xs text-ink-400 tabular-nums"
+                        class="ms-auto text-xs text-ink-400 tabular-nums"
                     >
                         {{ rows.length }}/{{ maxRows }}
                     </span>

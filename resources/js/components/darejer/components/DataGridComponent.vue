@@ -249,18 +249,18 @@ const pages = computed(() => {
         <div class="flex items-center gap-2 px-3 py-2 bg-paper-75 border-b border-paper-200">
 
             <div v-if="component.searchable !== false" class="relative flex-1 max-w-xs">
-                <Search class="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-ink-400" />
+                <Search class="absolute start-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-ink-400" />
                 <input
                     v-model="globalSearch"
                     type="search"
                     :placeholder="__('Search…')"
-                    class="w-full h-8 pl-8 pr-3 text-sm bg-white border border-paper-300 rounded-sm
+                    class="w-full h-8 ps-8 pe-3 text-sm bg-white border border-paper-300 rounded-sm
                            placeholder:text-ink-400 focus:outline-none focus:border-brand-500
                            transition-colors duration-100"
                 />
             </div>
 
-            <div class="ml-auto flex items-center gap-2 text-xs text-ink-400 tabular-nums">
+            <div class="ms-auto flex items-center gap-2 text-xs text-ink-400 tabular-nums">
                 <span v-if="total > 0">{{ __(':from–:to of :total', { from, to, total }) }}</span>
                 <Loader2 v-if="http.processing" class="w-3.5 h-3.5 animate-spin text-brand-500" />
             </div>
@@ -286,11 +286,11 @@ const pages = computed(() => {
                         <th
                             v-for="col in columns"
                             :key="col.field"
-                            class="px-3 h-9 text-left whitespace-nowrap select-none"
+                            class="px-3 h-9 text-start whitespace-nowrap select-none"
                             :class="[
                                 col.sortable ? 'cursor-pointer hover:bg-paper-100 transition-colors' : '',
                                 col.align === 'center' ? 'text-center' : '',
-                                col.align === 'right'  ? 'text-right'  : '',
+                                col.align === 'right'  ? 'text-end'  : '',
                             ]"
                             :style="col.width ? { width: col.width } : {}"
                             @click="toggleSort(col.field, col.sortable)"
@@ -384,7 +384,7 @@ const pages = computed(() => {
                                 class="px-3 h-9 text-sm text-ink-800"
                                 :class="[
                                     col.align === 'center' ? 'text-center' : '',
-                                    col.align === 'right'  ? 'text-right tabular-nums'  : '',
+                                    col.align === 'right'  ? 'text-end tabular-nums'  : '',
                                 ]"
                             >
                                 <span

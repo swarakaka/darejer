@@ -127,7 +127,7 @@ function download() {
                     <!-- "Sign here" guide line -->
                     <div
                         v-if="showGuide && !hasSignature"
-                        class="absolute bottom-8 left-6 right-6 pointer-events-none"
+                        class="absolute bottom-8 start-6 end-6 pointer-events-none"
                     >
                         <div class="border-b border-dashed border-paper-300" />
                         <p class="text-xs text-ink-300 mt-1 tracking-wider uppercase">{{ __('Sign here') }}</p>
