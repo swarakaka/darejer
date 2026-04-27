@@ -22,6 +22,7 @@ use Illuminate\Support\Carbon;
  * @property int|null $company_id
  * @property int|null $causer_id
  * @property string|null $reason
+ * @property string|null $summary
  * @property array<string, mixed>|null $payload
  * @property string|null $ip
  * @property string|null $user_agent

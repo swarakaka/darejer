@@ -33,6 +33,7 @@ beforeEach(function (): void {
         $table->unsignedBigInteger('company_id')->nullable();
         $table->unsignedBigInteger('causer_id')->nullable();
         $table->text('reason')->nullable();
+        $table->string('summary', 500)->nullable();
         $table->json('payload')->nullable();
         $table->string('ip', 45)->nullable();
         $table->string('user_agent', 255)->nullable();
@@ -180,6 +181,79 @@ it('still audits after withoutAuditing returns', function (): void {
     ]);
 
     expect(DB::table('audit_logs')->count())->toBe(1);
+});
+
+it('records a human-readable summary on create using the model label', function (): void {
+    AuditableTestWidget::query()->create([
+        'company_id' => 7,
+        'code' => 'W-001',
+        'name' => 'Hello',
+    ]);
+
+    $row = DB::table('audit_logs')->first();
+
+    expect($row->summary)->toBe("Created Auditable Test Widget 'W-001'");
+});
+
+it('records a human-readable summary on single-field update with old/new values', function (): void {
+    $widget = AuditableTestWidget::query()->create([
+        'company_id' => 7,
+        'code' => 'W-001',
+        'name' => 'Old',
+    ]);
+
+    DB::table('audit_logs')->truncate();
+
+    $widget->name = 'New';
+    $widget->save();
+
+    $row = DB::table('audit_logs')->first();
+
+    expect($row->summary)->toBe("Changed name from 'Old' to 'New' on Auditable Test Widget 'W-001'");
+});
+
+it('collapses multi-field updates into a count summary', function (): void {
+    $widget = AuditableTestWidget::query()->create([
+        'company_id' => 7,
+        'code' => 'W-001',
+        'name' => 'Old',
+    ]);
+
+    DB::table('audit_logs')->truncate();
+
+    $widget->code = 'W-002';
+    $widget->name = 'New';
+    $widget->save();
+
+    $row = DB::table('audit_logs')->first();
+
+    expect($row->summary)->toBe("Updated Auditable Test Widget 'W-002' (2 changes)");
+});
+
+it('records a human-readable summary on delete', function (): void {
+    $widget = AuditableTestWidget::query()->create([
+        'company_id' => 7,
+        'code' => 'W-001',
+        'name' => 'Hello',
+    ]);
+
+    DB::table('audit_logs')->truncate();
+
+    $widget->delete();
+
+    $row = DB::table('audit_logs')->first();
+
+    expect($row->summary)->toBe("Deleted Auditable Test Widget 'W-001'");
+});
+
+it('falls back to "#id" in the summary when the model has no recognizable label', function (): void {
+    $widget = AuditableTestWidget::query()->create([
+        'company_id' => 7,
+    ]);
+
+    $row = DB::table('audit_logs')->first();
+
+    expect($row->summary)->toBe("Created Auditable Test Widget #{$widget->id}");
 });
 
 it('writes nothing when the audit_logs table does not exist', function (): void {

@@ -25,6 +25,7 @@ interface AuditRow {
     causer_id:    number | null
     causer:       string | null
     reason:       string | null
+    summary:      string | null
     payload:      Record<string, unknown> | null
     ip:           string | null
     user_agent:   string | null
@@ -301,12 +302,7 @@ watch(() => props.filters, (next) => {
                                 </th>
                                 <th class="px-3 h-9 text-left whitespace-nowrap">
                                     <span class="text-[10px] font-semibold uppercase tracking-[0.08em] text-ink-400">
-                                        {{ __('Event') }}
-                                    </span>
-                                </th>
-                                <th class="px-3 h-9 text-left whitespace-nowrap">
-                                    <span class="text-[10px] font-semibold uppercase tracking-[0.08em] text-ink-400">
-                                        {{ __('Subject') }}
+                                        {{ __('What happened') }}
                                     </span>
                                 </th>
                                 <th class="px-3 h-9 text-left whitespace-nowrap">
@@ -329,7 +325,7 @@ watch(() => props.filters, (next) => {
 
                         <tbody>
                             <tr v-if="rows.length === 0">
-                                <td colspan="6" class="px-3 py-10 text-center">
+                                <td colspan="5" class="px-3 py-10 text-center">
                                     <div class="flex flex-col items-center gap-2 text-ink-400">
                                         <Inbox class="w-8 h-8" />
                                         <span class="text-sm">{{ __('No audit events match the current filters.') }}</span>
@@ -346,23 +342,25 @@ watch(() => props.filters, (next) => {
                                 <td class="px-3 h-9 text-sm text-ink-700 tabular-nums whitespace-nowrap">
                                     {{ formatDate(row.created_at) }}
                                 </td>
-                                <td class="px-3 h-9 text-sm">
-                                    <span
-                                        class="inline-flex items-center px-1.5 py-0.5 rounded-sm
-                                               text-[10px] font-semibold uppercase tracking-wide border whitespace-nowrap"
-                                        :class="eventBadgeClass(row.event)"
-                                    >
-                                        {{ row.event }}
-                                    </span>
-                                </td>
                                 <td class="px-3 h-9 text-sm text-ink-800">
-                                    <template v-if="row.subject_type">
-                                        <span class="text-ink-700">{{ shortType(row.subject_type) }}</span>
-                                        <span v-if="row.subject_id" class="text-ink-400 tabular-nums">
-                                            #{{ row.subject_id }}
+                                    <template v-if="row.summary">
+                                        <span class="text-ink-800">{{ row.summary }}</span>
+                                    </template>
+                                    <template v-else>
+                                        <span
+                                            class="inline-flex items-center px-1.5 py-0.5 rounded-sm
+                                                   text-[10px] font-semibold uppercase tracking-wide border whitespace-nowrap"
+                                            :class="eventBadgeClass(row.event)"
+                                        >
+                                            {{ row.event }}
+                                        </span>
+                                        <span v-if="row.subject_type" class="ml-2 text-ink-700">
+                                            {{ shortType(row.subject_type) }}<span
+                                                v-if="row.subject_id"
+                                                class="text-ink-400 tabular-nums"
+                                            > #{{ row.subject_id }}</span>
                                         </span>
                                     </template>
-                                    <span v-else class="text-ink-400">—</span>
                                 </td>
                                 <td class="px-3 h-9 text-sm text-ink-800">
                                     {{ row.causer ?? (row.causer_id ? `#${row.causer_id}` : '—') }}
@@ -394,9 +392,15 @@ watch(() => props.filters, (next) => {
                 </SheetHeader>
 
                 <div v-if="selected" class="flex-1 min-h-0 overflow-y-auto px-5 py-4 space-y-5">
+                    <section v-if="selected.summary">
+                        <p class="text-sm text-ink-800 leading-relaxed">
+                            {{ selected.summary }}
+                        </p>
+                    </section>
+
                     <section>
                         <h3 class="text-[10px] font-semibold uppercase tracking-[0.08em] text-ink-400 mb-2">
-                            {{ __('Summary') }}
+                            {{ __('Details') }}
                         </h3>
                         <dl class="grid grid-cols-[8rem_1fr] gap-x-3 gap-y-2 text-sm">
                             <dt class="text-ink-500">{{ __('Event') }}</dt>
