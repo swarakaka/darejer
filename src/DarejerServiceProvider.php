@@ -66,7 +66,7 @@ class DarejerServiceProvider extends ServiceProvider
         ], 'darejer-assets');
 
         $this->loadRoutesFrom(__DIR__.'/../routes/darejer.php');
-        $this->loadTranslationsFrom(__DIR__.'/../resources/lang', 'darejer');
+        $this->loadTranslationsFrom(__DIR__.'/../lang', 'darejer');
 
         // Discover controllers extending `Darejer\Http\Controllers\DarejerController`
         // and auto-register their routes. Honours Laravel's route cache.
