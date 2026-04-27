@@ -5,8 +5,11 @@ import KpiCard         from '@/components/darejer/charts/KpiCard.vue'
 import LineChart       from '@/components/darejer/charts/LineChart.vue'
 import BarChart        from '@/components/darejer/charts/BarChart.vue'
 import DoughnutChart   from '@/components/darejer/charts/DoughnutChart.vue'
+import useTranslation  from '@/composables/useTranslation'
 
 defineOptions({ layout: AppLayout })
+
+const { __ } = useTranslation()
 
 interface Kpi {
     label:    string
@@ -146,7 +149,7 @@ withDefaults(defineProps<{
                 >
                     <div class="flex items-baseline justify-between px-4 py-3 border-b border-paper-200">
                         <h2 class="font-serif text-base text-ink-700">{{ panel.title }}</h2>
-                        <a v-if="panel.href" :href="panel.href" class="text-xs text-brand-600 hover:text-brand-700">View all →</a>
+                        <a v-if="panel.href" :href="panel.href" class="text-xs text-brand-600 hover:text-brand-700">{{ __('View all') }} →</a>
                     </div>
                     <table v-if="panel.rows.length" class="w-full text-sm">
                         <thead class="bg-paper-50 text-[10px] uppercase tracking-[0.12em] text-ink-500">
@@ -179,13 +182,13 @@ withDefaults(defineProps<{
                         </tbody>
                     </table>
                     <div v-else class="px-4 py-8 text-center text-sm text-ink-400">
-                        No data
+                        {{ __('No data') }}
                     </div>
                 </div>
             </section>
 
             <div v-if="!kpis.length && !charts.length && !lists.length" class="text-center text-ink-400 py-16 text-sm">
-                Dashboard is empty. Wire props from your DashboardController.
+                {{ __('Dashboard is empty. Wire props from your DashboardController.') }}
             </div>
 
         </div>

@@ -11,9 +11,12 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { LogOut, Search, Bell, Command, Globe } from 'lucide-vue-next'
 import { useLanguages }            from '@/composables/useLanguages'
+import useTranslation              from '@/composables/useTranslation'
 import type { DarejerSharedProps } from '@/types/darejer'
 
 const page = usePage<DarejerSharedProps>()
+
+const { __ } = useTranslation()
 
 // `currentLocale` comes from `page.props.darejer.locale` (set server-side
 // by the locale middleware). It's reactive via `usePage()`, so the topbar
@@ -61,7 +64,7 @@ function logout() {
                 />
                 <input
                     type="search"
-                    placeholder="Search records, screens, or run a command…"
+                    :placeholder="__('Search records, screens, or run a command…')"
                     class="w-full h-8 ps-8 pe-14 text-sm bg-paper-100/70 border-none rounded-sm
                            placeholder:text-ink-400 focus:outline-none focus:bg-white
                            focus:ring-1 focus:ring-brand-500/50 transition-all"
@@ -83,7 +86,7 @@ function logout() {
                 type="button"
                 class="relative flex items-center justify-center w-8 h-8 rounded-sm text-ink-500
                        hover:text-ink-800 hover:bg-paper-100 transition-colors"
-                aria-label="Notifications"
+                :aria-label="__('Notifications')"
             >
                 <Bell class="w-4 h-4" />
                 <span class="absolute top-1.5 end-1.5 w-1.5 h-1.5 rounded-full bg-danger-500" />
@@ -133,7 +136,7 @@ function logout() {
                     </Avatar>
                     <div class="hidden md:flex flex-col items-start leading-tight">
                         <span class="text-xs font-medium text-ink-800">{{ page.props.auth.user.name }}</span>
-                        <span class="text-[10px] font-semibold uppercase tracking-[0.18em] text-ink-400">Admin</span>
+                        <span class="text-[10px] font-semibold uppercase tracking-[0.18em] text-ink-400">{{ __('Admin') }}</span>
                     </div>
                 </DropdownMenuTrigger>
 
@@ -148,7 +151,7 @@ function logout() {
                         @click="logout"
                     >
                         <LogOut class="w-3.5 h-3.5" />
-                        Sign out
+                        {{ __('Sign out') }}
                     </DropdownMenuItem>
                 </DropdownMenuContent>
             </DropdownMenu>

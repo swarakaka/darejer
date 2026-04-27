@@ -11,7 +11,10 @@ import {
 } from 'lucide-vue-next'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { usePermissions } from '@/composables/usePermissions'
+import useTranslation     from '@/composables/useTranslation'
 import type { DarejerSharedProps, NavItem } from '@/types/darejer'
+
+const { __ } = useTranslation()
 
 const STORAGE_KEY = 'darejer-sidebar-collapsed'
 
@@ -296,7 +299,7 @@ function badgeClass(color?: string): string {
                                     <LifeBuoy class="w-[18px] h-[18px]" />
                                 </button>
                             </TooltipTrigger>
-                            <TooltipContent side="right" :side-offset="10" class="text-xs">Help</TooltipContent>
+                            <TooltipContent side="right" :side-offset="10" class="text-xs">{{ __('Help') }}</TooltipContent>
                         </Tooltip>
                         <Tooltip v-if="can('darejer.settings') || isSuperAdmin">
                             <TooltipTrigger as-child>
@@ -307,7 +310,7 @@ function badgeClass(color?: string): string {
                                     <Settings class="w-[18px] h-[18px]" />
                                 </button>
                             </TooltipTrigger>
-                            <TooltipContent side="right" :side-offset="10" class="text-xs">Settings</TooltipContent>
+                            <TooltipContent side="right" :side-offset="10" class="text-xs">{{ __('Settings') }}</TooltipContent>
                         </Tooltip>
                     </div>
 
@@ -323,7 +326,7 @@ function badgeClass(color?: string): string {
                             </button>
                         </TooltipTrigger>
                         <TooltipContent side="right" :side-offset="10" class="text-xs">
-                            {{ collapsed ? 'Expand sidebar' : 'Collapse sidebar' }}
+                            {{ collapsed ? __('Expand sidebar') : __('Collapse sidebar') }}
                         </TooltipContent>
                     </Tooltip>
                 </div>

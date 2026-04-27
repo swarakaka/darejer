@@ -14,9 +14,12 @@ import AppBreadcrumbs       from '@/components/darejer/AppBreadcrumbs.vue'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useDarejerForm }   from '@/composables/useDarejerForm'
 import { evaluateDependOn } from '@/composables/useDependOn'
+import useTranslation       from '@/composables/useTranslation'
 import type { ScreenProps, ScreenSection, ScreenTab, DarejerComponent as DarejerComponentType } from '@/types/darejer'
 
 defineOptions({ layout: AppLayout })
+
+const { __ } = useTranslation()
 
 const props = defineProps<ScreenProps & { sections?: ScreenSection[] | null; tabs?: ScreenTab[] | null }>()
 
@@ -196,7 +199,7 @@ const dialogSizeMap: Record<string, string> = {
                     v-if="isDirty && !processing"
                     class="ml-auto text-[11px] font-medium uppercase tracking-[0.12em] text-warning-600"
                 >
-                    Unsaved changes
+                    {{ __('Unsaved changes') }}
                 </span>
             </div>
 
@@ -317,7 +320,7 @@ const dialogSizeMap: Record<string, string> = {
                                 role="button"
                                 @click="toggleSection('General')"
                             >
-                                <h2 class="font-serif text-lg tracking-tight leading-[1.15] text-ink-700">General</h2>
+                                <h2 class="font-serif text-lg tracking-tight leading-[1.15] text-ink-700">{{ __('General') }}</h2>
                                 <ChevronDown
                                     class="w-4 h-4 text-ink-400 transition-transform duration-150"
                                     :class="collapsed['General'] ? '-rotate-90' : 'rotate-0'"

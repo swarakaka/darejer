@@ -5,8 +5,11 @@ import { Badge }                        from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { CheckCircle }                  from 'lucide-vue-next'
 import type { DarejerSharedProps }      from '@/types/darejer'
+import useTranslation                   from '@/composables/useTranslation'
 
 const page = usePage<DarejerSharedProps>()
+
+const { __ } = useTranslation()
 
 const checks = [
     { label: 'Vue 3' },
@@ -27,11 +30,11 @@ const checks = [
                         <span class="text-white font-bold text-sm">D</span>
                     </div>
                     <CardTitle class="text-2xl font-semibold tracking-tight">
-                        Darejer Playground
+                        {{ __('Darejer Playground') }}
                     </CardTitle>
                 </div>
                 <p class="text-muted-foreground text-sm">
-                    Frontend stack is operational. All systems ready.
+                    {{ __('Frontend stack is operational. All systems ready.') }}
                 </p>
             </CardHeader>
 
@@ -45,17 +48,17 @@ const checks = [
                         <span class="text-sm font-medium">{{ check.label }}</span>
                         <div class="flex items-center gap-1.5 text-success-600">
                             <CheckCircle class="w-4 h-4" />
-                            <span class="text-xs font-medium">Ready</span>
+                            <span class="text-xs font-medium">{{ __('Ready') }}</span>
                         </div>
                     </div>
                 </div>
 
                 <div class="rounded-md border p-3 bg-card space-y-1">
                     <p class="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
-                        Inertia Shared Props from DarejerServiceProvider
+                        {{ __('Inertia Shared Props from DarejerServiceProvider') }}
                     </p>
                     <div class="flex items-center gap-2">
-                        <span class="text-xs text-muted-foreground">Languages:</span>
+                        <span class="text-xs text-muted-foreground">{{ __('Languages:') }}</span>
                         <Badge
                             v-for="lang in page.props.darejer.languages"
                             :key="lang"
@@ -66,7 +69,7 @@ const checks = [
                         </Badge>
                     </div>
                     <div class="flex items-center gap-2 mt-1">
-                        <span class="text-xs text-muted-foreground">Default:</span>
+                        <span class="text-xs text-muted-foreground">{{ __('Default:') }}</span>
                         <Badge variant="outline" class="text-xs">
                             {{ page.props.darejer.default_language }}
                         </Badge>
@@ -74,7 +77,7 @@ const checks = [
                 </div>
 
                 <Button class="w-full bg-brand-500 hover:bg-brand-600 text-white">
-                    Continue to App
+                    {{ __('Continue to App') }}
                 </Button>
             </CardContent>
         </Card>

@@ -4,8 +4,11 @@ import AuthLayout         from '@/layouts/AuthLayout.vue'
 import { Input }          from '@/components/ui/input'
 import { Label }          from '@/components/ui/label'
 import { ArrowLeft, ArrowRight } from 'lucide-vue-next'
+import useTranslation     from '@/composables/useTranslation'
 
 defineOptions({ layout: AuthLayout })
+
+const { __ } = useTranslation()
 
 const form = useForm({
     name:                  '',
@@ -25,19 +28,19 @@ function submit() {
     <div class="space-y-8">
 
         <div>
-            <div class="text-[10px] font-semibold uppercase tracking-[0.18em] text-brand-600 mb-2">Entry · New Account</div>
+            <div class="text-[10px] font-semibold uppercase tracking-[0.18em] text-brand-600 mb-2">{{ __('Entry · New Account') }}</div>
             <h1 class="font-serif text-3xl leading-tight text-ink-900 tracking-tight">
-                Open an <em class="italic text-brand-600">account</em>.
+                {{ __('Open an') }} <em class="italic text-brand-600">{{ __('account') }}</em>.
             </h1>
             <p class="text-sm text-ink-500 mt-2">
-                Fill in your details to create a new ledger.
+                {{ __('Fill in your details to create a new ledger.') }}
             </p>
         </div>
 
         <form class="space-y-5" @submit.prevent="submit">
 
             <div class="flex flex-col gap-1.5">
-                <Label for="name">Name</Label>
+                <Label for="name">{{ __('Name') }}</Label>
                 <Input
                     id="name"
                     v-model="form.name"
@@ -49,7 +52,7 @@ function submit() {
             </div>
 
             <div class="flex flex-col gap-1.5">
-                <Label for="email">Email</Label>
+                <Label for="email">{{ __('Email') }}</Label>
                 <Input
                     id="email"
                     v-model="form.email"
@@ -61,7 +64,7 @@ function submit() {
             </div>
 
             <div class="flex flex-col gap-1.5">
-                <Label for="password">Password</Label>
+                <Label for="password">{{ __('Password') }}</Label>
                 <Input
                     id="password"
                     v-model="form.password"
@@ -73,7 +76,7 @@ function submit() {
             </div>
 
             <div class="flex flex-col gap-1.5">
-                <Label for="password_confirmation">Confirm password</Label>
+                <Label for="password_confirmation">{{ __('Confirm password') }}</Label>
                 <Input
                     id="password_confirmation"
                     v-model="form.password_confirmation"
@@ -89,7 +92,7 @@ function submit() {
                        border border-transparent transition-colors disabled:opacity-60"
                 :disabled="form.processing"
             >
-                {{ form.processing ? 'Creating…' : 'Create account' }}
+                {{ form.processing ? __('Creating') : __('Create account') }}
                 <ArrowRight class="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5" />
             </button>
 
@@ -100,7 +103,7 @@ function submit() {
             class="inline-flex items-center gap-1.5 text-sm text-ink-500 hover:text-brand-600 transition-colors"
         >
             <ArrowLeft class="w-3.5 h-3.5" />
-            Back to sign in
+            {{ __('Back to sign in') }}
         </Link>
     </div>
 </template>
