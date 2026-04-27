@@ -139,7 +139,7 @@ return [
     'Settings'           => 'ڕێکخستنەکان',
     'Expand sidebar'     => 'فراوانکردنی لاتەنیشت',
     'Collapse sidebar'   => 'بچووککردنەوەی لاتەنیشت',
-    'Search records, screens, or run a command…' => 'بگەڕێ بە تۆمارەکان، شاشەکان، یان فەرمانێک جێبەجێبکە...',
+    'Search records, screens, or run a command…' => 'بگەڕێ بۆ تۆمارەکان، شاشەکان، یان فەرمانێک جێبەجێبکە...',
     'Notifications'      => 'ئاگادارکردنەوەکان',
     'Admin'              => 'بەڕێوەبەر',
     'Breadcrumb'         => 'ڕێگای ڕێگاپێشاندان',
