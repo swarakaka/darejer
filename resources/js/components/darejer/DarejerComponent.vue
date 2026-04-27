@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed }             from 'vue'
 import type { DarejerComponent as DarejerComponentType } from '@/types/darejer'
+import useTranslation           from '@/composables/useTranslation'
 
 import TextInputComponent             from '@/components/darejer/components/TextInputComponent.vue'
 import TextareaComponent              from '@/components/darejer/components/TextareaComponent.vue'
@@ -43,6 +44,8 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits<{ (e: 'update', name: string, value: unknown): void }>()
+
+const { __ } = useTranslation()
 
 const componentMap: Record<string, unknown> = {
     TextInput:             TextInputComponent,
@@ -100,6 +103,6 @@ const resolvedComponent = computed(() => componentMap[props.component.type] ?? n
         v-else
         class="px-2.5 py-1.5 rounded text-xs border border-warning-500 bg-warning-50 text-warning-600"
     >
-        Unknown component type: <strong>{{ component.type }}</strong>
+        {{ __('Unknown component type:') }} <strong>{{ component.type }}</strong>
     </div>
 </template>

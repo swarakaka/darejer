@@ -1,11 +1,14 @@
 <script setup lang="ts">
-import { useForm }  from '@inertiajs/vue3'
-import AuthLayout   from '@/layouts/AuthLayout.vue'
-import { Input }    from '@/components/ui/input'
-import { Label }    from '@/components/ui/label'
+import { useForm }    from '@inertiajs/vue3'
+import AuthLayout     from '@/layouts/AuthLayout.vue'
+import { Input }      from '@/components/ui/input'
+import { Label }      from '@/components/ui/label'
 import { ArrowRight } from 'lucide-vue-next'
+import useTranslation from '@/composables/useTranslation'
 
 defineOptions({ layout: AuthLayout })
+
+const { __ } = useTranslation()
 
 const form = useForm({ password: '' })
 
@@ -20,18 +23,18 @@ function submit() {
     <div class="space-y-8">
 
         <div>
-            <div class="text-[10px] font-semibold uppercase tracking-[0.18em] text-brand-600 mb-2">Entry · Confirm</div>
+            <div class="text-[10px] font-semibold uppercase tracking-[0.18em] text-brand-600 mb-2">{{ __('Entry · Confirm') }}</div>
             <h1 class="font-serif text-3xl leading-tight text-ink-900 tracking-tight">
-                Confirm your <em class="italic text-brand-600">password</em>.
+                {{ __('Confirm your') }} <em class="italic text-brand-600">{{ __('password') }}</em>.
             </h1>
             <p class="text-sm text-ink-500 mt-2">
-                This is a secure area. Please re-enter your password to continue.
+                {{ __('This is a secure area. Please re-enter your password to continue.') }}
             </p>
         </div>
 
         <form class="space-y-5" @submit.prevent="submit">
             <div class="flex flex-col gap-1.5">
-                <Label for="password">Password</Label>
+                <Label for="password">{{ __('Password') }}</Label>
                 <Input
                     id="password"
                     v-model="form.password"
@@ -52,7 +55,7 @@ function submit() {
                        border border-transparent transition-colors disabled:opacity-60"
                 :disabled="form.processing"
             >
-                {{ form.processing ? 'Confirming…' : 'Confirm' }}
+                {{ form.processing ? __('Confirming') : __('Confirm') }}
                 <ArrowRight class="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5" />
             </button>
         </form>

@@ -1,10 +1,13 @@
 <script setup lang="ts">
-import { useForm }  from '@inertiajs/vue3'
-import AuthLayout   from '@/layouts/AuthLayout.vue'
-import { Input }    from '@/components/ui/input'
-import { Label }    from '@/components/ui/label'
+import { useForm }    from '@inertiajs/vue3'
+import AuthLayout     from '@/layouts/AuthLayout.vue'
+import { Input }      from '@/components/ui/input'
+import { Label }      from '@/components/ui/label'
+import useTranslation from '@/composables/useTranslation'
 
 defineOptions({ layout: AuthLayout })
+
+const { __ } = useTranslation()
 
 const props = defineProps<{ token: string; email: string }>()
 
@@ -26,19 +29,19 @@ function submit() {
     <div class="space-y-8">
 
         <div>
-            <div class="text-[10px] font-semibold uppercase tracking-[0.18em] text-brand-600 mb-2">Entry · Recovery</div>
+            <div class="text-[10px] font-semibold uppercase tracking-[0.18em] text-brand-600 mb-2">{{ __('Entry · Recovery') }}</div>
             <h1 class="font-serif text-3xl leading-tight text-ink-900 tracking-tight">
-                Choose a <em class="italic text-brand-600">new password</em>.
+                {{ __('Choose a') }} <em class="italic text-brand-600">{{ __('new password') }}</em>.
             </h1>
             <p class="text-sm text-ink-500 mt-2">
-                Make it memorable — but not guessable.
+                {{ __('Make it memorable — but not guessable.') }}
             </p>
         </div>
 
         <form class="space-y-5" @submit.prevent="submit">
 
             <div class="flex flex-col gap-1.5">
-                <Label for="email">Email</Label>
+                <Label for="email">{{ __('Email') }}</Label>
                 <Input
                     id="email"
                     v-model="form.email"
@@ -50,7 +53,7 @@ function submit() {
             </div>
 
             <div class="flex flex-col gap-1.5">
-                <Label for="password">New password</Label>
+                <Label for="password">{{ __('New password') }}</Label>
                 <Input
                     id="password"
                     v-model="form.password"
@@ -63,7 +66,7 @@ function submit() {
             </div>
 
             <div class="flex flex-col gap-1.5">
-                <Label for="password_confirmation">Confirm password</Label>
+                <Label for="password_confirmation">{{ __('Confirm password') }}</Label>
                 <Input
                     id="password_confirmation"
                     v-model="form.password_confirmation"
@@ -84,7 +87,7 @@ function submit() {
                        border border-transparent transition-colors disabled:opacity-60"
                 :disabled="form.processing"
             >
-                {{ form.processing ? 'Saving…' : 'Save new password' }}
+                {{ form.processing ? __('Saving') : __('Save new password') }}
             </button>
 
         </form>

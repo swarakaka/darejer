@@ -1,12 +1,15 @@
 <script setup lang="ts">
-import { computed }               from 'vue'
+import { computed }                from 'vue'
 import { usePage }                 from '@inertiajs/vue3'
 import { ConfigProvider }          from 'reka-ui'
 import type { DarejerSharedProps } from '@/types/darejer'
+import useTranslation              from '@/composables/useTranslation'
 
 const page      = usePage<DarejerSharedProps>()
 const locale    = computed(() => page.props.darejer?.locale    ?? 'en')
 const direction = computed(() => page.props.darejer?.direction ?? 'ltr')
+
+const { __ } = useTranslation()
 </script>
 
 <template>
@@ -32,16 +35,14 @@ const direction = computed(() => page.props.darejer?.direction ?? 'ltr')
             </div>
 
             <div class="relative">
-                <p class="text-[10px] font-semibold uppercase tracking-[0.18em] text-brand-300 mb-5">No. 01 · The Ledger</p>
+                <p class="text-[10px] font-semibold uppercase tracking-[0.18em] text-brand-300 mb-5">{{ __('No. 01 · The Ledger') }}</p>
                 <h1 class="font-serif text-paper-50 leading-[1.05] tracking-tight text-5xl mb-6">
-                    Write the<br />
-                    <em class="italic text-brand-300">business</em>,<br />
-                    not the interface.
+                    {{ __('Write the') }}<br />
+                    <em class="italic text-brand-300">{{ __('business') }}</em>,<br />
+                    {{ __('not the interface.') }}
                 </h1>
                 <p class="text-sm text-paper-200/80 leading-relaxed max-w-sm">
-                    Darejer is a Laravel platform that renders every screen from PHP.
-                    Forms, tables, actions, permissions — all declared in your controllers,
-                    reconciled on every request.
+                    {{ __('Darejer is a Laravel platform that renders every screen from PHP. Forms, tables, actions, permissions — all declared in your controllers, reconciled on every request.') }}
                 </p>
             </div>
 

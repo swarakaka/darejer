@@ -23,7 +23,10 @@ import {
     Plus, Pencil, Eye, MoreHorizontal, Zap, Download, AlertTriangle,
 } from 'lucide-vue-next'
 import { evaluateDependOn } from '@/composables/useDependOn'
+import useTranslation       from '@/composables/useTranslation'
 import type { DarejerAction } from '@/types/darejer'
+
+const { __ } = useTranslation()
 
 type ButtonVariant = 'default' | 'destructive' | 'outline' | 'ghost' | 'secondary' | 'link'
 
@@ -240,7 +243,7 @@ const placementClass = computed(() => {
                                 :is="resolveIcon(action.icon)"
                                 class="w-3.5 h-3.5"
                             />
-                            {{ action.type === 'Save' && processing ? 'Saving…' : action.label }}
+                            {{ action.type === 'Save' && processing ? __('Saving') : action.label }}
                         </button>
                     </TooltipTrigger>
                     <TooltipContent v-if="action.tooltip">{{ action.tooltip }}</TooltipContent>
@@ -261,7 +264,7 @@ const placementClass = computed(() => {
                         </div>
                         <div class="flex-1">
                             <DialogTitle class="font-serif text-xl leading-tight">
-                                Confirm action
+                                {{ __('Confirm action') }}
                             </DialogTitle>
                             <DialogDescription class="text-sm text-ink-500 mt-1.5 leading-relaxed">
                                 {{ confirmAction?.confirm }}
@@ -276,7 +279,7 @@ const placementClass = computed(() => {
                                bg-white border border-paper-300 hover:bg-paper-100 rounded-sm transition-colors"
                         @click="confirmOpen = false"
                     >
-                        Cancel
+                        {{ __('Cancel') }}
                     </button>
                     <button
                         type="button"

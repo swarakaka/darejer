@@ -5,8 +5,11 @@ import AuthLayout        from '@/layouts/AuthLayout.vue'
 import { Input }         from '@/components/ui/input'
 import { Label }         from '@/components/ui/label'
 import { ArrowRight }    from 'lucide-vue-next'
+import useTranslation    from '@/composables/useTranslation'
 
 defineOptions({ layout: AuthLayout })
+
+const { __ } = useTranslation()
 
 const recovery = ref(false)
 
@@ -16,7 +19,7 @@ const form = useForm({
 })
 
 const heading = computed(() =>
-    recovery.value ? 'Enter a recovery code' : 'Two-factor authentication'
+    recovery.value ? __('Enter a recovery code') : __('Two-factor authentication')
 )
 
 function toggle() {
@@ -36,16 +39,16 @@ function submit() {
     <div class="space-y-8">
 
         <div>
-            <div class="text-[10px] font-semibold uppercase tracking-[0.18em] text-brand-600 mb-2">Entry · Two Factor</div>
+            <div class="text-[10px] font-semibold uppercase tracking-[0.18em] text-brand-600 mb-2">{{ __('Entry · Two Factor') }}</div>
             <h1 class="font-serif text-3xl leading-tight text-ink-900 tracking-tight">
                 {{ heading }}.
             </h1>
             <p class="text-sm text-ink-500 mt-2">
                 <template v-if="recovery">
-                    Please confirm access to your account by entering one of your emergency recovery codes.
+                    {{ __('Please confirm access to your account by entering one of your emergency recovery codes.') }}
                 </template>
                 <template v-else>
-                    Please confirm access to your account by entering the code from your authenticator application.
+                    {{ __('Please confirm access to your account by entering the code from your authenticator application.') }}
                 </template>
             </p>
         </div>
@@ -53,7 +56,7 @@ function submit() {
         <form class="space-y-5" @submit.prevent="submit">
 
             <div v-if="!recovery" class="flex flex-col gap-1.5">
-                <Label for="code">Authentication code</Label>
+                <Label for="code">{{ __('Authentication code') }}</Label>
                 <Input
                     id="code"
                     v-model="form.code"
@@ -67,7 +70,7 @@ function submit() {
             </div>
 
             <div v-else class="flex flex-col gap-1.5">
-                <Label for="recovery_code">Recovery code</Label>
+                <Label for="recovery_code">{{ __('Recovery code') }}</Label>
                 <Input
                     id="recovery_code"
                     v-model="form.recovery_code"
@@ -85,7 +88,7 @@ function submit() {
                        border border-transparent transition-colors disabled:opacity-60"
                 :disabled="form.processing"
             >
-                {{ form.processing ? 'Verifying…' : 'Continue' }}
+                {{ form.processing ? __('Verifying') : __('Continue') }}
                 <ArrowRight class="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5" />
             </button>
 
@@ -94,7 +97,7 @@ function submit() {
                 class="text-sm text-ink-500 hover:text-brand-600 transition-colors"
                 @click="toggle"
             >
-                {{ recovery ? 'Use an authentication code' : 'Use a recovery code' }}
+                {{ recovery ? __('Use an authentication code') : __('Use a recovery code') }}
             </button>
 
         </form>

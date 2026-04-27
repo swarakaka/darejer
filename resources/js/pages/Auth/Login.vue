@@ -6,8 +6,11 @@ import { Label }            from '@/components/ui/label'
 import { Checkbox }         from '@/components/ui/checkbox'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { AlertCircle, ArrowRight } from 'lucide-vue-next'
+import useTranslation       from '@/composables/useTranslation'
 
 defineOptions({ layout: AuthLayout })
+
+const { __ } = useTranslation()
 
 const form = useForm({
     email:    '',
@@ -26,12 +29,12 @@ function submit() {
     <div class="space-y-8">
 
         <div>
-            <div class="text-[10px] font-semibold uppercase tracking-[0.18em] text-brand-600 mb-2">Entry · Account</div>
+            <div class="text-[10px] font-semibold uppercase tracking-[0.18em] text-brand-600 mb-2">{{ __('Entry · Account') }}</div>
             <h1 class="font-serif text-3xl leading-tight text-ink-900 tracking-tight">
-                Sign in to the <em class="italic text-brand-600">Ledger</em>.
+                {{ __('Sign in to the') }} <em class="italic text-brand-600">{{ __('Ledger') }}</em>.
             </h1>
             <p class="text-sm text-ink-500 mt-2">
-                Records are kept continuously. Your session resumes where it was last balanced.
+                {{ __('Records are kept continuously. Your session resumes where it was last balanced.') }}
             </p>
         </div>
 
@@ -43,25 +46,25 @@ function submit() {
         <form class="space-y-5" @submit.prevent="submit">
 
             <div class="flex flex-col gap-1.5">
-                <Label for="email">Email</Label>
+                <Label for="email">{{ __('Email') }}</Label>
                 <Input
                     id="email"
                     v-model="form.email"
                     type="email"
                     autocomplete="email"
-                    placeholder="you@company.com"
+                    :placeholder="__('you@company.com')"
                     :class="{ 'border-danger-600': form.errors.email }"
                 />
             </div>
 
             <div class="flex flex-col gap-1.5">
                 <div class="flex items-center justify-between">
-                    <Label for="password">Password</Label>
+                    <Label for="password">{{ __('Password') }}</Label>
                     <a
                         :href="route('password.request').toString()"
                         class="text-xs text-ink-500 hover:text-brand-600 transition-colors"
                     >
-                        Forgot password?
+                        {{ __('Forgot password?') }}
                     </a>
                 </div>
                 <Input
@@ -80,7 +83,7 @@ function submit() {
             <div class="flex items-center gap-2">
                 <Checkbox id="remember" v-model:checked="form.remember" />
                 <Label for="remember" class="text-sm text-ink-600 cursor-pointer">
-                    Keep me signed in
+                    {{ __('Keep me signed in') }}
                 </Label>
             </div>
 
@@ -91,14 +94,14 @@ function submit() {
                        border border-transparent transition-colors disabled:opacity-60"
                 :disabled="form.processing"
             >
-                {{ form.processing ? 'Reconciling…' : 'Sign in' }}
+                {{ form.processing ? __('Reconciling') : __('Sign in') }}
                 <ArrowRight class="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5" />
             </button>
 
         </form>
 
         <p class="text-xs text-ink-400 tabular-nums pt-4 border-t border-paper-200">
-            Protected by session encryption · Session expires after inactivity
+            {{ __('Protected by session encryption · Session expires after inactivity') }}
         </p>
     </div>
 </template>

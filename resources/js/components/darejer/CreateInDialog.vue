@@ -9,10 +9,13 @@ import {
 }                           from '@/components/ui/dialog'
 import { Loader2 }          from 'lucide-vue-next'
 import CreateInDialogForm   from '@/components/darejer/CreateInDialogForm.vue'
+import useTranslation       from '@/composables/useTranslation'
 import type {
     DarejerComponent as DarejerComponentType,
     DarejerAction,
 }                           from '@/types/darejer'
+
+const { __ } = useTranslation()
 
 const props = withDefaults(defineProps<{
     open: boolean
@@ -85,10 +88,10 @@ function fetchPage() {
             }
         },
         onHttpException: (httpResponse) => {
-            error.value = `Failed to load form (HTTP ${httpResponse.status}).`
+            error.value = __('Failed to load form (HTTP :status).', { status: httpResponse.status })
         },
         onNetworkError: () => {
-            error.value = 'Network error while loading the form.'
+            error.value = __('Network error while loading the form.')
         },
     })
 }
@@ -120,12 +123,12 @@ function onCreated(payload: { url: string | null; flash: unknown }) {
         >
             <DialogHeader class="shrink-0 px-5 py-4 border-b border-paper-200 bg-paper-75">
                 <DialogTitle class="font-serif text-xl">
-                    {{ fetched?.title ?? 'Loading…' }}
+                    {{ fetched?.title ?? __('Loading…') }}
                 </DialogTitle>
             </DialogHeader>
 
             <div v-if="http.processing" class="flex-1 flex items-center justify-center py-10 text-ink-400 text-sm gap-2">
-                <Loader2 class="w-4 h-4 animate-spin" /> Loading form…
+                <Loader2 class="w-4 h-4 animate-spin" /> {{ __('Loading form…') }}
             </div>
 
             <div v-else-if="error" class="flex-1 flex items-center justify-center py-10 text-danger-600 text-sm">

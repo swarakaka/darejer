@@ -27,8 +27,11 @@ import {
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import type { DarejerAction } from '@/types/darejer'
+import useTranslation from '@/composables/useTranslation'
 
 defineOptions({ layout: AppLayout })
+
+const { __ } = useTranslation()
 
 interface GridColumn {
     field:       string
@@ -291,7 +294,7 @@ const resolveIcon = (name?: string) => name ? (iconMap[name] ?? null) : null
                 @click="showFilters = !showFilters"
             >
                 <SlidersHorizontal class="w-3.5 h-3.5" />
-                Filters
+                {{ __('Filters') }}
                 <span
                     v-if="activeFilterCount > 0"
                     class="inline-flex items-center justify-center w-4 h-4 rounded-full
@@ -334,7 +337,7 @@ const resolveIcon = (name?: string) => name ? (iconMap[name] ?? null) : null
                                focus:outline-none focus:border-brand-500 transition-colors"
                         @change="onFilterChange"
                     >
-                        <option value="">All</option>
+                        <option value="">{{ __('All') }}</option>
                         <option v-for="opt in filter.options" :key="opt.value" :value="opt.value">
                             {{ opt.label }}
                         </option>
@@ -358,7 +361,7 @@ const resolveIcon = (name?: string) => name ? (iconMap[name] ?? null) : null
                     @click="resetFilters"
                 >
                     <X class="w-3.5 h-3.5" />
-                    Clear ({{ activeFilterCount }})
+                    {{ __('Clear') }} ({{ activeFilterCount }})
                 </button>
             </div>
 
@@ -371,14 +374,14 @@ const resolveIcon = (name?: string) => name ? (iconMap[name] ?? null) : null
                     class="flex items-center gap-2 px-3 py-2 bg-brand-50 border-b border-brand-100"
                 >
                     <span class="text-xs font-medium text-brand-700 tabular-nums">
-                        {{ selected.size }} selected
+                        {{ __(':count selected', { count: selected.size }) }}
                     </span>
                     <button
                         type="button"
                         class="text-xs text-ink-500 hover:text-ink-800 underline-offset-2 hover:underline"
                         @click="clearSelection"
                     >
-                        Clear
+                        {{ __('Clear') }}
                     </button>
                     <div class="ml-auto">
                         <DarejerActions
@@ -397,13 +400,13 @@ const resolveIcon = (name?: string) => name ? (iconMap[name] ?? null) : null
                         <input
                             v-model="globalSearch"
                             type="search"
-                            placeholder="Search…"
+                            :placeholder="__('Search…')"
                             class="w-full h-8 pl-8 pr-3 text-sm bg-white border border-paper-300 rounded-sm
                                    placeholder:text-ink-400 focus:outline-none focus:border-brand-500 transition-colors"
                         />
                     </div>
                     <span class="ml-auto text-xs text-ink-400 tabular-nums">
-                        {{ tableData.from }}–{{ tableData.to }} of {{ tableData.total }}
+                        {{ tableData.from }}–{{ tableData.to }} {{ __('of') }} {{ tableData.total }}
                     </span>
                 </div>
 
@@ -459,7 +462,7 @@ const resolveIcon = (name?: string) => name ? (iconMap[name] ?? null) : null
                                 >
                                     <div class="flex flex-col items-center gap-2 text-ink-400">
                                         <Inbox class="w-8 h-8" />
-                                        <span class="text-sm">{{ emptyMessage ?? 'No records found.' }}</span>
+                                        <span class="text-sm">{{ emptyMessage ?? __('No records found.') }}</span>
                                     </div>
                                 </td>
                             </tr>
@@ -549,7 +552,7 @@ const resolveIcon = (name?: string) => name ? (iconMap[name] ?? null) : null
                     class="flex items-center justify-between px-3 py-2 bg-paper-75 border-t border-paper-200"
                 >
                     <span class="text-xs text-ink-400 tabular-nums">
-                        Showing {{ tableData.from }}–{{ tableData.to }} of {{ tableData.total }} records
+                        {{ __('Showing') }} {{ tableData.from }}–{{ tableData.to }} {{ __('of') }} {{ tableData.total }} {{ __('records') }}
                     </span>
                     <div class="flex items-center gap-1">
                         <button
@@ -592,13 +595,13 @@ const resolveIcon = (name?: string) => name ? (iconMap[name] ?? null) : null
     <Dialog :open="confirmOpen" @update:open="confirmOpen = $event">
         <DialogContent class="max-w-sm p-0 overflow-hidden">
             <DialogHeader class="px-4 py-3 border-b border-paper-200 bg-paper-75">
-                <DialogTitle class="font-serif text-lg">Confirm</DialogTitle>
+                <DialogTitle class="font-serif text-lg">{{ __('Confirm') }}</DialogTitle>
             </DialogHeader>
             <div class="px-4 py-4">
                 <DialogDescription class="text-sm text-ink-600">{{ confirmMsg }}</DialogDescription>
             </div>
             <DialogFooter class="flex justify-end gap-2 px-4 py-3 border-t border-paper-200 bg-paper-75">
-                <Button variant="outline" class="h-8 text-sm" @click="confirmOpen = false">Cancel</Button>
+                <Button variant="outline" class="h-8 text-sm" @click="confirmOpen = false">{{ __('Cancel') }}</Button>
                 <Button
                     class="h-8 text-sm bg-danger-600 hover:bg-danger-700 text-white border-transparent"
                     @click="executeConfirmed"

@@ -2,15 +2,18 @@
 import { usePage, Link } from '@inertiajs/vue3'
 import { ChevronRight } from 'lucide-vue-next'
 import type { DarejerSharedProps } from '@/types/darejer'
+import useTranslation from '@/composables/useTranslation'
 
 const page = usePage<DarejerSharedProps>()
+
+const { __ } = useTranslation()
 </script>
 
 <template>
     <nav
         v-if="page.props.breadcrumbs?.length"
         class="flex items-center gap-1 text-xs text-ink-400 tabular-nums"
-        aria-label="Breadcrumb"
+        :aria-label="__('Breadcrumb')"
     >
         <template
             v-for="(crumb, i) in page.props.breadcrumbs"

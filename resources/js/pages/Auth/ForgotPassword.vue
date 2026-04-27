@@ -5,8 +5,11 @@ import { Input }            from '@/components/ui/input'
 import { Label }            from '@/components/ui/label'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { CheckCircle2, ArrowLeft } from 'lucide-vue-next'
+import useTranslation       from '@/composables/useTranslation'
 
 defineOptions({ layout: AuthLayout })
+
+const { __ } = useTranslation()
 
 defineProps<{ status?: string }>()
 
@@ -21,12 +24,12 @@ function submit() {
     <div class="space-y-8">
 
         <div>
-            <div class="text-[10px] font-semibold uppercase tracking-[0.18em] text-brand-600 mb-2">Entry · Recovery</div>
+            <div class="text-[10px] font-semibold uppercase tracking-[0.18em] text-brand-600 mb-2">{{ __('Entry · Recovery') }}</div>
             <h1 class="font-serif text-3xl leading-tight text-ink-900 tracking-tight">
-                Reset your <em class="italic text-brand-600">password</em>.
+                {{ __('Reset your') }} <em class="italic text-brand-600">{{ __('password') }}</em>.
             </h1>
             <p class="text-sm text-ink-500 mt-2">
-                Enter the email on file and we'll issue a recovery link.
+                {{ __("Enter the email on file and we'll issue a recovery link.") }}
             </p>
         </div>
 
@@ -37,13 +40,13 @@ function submit() {
 
         <form class="space-y-5" @submit.prevent="submit">
             <div class="flex flex-col gap-1.5">
-                <Label for="email">Email</Label>
+                <Label for="email">{{ __('Email') }}</Label>
                 <Input
                     id="email"
                     v-model="form.email"
                     type="email"
                     autocomplete="email"
-                    placeholder="you@company.com"
+                    :placeholder="__('you@company.com')"
                     :class="{ 'border-danger-600': form.errors.email }"
                 />
                 <p v-if="form.errors.email" class="text-xs text-danger-600">{{ form.errors.email }}</p>
@@ -56,7 +59,7 @@ function submit() {
                        border border-transparent transition-colors disabled:opacity-60"
                 :disabled="form.processing"
             >
-                {{ form.processing ? 'Sending…' : 'Send reset link' }}
+                {{ form.processing ? __('Sending') : __('Send reset link') }}
             </button>
         </form>
 
@@ -65,7 +68,7 @@ function submit() {
             class="inline-flex items-center gap-1.5 text-sm text-ink-500 hover:text-brand-600 transition-colors"
         >
             <ArrowLeft class="w-3.5 h-3.5" />
-            Back to sign in
+            {{ __('Back to sign in') }}
         </Link>
     </div>
 </template>
