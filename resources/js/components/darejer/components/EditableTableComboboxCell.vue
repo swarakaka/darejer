@@ -15,6 +15,9 @@ import {
     PopoverTrigger,
 } from '@/components/ui/popover'
 import { ChevronsUpDown, Loader2, ImageIcon } from 'lucide-vue-next'
+import useTranslation from '@/composables/useTranslation'
+
+const { __ } = useTranslation()
 
 interface ComboboxColumn {
     field:        string
@@ -108,7 +111,7 @@ const selectedRecord = computed<Record_ | null>(() =>
 const triggerLabel = computed(() => {
     if (selectedRecord.value) return String(selectedRecord.value[labelField.value] ?? selectedKey.value)
     if (selectedKey.value)    return selectedKey.value
-    return props.column.placeholder ?? 'Select…'
+    return props.column.placeholder ?? __('Select…')
 })
 
 function pick(record: Record_) {
@@ -150,16 +153,16 @@ function formatPrice(v: unknown): string {
             <Command :should-filter="false">
                 <CommandInput
                     v-model="search"
-                    placeholder="Search…"
+                    :placeholder="__('Search…')"
                     class="text-sm h-8 border-b border-paper-200"
                 />
 
                 <CommandList class="max-h-72 overflow-y-auto">
                     <CommandEmpty class="py-4 text-center text-sm text-ink-400">
                         <span v-if="http.processing" class="flex items-center justify-center gap-2">
-                            <Loader2 class="w-3.5 h-3.5 animate-spin" /> Loading…
+                            <Loader2 class="w-3.5 h-3.5 animate-spin" /> {{ __('Loading…') }}
                         </span>
-                        <span v-else>No results found.</span>
+                        <span v-else>{{ __('No results found.') }}</span>
                     </CommandEmpty>
 
                     <CommandGroup>
@@ -204,7 +207,7 @@ function formatPrice(v: unknown): string {
                             class="text-xs text-ink-400 h-7 px-2.5 cursor-pointer justify-center"
                             @select="fetchOptions(false)"
                         >
-                            Load more…
+                            {{ __('Load more…') }}
                         </CommandItem>
                     </CommandGroup>
                 </CommandList>

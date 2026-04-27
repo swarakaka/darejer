@@ -2,7 +2,10 @@
 import { computed }        from 'vue'
 import { usePage, router } from '@inertiajs/vue3'
 import { ChevronLeft, ChevronRight } from 'lucide-vue-next'
+import useTranslation from '@/composables/useTranslation'
 import type { DarejerComponent, PaginatedData } from '@/types/darejer'
+
+const { __ } = useTranslation()
 
 const props = defineProps<{
     component: DarejerComponent
@@ -63,7 +66,7 @@ function goTo(p: number) {
         class="flex items-center justify-between px-1 py-2 col-span-full"
     >
         <span class="text-xs text-ink-400 tabular-nums">
-            Showing {{ from }}–{{ to }} of {{ total }} records
+            {{ __('Showing :from–:to of :total records', { from, to, total }) }}
         </span>
 
         <div class="flex items-center gap-1">

@@ -3,7 +3,10 @@ import { ref }          from 'vue'
 import { Input }        from '@/components/ui/input'
 import { Plus, Trash2 } from 'lucide-vue-next'
 import FieldWrapper     from '@/components/darejer/FieldWrapper.vue'
+import useTranslation   from '@/composables/useTranslation'
 import type { DarejerComponent } from '@/types/darejer'
+
+const { __ } = useTranslation()
 
 const props = defineProps<{
     component: DarejerComponent
@@ -69,8 +72,8 @@ function onValueInput(id: number, e: Event) {
     }
 }
 
-const keyLabel   = (props.component.keyLabel   as string) ?? 'Key'
-const valueLabel = (props.component.valueLabel as string) ?? 'Value'
+const keyLabel   = (props.component.keyLabel   as string) ?? __('Key')
+const valueLabel = (props.component.valueLabel as string) ?? __('Value')
 </script>
 
 <template>
@@ -101,7 +104,7 @@ const valueLabel = (props.component.valueLabel as string) ?? 'Value'
                         <Input
                             :value="row.key"
                             :disabled="(component.disabled as boolean)"
-                            placeholder="key"
+                            :placeholder="__('key')"
                             class="h-8 border-none rounded-none text-sm font-mono focus:ring-0 focus:border-none"
                             @input="onKeyInput(row.id, $event)"
                         />
@@ -110,7 +113,7 @@ const valueLabel = (props.component.valueLabel as string) ?? 'Value'
                         <Input
                             :value="row.value"
                             :disabled="(component.disabled as boolean)"
-                            placeholder="value"
+                            :placeholder="__('value')"
                             class="h-8 border-none rounded-none text-sm focus:ring-0 focus:border-none"
                             @input="onValueInput(row.id, $event)"
                         />
@@ -141,7 +144,7 @@ const valueLabel = (props.component.valueLabel as string) ?? 'Value'
                         @click="addRow"
                     >
                         <Plus class="w-3 h-3" />
-                        Add row
+                        {{ __('Add row') }}
                     </button>
                 </div>
             </div>

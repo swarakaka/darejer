@@ -4,7 +4,10 @@ import { Textarea }         from '@/components/ui/textarea'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import FieldWrapper         from '@/components/darejer/FieldWrapper.vue'
 import { useLanguages }     from '@/composables/useLanguages'
+import useTranslation       from '@/composables/useTranslation'
 import type { DarejerComponent } from '@/types/darejer'
+
+const { __ } = useTranslation()
 
 const props = defineProps<{
     component: DarejerComponent
@@ -119,7 +122,7 @@ function onSingleInput(e: Event) {
                     >
                         <Textarea
                             :id="`${component.name}-${locale}`"
-                            :placeholder="(component.placeholder as string) ?? `Enter ${localeName(locale)} text…`"
+                            :placeholder="(component.placeholder as string) ?? __('Enter :name text…', { name: localeName(locale) })"
                             :rows="(component.rows as number) ?? 4"
                             :readonly="(component.readonly as boolean)"
                             :disabled="(component.disabled as boolean)"

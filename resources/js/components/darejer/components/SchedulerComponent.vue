@@ -9,7 +9,10 @@ import type { CalendarOptions, EventClickArg, DateSelectArg } from '@fullcalenda
 import { useHttp, router }          from '@inertiajs/vue3'
 import { Loader2 }                  from 'lucide-vue-next'
 import FieldWrapper                 from '@/components/darejer/FieldWrapper.vue'
+import useTranslation               from '@/composables/useTranslation'
 import type { DarejerComponent }    from '@/types/darejer'
+
+const { __ } = useTranslation()
 
 const props = defineProps<{
     component: DarejerComponent
@@ -47,7 +50,7 @@ function loadEvents() {
         onSuccess: (data) => {
             events.value = (data?.data ?? []).map((row) => ({
                 id:    String(row.id ?? ''),
-                title: String(row[titleField.value] ?? 'Untitled'),
+                title: String(row[titleField.value] ?? __('Untitled')),
                 start: String(row[startField.value] ?? ''),
                 end:   row[endField.value] ? String(row[endField.value]) : undefined,
                 color: colorField.value
@@ -94,10 +97,10 @@ const headerToolbar = computed(() => {
 })
 
 const viewLabels: Record<string, string> = {
-    dayGridMonth: 'Month',
-    timeGridWeek: 'Week',
-    timeGridDay:  'Day',
-    listWeek:     'List',
+    dayGridMonth: __('Month'),
+    timeGridWeek: __('Week'),
+    timeGridDay:  __('Day'),
+    listWeek:     __('List'),
 }
 
 const calendarOptions = computed((): CalendarOptions => ({

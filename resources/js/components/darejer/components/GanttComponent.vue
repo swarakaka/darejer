@@ -3,7 +3,10 @@ import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import { useHttp }      from '@inertiajs/vue3'
 import { Loader2 }      from 'lucide-vue-next'
 import FieldWrapper     from '@/components/darejer/FieldWrapper.vue'
+import useTranslation   from '@/composables/useTranslation'
 import type { DarejerComponent } from '@/types/darejer'
+
+const { __ } = useTranslation()
 
 // dhtmlx-gantt ships as a global singleton.
 import { gantt } from 'dhtmlx-gantt'
@@ -38,7 +41,7 @@ function configureGantt() {
     gantt.config.columns = [
         {
             name:  'text',
-            label: 'Task',
+            label: __('Task'),
             tree:  true,
             width: 200,
             template: (task: Record<string, unknown>) =>
@@ -46,7 +49,7 @@ function configureGantt() {
         },
         {
             name:  'start_date',
-            label: 'Start',
+            label: __('Start'),
             align: 'center',
             width: 90,
             template: (task: Record<string, unknown>) => {
@@ -58,7 +61,7 @@ function configureGantt() {
         },
         {
             name:  'duration',
-            label: 'Days',
+            label: __('Days'),
             align: 'center',
             width: 50,
         },

@@ -2,7 +2,10 @@
 import { ref, computed }    from 'vue'
 import { X }                from 'lucide-vue-next'
 import FieldWrapper         from '@/components/darejer/FieldWrapper.vue'
+import useTranslation       from '@/composables/useTranslation'
 import type { DarejerComponent } from '@/types/darejer'
+
+const { __ } = useTranslation()
 
 const props = defineProps<{
     component: DarejerComponent
@@ -118,7 +121,7 @@ const atMax = computed(() =>
                         v-model="input"
                         type="text"
                         :placeholder="tags.length === 0
-                            ? ((component.placeholder as string) ?? 'Add tags…')
+                            ? ((component.placeholder as string) ?? __('Add tags…'))
                             : ''"
                         :disabled="(component.disabled as boolean)"
                         class="flex-1 min-w-[8rem] h-5 text-sm bg-transparent border-none
@@ -149,7 +152,7 @@ const atMax = computed(() =>
 
                 <!-- Max reached hint -->
                 <p v-if="atMax" class="text-xs text-slate-400 mt-1">
-                    Maximum {{ maxTags }} tags reached.
+                    {{ __('Maximum :max tags reached.', { max: maxTags ?? 0 }) }}
                 </p>
             </div>
         </template>

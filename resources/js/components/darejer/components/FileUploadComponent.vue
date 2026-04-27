@@ -2,7 +2,10 @@
 import { ref, computed }    from 'vue'
 import { UploadCloud, X, FileText, ImageIcon, AlertCircle } from 'lucide-vue-next'
 import FieldWrapper         from '@/components/darejer/FieldWrapper.vue'
+import useTranslation       from '@/composables/useTranslation'
 import type { DarejerComponent } from '@/types/darejer'
+
+const { __ } = useTranslation()
 
 const props = defineProps<{
     component: DarejerComponent
@@ -43,7 +46,7 @@ function formatSize(bytes: number): string {
 
 function validateFile(file: File): string | null {
     if (maxSize.value && file.size > maxSize.value * 1024) {
-        return `File exceeds ${maxSize.value} KB limit.`
+        return __('File exceeds :max KB limit.', { max: maxSize.value })
     }
     const acceptTypes = props.component.accept as string[] | undefined
     if (acceptTypes?.length) {
@@ -52,7 +55,7 @@ function validateFile(file: File): string | null {
             if (t.startsWith('.')) return file.name.endsWith(t)
             return file.type === t
         })
-        if (!ok) return `File type not allowed.`
+        if (!ok) return __('File type not allowed.')
     }
     return null
 }
@@ -129,8 +132,8 @@ const atMax = computed(() =>
 )
 
 const dropLabel = computed(() => {
-    if (isImage.value) return 'Drop images here or click to browse'
-    return 'Drop files here or click to browse'
+    if (isImage.value) return __('Drop images here or click to browse')
+    return __('Drop files here or click to browse')
 })
 </script>
 
@@ -174,8 +177,8 @@ const dropLabel = computed(() => {
                     <p class="text-sm font-medium text-slate-600">{{ dropLabel }}</p>
                     <p class="text-xs text-slate-400 mt-0.5">
                         <span v-if="accept">{{ accept }}</span>
-                        <span v-if="maxSize"> · max {{ maxSize }} KB</span>
-                        <span v-if="maxFiles && isMultiple"> · up to {{ maxFiles }} files</span>
+                        <span v-if="maxSize"> · {{ __('max :size KB', { size: maxSize }) }}</span>
+                        <span v-if="maxFiles && isMultiple"> · {{ __('up to :max files', { max: maxFiles }) }}</span>
                     </p>
                 </div>
             </div>

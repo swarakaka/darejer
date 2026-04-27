@@ -5,7 +5,10 @@ import { useDataUrl }                from '@/composables/useDataUrl'
 import { VueDraggable }              from 'vue-draggable-plus'
 import { Loader2, GripVertical }     from 'lucide-vue-next'
 import FieldWrapper                  from '@/components/darejer/FieldWrapper.vue'
+import useTranslation                from '@/composables/useTranslation'
 import type { DarejerComponent }     from '@/types/darejer'
+
+const { __ } = useTranslation()
 
 const props = defineProps<{
     component: DarejerComponent
@@ -362,7 +365,7 @@ function onDragEnd(col: KanbanCol) {
                                 v-if="!columnCards[col.value]?.length"
                                 class="flex items-center justify-center h-16 rounded-md border border-dashed border-paper-300 text-xs text-ink-300"
                             >
-                                Drop cards here
+                                {{ __('Drop cards here') }}
                             </div>
                         </template>
                     </VueDraggable>

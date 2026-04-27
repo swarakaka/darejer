@@ -163,4 +163,115 @@ return [
     'Error'         => 'Error',
     'Warning'       => 'Warning',
     'Info'          => 'Info',
+
+    // Field renderers — placeholders & inline labels
+    'Select…'                 => 'Select…',
+    'Search…'                 => 'Search…',
+    'Pick a date…'            => 'Pick a date…',
+    'Add tags…'               => 'Add tags…',
+    'Enter text…'             => 'Enter text…',
+    'Enter :name text…'       => 'Enter :name text…',
+    'Load more…'              => 'Load more…',
+    'Add new…'                => 'Add new…',
+    ':count selected_short'   => ':count selected',
+
+    // Toggle / boolean
+    'Yes'                     => 'Yes',
+    'No'                      => 'No',
+
+    // Time picker units / meridiem
+    'hr'                      => 'hr',
+    'min'                     => 'min',
+    'sec'                     => 'sec',
+    'AM'                      => 'AM',
+    'PM'                      => 'PM',
+
+    // File upload
+    'Drop files here or click to browse'  => 'Drop files here or click to browse',
+    'Drop images here or click to browse' => 'Drop images here or click to browse',
+    'File exceeds :max KB limit.'         => 'File exceeds :max KB limit.',
+    'File type not allowed.'              => 'File type not allowed.',
+    'max :size KB'                        => 'max :size KB',
+    'up to :max files'                    => 'up to :max files',
+
+    // Signature
+    'Sign here'             => 'Sign here',
+    'Draw your signature'   => 'Draw your signature',
+    'Signature captured'    => 'Signature captured',
+    'No signature yet'      => 'No signature yet',
+
+    // Rich text editor
+    'Undo'           => 'Undo',
+    'Redo'           => 'Redo',
+    'Heading 1'      => 'Heading 1',
+    'Heading 2'      => 'Heading 2',
+    'Heading 3'      => 'Heading 3',
+    'Bold'           => 'Bold',
+    'Italic'         => 'Italic',
+    'Underline'      => 'Underline',
+    'Strikethrough'  => 'Strikethrough',
+    'Bullet list'    => 'Bullet list',
+    'Numbered list'  => 'Numbered list',
+    'Blockquote'     => 'Blockquote',
+    'Code'           => 'Code',
+    'Align left'     => 'Align left',
+    'Align center'   => 'Align center',
+    'Align right'    => 'Align right',
+    'Link'           => 'Link',
+    'Insert link'    => 'Insert link',
+    'Apply'          => 'Apply',
+
+    // Tags input
+    'Maximum :max tags reached.' => 'Maximum :max tags reached.',
+
+    // Translatable
+    ':label — Translations' => ':label — Translations',
+    '(default)'             => '(default)',
+    'Translate (:filled/:total filled)' => 'Translate (:filled/:total filled)',
+
+    // Key/value editor
+    'Key'      => 'Key',
+    'Value'    => 'Value',
+    'key'      => 'key',
+    'value'    => 'value',
+    'Add row'  => 'Add row',
+
+    // Repeater
+    'Add item' => 'Add item',
+    'Item'     => 'Item',
+    'No items yet. Click ":label" to add one.' => 'No items yet. Click ":label" to add one.',
+    'Maximum :max items reached.' => 'Maximum :max items reached.',
+
+    // Kanban
+    'Drop cards here' => 'Drop cards here',
+
+    // Filter panel
+    'Filter :label…' => 'Filter :label…',
+    'Clear all'      => 'Clear all',
+    'Clear (:count)' => 'Clear (:count)',
+
+    // Pagination / data grid summary
+    'Showing :from–:to of :total records' => 'Showing :from–:to of :total records',
+    ':from–:to of :total'                  => ':from–:to of :total',
+
+    // Gantt
+    'Task'  => 'Task',
+    'Start' => 'Start',
+    'Days'  => 'Days',
+
+    // Scheduler
+    'Month'    => 'Month',
+    'Week'     => 'Week',
+    'Day'      => 'Day',
+    'List'     => 'List',
+    'Untitled' => 'Untitled',
+
+    // PDF viewer
+    'No PDF file specified.' => 'No PDF file specified.',
+    'Zoom in'                => 'Zoom in',
+    'Zoom out'               => 'Zoom out',
+    'Reset zoom'             => 'Reset zoom',
+    'Fullscreen'             => 'Fullscreen',
+    'Download'               => 'Download',
+    'PDF Viewer'             => 'PDF Viewer',
 ];

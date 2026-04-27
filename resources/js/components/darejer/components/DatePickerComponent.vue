@@ -8,6 +8,7 @@ import {
 import { Calendar }         from '@/components/ui/calendar'
 import { CalendarIcon, X }  from 'lucide-vue-next'
 import FieldWrapper         from '@/components/darejer/FieldWrapper.vue'
+import useTranslation       from '@/composables/useTranslation'
 import type { DarejerComponent } from '@/types/darejer'
 import {
     CalendarDate,
@@ -16,6 +17,8 @@ import {
     parseDate,
     type DateValue,
 } from '@internationalized/date'
+
+const { __ } = useTranslation()
 
 const props = defineProps<{
     component: DarejerComponent
@@ -72,7 +75,7 @@ const displayValue = computed(() =>
 )
 
 const placeholder = computed(() =>
-    (props.component.placeholder as string) ?? 'Pick a date…'
+    (props.component.placeholder as string) ?? __('Pick a date…')
 )
 
 const minDate = computed(() => {

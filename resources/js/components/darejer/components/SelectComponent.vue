@@ -8,7 +8,10 @@ import {
     SelectValue,
 } from '@/components/ui/select'
 import FieldWrapper from '@/components/darejer/FieldWrapper.vue'
+import useTranslation from '@/composables/useTranslation'
 import type { DarejerComponent } from '@/types/darejer'
+
+const { __ } = useTranslation()
 
 const props = defineProps<{
     component: DarejerComponent
@@ -46,7 +49,7 @@ function onChange(val: unknown) {
                     class="w-full text-sm"
                     :class="hasError ? 'border-danger-600' : ''"
                 >
-                    <SelectValue :placeholder="(component.placeholder as string) ?? 'Select…'" />
+                    <SelectValue :placeholder="(component.placeholder as string) ?? __('Select…')" />
                 </SelectTrigger>
                 <SelectContent>
                     <SelectItem
