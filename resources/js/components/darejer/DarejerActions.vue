@@ -175,7 +175,7 @@ const placementClass = computed(() => {
                                    no-underline hover:text-brand-700 h-8 px-2"
                         >
                             <component :is="resolveIcon(action.icon)" v-if="action.icon" class="w-3.5 h-3.5" />
-                            {{ action.label }}
+                            {{ __(action.label) }}
                             <ExternalLink class="w-3 h-3 opacity-60" />
                         </a>
                         <Link
@@ -185,10 +185,10 @@ const placementClass = computed(() => {
                                    no-underline hover:text-brand-700 h-8 px-2"
                         >
                             <component :is="resolveIcon(action.icon)" v-if="action.icon" class="w-3.5 h-3.5" />
-                            {{ action.label }}
+                            {{ __(action.label) }}
                         </Link>
                     </TooltipTrigger>
-                    <TooltipContent v-if="action.tooltip">{{ action.tooltip }}</TooltipContent>
+                    <TooltipContent v-if="action.tooltip">{{ __(action.tooltip) }}</TooltipContent>
                 </Tooltip>
 
                 <!-- Dropdown action -->
@@ -200,7 +200,7 @@ const placementClass = computed(() => {
                             :class="buttonClasses(action)"
                         >
                             <component :is="resolveIcon(action.icon)" v-if="action.icon" class="w-3.5 h-3.5" />
-                            {{ action.label }}
+                            {{ __(action.label) }}
                             <ChevronDown class="w-3 h-3 opacity-70" />
                         </button>
                     </DropdownMenuTrigger>
@@ -215,7 +215,7 @@ const placementClass = computed(() => {
                                 @click="executeAction(item)"
                             >
                                 <component :is="resolveIcon(item.icon)" v-if="item.icon" class="w-3.5 h-3.5" />
-                                {{ item.label }}
+                                {{ __(item.label) }}
                             </DropdownMenuItem>
                         </template>
                     </DropdownMenuContent>
@@ -243,10 +243,10 @@ const placementClass = computed(() => {
                                 :is="resolveIcon(action.icon)"
                                 class="w-3.5 h-3.5"
                             />
-                            {{ action.type === 'Save' && processing ? __('Saving') : action.label }}
+                            {{ action.type === 'Save' && processing ? __('Saving') : __(action.label) }}
                         </button>
                     </TooltipTrigger>
-                    <TooltipContent v-if="action.tooltip">{{ action.tooltip }}</TooltipContent>
+                    <TooltipContent v-if="action.tooltip">{{ __(action.tooltip) }}</TooltipContent>
                 </Tooltip>
 
             </template>
@@ -267,7 +267,7 @@ const placementClass = computed(() => {
                                 {{ __('Confirm action') }}
                             </DialogTitle>
                             <DialogDescription class="text-sm text-ink-500 mt-1.5 leading-relaxed">
-                                {{ confirmAction?.confirm }}
+                                {{ confirmAction?.confirm ? __(confirmAction.confirm) : '' }}
                             </DialogDescription>
                         </div>
                     </div>
@@ -287,7 +287,7 @@ const placementClass = computed(() => {
                                bg-danger-600 hover:bg-danger-700 border border-transparent rounded-sm transition-colors"
                         @click="executeConfirmed"
                     >
-                        {{ confirmAction?.label }}
+                        {{ confirmAction?.label ? __(confirmAction.label) : '' }}
                     </button>
                 </DialogFooter>
             </DialogContent>
