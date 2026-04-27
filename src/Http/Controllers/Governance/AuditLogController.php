@@ -55,7 +55,7 @@ class AuditLogController extends DarejerController
             ->leftJoin('users as u', 'u.id', '=', 'a.causer_id')
             ->select([
                 'a.id', 'a.event', 'a.subject_type', 'a.subject_id',
-                'a.causer_id', 'a.reason', 'a.payload', 'a.ip', 'a.user_agent',
+                'a.causer_id', 'a.reason', 'a.summary', 'a.payload', 'a.ip', 'a.user_agent',
                 'a.created_at', 'u.name as causer',
             ])
             ->where('a.company_id', $companyId)
@@ -100,6 +100,7 @@ class AuditLogController extends DarejerController
                 'causer_id' => $r->causer_id,
                 'causer' => $r->getAttribute('causer'),
                 'reason' => $r->reason,
+                'summary' => $r->summary,
                 'payload' => $r->payload,
                 'ip' => $r->ip,
                 'user_agent' => $r->user_agent,

@@ -37,6 +37,7 @@ beforeEach(function (): void {
         $table->unsignedBigInteger('company_id')->nullable();
         $table->unsignedBigInteger('causer_id')->nullable();
         $table->text('reason')->nullable();
+        $table->string('summary', 500)->nullable();
         $table->json('payload')->nullable();
         $table->string('ip', 45)->nullable();
         $table->string('user_agent', 255)->nullable();
@@ -169,6 +170,16 @@ it('exposes distinct event and subject type options for filter dropdowns', funct
         ->toEqualCanonicalizing(['document.created', 'document.posted', 'lead.qualified']);
     expect($page['props']['subjectTypeOptions'])
         ->toEqualCanonicalizing(['A\\B', 'L\\Lead']);
+});
+
+it('exposes the human summary in the row props', function (): void {
+    seedAuditRow(['summary' => "Created Document 'DOC-1'"]);
+
+    $request = Request::create('/darejer/governance/audit-log', 'GET');
+    $response = (new AuditLogController)->index($request);
+    $page = inertiaPage($response, $request);
+
+    expect($page['props']['rows'][0]['summary'])->toBe("Created Document 'DOC-1'");
 });
 
 it('aborts with 403 when the user lacks audit.log.view permission', function (): void {

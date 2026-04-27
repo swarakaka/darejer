@@ -21,6 +21,7 @@ use Illuminate\Support\Facades\Schema;
  *   company_id    fk(companies) nullable
  *   causer_id     fk(users)     nullable
  *   reason        text          nullable
+ *   summary       string(500)   nullable
  *   payload       json          nullable
  *   ip            string(45)    nullable
  *   user_agent    string(255)   nullable
@@ -40,6 +41,7 @@ final class AuditWriter
         array $payload = [],
         ?int $companyId = null,
         ?string $reason = null,
+        ?string $summary = null,
     ): void {
         if (! self::tableExists()) {
             return;
@@ -52,6 +54,7 @@ final class AuditWriter
             'company_id' => $companyId ?? (auth()->user()?->active_company_id ?? null),
             'causer_id' => auth()->id(),
             'reason' => $reason,
+            'summary' => $summary !== null ? mb_substr($summary, 0, 500) : null,
             'payload' => json_encode($payload, JSON_UNESCAPED_UNICODE),
             'ip' => request()?->ip(),
             'user_agent' => substr((string) request()?->userAgent(), 0, 255),

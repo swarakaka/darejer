@@ -317,6 +317,8 @@ return [
     'Reason' => 'Reason',
     'Payload' => 'Payload',
     'Summary' => 'Summary',
+    'Details' => 'Details',
+    'What happened' => 'What happened',
     'When' => 'When',
     'IP' => 'IP',
     'From' => 'From',

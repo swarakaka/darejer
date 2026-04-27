@@ -6,6 +6,7 @@ namespace Darejer\Concerns;
 
 use Darejer\Support\AuditWriter;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 /**
  * Mix into any Eloquent model to record `created`, `updated` and `deleted`
@@ -122,6 +123,103 @@ trait Auditable
     }
 
     /**
+     * Plain-language sentence describing this event for non-developers, e.g.
+     * "Created Lead 'Acme Corp'" or "Changed status from 'New' to 'Qualified'
+     * on Lead 'Acme Corp'". Override on the model for full control.
+     */
+    public function auditSummary(string $event): ?string
+    {
+        $type = $this->auditTypeLabel();
+        $label = $this->auditLabel();
+        $subject = $label !== null ? "{$type} '{$label}'" : "{$type} #{$this->getKey()}";
+
+        return match ($event) {
+            'created' => "Created {$subject}",
+            'deleted' => "Deleted {$subject}",
+            'updated' => $this->buildUpdatedSummary($subject),
+            default => null,
+        };
+    }
+
+    /**
+     * Display name for the model's class — used as the "type" in summaries.
+     * Defaults to the humanized class basename ("Lead", "Document", "Bank
+     * account"). Override to translate or rename.
+     */
+    public function auditTypeLabel(): string
+    {
+        return Str::headline(class_basename(static::class));
+    }
+
+    /**
+     * Short identifier for this row that a user would recognize, e.g. the
+     * code, number, name or title. Returning null falls back to "#<id>".
+     */
+    public function auditLabel(): ?string
+    {
+        $attributes = $this->getAttributes();
+
+        foreach (['code', 'number', 'name', 'title'] as $key) {
+            if (! empty($attributes[$key])) {
+                return (string) $attributes[$key];
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Display name for an attribute key — used when rendering a single-field
+     * change ("Changed pipeline stage from..."). Strips trailing `_id` and
+     * humanizes snake_case. Override to translate or rename.
+     */
+    public function auditFieldLabel(string $key): string
+    {
+        $key = preg_replace('/_id$/', '', $key) ?? $key;
+
+        return Str::lower(Str::headline($key));
+    }
+
+    private function buildUpdatedSummary(string $subject): string
+    {
+        $excluded = array_flip($this->auditExcluded());
+        $changes = array_diff_key($this->getDirty(), $excluded);
+        $count = count($changes);
+
+        if ($count === 0) {
+            return "Updated {$subject}";
+        }
+
+        if ($count === 1) {
+            $key = (string) array_key_first($changes);
+            $field = $this->auditFieldLabel($key);
+            $old = $this->formatAuditValue($this->getRawOriginal($key));
+            $new = $this->formatAuditValue($changes[$key]);
+
+            return "Changed {$field} from {$old} to {$new} on {$subject}";
+        }
+
+        return "Updated {$subject} ({$count} changes)";
+    }
+
+    private function formatAuditValue(mixed $value): string
+    {
+        if ($value === null || $value === '') {
+            return '(empty)';
+        }
+
+        if (is_bool($value)) {
+            return $value ? 'yes' : 'no';
+        }
+
+        if (is_scalar($value)) {
+            return "'".(string) $value."'";
+        }
+
+        return "'".json_encode($value, JSON_UNESCAPED_UNICODE)."'";
+    }
+
+    /**
      * @param  array<string, int>  $excluded
      * @return array<string, array{old: mixed, new: mixed}>
      */
@@ -197,6 +295,7 @@ trait Auditable
             subjectId: $model->getKey(),
             payload: $model->auditPayload($event),
             companyId: $companyId,
+            summary: $model->auditSummary($event),
         );
     }
 }
