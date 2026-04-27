@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, watchEffect } from 'vue'
 import { usePage }                from '@inertiajs/vue3'
+import { ConfigProvider }         from 'reka-ui'
 import AppSidebar                 from '@/components/darejer/AppSidebar.vue'
 import AppTopbar                  from '@/components/darejer/AppTopbar.vue'
 import FlashMessage               from '@/components/darejer/FlashMessage.vue'
@@ -21,14 +22,16 @@ watchEffect(() => {
 </script>
 
 <template>
-    <div class="flex h-screen overflow-hidden bg-paper-50">
-        <AppSidebar />
-        <div class="flex flex-col flex-1 min-w-0 overflow-hidden">
-            <AppTopbar />
-            <main class="flex-1 min-h-0 overflow-hidden">
-                <slot />
-            </main>
+    <ConfigProvider :dir="direction" :locale="locale">
+        <div class="flex h-screen overflow-hidden bg-paper-50">
+            <AppSidebar />
+            <div class="flex flex-col flex-1 min-w-0 overflow-hidden">
+                <AppTopbar />
+                <main class="flex-1 min-h-0 overflow-hidden">
+                    <slot />
+                </main>
+            </div>
+            <FlashMessage />
         </div>
-        <FlashMessage />
-    </div>
+    </ConfigProvider>
 </template>
