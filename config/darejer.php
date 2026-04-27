@@ -11,7 +11,7 @@ return [
     | TranslatableInput and TranslatableTextarea only show multi-language UI
     | when more than one language is listed here.
     |
-    | Example: ['en', 'ar', 'de', 'fr']
+    | Example: ['en', 'ar', 'de', 'ckb']
     */
     'languages' => ['en'],
 

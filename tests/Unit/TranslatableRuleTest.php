@@ -42,7 +42,7 @@ it('attaches max-length errors to the offending locale only', function () {
 it('rejects unsupported locale keys on the parent', function () {
     $v = Validator::make(
         ['name' => ['en' => 'OK', 'xx' => 'Bad']],
-        ['name' => [new TranslatableRule()]],
+        ['name' => [new TranslatableRule]],
     );
 
     expect($v->fails())->toBeTrue();
@@ -52,7 +52,7 @@ it('rejects unsupported locale keys on the parent', function () {
 it('rejects non-array values on the parent', function () {
     $v = Validator::make(
         ['name' => 'plain string that is not json'],
-        ['name' => [new TranslatableRule()]],
+        ['name' => [new TranslatableRule]],
     );
 
     expect($v->fails())->toBeTrue();
