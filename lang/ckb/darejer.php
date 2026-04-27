@@ -129,7 +129,6 @@ return [
 
     // DataTable
     'Filters' => 'پاڵاوتنەکان',
-    'Search…' => 'گەڕان...',
     'No records found.' => 'هیچ تۆمارێک نەدۆزرایەوە.',
     'records' => 'تۆمار',
     ':count selected' => ':count دیاریکراوە',
@@ -317,6 +316,7 @@ return [
     'Payload' => 'ناوەڕۆک',
     'Summary' => 'پوختە',
     'When' => 'کاتی',
+    'What happened' => 'چی ڕوویداوە',
     'IP' => 'ناونیشانی IP',
     'From' => 'لە',
     'To' => 'بۆ',
