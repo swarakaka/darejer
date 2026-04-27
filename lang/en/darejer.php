@@ -13,7 +13,6 @@ return [
     'Close' => 'Close',
     'Add' => 'Add',
     'Remove' => 'Remove',
-    'Search' => 'Search',
     'Filter' => 'Filter',
     'Reset' => 'Reset',
     'Export' => 'Export',
@@ -21,13 +20,10 @@ return [
     'Continue' => 'Continue',
 
     // Form
-    'Required' => 'Required',
     'Optional' => 'Optional',
-    'Loading' => 'Loading...',
     'Loading…' => 'Loading…',
     'Loading form…' => 'Loading form…',
     'No results' => 'No results found.',
-    'Select' => 'Select...',
     'All' => 'All',
     'Clear' => 'Clear',
     'No data' => 'No data',
@@ -41,21 +37,14 @@ return [
     'General' => 'General',
     'Confirm action' => 'Confirm action',
 
-    // Validation fallback
-    'This field is required' => 'This field is required.',
-
     // Auth
     'Login' => 'Login',
-    'Logout' => 'Logout',
     'Email' => 'Email',
     'Password' => 'Password',
     'Name' => 'Name',
     'Confirm password' => 'Confirm password',
     'New password' => 'New password',
-    'Forgot your password?' => 'Forgot your password?',
     'Forgot password?' => 'Forgot password?',
-    'Reset Password' => 'Reset Password',
-    'Send Reset Link' => 'Send Reset Link',
     'Send reset link' => 'Send reset link',
     'Sign in' => 'Sign in',
     'Sign out' => 'Sign out',
@@ -161,7 +150,6 @@ return [
     // Flash messages
     'Success' => 'Success',
     'Error' => 'Error',
-    'Warning' => 'Warning',
     'Info' => 'Info',
 
     // Field renderers — placeholders & inline labels

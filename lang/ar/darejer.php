@@ -13,7 +13,6 @@ return [
     'Close' => 'إغلاق',
     'Add' => 'إضافة',
     'Remove' => 'إزالة',
-    'Search' => 'بحث',
     'Filter' => 'تصفية',
     'Reset' => 'إعادة تعيين',
     'Export' => 'تصدير',
@@ -21,13 +20,10 @@ return [
     'Continue' => 'متابعة',
 
     // Form
-    'Required' => 'مطلوب',
     'Optional' => 'اختياري',
-    'Loading' => 'جارٍ التحميل...',
     'Loading…' => 'جارٍ التحميل...',
     'Loading form…' => 'جارٍ تحميل النموذج...',
     'No results' => 'لا توجد نتائج.',
-    'Select' => 'اختر...',
     'All' => 'الكل',
     'Clear' => 'مسح',
     'No data' => 'لا توجد بيانات',
@@ -41,21 +37,14 @@ return [
     'General' => 'عام',
     'Confirm action' => 'تأكيد الإجراء',
 
-    // Validation fallback
-    'This field is required' => 'هذا الحقل مطلوب.',
-
     // Auth
     'Login' => 'تسجيل الدخول',
-    'Logout' => 'تسجيل الخروج',
     'Email' => 'البريد الإلكتروني',
     'Password' => 'كلمة المرور',
     'Name' => 'الاسم',
     'Confirm password' => 'تأكيد كلمة المرور',
     'New password' => 'كلمة المرور الجديدة',
-    'Forgot your password?' => 'هل نسيت كلمة المرور؟',
     'Forgot password?' => 'نسيت كلمة المرور؟',
-    'Reset Password' => 'إعادة تعيين كلمة المرور',
-    'Send Reset Link' => 'إرسال رابط الإعادة',
     'Send reset link' => 'إرسال رابط الإعادة',
     'Sign in' => 'تسجيل الدخول',
     'Sign out' => 'تسجيل الخروج',
@@ -160,7 +149,6 @@ return [
     // Flash messages
     'Success' => 'نجاح',
     'Error' => 'خطأ',
-    'Warning' => 'تحذير',
     'Info' => 'معلومة',
 
     // Field renderers — placeholders & inline labels
@@ -316,6 +304,8 @@ return [
     'Reason' => 'السبب',
     'Payload' => 'الحمولة',
     'Summary' => 'الملخص',
+    'Details' => 'التفاصيل',
+    'What happened' => 'ما الذي حدث',
     'When' => 'متى',
     'IP' => 'عنوان IP',
     'From' => 'من',

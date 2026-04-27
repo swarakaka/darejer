@@ -13,7 +13,6 @@ return [
     'Close' => 'داخستن',
     'Add' => 'زیادکردن',
     'Remove' => 'لابردن',
-    'Search' => 'گەڕان',
     'Filter' => 'پاڵاوتن',
     'Reset' => 'ڕێکخستنەوە',
     'Export' => 'هەناردەکردن',
@@ -21,13 +20,10 @@ return [
     'Continue' => 'بەردەوامبوون',
 
     // Form
-    'Required' => 'پێویست',
     'Optional' => 'هەڵبژاردەیی',
-    'Loading' => 'بارکردن...',
     'Loading…' => 'بارکردن...',
     'Loading form…' => 'بارکردنی فۆڕم...',
     'No results' => 'هیچ ئەنجامێک نەدۆزرایەوە.',
-    'Select' => 'هەڵبژاردن...',
     'All' => 'هەموو',
     'Clear' => 'سڕینەوە',
     'No data' => 'هیچ داتایەک نییە',
@@ -41,21 +37,14 @@ return [
     'General' => 'گشتی',
     'Confirm action' => 'پشتڕاستکردنەوەی کردار',
 
-    // Validation fallback
-    'This field is required' => 'ئەم خانەیە پێویستە.',
-
     // Auth
     'Login' => 'چوونەژوورەوە',
-    'Logout' => 'دەرچوون',
     'Email' => 'ئیمەیڵ',
     'Password' => 'وشەی نهێنی',
     'Name' => 'ناو',
     'Confirm password' => 'پشتڕاستکردنەوەی وشەی نهێنی',
     'New password' => 'وشەی نهێنی نوێ',
-    'Forgot your password?' => 'وشەی نهێنیت لەبیر کردووە؟',
     'Forgot password?' => 'وشەی نهێنیت لەبیرچووە؟',
-    'Reset Password' => 'ڕێکخستنەوەی وشەی نهێنی',
-    'Send Reset Link' => 'ناردنی بەستەری ڕێکخستنەوە',
     'Send reset link' => 'ناردنی بەستەری ڕێکخستنەوە',
     'Sign in' => 'چوونەژوورەوە',
     'Sign out' => 'دەرچوون',
@@ -159,7 +148,6 @@ return [
     // Flash messages
     'Success' => 'سەرکەوتوو',
     'Error' => 'هەڵە',
-    'Warning' => 'ئاگاداری',
     'Info' => 'زانیاری',
 
     // Field renderers — placeholders & inline labels
@@ -315,8 +303,9 @@ return [
     'Reason' => 'هۆکار',
     'Payload' => 'ناوەڕۆک',
     'Summary' => 'پوختە',
-    'When' => 'کاتی',
+    'Details' => 'وردەکارییەکان',
     'What happened' => 'چی ڕوویداوە',
+    'When' => 'کاتی',
     'IP' => 'ناونیشانی IP',
     'From' => 'لە',
     'To' => 'بۆ',
