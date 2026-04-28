@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Schema;
+use Spatie\Translatable\HasTranslations;
 
 /**
  * Top-level so PHP autoload doesn't try to resolve the file.
@@ -41,6 +42,25 @@ class SearchableTestPlain extends Model
     public $timestamps = false;
 }
 
+class SearchableTestTranslatable extends Model
+{
+    use HasTranslations, Searchable;
+
+    protected $table = 'searchable_translatable';
+
+    protected $guarded = [];
+
+    public $timestamps = false;
+
+    public array $translatable = ['name'];
+
+    protected array $searchable = ['code', 'name'];
+
+    protected ?string $searchableLabel = 'name';
+
+    protected ?string $searchableSubtitle = 'code';
+}
+
 beforeEach(function (): void {
     Schema::create('searchable_widgets', function (Blueprint $table): void {
         $table->id();
@@ -54,6 +74,14 @@ beforeEach(function (): void {
         $table->string('label')->nullable();
     });
 
+    Schema::create('searchable_translatable', function (Blueprint $table): void {
+        $table->id();
+        $table->string('code')->nullable();
+        $table->json('name')->nullable();
+    });
+
+    config()->set('darejer.languages', ['en', 'ar']);
+
     ModelRegistry::flush();
 });
 
@@ -61,6 +89,7 @@ afterEach(function (): void {
     ModelRegistry::flush();
     Schema::dropIfExists('searchable_widgets');
     Schema::dropIfExists('searchable_plain');
+    Schema::dropIfExists('searchable_translatable');
 });
 
 it('matches records via the LIKE scope across every searchable column', function (): void {
@@ -165,6 +194,32 @@ it('GlobalSearch::search returns nothing for a blank term', function (): void {
 
     expect(GlobalSearch::search(''))
         ->toMatchArray(['query' => '', 'groups' => [], 'total' => 0]);
+});
+
+it('matches translatable JSON columns across every configured locale', function (): void {
+    $arOnly = new SearchableTestTranslatable(['code' => 'T-AR']);
+    $arOnly->setTranslation('name', 'ar', 'سارا');
+    $arOnly->save();
+
+    $enOnly = new SearchableTestTranslatable(['code' => 'T-EN']);
+    $enOnly->setTranslation('name', 'en', 'Sara');
+    $enOnly->save();
+
+    SearchableTestTranslatable::query()->create(['code' => 'T-NA', 'name' => null]);
+
+    expect(SearchableTestTranslatable::query()->searchableTerm('سارا')->pluck('code')->all())->toBe(['T-AR'])
+        ->and(SearchableTestTranslatable::query()->searchableTerm('Sara')->pluck('code')->all())->toBe(['T-EN'])
+        ->and(SearchableTestTranslatable::query()->searchableTerm('T-AR')->pluck('code')->all())->toBe(['T-AR']);
+});
+
+it('falls back to any non-empty locale when rendering a translatable label', function (): void {
+    app()->setLocale('en');
+
+    $row = new SearchableTestTranslatable(['code' => 'T-AR']);
+    $row->setTranslation('name', 'ar', 'سارا');
+    $row->save();
+
+    expect($row->getSearchableLabel())->toBe('سارا');
 });
 
 it('GlobalSearch::search caps results per model via the perModel argument', function (): void {

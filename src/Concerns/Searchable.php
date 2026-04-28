@@ -55,13 +55,52 @@ trait Searchable
         $escaped = str_replace(['!', '%', '_'], ['!!', '!%', '!_'], $term);
         $like = '%'.$escaped.'%';
 
-        return $query->where(function (Builder $q) use ($columns, $like): void {
+        $translatable = method_exists($this, 'getTranslatableAttributes')
+            ? (array) $this->getTranslatableAttributes()
+            : [];
+
+        return $query->where(function (Builder $q) use ($columns, $like, $translatable): void {
             $grammar = $q->getQuery()->getGrammar();
 
             foreach ($columns as $column) {
+                if (in_array($column, $translatable, true)) {
+                    // Translatable attributes are stored as JSON
+                    // ({"en": "...", "ar": "..."}). Search every locale's
+                    // value separately via the grammar's JSON-path wrap
+                    // (`column->locale`) so the match is anchored to the
+                    // actual translation — and so the SQL stays portable
+                    // across MySQL, MariaDB, PostgreSQL and SQLite.
+                    foreach ($this->searchableLocalesFor($column) as $locale) {
+                        $q->orWhereRaw(
+                            $grammar->wrap($column.'->'.$locale)." LIKE ? ESCAPE '!'",
+                            [$like]
+                        );
+                    }
+
+                    continue;
+                }
+
                 $q->orWhereRaw($grammar->wrap($column)." LIKE ? ESCAPE '!'", [$like]);
             }
         });
+    }
+
+    /**
+     * Locales searched on a translatable column. Defaults to the configured
+     * Darejer languages so search covers every UI locale; override on the
+     * model to scope to a subset.
+     *
+     * @return list<string>
+     */
+    protected function searchableLocalesFor(string $column): array
+    {
+        $configured = config('darejer.languages');
+
+        if (is_array($configured) && $configured !== []) {
+            return array_values(array_unique(array_map('strval', $configured)));
+        }
+
+        return [app()->getLocale(), (string) config('app.fallback_locale', 'en')];
     }
 
     /**
@@ -86,13 +125,7 @@ trait Searchable
             ? $this->searchableLabel
             : $this->guessSearchableLabelColumn();
 
-        if ($column === null) {
-            return null;
-        }
-
-        $value = $this->getAttribute($column);
-
-        return ($value === null || $value === '') ? null : (string) $value;
+        return $column === null ? null : $this->resolveSearchableValue($column);
     }
 
     /**
@@ -102,7 +135,36 @@ trait Searchable
     {
         $column = property_exists($this, 'searchableSubtitle') ? $this->searchableSubtitle : null;
 
-        if (! $column) {
+        return $column ? $this->resolveSearchableValue($column) : null;
+    }
+
+    /**
+     * Read a column value, with translatable-attribute awareness so a
+     * record that only carries an `ar` translation still renders with
+     * that text when the active locale is `en` (and vice versa).
+     */
+    private function resolveSearchableValue(string $column): ?string
+    {
+        if (method_exists($this, 'isTranslatableAttribute') && $this->isTranslatableAttribute($column)) {
+            // Spatie returns '' for an empty/missing locale once fallback
+            // is exhausted, so we have to walk the translations bag
+            // ourselves to surface a value from any locale that has one.
+            $translations = method_exists($this, 'getTranslations')
+                ? (array) $this->getTranslations($column)
+                : [];
+
+            foreach ([app()->getLocale(), config('app.fallback_locale'), config('darejer.default_language', 'en')] as $locale) {
+                if ($locale && ! empty($translations[$locale])) {
+                    return (string) $translations[$locale];
+                }
+            }
+
+            foreach ($translations as $value) {
+                if ($value !== null && $value !== '') {
+                    return (string) $value;
+                }
+            }
+
             return null;
         }
 
