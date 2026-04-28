@@ -317,4 +317,16 @@ return [
     ':n events' => ':n ڕووداو',
     'No audit events match the current filters.' => 'هیچ ڕووداوێکی چالاکی لەگەڵ پاڵاوتنەکانی ئێستا نەگونجاوە.',
     'Showing the most recent :n events. Narrow the filters to see older entries.' => 'پیشاندانی نوێترین :n ڕووداو. پاڵاوتنەکان تەسک بکەرەوە بۆ بینینی تۆمارە کۆنەکان.',
+
+    // Notifications
+    'Recent alerts and updates for your account.' => 'ئاگاداری و نوێکارییە دواییەکانی هەژمارەکەت.',
+    'Mark all read' => 'هەمووی وەک خوێندراوە دیاری بکە',
+    'You\'re all caught up' => 'هەمووت بینیوە',
+    'New notifications will appear here.' => 'ئاگادارییە نوێیەکان لێرە دەردەکەون.',
+    'Delete notification' => 'سڕینەوەی ئاگاداری',
+    'Open' => 'کردنەوە',
+    'just now' => 'ئێستا',
+    ':n min ago' => ':n خولەک پێش ئێستا',
+    ':n h ago' => ':n کاتژمێر پێش ئێستا',
+    ':n d ago' => ':n ڕۆژ پێش ئێستا',
 ];
