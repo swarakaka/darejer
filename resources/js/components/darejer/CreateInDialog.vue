@@ -122,7 +122,7 @@ function onCreated(payload: { url: string | null; flash: unknown }) {
             style="max-width: 36rem"
         >
             <DialogHeader class="shrink-0 px-5 py-4 border-b border-paper-200 bg-paper-75">
-                <DialogTitle class="font-serif text-xl">
+                <DialogTitle class="text-xl">
                     {{ fetched?.title ?? __('Loading…') }}
                 </DialogTitle>
             </DialogHeader>

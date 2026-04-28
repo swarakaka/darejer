@@ -157,7 +157,7 @@ function badgeClass(color?: string): string {
                     }"
                 >
                     <div class="w-7 h-7 rounded-sm bg-brand-600 flex items-center justify-center shrink-0">
-                        <span class="font-serif text-white text-base leading-none translate-y-[1px]">D</span>
+                        <span class="text-white text-base leading-none translate-y-[1px]">D</span>
                     </div>
                     <span
                         v-if="!collapsed"

@@ -158,7 +158,7 @@ watch(() => props.filters, (next) => {
         <div class="flex items-start justify-between gap-6 px-6 pt-5 pb-4 border-b border-paper-200 shrink-0">
             <div class="flex flex-col min-w-0">
                 <AppBreadcrumbs class="mb-3" />
-                <h1 class="font-serif text-[1.75rem] leading-[1.1] tracking-tight text-ink-900">
+                <h1 class="text-[1.75rem] leading-[1.1] tracking-tight text-ink-900">
                     {{ title }}
                 </h1>
             </div>
@@ -382,7 +382,7 @@ watch(() => props.filters, (next) => {
         <Sheet :open="sheetOpen" @update:open="sheetOpen = $event">
             <SheetContent class="w-full sm:max-w-xl flex flex-col gap-0 p-0 overflow-hidden" side="right">
                 <SheetHeader class="shrink-0 px-5 py-4 border-b border-paper-200 bg-paper-75 text-start">
-                    <SheetTitle class="font-serif text-xl text-ink-900">
+                    <SheetTitle class="text-xl text-ink-900">
                         {{ __('Audit Event') }}
                         <span v-if="selected" class="text-ink-400 tabular-nums">#{{ selected.id }}</span>
                     </SheetTitle>

@@ -30,11 +30,11 @@ function submit() {
         <div class="flex flex-col items-center gap-6 text-center">
             <div class="flex items-center gap-2.5">
                 <div class="w-6 h-6 rounded-sm bg-brand-600 flex items-center justify-center">
-                    <span class="font-serif text-white text-base leading-none translate-y-[1px]">D</span>
+                    <span class="text-white text-base leading-none translate-y-[1px]">D</span>
                 </div>
                 <span class="text-sm font-medium tracking-[0.24em] uppercase text-ink-700">Darejer</span>
             </div>
-            <h1 class="font-serif text-3xl leading-tight text-ink-900 tracking-tight">
+            <h1 class="text-3xl leading-tight text-ink-900 tracking-tight">
                 {{ __('Register') }}
             </h1>
         </div>

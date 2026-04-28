@@ -67,7 +67,7 @@ withDefaults(defineProps<{
         <div class="flex items-start justify-between gap-6 px-6 pt-5 pb-4 border-b border-paper-200 shrink-0 bg-white">
             <div class="flex flex-col min-w-0">
                 <AppBreadcrumbs class="mb-3" />
-                <h1 class="font-serif text-[1.75rem] leading-[1.1] tracking-tight text-ink-900">
+                <h1 class="text-[1.75rem] leading-[1.1] tracking-tight text-ink-900">
                     {{ title }}
                 </h1>
             </div>
@@ -78,7 +78,7 @@ withDefaults(defineProps<{
 
             <!-- KPI strip -->
             <section
-                v-if="kpis.length"
+                v-if="kpis?.length"
                 class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-7 gap-3"
             >
                 <KpiCard
@@ -97,7 +97,7 @@ withDefaults(defineProps<{
 
             <!-- Charts grid -->
             <section
-                v-if="charts.length"
+                v-if="charts?.length"
                 class="grid grid-cols-1 lg:grid-cols-2 gap-4"
             >
                 <div
@@ -107,7 +107,7 @@ withDefaults(defineProps<{
                     :class="(c.span ?? 1) === 2 ? 'lg:col-span-2' : ''"
                 >
                     <div class="flex items-baseline justify-between mb-3">
-                        <h2 class="font-serif text-base text-ink-700">{{ c.title }}</h2>
+                        <h2 class="text-base text-ink-700">{{ c.title }}</h2>
                     </div>
 
                     <LineChart
@@ -139,7 +139,7 @@ withDefaults(defineProps<{
 
             <!-- Side-by-side list panels -->
             <section
-                v-if="lists.length"
+                v-if="lists?.length"
                 class="grid grid-cols-1 lg:grid-cols-2 gap-4"
             >
                 <div
@@ -148,7 +148,7 @@ withDefaults(defineProps<{
                     class="bg-white border border-paper-200 rounded-md overflow-hidden"
                 >
                     <div class="flex items-baseline justify-between px-4 py-3 border-b border-paper-200">
-                        <h2 class="font-serif text-base text-ink-700">{{ panel.title }}</h2>
+                        <h2 class="text-base text-ink-700">{{ panel.title }}</h2>
                         <a v-if="panel.href" :href="panel.href" class="text-xs text-brand-600 hover:text-brand-700">{{ __('View all') }} →</a>
                     </div>
                     <table v-if="panel.rows.length" class="w-full text-sm">
@@ -187,7 +187,7 @@ withDefaults(defineProps<{
                 </div>
             </section>
 
-            <div v-if="!kpis.length && !charts.length && !lists.length" class="text-center text-ink-400 py-16 text-sm">
+            <div v-if="!kpis?.length && !charts?.length && !lists?.length" class="text-center text-ink-400 py-16 text-sm">
                 {{ __('Dashboard is empty. Wire props from your DashboardController.') }}
             </div>
 
