@@ -153,8 +153,8 @@ return [
     'uploaded' => 'بارکردنی :attribute سەرکەوتوو نەبوو.',
     'uppercase' => 'پێویستە خانەی :attribute بە پیتی گەورە بێت.',
     'url' => 'پێویستە خانەی :attribute بەستەرێکی دروست بێت.',
-    'ulid' => 'پێویستە خانەی :attribute ناسنامەی ULID-ی دروست بێت.',
-    'uuid' => 'پێویستە خانەی :attribute ناسنامەی UUID-ی دروست بێت.',
+    'ulid' => 'پێویستە خانەی :attribute پێناسی ULID-ی دروست بێت.',
+    'uuid' => 'پێویستە خانەی :attribute پێناسی UUID-ی دروست بێت.',
 
     'custom' => [
         'attribute-name' => [
