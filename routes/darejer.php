@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use Darejer\Http\Controllers\AlertsController;
 use Darejer\Http\Controllers\DashboardController;
 use Darejer\Http\Controllers\DataController;
+use Darejer\Http\Controllers\SearchController;
 
 // ── Authenticated routes ────────────────────────────────────────────────────
 //
@@ -29,6 +30,10 @@ Route::prefix(config('darejer.route_prefix', 'darejer'))
         // Single-field update — used by Kanban drag+drop
         Route::patch('/data/{model}/{id}', [DataController::class, 'update'])
             ->name('data.update');
+
+        // Global search — feeds the topbar quick-jump. Walks every
+        // ModelRegistry entry that uses the Searchable trait.
+        Route::get('/search', [SearchController::class, 'index'])->name('search');
 
         // Per-user notifications. The list + count endpoints feed the
         // topbar Bell + slideover; live updates arrive over the
