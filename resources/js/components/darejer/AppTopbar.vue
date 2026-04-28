@@ -10,8 +10,9 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { LogOut, Search, Bell, Command, Globe, Menu } from 'lucide-vue-next'
+import { LogOut, Bell, Globe, Menu } from 'lucide-vue-next'
 import AppNotifications            from '@/components/darejer/AppNotifications.vue'
+import AppGlobalSearch             from '@/components/darejer/AppGlobalSearch.vue'
 import { useLanguages }            from '@/composables/useLanguages'
 import { useAlerts }               from '@/composables/useAlerts'
 import { useSidebar }              from '@/composables/useSidebar'
@@ -67,29 +68,8 @@ function logout() {
             <Menu class="w-4 h-4" />
         </button>
 
-        <!-- Search -->
-        <div class="flex-1 max-w-md min-w-0">
-            <div class="relative group">
-                <Search
-                    class="absolute inset-s-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5
-                           text-ink-400 group-focus-within:text-brand-600 transition-colors"
-                />
-                <input
-                    type="search"
-                    :placeholder="__('Search records, screens, or run a command…')"
-                    class="w-full h-8 ps-8 pe-14 text-sm bg-paper-100/70 border-none rounded-sm
-                           placeholder:text-ink-400 focus:outline-none focus:bg-white
-                           focus:ring-1 focus:ring-brand-500/50 transition-all"
-                />
-                <kbd
-                    class="absolute inset-e-2 top-1/2 -translate-y-1/2 hidden md:flex items-center gap-1
-                           text-2xs font-medium text-ink-400 bg-paper-200/70
-                           border border-paper-300 rounded-sm px-1 h-4.5 tabular-nums"
-                >
-                    <Command class="w-2.5 h-2.5" />K
-                </kbd>
-            </div>
-        </div>
+        <!-- Global search -->
+        <AppGlobalSearch />
 
         <!-- Right rail (becomes left rail in RTL via `ms-auto`) -->
         <div class="flex items-center gap-1 ms-auto">
