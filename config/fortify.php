@@ -23,7 +23,7 @@ return [
     | Username / Email
     |--------------------------------------------------------------------------
     */
-    'username' => 'email',
+    'username' => 'username',
     'email'    => 'email',
 
     /*

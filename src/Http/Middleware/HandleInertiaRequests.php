@@ -99,7 +99,7 @@ class HandleInertiaRequests extends Middleware
     {
         return [
             'id' => $user->id,
-            'name' => $user->name,
+            'username' => $user->username,
             'email' => $user->email,
             'permissions' => method_exists($user, 'darejerPermissions')
                 ? $user->darejerPermissions()

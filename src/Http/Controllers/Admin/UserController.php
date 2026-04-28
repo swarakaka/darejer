@@ -49,7 +49,7 @@ class UserController extends DarejerController
             ])
             ->columns([
                 Column::make('id')->label('#')->width('80px')->sortable(),
-                Column::make('name')->label(__darejer('Name'))->sortable()->searchable(),
+                Column::make('username')->label(__darejer('Username'))->sortable()->searchable(),
                 Column::make('email')->label(__darejer('Email'))->sortable()->searchable(),
                 Column::make('roles_csv')->label(__darejer('Roles'))
                     ->displayUsing(fn ($user) => $user->roles->pluck('name')->join(', ') ?: '—'),
@@ -59,6 +59,7 @@ class UserController extends DarejerController
                 Column::make('created_at')->label(__darejer('Created'))->sortable()->dateTime(),
             ])
             ->filters([
+                Filter::text('username')->label(__darejer('Username')),
                 Filter::text('email')->label(__darejer('Email')),
             ])
             ->headerActions([
@@ -100,7 +101,7 @@ class UserController extends DarejerController
         $record = $this->userModel()::query()->with('roles')->findOrFail($user);
 
         return $this->form()
-            ->title(__darejer('Edit User').' — '.$record->name)
+            ->title(__darejer('Edit User').' — '.$record->username)
             ->record(array_merge($record->toArray(), [
                 'role_ids' => $record->roles->pluck('id')->all(),
                 'password' => '',
@@ -124,7 +125,7 @@ class UserController extends DarejerController
         $userModel = $this->userModel();
         $user = new $userModel;
         $user->fill([
-            'name' => $data['name'],
+            'username' => $data['username'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
         ]);
@@ -152,7 +153,7 @@ class UserController extends DarejerController
         $record = $this->userModel()::query()->findOrFail($user);
         $data = $this->validateRequest($request, $record);
 
-        $record->name = $data['name'];
+        $record->username = $data['username'];
         $record->email = $data['email'];
 
         if (! empty($data['password'])) {
@@ -198,7 +199,7 @@ class UserController extends DarejerController
         $hasSuperAdmin = in_array('is_super_admin', (new $userModel)->getFillable(), true);
 
         $components = [
-            TextInput::make('name')->label(__darejer('Name'))->required()->maxLength(191),
+            TextInput::make('username')->label(__darejer('Username'))->required()->maxLength(191),
             TextInput::make('email')->label(__darejer('Email'))->email()->required()->maxLength(191),
             TextInput::make('password')->label(__darejer('Password'))->password()
                 ->hint(__darejer('Leave blank to keep the current password.')),
@@ -227,7 +228,7 @@ class UserController extends DarejerController
             ])
             ->components($components)
             ->sections([
-                Section::make(__darejer('Identity'))->components(['name', 'email']),
+                Section::make(__darejer('Identity'))->components(['username', 'email']),
                 Section::make(__darejer('Password'))->components(['password', 'password_confirmation']),
                 Section::make(__darejer('Access'))
                     ->components(array_values(array_filter([
@@ -248,7 +249,10 @@ class UserController extends DarejerController
         $isUpdate = $existing !== null;
 
         return $request->validate([
-            'name' => ['required', 'string', 'max:191'],
+            'username' => [
+                'required', 'string', 'max:191',
+                Rule::unique($table, 'username')->ignore($userId)->whereNull('deleted_at'),
+            ],
             'email' => [
                 'required', 'email', 'max:191',
                 Rule::unique($table, 'email')->ignore($userId)->whereNull('deleted_at'),

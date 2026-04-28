@@ -143,18 +143,18 @@ function logout() {
                         <AvatarFallback
                             class="bg-brand-600 text-white text-[10px] font-semibold tracking-wider tabular-nums"
                         >
-                            {{ initials(page.props.auth.user.name) }}
+                            {{ initials(page.props.auth.user.username) }}
                         </AvatarFallback>
                     </Avatar>
                     <div class="hidden md:flex flex-col items-start leading-tight">
-                        <span class="text-xs font-medium text-ink-800">{{ page.props.auth.user.name }}</span>
+                        <span class="text-xs font-medium text-ink-800">{{ page.props.auth.user.username }}</span>
                         <span class="text-[10px] font-semibold uppercase tracking-[0.18em] text-ink-400">{{ __('Admin') }}</span>
                     </div>
                 </DropdownMenuTrigger>
 
                 <DropdownMenuContent align="end" class="w-56">
                     <DropdownMenuLabel class="font-normal px-3 py-2">
-                        <p class="text-sm font-medium text-ink-800">{{ page.props.auth.user.name }}</p>
+                        <p class="text-sm font-medium text-ink-800">{{ page.props.auth.user.username }}</p>
                         <p class="text-xs text-ink-400 mt-0.5 tabular-nums">{{ page.props.auth.user.email }}</p>
                     </DropdownMenuLabel>
                     <DropdownMenuSeparator />
