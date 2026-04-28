@@ -26,9 +26,13 @@ class Column
 
     protected ?string $badge = null;
 
-    protected ?string $displayType = null;   // 'date' | 'datetime' | 'plain' | …
+    protected ?string $displayType = null;   // 'date' | 'datetime' | 'boolean' | 'plain' | …
 
     protected ?string $dateFormat = null;   // PHP date() format string
+
+    protected ?string $booleanTrueLabel = null;
+
+    protected ?string $booleanFalseLabel = null;
 
     protected function __construct(string $field)
     {
@@ -143,6 +147,20 @@ class Column
         return $this;
     }
 
+    /**
+     * Render the column value as a boolean. The raw value is coerced to bool
+     * server-side and replaced with the corresponding label so the frontend
+     * receives a ready-to-display string.
+     */
+    public function boolean(?string $trueLabel = null, ?string $falseLabel = null): static
+    {
+        $this->displayType = 'boolean';
+        $this->booleanTrueLabel = $trueLabel ?? __('Yes');
+        $this->booleanFalseLabel = $falseLabel ?? __('No');
+
+        return $this;
+    }
+
     /** Override the auto-resolved display type. e.g. 'plain' to opt out. */
     public function display(string $type, ?string $format = null): static
     {
@@ -167,6 +185,16 @@ class Column
     public function getDateFormat(): ?string
     {
         return $this->dateFormat;
+    }
+
+    public function getBooleanTrueLabel(): ?string
+    {
+        return $this->booleanTrueLabel;
+    }
+
+    public function getBooleanFalseLabel(): ?string
+    {
+        return $this->booleanFalseLabel;
     }
 
     public function getDisplayUsing(): ?Closure

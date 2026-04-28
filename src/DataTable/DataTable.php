@@ -199,6 +199,14 @@ class DataTable
             ->mapWithKeys(fn (Column $c) => [$c->getField() => $c->getDateFormat() ?: 'Y-m-d'])
             ->all();
 
+        $booleanColumns = collect($this->columns)
+            ->filter(fn (Column $c) => $c->getDisplayType() === 'boolean')
+            ->mapWithKeys(fn (Column $c) => [$c->getField() => [
+                'true' => $c->getBooleanTrueLabel() ?? __('Yes'),
+                'false' => $c->getBooleanFalseLabel() ?? __('No'),
+            ]])
+            ->all();
+
         $displayUsingColumns = collect($this->columns)
             ->mapWithKeys(function (Column $column): array {
                 $callback = $column->getDisplayUsing();
@@ -211,7 +219,7 @@ class DataTable
             })
             ->all();
 
-        $data = collect($paginated->items())->map(function ($item) use ($dateColumns, $displayUsingColumns) {
+        $data = collect($paginated->items())->map(function ($item) use ($dateColumns, $booleanColumns, $displayUsingColumns) {
             $arr = $item->toArray();
 
             if (method_exists($item, 'getTranslatableAttributes')) {
@@ -233,6 +241,15 @@ class DataTable
                     // Leave the raw value if it isn't parseable — surfaces
                     // bad data instead of hiding it.
                 }
+            }
+
+            foreach ($booleanColumns as $field => $labels) {
+                if (! array_key_exists($field, $arr)) {
+                    continue;
+                }
+                $arr[$field] = filter_var($arr[$field], FILTER_VALIDATE_BOOLEAN)
+                    ? $labels['true']
+                    : $labels['false'];
             }
 
             foreach ($displayUsingColumns as $field => $callback) {
