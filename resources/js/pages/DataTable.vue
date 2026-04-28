@@ -247,22 +247,11 @@ function executeConfirmed() {
   confirmOpen.value = false
 }
 
-function formatCell(value: unknown, col: unknown): unknown {
-  if (!col) return value
-  if (col === 'id') return value
+function formatCell(value: unknown, col: Object|unknown): unknown {
 
-  if (typeof value === 'boolean') {
-    return value ? __('Yes') : __('No')
-  }
-  if (value === 0 || value === 1) {
-    return value === 1 ? __('Yes') : __('No')
-  }
-  if (value === '0' || value === '1') {
-    return value === '1' ? __('Yes') : __('No')
-  }
-  if (value === 'true' || value === 'false') {
-    return value === 'true' ? __('Yes') : __('No')
-  }
+  //if (!col) return value
+  //if (col?.field === 'id') return value
+
   return value
 }
 
@@ -516,10 +505,10 @@ const resolveIcon = (name?: string) => name ? (iconMap[name] ?? null) : null
                                                text-2xs font-semibold uppercase tracking-wide border"
                                         :class="badgeClass(col, row[col.field])"
                                     >
-                                        {{ formatCell(row[col.field], col.field) }}
+                                        {{ formatCell(row[col.field], col) }}
                                     </span>
                 <span v-else class="block truncate max-w-xs">
-                                        {{ formatCell(row[col.field], col.field) ?? '—' }}
+                                        {{ formatCell(row[col.field], col) ?? '—' }}
                                     </span>
               </td>
 

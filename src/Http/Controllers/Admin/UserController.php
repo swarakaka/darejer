@@ -55,7 +55,7 @@ class UserController extends DarejerController
                     ->displayUsing(fn ($user) => $user->roles->pluck('name')->join(', ') ?: '—'),
                 Column::make('is_super_admin')->label(__darejer('Super Admin'))
                     ->badge(['1' => 'success', '0' => 'muted'])
-                    ->displayUsing(fn ($user) => (bool) ($user->is_super_admin ?? false) ? '1' : '0'),
+                    ->displayUsing(fn ($user) => (bool) ($user->is_super_admin ?? false) ? ('Yes') : __('No')),
                 Column::make('created_at')->label(__darejer('Created'))->sortable()->dateTime(),
             ])
             ->filters([
