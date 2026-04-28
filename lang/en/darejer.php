@@ -39,7 +39,11 @@ return [
 
     // Auth
     'Login' => 'Login',
+    'Register' => 'Register',
     'Email' => 'Email',
+    'Username' => 'Username',
+    'your.username' => 'Your Username',
+    'The username may only contain English letters.' => 'The username may only contain English letters.',
     'Password' => 'Password',
     'Name' => 'Name',
     'Confirm password' => 'Confirm password',

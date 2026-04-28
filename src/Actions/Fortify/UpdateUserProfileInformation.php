@@ -18,13 +18,15 @@ class UpdateUserProfileInformation implements UpdatesUserProfileInformation
     {
         Validator::make($input, [
             'username' => [
-                'required', 'string', 'max:255',
+                'required', 'string', 'max:255', 'regex:/^[A-Za-z]+$/',
                 Rule::unique('users')->ignore($user->id),
             ],
             'email' => [
                 'required', 'string', 'email', 'max:255',
                 Rule::unique('users')->ignore($user->id),
             ],
+        ], [
+            'username.regex' => __darejer('The username may only contain English letters.'),
         ])->validateWithBag('updateProfileInformation');
 
         if ($input['email'] !== $user->email && $user instanceof MustVerifyEmail) {
