@@ -12,6 +12,7 @@ use Illuminate\Contracts\Http\Kernel;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Translation\FileLoader;
 use Spatie\Permission\Models\Permission as SpatiePermission;
 use Spatie\Permission\Models\Role as SpatieRole;
 
@@ -72,6 +73,37 @@ class DarejerServiceProvider extends ServiceProvider
 
         $this->loadRoutesFrom(__DIR__.'/../routes/darejer.php');
         $this->loadTranslationsFrom(__DIR__.'/../lang', 'darejer');
+
+        // Also register the package's lang folder against the default
+        // (un-namespaced) loader paths so Laravel's validator — which calls
+        // `trans('validation.*')` without a namespace — picks up the
+        // package-shipped messages for locales the host hasn't translated
+        // (e.g. ckb). Inserted before the host's `lang_path` so the
+        // host's own `lang/{locale}/*.php` files still win on conflict
+        // (FileLoader merges later paths over earlier ones).
+        $this->loadJsonTranslationsFrom(__DIR__.'/../lang');
+        $this->callAfterResolving('translation.loader', function ($loader) {
+            if (! $loader instanceof FileLoader) {
+                return;
+            }
+
+            $packageLang = __DIR__.'/../lang';
+            $reflection = new \ReflectionProperty($loader, 'paths');
+            $paths = $reflection->getValue($loader);
+
+            if (in_array($packageLang, $paths, true)) {
+                return;
+            }
+
+            $hostIndex = array_search(lang_path(), $paths, true);
+
+            if ($hostIndex === false) {
+                $loader->addPath($packageLang);
+            } else {
+                array_splice($paths, $hostIndex, 0, [$packageLang]);
+                $reflection->setValue($loader, $paths);
+            }
+        });
 
         // Zero-config: auto-load shipped migrations (alerts, etc.) so host
         // apps just `php artisan migrate` — no `vendor:publish` needed.

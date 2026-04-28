@@ -33,7 +33,7 @@ return [
     'Verifying' => 'پشکنین...',
     'Creating' => 'دروستکردن...',
     'Reconciling' => 'ڕێکخستنەوە...',
-    'Unsaved changes' => 'گۆڕانکارییە پاشەکەوت نەکراوەکان',
+    'Unsaved changes' => 'گۆڕانکاریی پاشەکەوت نەکراو هەیە',
     'General' => 'گشتی',
     'Confirm action' => 'پشتڕاستکردنەوەی کردار',
 
