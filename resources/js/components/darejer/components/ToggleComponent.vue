@@ -33,9 +33,9 @@ function onChange(val: boolean) {
             <div class="flex items-center gap-2 h-8.5">
                 <Switch
                     :id="component.name"
-                    :checked="checked"
+                    :modelValue="checked"
                     :disabled="(component.disabled as boolean)"
-                    @update:checked="onChange"
+                    @update:modelValue="onChange"
                 />
                 <label
                     :for="component.name"
