@@ -38,6 +38,8 @@ class Combobox extends BaseComponent
 
     protected ?array $staticOptions = null;
 
+    protected ?string $reloadParam = null;
+
     /**
      * Bind to an Eloquent model — Darejer auto-generates the dataUrl.
      *
@@ -214,6 +216,21 @@ class Combobox extends BaseComponent
         return $this;
     }
 
+    /**
+     * Reload the current page via Inertia when a value is selected, passing
+     * the chosen id as the given query parameter. Lets server-side `create`
+     * controllers prefill related fields (e.g. line items from a Sales
+     * Order's `?from_order=<id>` param) without bespoke frontend wiring.
+     *
+     * No-op for multi-select comboboxes.
+     */
+    public function reloadOnSelect(string $paramName): static
+    {
+        $this->reloadParam = $paramName;
+
+        return $this;
+    }
+
     protected function componentType(): string
     {
         return 'Combobox';
@@ -234,6 +251,7 @@ class Combobox extends BaseComponent
             'placeholder' => $this->placeholder,
             'keyField' => $this->keyField,
             'labelField' => $this->labelField,
+            'reloadParam' => $this->reloadParam,
         ];
     }
 }

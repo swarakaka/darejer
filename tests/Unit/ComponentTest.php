@@ -93,3 +93,20 @@ it('lets clearable be turned off', function () {
 
     expect($array)->toHaveKey('clearable', false);
 });
+
+it('omits reloadParam by default', function () {
+    $array = Combobox::make('country')
+        ->options(['us' => 'United States'])
+        ->toArray();
+
+    expect($array)->not->toHaveKey('reloadParam');
+});
+
+it('serializes reloadParam when reloadOnSelect is set', function () {
+    $array = Combobox::make('sales_order_id')
+        ->options(['1' => 'SO-001'])
+        ->reloadOnSelect('from_order')
+        ->toArray();
+
+    expect($array)->toHaveKey('reloadParam', 'from_order');
+});
