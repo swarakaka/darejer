@@ -162,6 +162,12 @@ return [
         ],
     ],
 
-    'attributes' => [],
+    'attributes' => [
+        'username' => 'ناوی بەکارهێنەر',
+        'email' => 'ئیمەیڵ',
+        'role_ids' => 'ڕۆڵەکان',
+        'is_super_admin' => 'بەڕێوەبەری گشتی',
+        'password' => 'تێپەڕەوشە',
+    ],
 
 ];
