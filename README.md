@@ -45,8 +45,6 @@ The package serializes your PHP screen definitions to Inertia page props, which 
 composer require swarakaka/darejer
 php artisan darejer:install
 php artisan vendor:publish --tag=darejer-assets
-npm install
-npm run build
 ```
 
 ---
