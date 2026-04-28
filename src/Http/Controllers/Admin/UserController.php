@@ -250,7 +250,7 @@ class UserController extends DarejerController
 
         return $request->validate([
             'username' => [
-                'required', 'string', 'max:191', 'regex:/^[A-Za-z]+$/',
+                'required', 'string', 'min:3', 'max:191', 'regex:/^[A-Za-z]+$/',
                 Rule::unique($table, 'username')->ignore($userId)->whereNull('deleted_at'),
             ],
             'email' => [
