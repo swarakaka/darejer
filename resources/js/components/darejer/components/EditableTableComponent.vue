@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { Plus, Trash2, GripVertical } from 'lucide-vue-next'
 import { VueDraggable } from 'vue-draggable-plus'
 import FieldWrapper from '@/components/darejer/FieldWrapper.vue'
@@ -48,8 +48,10 @@ const isDisabled  = computed(() => !!props.component.disabled)
 const maxRows     = computed(() => props.component.maxRows as number | undefined)
 const defaultRow  = computed(() => (props.component.defaultRow as Record<string, unknown>) ?? {})
 
-const rawValue = (props.formData ?? props.record)[props.component.name]
-    ?? props.component.default ?? []
+const externalValue = computed(() =>
+    (props.formData ?? props.record)[props.component.name]
+        ?? props.component.default ?? []
+)
 
 function buildBlankRow(): TableRow {
     return {
@@ -60,8 +62,8 @@ function buildBlankRow(): TableRow {
     } as TableRow
 }
 
-function parseInitial(): TableRow[] {
-    const arr = Array.isArray(rawValue) ? rawValue : []
+function buildRowsFrom(value: unknown): TableRow[] {
+    const arr = Array.isArray(value) ? value : []
     const seeded = arr.map((row: Record<string, unknown>) => ({ ...row, _id: nextId++ }))
 
     // Airtable-style UX: always keep one empty row at the bottom so the
@@ -82,7 +84,12 @@ function isRowBlank(row: TableRow): boolean {
     return true
 }
 
-const rows = ref<TableRow[]>(parseInitial())
+const rows = ref<TableRow[]>(buildRowsFrom(externalValue.value))
+
+// Track the last array we emitted so we can ignore the parent's echo when it
+// writes our own emission back into formData. Anything other than that exact
+// reference is a real external change (e.g. a prefill) and replaces our rows.
+let lastEmitted: unknown = null
 
 function emitValue() {
     // Strip a single trailing blank row (the editable placeholder) before
@@ -90,8 +97,14 @@ function emitValue() {
     const last     = rows.value[rows.value.length - 1]
     const payload  = last && isRowBlank(last) ? rows.value.slice(0, -1) : rows.value
     const cleaned  = payload.map(({ _id, ...rest }) => rest)
+    lastEmitted = cleaned
     emit('update', props.component.name, cleaned)
 }
+
+watch(externalValue, (next) => {
+    if (next === lastEmitted) return
+    rows.value = buildRowsFrom(next)
+})
 
 function ensureTrailingBlankRow() {
     if (!isAddable.value)                            return

@@ -119,6 +119,21 @@ function handleFieldUpdate(name: string, value: unknown) {
     }
 }
 
+/**
+ * Combobox prefill: a child component (e.g. a Sales Order combobox with
+ * `prefillFrom(...)`) returned a record from the server. Merge each key
+ * into form state via the same updateField path so dirty-tracking and
+ * cascading-reset behave normally.
+ */
+function handlePrefill(fields: Record<string, unknown>) {
+    let cascade = false
+    for (const [name, value] of Object.entries(fields)) {
+        updateField(name, value)
+        if (controllerFields.value.has(name)) cascade = true
+    }
+    if (cascade) cascadeResetHidden()
+}
+
 function isSectionVisible(section: ScreenSection): boolean {
     return evaluateDependOn(section.dependOn, formData)
 }
@@ -228,6 +243,7 @@ const dialogSizeMap: Record<string, string> = {
                             :form-data="formData"
                             class="flex-1 min-h-0"
                             @update="handleFieldUpdate"
+                            @prefill="handlePrefill"
                         />
                     </div>
                 </template>
@@ -262,6 +278,7 @@ const dialogSizeMap: Record<string, string> = {
                                             :errors="mergedErrors"
                                             :form-data="formData"
                                             @update="handleFieldUpdate"
+                                            @prefill="handlePrefill"
                                         />
                                     </div>
                                 </section>
@@ -305,6 +322,7 @@ const dialogSizeMap: Record<string, string> = {
                                     :errors="mergedErrors"
                                     :form-data="formData"
                                     @update="handleFieldUpdate"
+                                    @prefill="handlePrefill"
                                 />
                             </div>
                         </div>
@@ -339,6 +357,7 @@ const dialogSizeMap: Record<string, string> = {
                                         :errors="mergedErrors"
                                         :form-data="formData"
                                         @update="handleFieldUpdate"
+                                        @prefill="handlePrefill"
                                     />
                                 </div>
                             </div>
@@ -371,6 +390,7 @@ const dialogSizeMap: Record<string, string> = {
                             :errors="mergedErrors"
                             :form-data="formData"
                             @update="handleFieldUpdate"
+                            @prefill="handlePrefill"
                         />
                     </div>
                 </div>

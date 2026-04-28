@@ -94,19 +94,19 @@ it('lets clearable be turned off', function () {
     expect($array)->toHaveKey('clearable', false);
 });
 
-it('omits reloadParam by default', function () {
+it('omits prefillUrl by default', function () {
     $array = Combobox::make('country')
         ->options(['us' => 'United States'])
         ->toArray();
 
-    expect($array)->not->toHaveKey('reloadParam');
+    expect($array)->not->toHaveKey('prefillUrl');
 });
 
-it('serializes reloadParam when reloadOnSelect is set', function () {
+it('serializes prefillUrl when prefillFrom is set', function () {
     $array = Combobox::make('sales_order_id')
         ->options(['1' => 'SO-001'])
-        ->reloadOnSelect('from_order')
+        ->prefillFrom('/darejer/sales/sales-invoices/prefill-from-order')
         ->toArray();
 
-    expect($array)->toHaveKey('reloadParam', 'from_order');
+    expect($array)->toHaveKey('prefillUrl', '/darejer/sales/sales-invoices/prefill-from-order');
 });

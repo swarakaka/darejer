@@ -43,7 +43,10 @@ const props = defineProps<{
     formData?: Record<string, unknown>
 }>()
 
-const emit = defineEmits<{ (e: 'update', name: string, value: unknown): void }>()
+const emit = defineEmits<{
+    (e: 'update', name: string, value: unknown): void
+    (e: 'prefill', fields: Record<string, unknown>): void
+}>()
 
 const { __ } = useTranslation()
 
@@ -97,6 +100,7 @@ const resolvedComponent = computed(() => componentMap[props.component.type] ?? n
             :errors="errors"
             :form-data="formData"
             @update="(name: string, value: unknown) => emit('update', name, value)"
+            @prefill="(fields: Record<string, unknown>) => emit('prefill', fields)"
         />
     </div>
     <div

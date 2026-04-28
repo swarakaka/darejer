@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, watch, onMounted } from 'vue'
-import { router }           from '@inertiajs/vue3'
+import { useHttp }          from '@inertiajs/vue3'
 import { useDataUrl }       from '@/composables/useDataUrl'
 import {
     Command,
@@ -31,7 +31,10 @@ const props = defineProps<{
     formData?: Record<string, unknown>
 }>()
 
-const emit = defineEmits<{ (e: 'update', name: string, value: unknown): void }>()
+const emit = defineEmits<{
+    (e: 'update', name: string, value: unknown): void
+    (e: 'prefill', fields: Record<string, unknown>): void
+}>()
 
 type Option = { value: string; label: string }
 
@@ -126,28 +129,28 @@ function toggle(value: string) {
         isMultiple.value ? selected.value : (selected.value[0] ?? null)
     )
 
-    maybeReloadWithParam(selected.value[0] ?? null)
+    maybePrefillFromUrl(selected.value[0] ?? null)
 }
 
+const prefillHttp = useHttp<Record<string, never>, Record<string, unknown>>()
+
 /**
- * When `reloadParam` is set on a single-select combobox, picking a value
- * triggers an Inertia visit that adds the chosen id as a query parameter.
- * Server-side `create` controllers use this to prefill related fields
- * (e.g. line items from `?from_order=<id>`).
+ * When `prefillUrl` is set on a single-select combobox, picking a value
+ * fetches `${prefillUrl}?id=<value>` and emits a `prefill` event with the
+ * response. The host form merges those fields into its state in place —
+ * no URL change, no full-page reload, other unsaved input is preserved.
  */
-function maybeReloadWithParam(value: string | null) {
-    const param = props.component.reloadParam as string | undefined
-    if (!param || isMultiple.value || typeof window === 'undefined') return
-    if (!value) return
+function maybePrefillFromUrl(value: string | null) {
+    const url = props.component.prefillUrl as string | undefined
+    if (!url || isMultiple.value || !value) return
 
-    const url = new URL(window.location.href)
-    if (url.searchParams.get(param) === value) return
-    url.searchParams.set(param, value)
-
-    router.visit(url.pathname + url.search, {
-        preserveScroll: true,
-        preserveState:  false,
-        replace:        true,
+    const sep = url.includes('?') ? '&' : '?'
+    prefillHttp.get(`${url}${sep}id=${encodeURIComponent(value)}`, {
+        onSuccess: (data) => {
+            if (data && typeof data === 'object') {
+                emit('prefill', data as Record<string, unknown>)
+            }
+        },
     })
 }
 
