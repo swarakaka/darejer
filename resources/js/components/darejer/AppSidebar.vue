@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, onBeforeUnmount, watch } from 'vue'
 import { usePage, Link } from '@inertiajs/vue3'
 import {
     Layers, LayoutDashboard, Package, Users, Settings, LifeBuoy,
@@ -7,26 +7,53 @@ import {
     FileText, Tag, Truck, Building, CreditCard, Calendar,
     Bell, Search, ChevronRight, ChevronDown, ChevronLeft,
     Inbox, Star, Archive, Globe, Shield, Wrench, Database,
-    HelpCircle, PanelLeftClose, PanelLeftOpen,
+    HelpCircle, PanelLeftClose, PanelLeftOpen, X,
 } from 'lucide-vue-next'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { usePermissions } from '@/composables/usePermissions'
+import { useSidebar }      from '@/composables/useSidebar'
 import useTranslation     from '@/composables/useTranslation'
 import type { DarejerSharedProps, NavItem } from '@/types/darejer'
 
 const { __ } = useTranslation()
 
 const STORAGE_KEY = 'darejer-sidebar-collapsed'
+const MOBILE_QUERY = '(max-width: 767px)'
 
 const page = usePage<DarejerSharedProps>()
 const { can, isSuperAdmin } = usePermissions()
+const { mobileOpen, closeMobile } = useSidebar()
 
 const collapsed = ref(false)
+const isMobile  = ref(false)
+let mediaQuery: MediaQueryList | null = null
+
+// On mobile we always render the expanded sidebar — the desktop "collapsed"
+// preference is irrelevant inside an off-canvas drawer.
+const effectiveCollapsed = computed(() => !isMobile.value && collapsed.value)
+
+function syncMobile(matches: boolean) {
+    isMobile.value = matches
+    if (!matches) {
+        // Resizing back to desktop: drop any open drawer state and flyout artefacts.
+        closeMobile()
+    }
+}
+
+function handleMediaChange(e: MediaQueryListEvent) {
+    syncMobile(e.matches)
+}
 
 onMounted(() => {
     const stored = localStorage.getItem(STORAGE_KEY)
     if (stored !== null) {
         collapsed.value = stored === '1'
+    }
+
+    if (typeof window !== 'undefined' && typeof window.matchMedia === 'function') {
+        mediaQuery = window.matchMedia(MOBILE_QUERY)
+        syncMobile(mediaQuery.matches)
+        mediaQuery.addEventListener('change', handleMediaChange)
     }
 
     // Auto-expand parent groups that contain an active child
@@ -35,6 +62,16 @@ onMounted(() => {
             expandedGroups.value.add(item.label)
         }
     }
+})
+
+onBeforeUnmount(() => {
+    mediaQuery?.removeEventListener('change', handleMediaChange)
+})
+
+// Lock body scroll while the mobile drawer is open.
+watch(mobileOpen, (open) => {
+    if (typeof document === 'undefined') return
+    document.body.style.overflow = open && isMobile.value ? 'hidden' : ''
 })
 
 function toggleCollapsed() {
@@ -97,12 +134,13 @@ const expandedGroups = ref<Set<string>>(new Set())
 function onItemClick(item: NavItem, e: Event) {
     if (!item.children?.length) {
         closeFlyout()
+        closeMobile()
         return
     }
 
     e.preventDefault()
 
-    if (collapsed.value) {
+    if (effectiveCollapsed.value) {
         if (activeGroup.value?.label === item.label && flyoutOpen.value) {
             closeFlyout()
         } else {
@@ -137,12 +175,31 @@ function badgeClass(color?: string): string {
 </script>
 
 <template>
-    <div class="relative flex shrink-0">
+    <div class="md:relative md:flex md:shrink-0">
+        <!-- Mobile backdrop -->
+        <transition
+            enter-active-class="transition-opacity duration-200 ease-out"
+            enter-from-class="opacity-0"
+            enter-to-class="opacity-100"
+            leave-active-class="transition-opacity duration-150 ease-in"
+            leave-from-class="opacity-100"
+            leave-to-class="opacity-0"
+        >
+            <div
+                v-if="mobileOpen && isMobile"
+                class="md:hidden fixed inset-0 z-30 bg-black/40"
+                @click="closeMobile"
+            />
+        </transition>
+
         <TooltipProvider :delay-duration="120">
             <aside
-                class="flex flex-col shrink-0 relative z-20 transition-[width] duration-200 ease-in-out"
+                class="flex flex-col shrink-0 fixed md:static inset-y-0 start-0 z-40 transition-[transform,width] duration-200 ease-in-out md:translate-x-0 md:rtl:translate-x-0"
+                :class="mobileOpen
+                    ? 'translate-x-0 rtl:translate-x-0'
+                    : '-translate-x-full rtl:translate-x-full'"
                 :style="{
-                    width: collapsed ? 'var(--sidebar-width)' : 'var(--sidebar-expanded-width, 15rem)',
+                    width: effectiveCollapsed ? 'var(--sidebar-width)' : 'var(--sidebar-expanded-width, 15rem)',
                     background: 'var(--sidebar-bg)',
                     borderRight: '1px solid var(--sidebar-border)',
                 }"
@@ -150,7 +207,7 @@ function badgeClass(color?: string): string {
                 <!-- Header -->
                 <div
                     class="flex items-center shrink-0 border-b gap-2.5 overflow-hidden"
-                    :class="collapsed ? 'justify-center' : 'px-3'"
+                    :class="effectiveCollapsed ? 'justify-center' : 'px-3'"
                     :style="{
                         height: 'var(--topbar-height)',
                         borderColor: 'var(--sidebar-border)',
@@ -160,16 +217,25 @@ function badgeClass(color?: string): string {
                         <span class="text-white text-base leading-none translate-y-[1px]">D</span>
                     </div>
                     <span
-                        v-if="!collapsed"
+                        v-if="!effectiveCollapsed"
                         class="text-sm font-semibold text-ink-100 truncate"
                     >Darejer</span>
+                    <button
+                        v-if="isMobile"
+                        type="button"
+                        class="md:hidden ms-auto flex items-center justify-center w-8 h-8 rounded-sm text-ink-200 hover:!text-brand-300 hover:bg-brand-500/15 transition-colors"
+                        :aria-label="__('Close menu')"
+                        @click="closeMobile"
+                    >
+                        <X class="w-4 h-4" />
+                    </button>
                 </div>
 
                 <!-- Nav -->
                 <nav class="flex-1 flex flex-col py-2 overflow-y-auto overflow-x-hidden">
                     <template v-for="item in navItems" :key="item.label">
                         <!-- ── Collapsed: icon-only with tooltip ── -->
-                        <template v-if="collapsed">
+                        <template v-if="effectiveCollapsed">
                             <Tooltip>
                                 <TooltipTrigger as-child>
                                     <Link
@@ -222,10 +288,10 @@ function badgeClass(color?: string): string {
                             >
                                 <span
                                     v-if="isGroupActive(item)"
-                                    class="absolute start-0 top-1.5 bottom-1.5 w-[2px] rounded-full bg-brand-400"
+                                    class="absolute inset-s-0 top-1.5 bottom-1.5 w-[2px] rounded-full bg-brand-400"
                                 />
                                 <component :is="getIcon(item.icon)" class="w-[18px] h-[18px] shrink-0" />
-                                <span class="flex-1 text-sm truncate">{{ item.label }}</span>
+                                <span class="flex-1 text-md truncate">{{ item.label }}</span>
 
                                 <span
                                     v-if="item.badge"
@@ -286,10 +352,10 @@ function badgeClass(color?: string): string {
                 <!-- Footer -->
                 <div
                     class="flex items-center py-2 gap-0.5 border-t"
-                    :class="collapsed ? 'flex-col' : 'px-1.5 justify-between'"
+                    :class="effectiveCollapsed ? 'flex-col' : 'px-1.5 justify-between'"
                     :style="{ borderColor: 'var(--sidebar-border)' }"
                 >
-                    <div :class="collapsed ? 'flex flex-col items-center gap-0.5' : 'flex items-center gap-0.5'">
+                    <div :class="effectiveCollapsed ? 'flex flex-col items-center gap-0.5' : 'flex items-center gap-0.5'">
                         <Tooltip>
                             <TooltipTrigger as-child>
                                 <button
@@ -314,8 +380,8 @@ function badgeClass(color?: string): string {
                         </Tooltip>
                     </div>
 
-                    <!-- Collapse/Expand toggle -->
-                    <Tooltip>
+                    <!-- Collapse/Expand toggle (desktop only) -->
+                    <Tooltip v-if="!isMobile">
                         <TooltipTrigger as-child>
                             <button
                                 type="button"
@@ -343,7 +409,7 @@ function badgeClass(color?: string): string {
             leave-to-class="opacity-0 -translate-x-2"
         >
             <div
-                v-if="collapsed && flyoutOpen && activeGroup"
+                v-if="effectiveCollapsed && flyoutOpen && activeGroup"
                 class="absolute start-full top-0 h-full z-10 bg-white border-s border-paper-200 flex flex-col"
                 :style="{ width: 'var(--flyout-width)' }"
             >

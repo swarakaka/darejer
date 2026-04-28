@@ -318,4 +318,16 @@ return [
     ':n events' => ':n حدث',
     'No audit events match the current filters.' => 'لا توجد أحداث تدقيق مطابقة للفلاتر الحالية.',
     'Showing the most recent :n events. Narrow the filters to see older entries.' => 'يتم عرض أحدث :n حدث. ضيِّق الفلاتر لرؤية إدخالات أقدم.',
+
+    // Notifications
+    'Recent alerts and updates for your account.' => 'التنبيهات والتحديثات الأخيرة لحسابك.',
+    'Mark all read' => 'تحديد الكل كمقروء',
+    'You\'re all caught up' => 'لقد اطّلعت على كل شيء',
+    'New notifications will appear here.' => 'ستظهر الإشعارات الجديدة هنا.',
+    'Delete notification' => 'حذف الإشعار',
+    'Open' => 'فتح',
+    'just now' => 'الآن',
+    ':n min ago' => 'منذ :n دقيقة',
+    ':n h ago' => 'منذ :n ساعة',
+    ':n d ago' => 'منذ :n يوم',
 ];

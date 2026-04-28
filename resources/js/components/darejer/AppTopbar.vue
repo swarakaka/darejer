@@ -10,16 +10,18 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { LogOut, Search, Bell, Command, Globe } from 'lucide-vue-next'
+import { LogOut, Search, Bell, Command, Globe, Menu } from 'lucide-vue-next'
 import AppNotifications            from '@/components/darejer/AppNotifications.vue'
 import { useLanguages }            from '@/composables/useLanguages'
 import { useAlerts }               from '@/composables/useAlerts'
+import { useSidebar }              from '@/composables/useSidebar'
 import useTranslation              from '@/composables/useTranslation'
 import type { DarejerSharedProps } from '@/types/darejer'
 
 const page = usePage<DarejerSharedProps>()
 
 const { __ } = useTranslation()
+const { toggleMobile } = useSidebar()
 
 // `currentLocale` comes from `page.props.darejer.locale` (set server-side
 // by the locale middleware). It's reactive via `usePage()`, so the topbar
@@ -52,11 +54,21 @@ function logout() {
 <template>
     <header
         class="flex items-center bg-(--topbar-bg) border-b border-(--topbar-border)
-               shrink-0 px-4 gap-4"
+               shrink-0 px-4 gap-2 sm:gap-4"
         :style="{ height: 'var(--topbar-height)' }"
     >
+        <!-- Mobile menu toggle -->
+        <button
+            type="button"
+            class="md:hidden flex items-center justify-center w-8 h-8 rounded-sm text-ink-500 hover:text-ink-800 hover:bg-paper-100 transition-colors shrink-0"
+            :aria-label="__('Open menu')"
+            @click="toggleMobile"
+        >
+            <Menu class="w-4 h-4" />
+        </button>
+
         <!-- Search -->
-        <div class="flex-1 max-w-md">
+        <div class="flex-1 max-w-md min-w-0">
             <div class="relative group">
                 <Search
                     class="absolute inset-s-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5

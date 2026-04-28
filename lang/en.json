@@ -35,7 +35,8 @@
     "Register": "Register",
     "Email": "Email",
     "Username": "Username",
-    "your.username": "your.username",
+    "your.username": "Your Username",
+    "The username may only contain English letters.": "The username may only contain English letters.",
     "Password": "Password",
     "Name": "Name",
     "Confirm password": "Confirm password",
@@ -248,5 +249,15 @@
     "e.g. document.posted": "e.g. document.posted",
     ":n events": ":n events",
     "No audit events match the current filters.": "No audit events match the current filters.",
-    "Showing the most recent :n events. Narrow the filters to see older entries.": "Showing the most recent :n events. Narrow the filters to see older entries."
+    "Showing the most recent :n events. Narrow the filters to see older entries.": "Showing the most recent :n events. Narrow the filters to see older entries.",
+    "Recent alerts and updates for your account.": "Recent alerts and updates for your account.",
+    "Mark all read": "Mark all read",
+    "You're all caught up": "You're all caught up",
+    "New notifications will appear here.": "New notifications will appear here.",
+    "Delete notification": "Delete notification",
+    "Open": "Open",
+    "just now": "just now",
+    ":n min ago": ":n min ago",
+    ":n h ago": ":n h ago",
+    ":n d ago": ":n d ago"
 }
