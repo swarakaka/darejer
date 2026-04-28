@@ -183,7 +183,7 @@ function flatIndex(groupIdx: number, itemIdx: number): number {
                         @mouseenter="activeIndex = flatIndex(gIdx, iIdx)"
                         @click="go(item)"
                     >
-                        <div class="flex flex-col min-w-0">
+                        <div class="flex flex-col items-start min-w-0">
                             <span class="text-sm truncate">{{ item.label }}</span>
                             <span
                                 v-if="item.subtitle"
