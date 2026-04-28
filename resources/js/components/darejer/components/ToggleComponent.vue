@@ -30,7 +30,7 @@ function onChange(val: boolean) {
 <template>
     <FieldWrapper :component="component" :record="record" :errors="errors" :form-data="formData">
         <template #default>
-            <div class="flex items-center gap-2 h-[2.125rem]">
+            <div class="flex items-center gap-2 h-8.5">
                 <Switch
                     :id="component.name"
                     :checked="checked"
