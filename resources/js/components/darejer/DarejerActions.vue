@@ -263,7 +263,7 @@ const placementClass = computed(() => {
                             <AlertTriangle class="w-4 h-4 text-danger-600" />
                         </div>
                         <div class="flex-1">
-                            <DialogTitle class="font-serif text-xl leading-tight">
+                            <DialogTitle class="text-xl leading-tight">
                                 {{ __('Confirm action') }}
                             </DialogTitle>
                             <DialogDescription class="text-sm text-ink-500 mt-1.5 leading-relaxed">

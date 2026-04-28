@@ -297,7 +297,7 @@ const resolveIcon = (name?: string) => name ? (iconMap[name] ?? null) : null
         <div class="flex items-start justify-between gap-6 px-6 pt-5 pb-4 border-b border-paper-200 shrink-0">
             <div class="flex flex-col min-w-0">
                 <AppBreadcrumbs class="mb-3" />
-                <h1 class="font-serif text-[1.75rem] leading-[1.1] tracking-tight text-ink-900">
+                <h1 class="text-[1.75rem] leading-[1.1] tracking-tight text-ink-900">
                     {{ title }}
                 </h1>
             </div>
@@ -611,7 +611,7 @@ const resolveIcon = (name?: string) => name ? (iconMap[name] ?? null) : null
     <Dialog :open="confirmOpen" @update:open="confirmOpen = $event">
         <DialogContent class="max-w-sm p-0 overflow-hidden">
             <DialogHeader class="px-4 py-3 border-b border-paper-200 bg-paper-75">
-                <DialogTitle class="font-serif text-lg">{{ __('Confirm') }}</DialogTitle>
+                <DialogTitle class="text-lg">{{ __('Confirm') }}</DialogTitle>
             </DialogHeader>
             <div class="px-4 py-4">
                 <DialogDescription class="text-sm text-ink-600">{{ confirmMsg }}</DialogDescription>

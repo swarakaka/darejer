@@ -210,7 +210,7 @@ const dialogSizeMap: Record<string, string> = {
                 <div :class="['flex items-start justify-between gap-6 pt-5 pb-4 border-b border-paper-200 mb-5', fullWidth ? 'px-6' : '']">
                     <div class="flex flex-col min-w-0">
                         <AppBreadcrumbs class="mb-3" />
-                        <h1 class="font-serif text-[1.75rem] leading-[1.1] tracking-tight text-ink-900">
+                        <h1 class="text-[1.75rem] leading-[1.1] tracking-tight text-ink-900">
                             {{ title }}
                         </h1>
                     </div>
@@ -241,7 +241,7 @@ const dialogSizeMap: Record<string, string> = {
                                     v-for="tab in visibleTabs"
                                     :key="tab.title"
                                     :value="tab.title"
-                                    class="font-serif text-sm tracking-tight text-ink-700"
+                                    class="text-sm tracking-tight text-ink-700"
                                 >
                                     {{ tab.title }}
                                 </TabsTrigger>
@@ -284,7 +284,7 @@ const dialogSizeMap: Record<string, string> = {
                             :aria-expanded="!collapsed[section.title]"
                             @click="toggleSection(section.title)"
                         >
-                            <h2 class="font-serif text-lg tracking-tight leading-[1.15] text-ink-700 truncate min-w-0">
+                            <h2 class="text-lg tracking-tight leading-[1.15] text-ink-700 truncate min-w-0">
                                 {{ section.title }}
                             </h2>
                             <ChevronDown
@@ -320,7 +320,7 @@ const dialogSizeMap: Record<string, string> = {
                                 role="button"
                                 @click="toggleSection('General')"
                             >
-                                <h2 class="font-serif text-lg tracking-tight leading-[1.15] text-ink-700">{{ __('General') }}</h2>
+                                <h2 class="text-lg tracking-tight leading-[1.15] text-ink-700">{{ __('General') }}</h2>
                                 <ChevronDown
                                     class="w-4 h-4 text-ink-400 transition-transform duration-150"
                                     :class="collapsed['General'] ? '-rotate-90' : 'rotate-0'"
@@ -358,7 +358,7 @@ const dialogSizeMap: Record<string, string> = {
                 :style="{ maxWidth: dialogSizeMap[dialogSize ?? 'md'] ?? '36rem' }"
             >
                 <DialogHeader class="shrink-0 px-5 py-4 border-b border-paper-200 bg-paper-75">
-                    <DialogTitle class="font-serif text-xl">{{ title }}</DialogTitle>
+                    <DialogTitle class="text-xl">{{ title }}</DialogTitle>
                 </DialogHeader>
 
                 <div class="flex-1 min-h-0 overflow-y-auto px-5 py-4">

@@ -294,7 +294,7 @@ const treeCol = computed(() => columns.value.find(c => c.isTree) ?? columns.valu
     <Dialog :open="confirmOpen" @update:open="confirmOpen = $event">
         <DialogContent class="max-w-sm p-0 overflow-hidden">
             <DialogHeader class="px-4 py-3 border-b border-paper-200 bg-paper-75">
-                <DialogTitle class="font-serif text-lg">{{ __('Confirm') }}</DialogTitle>
+                <DialogTitle class="text-lg">{{ __('Confirm') }}</DialogTitle>
             </DialogHeader>
             <div class="px-4 py-4">
                 <DialogDescription class="text-sm text-ink-600">{{ confirmMsg }}</DialogDescription>

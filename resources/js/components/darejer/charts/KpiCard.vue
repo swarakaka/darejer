@@ -66,7 +66,7 @@ const trendClass = computed(() => {
         </div>
         <div class="text-xs text-ink-500 mb-2">{{ label }}</div>
         <div class="flex items-baseline justify-between gap-3">
-            <div class="font-serif text-2xl text-ink-900 tabular-nums leading-none">
+            <div class="text-2xl text-ink-900 tabular-nums leading-none">
                 {{ formatted }}
             </div>
             <div v-if="delta || trendIcon" class="flex items-center gap-1 text-xs" :class="trendClass">
