@@ -47,21 +47,19 @@ trait Searchable
             return $query;
         }
 
-        // Escape LIKE meta-characters so a user typing `100%` searches for
-        // the literal substring rather than "anything starting with 100".
-        // Backslash is the default ESCAPE on MySQL and is configured on
-        // SQLite/PostgreSQL via the explicit ESCAPE clause below.
-        $escaped = str_replace(['\\', '%', '_'], ['\\\\', '\%', '\_'], $term);
+        // Escape LIKE meta-characters so a user typing `100%` or `user_1`
+        // matches the literal string. The escape symbol is `!` rather than
+        // backslash because backslash inside a single-quoted SQL literal
+        // confuses MySQL/MariaDB (it escapes the closing quote) — `!` is
+        // safe across MySQL, MariaDB, PostgreSQL and SQLite.
+        $escaped = str_replace(['!', '%', '_'], ['!!', '!%', '!_'], $term);
         $like = '%'.$escaped.'%';
 
         return $query->where(function (Builder $q) use ($columns, $like): void {
             $grammar = $q->getQuery()->getGrammar();
 
-            // ESCAPE clause uses a single backslash — `\\` in PHP string
-            // literal renders as one char, which the underlying driver
-            // sees as the escape symbol used above on `\%` and `\_`.
             foreach ($columns as $column) {
-                $q->orWhereRaw($grammar->wrap($column).' LIKE ? ESCAPE \'\\\'', [$like]);
+                $q->orWhereRaw($grammar->wrap($column)." LIKE ? ESCAPE '!'", [$like]);
             }
         });
     }
