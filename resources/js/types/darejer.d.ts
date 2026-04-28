@@ -56,7 +56,7 @@ export interface Breadcrumb {
 
 export interface DarejerUser {
     id:           number
-    name:         string
+    username:     string
     email:        string
     permissions:  string[]
     roles:        string[]

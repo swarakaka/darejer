@@ -11,7 +11,7 @@ defineOptions({ layout: AuthLayout })
 const { __ } = useTranslation()
 
 const form = useForm({
-    name:                  '',
+    username:              '',
     email:                 '',
     password:              '',
     password_confirmation: '',
@@ -25,30 +25,33 @@ function submit() {
 </script>
 
 <template>
-    <div class="space-y-8">
+    <div class="space-y-8 p-6 bg-white">
 
-        <div>
-            <div class="text-[10px] font-semibold uppercase tracking-[0.18em] text-brand-600 mb-2">{{ __('Entry · New Account') }}</div>
+        <div class="flex flex-col items-center gap-6 text-center">
+            <div class="flex items-center gap-2.5">
+                <div class="w-6 h-6 rounded-sm bg-brand-600 flex items-center justify-center">
+                    <span class="font-serif text-white text-base leading-none translate-y-[1px]">D</span>
+                </div>
+                <span class="text-sm font-medium tracking-[0.24em] uppercase text-ink-700">Darejer</span>
+            </div>
             <h1 class="font-serif text-3xl leading-tight text-ink-900 tracking-tight">
-                {{ __('Open an') }} <em class="italic text-brand-600">{{ __('account') }}</em>.
+                {{ __('Register') }}
             </h1>
-            <p class="text-sm text-ink-500 mt-2">
-                {{ __('Fill in your details to create a new ledger.') }}
-            </p>
         </div>
 
         <form class="space-y-5" @submit.prevent="submit">
 
             <div class="flex flex-col gap-1.5">
-                <Label for="name">{{ __('Name') }}</Label>
+                <Label for="username">{{ __('Username') }}</Label>
                 <Input
-                    id="name"
-                    v-model="form.name"
+                    id="username"
+                    v-model="form.username"
                     type="text"
-                    autocomplete="name"
-                    :class="{ 'border-danger-600': form.errors.name }"
+                    autocomplete="username"
+                    :placeholder="__('your.username')"
+                    :class="{ 'border-danger-600': form.errors.username }"
                 />
-                <p v-if="form.errors.name" class="text-xs text-danger-600">{{ form.errors.name }}</p>
+                <p v-if="form.errors.username" class="text-xs text-danger-600">{{ form.errors.username }}</p>
             </div>
 
             <div class="flex flex-col gap-1.5">
@@ -58,6 +61,7 @@ function submit() {
                     v-model="form.email"
                     type="email"
                     autocomplete="email"
+                    :placeholder="__('you@company.com')"
                     :class="{ 'border-danger-600': form.errors.email }"
                 />
                 <p v-if="form.errors.email" class="text-xs text-danger-600">{{ form.errors.email }}</p>
@@ -70,6 +74,7 @@ function submit() {
                     v-model="form.password"
                     type="password"
                     autocomplete="new-password"
+                    placeholder="••••••••"
                     :class="{ 'border-danger-600': form.errors.password }"
                 />
                 <p v-if="form.errors.password" class="text-xs text-danger-600">{{ form.errors.password }}</p>
@@ -82,13 +87,14 @@ function submit() {
                     v-model="form.password_confirmation"
                     type="password"
                     autocomplete="new-password"
+                    placeholder="••••••••"
                 />
             </div>
 
             <button
                 type="submit"
                 class="group w-full inline-flex items-center justify-center gap-2 h-10 px-4 rounded-sm
-                       bg-ink-900 hover:bg-ink-800 text-paper-50 text-sm font-medium tracking-wide
+                       bg-brand-600 hover:bg-brand-700 text-paper-50 text-sm font-medium tracking-wide
                        border border-transparent transition-colors disabled:opacity-60"
                 :disabled="form.processing"
             >
@@ -96,14 +102,19 @@ function submit() {
                 <ArrowRight class="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5" />
             </button>
 
+            <Link
+                :href="route('login').toString()"
+                class="inline-flex items-center gap-1.5 text-sm text-ink-500 hover:text-brand-600 transition-colors"
+            >
+                <ArrowLeft class="w-3.5 h-3.5" />
+                {{ __('Back to sign in') }}
+            </Link>
+
         </form>
 
-        <Link
-            :href="route('login').toString()"
-            class="inline-flex items-center gap-1.5 text-sm text-ink-500 hover:text-brand-600 transition-colors"
-        >
-            <ArrowLeft class="w-3.5 h-3.5" />
-            {{ __('Back to sign in') }}
-        </Link>
+        <div class="flex items-center justify-between *:text-ink-400  tabular-nums pt-4 border-t border-paper-200">
+            <p>Darejer</p>
+            <p>{{ new Date().getFullYear() }}</p>
+        </div>
     </div>
 </template>

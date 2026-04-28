@@ -19,7 +19,7 @@ const form = useForm({
 })
 
 const heading = computed(() =>
-    recovery.value ? __('Enter a recovery code') : __('Two-factor authentication')
+    recovery.value ? __('Recovery code') : __('Two-factor')
 )
 
 function toggle() {
@@ -36,21 +36,18 @@ function submit() {
 </script>
 
 <template>
-    <div class="space-y-8">
+    <div class="space-y-8 p-6 bg-white">
 
-        <div>
-            <div class="text-[10px] font-semibold uppercase tracking-[0.18em] text-brand-600 mb-2">{{ __('Entry · Two Factor') }}</div>
+        <div class="flex flex-col items-center gap-6 text-center">
+            <div class="flex items-center gap-2.5">
+                <div class="w-6 h-6 rounded-sm bg-brand-600 flex items-center justify-center">
+                    <span class="font-serif text-white text-base leading-none translate-y-[1px]">D</span>
+                </div>
+                <span class="text-sm font-medium tracking-[0.24em] uppercase text-ink-700">Darejer</span>
+            </div>
             <h1 class="font-serif text-3xl leading-tight text-ink-900 tracking-tight">
-                {{ heading }}.
+                {{ heading }}
             </h1>
-            <p class="text-sm text-ink-500 mt-2">
-                <template v-if="recovery">
-                    {{ __('Please confirm access to your account by entering one of your emergency recovery codes.') }}
-                </template>
-                <template v-else>
-                    {{ __('Please confirm access to your account by entering the code from your authenticator application.') }}
-                </template>
-            </p>
         </div>
 
         <form class="space-y-5" @submit.prevent="submit">
@@ -84,7 +81,7 @@ function submit() {
             <button
                 type="submit"
                 class="group w-full inline-flex items-center justify-center gap-2 h-10 px-4 rounded-sm
-                       bg-ink-900 hover:bg-ink-800 text-paper-50 text-sm font-medium tracking-wide
+                       bg-brand-600 hover:bg-brand-700 text-paper-50 text-sm font-medium tracking-wide
                        border border-transparent transition-colors disabled:opacity-60"
                 :disabled="form.processing"
             >
@@ -101,5 +98,10 @@ function submit() {
             </button>
 
         </form>
+
+        <div class="flex items-center justify-between *:text-ink-400  tabular-nums pt-4 border-t border-paper-200">
+            <p>Darejer</p>
+            <p>{{ new Date().getFullYear() }}</p>
+        </div>
     </div>
 </template>
