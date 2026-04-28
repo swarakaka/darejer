@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, watch, onMounted } from 'vue'
+import { router }           from '@inertiajs/vue3'
 import { useDataUrl }       from '@/composables/useDataUrl'
 import {
     Command,
@@ -124,6 +125,30 @@ function toggle(value: string) {
     emit('update', props.component.name,
         isMultiple.value ? selected.value : (selected.value[0] ?? null)
     )
+
+    maybeReloadWithParam(selected.value[0] ?? null)
+}
+
+/**
+ * When `reloadParam` is set on a single-select combobox, picking a value
+ * triggers an Inertia visit that adds the chosen id as a query parameter.
+ * Server-side `create` controllers use this to prefill related fields
+ * (e.g. line items from `?from_order=<id>`).
+ */
+function maybeReloadWithParam(value: string | null) {
+    const param = props.component.reloadParam as string | undefined
+    if (!param || isMultiple.value || typeof window === 'undefined') return
+    if (!value) return
+
+    const url = new URL(window.location.href)
+    if (url.searchParams.get(param) === value) return
+    url.searchParams.set(param, value)
+
+    router.visit(url.pathname + url.search, {
+        preserveScroll: true,
+        preserveState:  false,
+        replace:        true,
+    })
 }
 
 function labelFor(value: string): string {
