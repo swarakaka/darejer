@@ -39,7 +39,11 @@ return [
 
     // Auth
     'Login' => 'تسجيل الدخول',
+    'Register' => 'إنشاء حساب',
     'Email' => 'البريد الإلكتروني',
+    'Username' => 'اسم المستخدم',
+    'your.username' => 'اسم المستخدم الخاص بك',
+    'The username may only contain English letters.' => 'يجب أن يحتوي اسم المستخدم على أحرف إنجليزية فقط.',
     'Password' => 'كلمة المرور',
     'Name' => 'الاسم',
     'Confirm password' => 'تأكيد كلمة المرور',

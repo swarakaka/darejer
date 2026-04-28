@@ -250,7 +250,7 @@ class UserController extends DarejerController
 
         return $request->validate([
             'username' => [
-                'required', 'string', 'max:191',
+                'required', 'string', 'max:191', 'regex:/^[A-Za-z]+$/',
                 Rule::unique($table, 'username')->ignore($userId)->whereNull('deleted_at'),
             ],
             'email' => [
@@ -266,6 +266,8 @@ class UserController extends DarejerController
             'role_ids' => ['sometimes', 'array'],
             'role_ids.*' => ['integer', 'exists:'.config('permission.table_names.roles', 'roles').',id'],
             'is_super_admin' => ['sometimes', 'boolean'],
+        ], [
+            'username.regex' => __darejer('The username may only contain English letters.'),
         ]);
     }
 

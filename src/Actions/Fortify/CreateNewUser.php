@@ -22,9 +22,11 @@ class CreateNewUser implements CreatesNewUsers
     public function create(array $input): User
     {
         Validator::make($input, [
-            'username' => ['required', 'string', 'max:255', 'unique:users'],
+            'username' => ['required', 'string', 'max:255', 'regex:/^[A-Za-z]+$/', 'unique:users'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => $this->passwordRules(),
+        ], [
+            'username.regex' => __darejer('The username may only contain English letters.'),
         ])->validate();
 
         return User::create([
