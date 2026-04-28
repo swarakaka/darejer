@@ -247,6 +247,22 @@ function executeConfirmed() {
     confirmOpen.value = false
 }
 
+function formatCell(value: unknown): unknown {
+    if (typeof value === 'boolean') {
+        return value ? __('Yes') : __('No')
+    }
+    if (value === 0 || value === 1) {
+        return value === 1 ? __('Yes') : __('No')
+    }
+    if (value === '0' || value === '1') {
+        return value === '1' ? __('Yes') : __('No')
+    }
+    if (value === 'true' || value === 'false') {
+        return value === 'true' ? __('Yes') : __('No')
+    }
+    return value
+}
+
 function badgeClass(col: GridColumn, value: unknown): string {
     if (!col.badge) return ''
     let map: Record<string, string> = {}
@@ -497,10 +513,10 @@ const resolveIcon = (name?: string) => name ? (iconMap[name] ?? null) : null
                                                text-[10px] font-semibold uppercase tracking-wide border"
                                         :class="badgeClass(col, row[col.field])"
                                     >
-                                        {{ row[col.field] }}
+                                        {{ formatCell(row[col.field]) }}
                                     </span>
                                     <span v-else class="block truncate max-w-xs">
-                                        {{ row[col.field] ?? '—' }}
+                                        {{ formatCell(row[col.field]) ?? '—' }}
                                     </span>
                                 </td>
 
