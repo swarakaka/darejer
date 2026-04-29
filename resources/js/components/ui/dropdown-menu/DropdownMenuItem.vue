@@ -16,7 +16,7 @@ const forwardedProps = useForwardProps(delegatedProps)
   <DropdownMenuItem
     v-bind="forwardedProps"
     :class="cn(
-      'relative flex cursor-pointer select-none items-center rounded-sm gap-2 px-2.5 py-1.5 text-sm text-ink-700 outline-none transition-colors hover:bg-paper-100 focus:bg-paper-100 focus:text-ink-900 data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&>svg]:size-3.5 [&>svg]:shrink-0',
+      'relative flex cursor-pointer select-none items-center rounded-[2px] gap-2 px-2.5 py-1.5 text-[13px] text-ink-800 outline-none transition-colors duration-75 hover:bg-paper-100 focus:bg-paper-100 focus:text-ink-900 data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&>svg]:size-3.5 [&>svg]:shrink-0',
       inset && 'ps-8',
       props.class,
     )"

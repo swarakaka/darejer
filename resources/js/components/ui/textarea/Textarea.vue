@@ -23,7 +23,7 @@ function onInternalInput(e: Event) {
 <template>
   <textarea
     :value="modelValue ?? undefined"
-    :class="cn('flex w-full min-h-[5rem] rounded-sm border border-paper-300 bg-white px-2.5 py-2 text-sm text-ink-900 resize-y placeholder:text-ink-400 transition-colors duration-100 focus:border-brand-500 focus:outline-none focus:ring-0 disabled:cursor-not-allowed disabled:opacity-50', props.class)"
+    :class="cn('flex w-full min-h-[5rem] rounded-[2px] border border-ink-500 bg-white px-2.5 py-2 text-[13px] text-ink-900 resize-y placeholder:text-ink-400 transition-colors duration-100 hover:border-ink-700 focus:border-brand-500 focus:outline-none focus:ring-0 focus:shadow-[inset_0_0_0_1px_var(--color-brand-500)] disabled:cursor-not-allowed disabled:opacity-50 disabled:bg-paper-100', props.class)"
     @input="onInternalInput"
   />
 </template>
