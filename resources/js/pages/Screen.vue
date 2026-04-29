@@ -144,11 +144,15 @@ function isTabVisible(tab: ScreenTab): boolean {
 
 const collapsed = ref<Record<string, boolean>>(
     Object.fromEntries(
-        (props.sections ?? []).map(s => [s.title, s.collapsed ?? false])
+        (props.sections ?? []).map(s => [s.title, s.alwaysExpanded ? false : (s.collapsed ?? false)])
     )
 )
 
 function toggleSection(title: string) {
+    const section = (props.sections ?? []).find(s => s.title === title)
+    if (section?.alwaysExpanded) {
+        return
+    }
     collapsed.value[title] = !collapsed.value[title]
 }
 
@@ -295,16 +299,20 @@ const dialogSizeMap: Record<string, string> = {
                         class="border border-paper-200 rounded-md overflow-hidden bg-white"
                     >
                         <header
-                            class="flex items-center justify-between gap-3 px-4 py-2.5 cursor-pointer select-none hover:bg-paper-50 transition-colors"
-                            :class="!collapsed[section.title] ? 'border-b border-paper-200' : ''"
-                            role="button"
-                            :aria-expanded="!collapsed[section.title]"
+                            class="flex items-center justify-between gap-3 px-4 py-2.5 select-none transition-colors"
+                            :class="[
+                                !collapsed[section.title] ? 'border-b border-paper-200' : '',
+                                section.alwaysExpanded ? '' : 'cursor-pointer hover:bg-paper-50',
+                            ]"
+                            :role="section.alwaysExpanded ? undefined : 'button'"
+                            :aria-expanded="section.alwaysExpanded ? undefined : !collapsed[section.title]"
                             @click="toggleSection(section.title)"
                         >
                             <h2 class="text-lg tracking-tight leading-[1.15] text-ink-700 truncate min-w-0">
                                 {{ section.title }}
                             </h2>
                             <ChevronDown
+                                v-if="!section.alwaysExpanded"
                                 class="w-4 h-4 text-ink-400 transition-transform duration-150 shrink-0"
                                 :class="collapsed[section.title] ? '-rotate-90' : 'rotate-0'"
                             />
