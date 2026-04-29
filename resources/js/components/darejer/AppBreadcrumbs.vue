@@ -28,7 +28,7 @@ const { __ } = useTranslation()
             </Link>
             <span
                 v-else
-                class="px-1 py-0.5 text-ink-900 font-semibold"
+                class="pe-1 py-0.5 text-ink-900 font-semibold"
             >
                 {{ crumb.label }}
             </span>
