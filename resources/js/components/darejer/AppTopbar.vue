@@ -52,21 +52,21 @@ function logout() {
 
 <template>
     <header
-        class="flex items-center h-(--topbar-height) shrink-0 ps-2 pe-2 sm:pe-3 gap-1
+        class="flex items-center h-(--topbar-height) shrink-0 gap-0
                bg-(--topbar-bg) text-(--topbar-foreground) border-b border-(--topbar-border)"
     >
-        <!-- Mobile menu toggle -->
+        <!-- Hamburger / mobile menu toggle — always visible like the Azure portal -->
         <button
             type="button"
-            class="md:hidden flex items-center justify-center w-9 h-9 rounded-none text-white/85 hover:text-white hover:bg-white/[0.08] transition-colors shrink-0"
-            :aria-label="__('Open menu')"
+            class="flex items-center justify-center w-11 h-(--topbar-height) rounded-none text-white hover:bg-white/[0.12] transition-colors shrink-0"
+            :aria-label="__('Show portal menu')"
             @click="toggleMobile"
         >
-            <Menu class="w-4 h-4" />
+            <Menu class="w-[18px] h-[18px]" />
         </button>
 
         <!-- Product wordmark — Azure portal "Microsoft Azure" placement -->
-        <span class="hidden md:inline-flex items-center h-full px-2 text-[13px] font-normal tracking-tight text-white/90 select-none">
+        <span class="hidden md:inline-flex items-center h-full pe-3 text-[15px] font-normal tracking-tight text-white select-none">
             {{ __('Microsoft Darejer') }}
         </span>
 
@@ -76,12 +76,11 @@ function logout() {
         </div>
 
         <!-- Right rail (becomes left rail in RTL via `ms-auto`) -->
-        <div class="flex items-center">
+        <div class="flex items-center h-full">
 
             <button
                 type="button"
-                class="relative flex items-center justify-center w-9 h-9 rounded-none transition-colors text-white/85 hover:text-white hover:bg-white/[0.08]"
-                :class="hasUnread ? 'text-white' : ''"
+                class="relative flex items-center justify-center w-10 h-(--topbar-height) rounded-none transition-colors text-white hover:bg-white/[0.12]"
                 :aria-label="__('Notifications')"
                 @click="notificationsOpen = true"
             >
@@ -101,12 +100,12 @@ function logout() {
             <!-- Language switcher (only when multiple languages configured) -->
             <DropdownMenu v-if="isMultilingual">
                 <DropdownMenuTrigger
-                    class="flex items-center gap-1.5 h-9 px-2.5 rounded-none text-white/85
-                           hover:bg-white/[0.08] hover:text-white transition-colors text-xs font-medium tabular-nums"
+                    class="flex items-center gap-1.5 h-(--topbar-height) px-3 rounded-none text-white
+                           hover:bg-white/[0.12] transition-colors text-xs font-semibold tabular-nums"
                 >
                     <Globe class="w-3.5 h-3.5" />
                     <span class="uppercase tracking-wider">{{ localeLabel(currentLocale) }}</span>
-                    <ChevronDown class="w-3 h-3 text-white/60" />
+                    <ChevronDown class="w-3 h-3 text-white/70" />
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" class="w-44">
                     <DropdownMenuLabel class="text-[10px] font-semibold uppercase tracking-[0.14em] text-ink-500 px-3 py-1.5">
@@ -132,21 +131,20 @@ function logout() {
 
             <DropdownMenu v-if="page.props.auth.user">
                 <DropdownMenuTrigger
-                    class="flex items-center gap-2 h-9 ps-1.5 pe-2 rounded-none outline-none cursor-pointer
-                           text-white/90 hover:bg-white/[0.08] transition-colors"
+                    class="flex items-center gap-2.5 h-(--topbar-height) ps-3 pe-3 rounded-none outline-none cursor-pointer
+                           text-white hover:bg-white/[0.12] transition-colors"
                 >
-                    <Avatar class="w-6 h-6 ring-1 ring-white/30">
+                    <div class="hidden md:flex flex-col items-end leading-tight">
+                        <span class="text-[12px] font-semibold text-white">{{ page.props.auth.user.username }}</span>
+                        <span class="text-[10px] font-medium uppercase tracking-[0.08em] text-white/80">{{ __('Admin') }}</span>
+                    </div>
+                    <Avatar class="w-7 h-7 rounded-full">
                         <AvatarFallback
-                            class="bg-brand-500 text-white text-[10px] font-semibold tracking-wider tabular-nums"
+                            class="bg-paper-50 text-brand-700 text-[11px] font-semibold tracking-wider tabular-nums"
                         >
                             {{ initials(page.props.auth.user.username) }}
                         </AvatarFallback>
                     </Avatar>
-                    <div class="hidden md:flex flex-col items-start leading-tight">
-                        <span class="text-[12px] font-semibold text-white">{{ page.props.auth.user.username }}</span>
-                        <span class="text-[10px] font-medium text-white/60">{{ __('Admin') }}</span>
-                    </div>
-                    <ChevronDown class="hidden md:block w-3 h-3 text-white/60" />
                 </DropdownMenuTrigger>
 
                 <DropdownMenuContent align="end" class="w-60">

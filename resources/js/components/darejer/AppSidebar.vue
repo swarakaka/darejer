@@ -191,7 +191,7 @@ function badgeClass(color?: string): string {
         >
             <div
                 v-if="mobileOpen && isMobile"
-                class="md:hidden fixed inset-0 z-30 bg-ink-950/50 backdrop-blur-sm"
+                class="md:hidden fixed inset-0 z-30 bg-ink-900/55"
                 @click="closeMobile"
             />
         </transition>
@@ -209,26 +209,15 @@ function badgeClass(color?: string): string {
                     effectiveCollapsed ? 'w-(--sidebar-width)' : 'w-(--sidebar-expanded-width)',
                 ]"
             >
-                <!-- Header -->
+                <!-- Header — only the close button on mobile; logo lives in the topbar -->
                 <div
-                    class="flex items-center shrink-0 h-(--topbar-height) gap-2.5 overflow-hidden"
-                    :class="effectiveCollapsed ? 'justify-center' : 'px-3'"
+                    v-if="isMobile"
+                    class="flex items-center shrink-0 h-(--topbar-height) px-3 gap-2.5 border-b border-(--sidebar-border)"
                 >
-                    <div class="w-6 h-6 flex items-center justify-center shrink-0">
-                        <svg viewBox="0 0 18 18" class="w-[18px] h-[18px]" aria-hidden="true">
-                            <path fill="#50e6ff" d="M10.61 1.31l4.4 11.27-3.04 3.41h-7.31z"/>
-                            <path fill="#0078d4" d="M11.34 1.31h6.06l-3.84 11.27z"/>
-                            <path fill="#0078d4" d="M.6 16l4.7-1.83 9.61.83z"/>
-                        </svg>
-                    </div>
-                    <div v-if="!effectiveCollapsed" class="flex items-baseline gap-1.5 leading-tight min-w-0">
-                        <span class="text-[13px] font-semibold text-white truncate tracking-tight">Darejer</span>
-                        <span class="text-[10px] text-paper-300 truncate">{{ __('Enterprise') }}</span>
-                    </div>
+                    <span class="text-[13px] font-semibold text-ink-900 truncate">{{ __('Menu') }}</span>
                     <button
-                        v-if="isMobile"
                         type="button"
-                        class="md:hidden ms-auto flex items-center justify-center w-7 h-7 rounded-none text-paper-200 hover:text-white hover:bg-white/10 transition-colors"
+                        class="md:hidden ms-auto flex items-center justify-center w-7 h-7 rounded-[2px] text-ink-700 hover:text-brand-700 hover:bg-paper-100 transition-colors"
                         :aria-label="__('Close menu')"
                         @click="closeMobile"
                     >
@@ -237,7 +226,7 @@ function badgeClass(color?: string): string {
                 </div>
 
                 <!-- Nav -->
-                <nav class="flex-1 flex flex-col py-1 overflow-y-auto overflow-x-hidden">
+                <nav class="flex-1 flex flex-col py-2 overflow-y-auto overflow-x-hidden">
                     <template v-for="item in navItems" :key="item.label">
                         <!-- ── Collapsed: icon-only with tooltip ── -->
                         <template v-if="effectiveCollapsed">
@@ -247,13 +236,13 @@ function badgeClass(color?: string): string {
                                         :href="item.url ?? '#'"
                                         class="relative flex items-center justify-center h-9 transition-colors duration-100 no-underline"
                                         :class="isGroupActive(item) || (activeGroup?.label === item.label && flyoutOpen)
-                                            ? 'text-white bg-[color:var(--sidebar-item-bg-active)]'
-                                            : 'text-paper-200 hover:text-white hover:bg-white/[0.06]'"
+                                            ? 'text-brand-700 bg-[color:var(--sidebar-item-bg-active)]'
+                                            : 'text-ink-700 hover:text-ink-900 hover:bg-paper-100'"
                                         @click="(e) => onItemClick(item, e)"
                                     >
                                         <span
                                             v-if="isGroupActive(item) || (activeGroup?.label === item.label && flyoutOpen)"
-                                            class="absolute start-0 top-0 bottom-0 w-[2px] bg-brand-400"
+                                            class="absolute start-0 top-0 bottom-0 w-[2px] bg-brand-500"
                                         />
                                         <component :is="getIcon(item.icon)" class="w-4 h-4" />
 
@@ -267,7 +256,7 @@ function badgeClass(color?: string): string {
 
                                         <span
                                             v-if="item.children?.length"
-                                            class="absolute bottom-1 end-1 w-1 h-1 bg-brand-400/80"
+                                            class="absolute bottom-1 end-1 w-1 h-1 bg-brand-500/70"
                                         />
                                     </Link>
                                 </TooltipTrigger>
@@ -287,16 +276,20 @@ function badgeClass(color?: string): string {
                                 :href="item.url ?? '#'"
                                 class="relative flex items-center gap-3 h-9 px-3 transition-colors duration-100 no-underline overflow-hidden"
                                 :class="isGroupActive(item)
-                                    ? 'text-white bg-[color:var(--sidebar-item-bg-active)]'
-                                    : 'text-paper-200 hover:text-white hover:bg-white/[0.06]'"
+                                    ? 'text-brand-700 bg-[color:var(--sidebar-item-bg-active)] font-semibold'
+                                    : 'text-ink-800 hover:text-ink-900 hover:bg-paper-100'"
                                 @click="(e) => onItemClick(item, e)"
                             >
                                 <span
                                     v-if="isGroupActive(item)"
-                                    class="absolute inset-s-0 top-0 bottom-0 w-[2px] bg-brand-400"
+                                    class="absolute inset-s-0 top-0 bottom-0 w-[2px] bg-brand-500"
                                 />
-                                <component :is="getIcon(item.icon)" class="w-4 h-4 shrink-0" />
-                                <span class="flex-1 text-[13px] font-normal truncate">{{ item.label }}</span>
+                                <component
+                                    :is="getIcon(item.icon)"
+                                    class="w-4 h-4 shrink-0"
+                                    :class="isGroupActive(item) ? 'text-brand-600' : 'text-ink-600'"
+                                />
+                                <span class="flex-1 text-[13px] truncate">{{ item.label }}</span>
 
                                 <span
                                     v-if="item.badge"
@@ -309,19 +302,19 @@ function badgeClass(color?: string): string {
                                 <component
                                     v-if="item.children?.length"
                                     :is="expandedGroups.has(item.label) ? ChevronDown : ChevronRight"
-                                    class="w-3.5 h-3.5 shrink-0 text-paper-300 rtl:[&:not(.lucide-chevron-down)]:rotate-180"
+                                    class="w-3.5 h-3.5 shrink-0 text-ink-500 rtl:[&:not(.lucide-chevron-down)]:rotate-180"
                                 />
                             </Link>
 
                             <!-- Inline children (expanded mode) -->
                             <div
                                 v-if="item.children?.length && expandedGroups.has(item.label)"
-                                class="flex flex-col bg-black/20"
+                                class="flex flex-col bg-paper-75"
                             >
                                 <template v-for="(child, i) in item.children" :key="child.label">
                                     <div
                                         v-if="child.group && (i === 0 || (item.children?.[i - 1]?.group !== child.group))"
-                                        class="ps-10 pt-2 pb-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-paper-300/70 select-none"
+                                        class="ps-10 pt-2 pb-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-ink-500 select-none"
                                     >
                                         {{ child.group }}
                                     </div>
@@ -330,17 +323,18 @@ function badgeClass(color?: string): string {
                                         :href="child.url ?? '#'"
                                         class="relative flex items-center gap-2 h-8 ps-10 pe-3 text-[12.5px] no-underline transition-colors duration-100"
                                         :class="isActive(child)
-                                            ? 'text-white font-medium bg-white/[0.04]'
-                                            : 'text-paper-200 hover:text-white hover:bg-white/[0.04]'"
+                                            ? 'text-brand-700 font-semibold bg-brand-50'
+                                            : 'text-ink-700 hover:text-ink-900 hover:bg-paper-100'"
                                     >
                                         <span
                                             v-if="isActive(child)"
-                                            class="absolute inset-s-0 top-0 bottom-0 w-[2px] bg-brand-400"
+                                            class="absolute inset-s-0 top-0 bottom-0 w-[2px] bg-brand-500"
                                         />
                                         <component
                                             v-if="child.icon"
                                             :is="getIcon(child.icon)"
-                                            class="w-3.5 h-3.5 shrink-0 text-paper-300"
+                                            class="w-3.5 h-3.5 shrink-0"
+                                            :class="isActive(child) ? 'text-brand-600' : 'text-ink-500'"
                                         />
                                         <span class="flex-1 truncate">{{ child.label }}</span>
 
@@ -368,7 +362,7 @@ function badgeClass(color?: string): string {
                             <TooltipTrigger as-child>
                                 <button
                                     type="button"
-                                    class="flex items-center justify-center w-9 h-9 text-paper-200 hover:text-white hover:bg-white/[0.06] transition-colors"
+                                    class="flex items-center justify-center w-9 h-9 text-ink-600 hover:text-brand-700 hover:bg-paper-100 transition-colors"
                                 >
                                     <LifeBuoy class="w-4 h-4" />
                                 </button>
@@ -379,7 +373,7 @@ function badgeClass(color?: string): string {
                             <TooltipTrigger as-child>
                                 <button
                                     type="button"
-                                    class="flex items-center justify-center w-9 h-9 text-paper-200 hover:text-white hover:bg-white/[0.06] transition-colors"
+                                    class="flex items-center justify-center w-9 h-9 text-ink-600 hover:text-brand-700 hover:bg-paper-100 transition-colors"
                                 >
                                     <Settings class="w-4 h-4" />
                                 </button>
@@ -393,7 +387,7 @@ function badgeClass(color?: string): string {
                         <TooltipTrigger as-child>
                             <button
                                 type="button"
-                                class="flex items-center justify-center w-9 h-9 text-paper-200 hover:text-white hover:bg-white/[0.06] transition-colors"
+                                class="flex items-center justify-center w-9 h-9 text-ink-600 hover:text-brand-700 hover:bg-paper-100 transition-colors"
                                 @click="toggleCollapsed"
                             >
                                 <component :is="collapsed ? PanelLeftOpen : PanelLeftClose" class="w-4 h-4 rtl:rotate-180" />
