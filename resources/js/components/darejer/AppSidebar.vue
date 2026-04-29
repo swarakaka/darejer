@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, onBeforeUnmount, watch } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { usePage, Link } from '@inertiajs/vue3'
 import {
     Layers, LayoutDashboard, Package, Users, Settings, LifeBuoy,
@@ -7,55 +7,19 @@ import {
     FileText, Tag, Truck, Building, CreditCard, Calendar,
     Bell, Search, ChevronRight, ChevronDown, ChevronLeft,
     Inbox, Star, Archive, Globe, Shield, Wrench, Database,
-    HelpCircle, PanelLeftClose, PanelLeftOpen, X,
+    HelpCircle, X,
 } from 'lucide-vue-next'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
-import { usePermissions } from '@/composables/usePermissions'
 import { useSidebar }      from '@/composables/useSidebar'
 import useTranslation     from '@/composables/useTranslation'
 import type { DarejerSharedProps, NavItem } from '@/types/darejer'
 
 const { __ } = useTranslation()
 
-const STORAGE_KEY = 'darejer-sidebar-collapsed'
-const MOBILE_QUERY = '(max-width: 767px)'
-
 const page = usePage<DarejerSharedProps>()
-const { can, isSuperAdmin } = usePermissions()
-const { mobileOpen, closeMobile } = useSidebar()
-
-const collapsed = ref(false)
-const isMobile  = ref(false)
-let mediaQuery: MediaQueryList | null = null
-
-// On mobile we always render the expanded sidebar — the desktop "collapsed"
-// preference is irrelevant inside an off-canvas drawer.
-const effectiveCollapsed = computed(() => !isMobile.value && collapsed.value)
-
-function syncMobile(matches: boolean) {
-    isMobile.value = matches
-    if (!matches) {
-        // Resizing back to desktop: drop any open drawer state and flyout artefacts.
-        closeMobile()
-    }
-}
-
-function handleMediaChange(e: MediaQueryListEvent) {
-    syncMobile(e.matches)
-}
+const { mobileOpen, isMobile, effectiveCollapsed, collapsed, closeMobile } = useSidebar()
 
 onMounted(() => {
-    const stored = localStorage.getItem(STORAGE_KEY)
-    if (stored !== null) {
-        collapsed.value = stored === '1'
-    }
-
-    if (typeof window !== 'undefined' && typeof window.matchMedia === 'function') {
-        mediaQuery = window.matchMedia(MOBILE_QUERY)
-        syncMobile(mediaQuery.matches)
-        mediaQuery.addEventListener('change', handleMediaChange)
-    }
-
     // Auto-expand parent groups that contain an active child
     for (const item of navItems.value) {
         if (item.children?.length && isGroupActive(item)) {
@@ -64,21 +28,16 @@ onMounted(() => {
     }
 })
 
-onBeforeUnmount(() => {
-    mediaQuery?.removeEventListener('change', handleMediaChange)
-})
-
 // Lock body scroll while the mobile drawer is open.
 watch(mobileOpen, (open) => {
     if (typeof document === 'undefined') return
     document.body.style.overflow = open && isMobile.value ? 'hidden' : ''
 })
 
-function toggleCollapsed() {
-    collapsed.value = !collapsed.value
-    localStorage.setItem(STORAGE_KEY, collapsed.value ? '1' : '0')
-    if (!collapsed.value) closeFlyout()
-}
+// When the user expands the sidebar, dismiss any open flyout panel
+watch(collapsed, (isCollapsed) => {
+    if (!isCollapsed) closeFlyout()
+})
 
 const navItems = computed((): NavItem[] => {
     const items = page.props.navigation ?? []
@@ -352,52 +311,6 @@ function badgeClass(color?: string): string {
                     </template>
                 </nav>
 
-                <!-- Footer -->
-                <div
-                    class="flex items-center border-t border-(--sidebar-border)"
-                    :class="effectiveCollapsed ? 'flex-col' : 'justify-between'"
-                >
-                    <div class="flex" :class="effectiveCollapsed ? 'flex-col' : 'flex-row'">
-                        <Tooltip>
-                            <TooltipTrigger as-child>
-                                <button
-                                    type="button"
-                                    class="flex items-center justify-center w-9 h-9 text-ink-600 hover:text-brand-700 hover:bg-paper-100 transition-colors"
-                                >
-                                    <LifeBuoy class="w-4 h-4" />
-                                </button>
-                            </TooltipTrigger>
-                            <TooltipContent side="right" :side-offset="10" class="text-xs">{{ __('Help') }}</TooltipContent>
-                        </Tooltip>
-                        <Tooltip v-if="can('darejer.settings') || isSuperAdmin">
-                            <TooltipTrigger as-child>
-                                <button
-                                    type="button"
-                                    class="flex items-center justify-center w-9 h-9 text-ink-600 hover:text-brand-700 hover:bg-paper-100 transition-colors"
-                                >
-                                    <Settings class="w-4 h-4" />
-                                </button>
-                            </TooltipTrigger>
-                            <TooltipContent side="right" :side-offset="10" class="text-xs">{{ __('Settings') }}</TooltipContent>
-                        </Tooltip>
-                    </div>
-
-                    <!-- Collapse/Expand toggle (desktop only) -->
-                    <Tooltip v-if="!isMobile">
-                        <TooltipTrigger as-child>
-                            <button
-                                type="button"
-                                class="flex items-center justify-center w-9 h-9 text-ink-600 hover:text-brand-700 hover:bg-paper-100 transition-colors"
-                                @click="toggleCollapsed"
-                            >
-                                <component :is="collapsed ? PanelLeftOpen : PanelLeftClose" class="w-4 h-4 rtl:rotate-180" />
-                            </button>
-                        </TooltipTrigger>
-                        <TooltipContent side="right" :side-offset="10" class="text-xs">
-                            {{ collapsed ? __('Expand sidebar') : __('Collapse sidebar') }}
-                        </TooltipContent>
-                    </Tooltip>
-                </div>
             </aside>
         </TooltipProvider>
 
