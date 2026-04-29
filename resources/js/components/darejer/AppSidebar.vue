@@ -167,12 +167,13 @@ function closeFlyout() {
 }
 
 function badgeClass(color?: string): string {
+    const base = 'rounded-none'
     switch (color) {
-        case 'success': return 'bg-success-500 text-white'
-        case 'warning': return 'bg-warning-500 text-white'
-        case 'danger':  return 'bg-danger-500  text-white'
+        case 'success': return `${base} bg-success-500 text-white`
+        case 'warning': return `${base} bg-warning-500 text-white`
+        case 'danger':  return `${base} bg-danger-500  text-white`
         case 'info':
-        default:        return 'bg-brand-500   text-white'
+        default:        return `${base} bg-brand-500   text-white`
     }
 }
 </script>
@@ -210,21 +211,24 @@ function badgeClass(color?: string): string {
             >
                 <!-- Header -->
                 <div
-                    class="flex items-center shrink-0 h-(--topbar-height) gap-2.5 overflow-hidden
-                           border-b border-(--sidebar-border)"
+                    class="flex items-center shrink-0 h-(--topbar-height) gap-2.5 overflow-hidden"
                     :class="effectiveCollapsed ? 'justify-center' : 'px-3'"
                 >
-                    <div class="w-7 h-7 rounded-md bg-brand-600 flex items-center justify-center shrink-0 ring-1 ring-brand-400/30 shadow-sm">
-                        <span class="text-white text-base font-semibold leading-none">D</span>
+                    <div class="w-6 h-6 flex items-center justify-center shrink-0">
+                        <svg viewBox="0 0 18 18" class="w-[18px] h-[18px]" aria-hidden="true">
+                            <path fill="#50e6ff" d="M10.61 1.31l4.4 11.27-3.04 3.41h-7.31z"/>
+                            <path fill="#0078d4" d="M11.34 1.31h6.06l-3.84 11.27z"/>
+                            <path fill="#0078d4" d="M.6 16l4.7-1.83 9.61.83z"/>
+                        </svg>
                     </div>
-                    <div v-if="!effectiveCollapsed" class="flex flex-col leading-tight min-w-0">
-                        <span class="text-sm font-semibold text-paper-50 truncate">Darejer</span>
-                        <span class="text-[10px] uppercase tracking-[0.18em] text-ink-300/70 truncate">{{ __('Enterprise') }}</span>
+                    <div v-if="!effectiveCollapsed" class="flex items-baseline gap-1.5 leading-tight min-w-0">
+                        <span class="text-[13px] font-semibold text-white truncate tracking-tight">Darejer</span>
+                        <span class="text-[10px] text-paper-300 truncate">{{ __('Enterprise') }}</span>
                     </div>
                     <button
                         v-if="isMobile"
                         type="button"
-                        class="md:hidden ms-auto flex items-center justify-center w-8 h-8 rounded-md text-ink-200 hover:text-brand-300 hover:bg-brand-500/15 transition-colors"
+                        class="md:hidden ms-auto flex items-center justify-center w-7 h-7 rounded-none text-paper-200 hover:text-white hover:bg-white/10 transition-colors"
                         :aria-label="__('Close menu')"
                         @click="closeMobile"
                     >
@@ -233,7 +237,7 @@ function badgeClass(color?: string): string {
                 </div>
 
                 <!-- Nav -->
-                <nav class="flex-1 flex flex-col py-3 overflow-y-auto overflow-x-hidden">
+                <nav class="flex-1 flex flex-col py-1 overflow-y-auto overflow-x-hidden">
                     <template v-for="item in navItems" :key="item.label">
                         <!-- ── Collapsed: icon-only with tooltip ── -->
                         <template v-if="effectiveCollapsed">
@@ -241,21 +245,21 @@ function badgeClass(color?: string): string {
                                 <TooltipTrigger as-child>
                                     <Link
                                         :href="item.url ?? '#'"
-                                        class="relative flex items-center justify-center h-10 mx-2 my-0.5 rounded-md transition-colors duration-150 no-underline"
+                                        class="relative flex items-center justify-center h-9 transition-colors duration-100 no-underline"
                                         :class="isGroupActive(item) || (activeGroup?.label === item.label && flyoutOpen)
-                                            ? 'text-brand-200 bg-[color:var(--sidebar-item-bg-active)]'
-                                            : 'text-ink-200 hover:text-brand-300 hover:bg-brand-500/10'"
+                                            ? 'text-white bg-[color:var(--sidebar-item-bg-active)]'
+                                            : 'text-paper-200 hover:text-white hover:bg-white/[0.06]'"
                                         @click="(e) => onItemClick(item, e)"
                                     >
                                         <span
                                             v-if="isGroupActive(item) || (activeGroup?.label === item.label && flyoutOpen)"
-                                            class="absolute start-0 top-2 bottom-2 w-[2px] rounded-full bg-brand-400"
+                                            class="absolute start-0 top-0 bottom-0 w-[2px] bg-brand-400"
                                         />
-                                        <component :is="getIcon(item.icon)" class="w-[18px] h-[18px]" />
+                                        <component :is="getIcon(item.icon)" class="w-4 h-4" />
 
                                         <span
                                             v-if="item.badge"
-                                            class="absolute top-1 end-1 inline-flex items-center justify-center min-w-[1.125rem] h-4 px-1 rounded-full text-[9px] font-bold leading-none tabular-nums shadow-sm"
+                                            class="absolute top-1 end-1 inline-flex items-center justify-center min-w-[1.125rem] h-4 px-1 text-[9px] font-bold leading-none tabular-nums"
                                             :class="badgeClass(item.badgeColor)"
                                         >
                                             {{ item.badge }}
@@ -263,7 +267,7 @@ function badgeClass(color?: string): string {
 
                                         <span
                                             v-if="item.children?.length"
-                                            class="absolute bottom-1 end-1 w-1 h-1 rounded-full bg-brand-300/70"
+                                            class="absolute bottom-1 end-1 w-1 h-1 bg-brand-400/80"
                                         />
                                     </Link>
                                 </TooltipTrigger>
@@ -281,22 +285,22 @@ function badgeClass(color?: string): string {
                         <template v-else>
                             <Link
                                 :href="item.url ?? '#'"
-                                class="relative flex items-center gap-2.5 h-9 mx-2 my-0.5 px-2.5 rounded-md transition-colors duration-150 no-underline overflow-hidden"
+                                class="relative flex items-center gap-3 h-9 px-3 transition-colors duration-100 no-underline overflow-hidden"
                                 :class="isGroupActive(item)
-                                    ? 'text-brand-100 bg-[color:var(--sidebar-item-bg-active)]'
-                                    : 'text-ink-200 hover:text-brand-200 hover:bg-brand-500/10'"
+                                    ? 'text-white bg-[color:var(--sidebar-item-bg-active)]'
+                                    : 'text-paper-200 hover:text-white hover:bg-white/[0.06]'"
                                 @click="(e) => onItemClick(item, e)"
                             >
                                 <span
                                     v-if="isGroupActive(item)"
-                                    class="absolute inset-s-0 top-1.5 bottom-1.5 w-[2px] rounded-full bg-brand-400"
+                                    class="absolute inset-s-0 top-0 bottom-0 w-[2px] bg-brand-400"
                                 />
-                                <component :is="getIcon(item.icon)" class="w-[18px] h-[18px] shrink-0" />
-                                <span class="flex-1 text-[13px] font-medium tracking-tight truncate">{{ item.label }}</span>
+                                <component :is="getIcon(item.icon)" class="w-4 h-4 shrink-0" />
+                                <span class="flex-1 text-[13px] font-normal truncate">{{ item.label }}</span>
 
                                 <span
                                     v-if="item.badge"
-                                    class="inline-flex items-center justify-center min-w-[1.125rem] h-4 px-1 rounded-full text-[9px] font-bold leading-none tabular-nums shadow-sm"
+                                    class="inline-flex items-center justify-center min-w-[1.125rem] h-4 px-1 text-[9px] font-bold leading-none tabular-nums"
                                     :class="badgeClass(item.badgeColor)"
                                 >
                                     {{ item.badge }}
@@ -305,40 +309,44 @@ function badgeClass(color?: string): string {
                                 <component
                                     v-if="item.children?.length"
                                     :is="expandedGroups.has(item.label) ? ChevronDown : ChevronRight"
-                                    class="w-3.5 h-3.5 shrink-0 text-ink-400 rtl:[&:not(.lucide-chevron-down)]:rotate-180"
+                                    class="w-3.5 h-3.5 shrink-0 text-paper-300 rtl:[&:not(.lucide-chevron-down)]:rotate-180"
                                 />
                             </Link>
 
                             <!-- Inline children (expanded mode) -->
                             <div
                                 v-if="item.children?.length && expandedGroups.has(item.label)"
-                                class="flex flex-col"
+                                class="flex flex-col bg-black/20"
                             >
                                 <template v-for="(child, i) in item.children" :key="child.label">
                                     <div
                                         v-if="child.group && (i === 0 || (item.children?.[i - 1]?.group !== child.group))"
-                                        class="ps-10 pt-2.5 pb-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-ink-400/80 select-none"
+                                        class="ps-10 pt-2 pb-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-paper-300/70 select-none"
                                     >
                                         {{ child.group }}
                                     </div>
 
                                     <Link
                                         :href="child.url ?? '#'"
-                                        class="flex items-center gap-2 h-7 ps-10 pe-3 text-[12.5px] no-underline transition-colors duration-100"
+                                        class="relative flex items-center gap-2 h-8 ps-10 pe-3 text-[12.5px] no-underline transition-colors duration-100"
                                         :class="isActive(child)
-                                            ? 'text-brand-200 font-medium'
-                                            : 'text-ink-300 hover:text-brand-200'"
+                                            ? 'text-white font-medium bg-white/[0.04]'
+                                            : 'text-paper-200 hover:text-white hover:bg-white/[0.04]'"
                                     >
+                                        <span
+                                            v-if="isActive(child)"
+                                            class="absolute inset-s-0 top-0 bottom-0 w-[2px] bg-brand-400"
+                                        />
                                         <component
                                             v-if="child.icon"
                                             :is="getIcon(child.icon)"
-                                            class="w-3.5 h-3.5 shrink-0 text-ink-400"
+                                            class="w-3.5 h-3.5 shrink-0 text-paper-300"
                                         />
                                         <span class="flex-1 truncate">{{ child.label }}</span>
 
                                         <span
                                             v-if="child.badge"
-                                            class="inline-flex items-center justify-center min-w-[1.125rem] h-4 px-1 rounded-full text-[9px] font-bold leading-none tabular-nums"
+                                            class="inline-flex items-center justify-center min-w-[1.125rem] h-4 px-1 text-[9px] font-bold leading-none tabular-nums"
                                             :class="badgeClass(child.badgeColor)"
                                         >
                                             {{ child.badge }}
@@ -352,15 +360,15 @@ function badgeClass(color?: string): string {
 
                 <!-- Footer -->
                 <div
-                    class="flex items-center py-2 gap-0.5 border-t border-(--sidebar-border)"
-                    :class="effectiveCollapsed ? 'flex-col' : 'px-2 justify-between'"
+                    class="flex items-center border-t border-(--sidebar-border)"
+                    :class="effectiveCollapsed ? 'flex-col' : 'justify-between'"
                 >
-                    <div :class="effectiveCollapsed ? 'flex flex-col items-center gap-0.5' : 'flex items-center gap-0.5'">
+                    <div class="flex" :class="effectiveCollapsed ? 'flex-col' : 'flex-row'">
                         <Tooltip>
                             <TooltipTrigger as-child>
                                 <button
                                     type="button"
-                                    class="flex items-center justify-center w-9 h-9 rounded-md text-ink-200 hover:text-brand-300 hover:bg-brand-500/15 transition-colors"
+                                    class="flex items-center justify-center w-9 h-9 text-paper-200 hover:text-white hover:bg-white/[0.06] transition-colors"
                                 >
                                     <LifeBuoy class="w-4 h-4" />
                                 </button>
@@ -371,7 +379,7 @@ function badgeClass(color?: string): string {
                             <TooltipTrigger as-child>
                                 <button
                                     type="button"
-                                    class="flex items-center justify-center w-9 h-9 rounded-md text-ink-200 hover:text-brand-300 hover:bg-brand-500/15 transition-colors"
+                                    class="flex items-center justify-center w-9 h-9 text-paper-200 hover:text-white hover:bg-white/[0.06] transition-colors"
                                 >
                                     <Settings class="w-4 h-4" />
                                 </button>
@@ -385,7 +393,7 @@ function badgeClass(color?: string): string {
                         <TooltipTrigger as-child>
                             <button
                                 type="button"
-                                class="flex items-center justify-center w-9 h-9 rounded-md text-ink-200 hover:text-brand-300 hover:bg-brand-500/15 transition-colors"
+                                class="flex items-center justify-center w-9 h-9 text-paper-200 hover:text-white hover:bg-white/[0.06] transition-colors"
                                 @click="toggleCollapsed"
                             >
                                 <component :is="collapsed ? PanelLeftOpen : PanelLeftClose" class="w-4 h-4 rtl:rotate-180" />
@@ -410,14 +418,14 @@ function badgeClass(color?: string): string {
         >
             <div
                 v-if="effectiveCollapsed && flyoutOpen && activeGroup"
-                class="absolute start-full top-0 h-full z-10 w-(--flyout-width) bg-white border-s border-paper-200 shadow-xl flex flex-col"
+                class="absolute start-full top-0 h-full z-10 w-(--flyout-width) bg-white border-s border-paper-200 shadow-[var(--shadow-blade)] flex flex-col"
             >
                 <!-- Flyout header -->
                 <div class="flex items-center justify-between h-(--topbar-height) px-4 border-b border-paper-200 shrink-0 bg-paper-75">
-                    <span class="text-sm font-semibold tracking-tight text-ink-800">{{ activeGroup.label }}</span>
+                    <span class="text-[13px] font-semibold tracking-tight text-ink-900">{{ activeGroup.label }}</span>
                     <button
                         type="button"
-                        class="text-ink-400 hover:text-ink-700 transition-colors rtl:rotate-180"
+                        class="text-ink-500 hover:text-brand-600 transition-colors rtl:rotate-180"
                         @click="closeFlyout"
                     >
                         <ChevronLeft class="w-4 h-4" />
@@ -425,33 +433,38 @@ function badgeClass(color?: string): string {
                 </div>
 
                 <!-- Flyout nav items -->
-                <nav class="flex-1 flex flex-col py-2 overflow-y-auto">
+                <nav class="flex-1 flex flex-col py-1 overflow-y-auto">
                     <template v-for="(child, i) in activeGroup.children" :key="child.label">
                         <div
                             v-if="child.group && (i === 0 || (activeGroup.children?.[i - 1]?.group !== child.group))"
-                            class="px-4 pt-3 pb-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-ink-400 select-none"
+                            class="px-4 pt-3 pb-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-ink-500 select-none"
                         >
                             {{ child.group }}
                         </div>
 
                         <Link
                             :href="child.url ?? '#'"
-                            class="flex items-center gap-2.5 h-8 px-4 text-sm no-underline transition-colors duration-100 border-s-2"
+                            class="relative flex items-center gap-2.5 h-8 px-4 text-[13px] no-underline transition-colors duration-100"
                             :class="isActive(child)
-                                ? 'bg-brand-50 text-brand-700 font-medium border-brand-500'
-                                : 'text-ink-600 hover:bg-paper-75 hover:text-ink-900 border-transparent'"
+                                ? 'bg-brand-50 text-brand-700 font-semibold'
+                                : 'text-ink-700 hover:bg-paper-100 hover:text-ink-900'"
                             @click="closeFlyout"
                         >
+                            <span
+                                v-if="isActive(child)"
+                                class="absolute inset-s-0 top-0 bottom-0 w-[2px] bg-brand-500"
+                            />
                             <component
                                 v-if="child.icon"
                                 :is="getIcon(child.icon)"
-                                class="w-3.5 h-3.5 shrink-0 text-ink-400"
+                                class="w-3.5 h-3.5 shrink-0"
+                                :class="isActive(child) ? 'text-brand-600' : 'text-ink-500'"
                             />
                             <span class="flex-1 truncate">{{ child.label }}</span>
 
                             <span
                                 v-if="child.badge"
-                                class="inline-flex items-center justify-center min-w-[1.125rem] h-4 px-1 rounded-full text-[9px] font-bold leading-none tabular-nums"
+                                class="inline-flex items-center justify-center min-w-[1.125rem] h-4 px-1 text-[9px] font-bold leading-none tabular-nums"
                                 :class="badgeClass(child.badgeColor)"
                             >
                                 {{ child.badge }}

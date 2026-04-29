@@ -12,7 +12,7 @@ const { __ } = useTranslation()
 <template>
     <nav
         v-if="page.props.breadcrumbs?.length"
-        class="flex items-center gap-1 text-xs text-ink-400 tabular-nums"
+        class="flex items-center gap-1 text-[12px] text-ink-500 tabular-nums"
         :aria-label="__('Breadcrumb')"
     >
         <template
@@ -22,20 +22,20 @@ const { __ } = useTranslation()
             <Link
                 v-if="crumb.url && i < page.props.breadcrumbs.length - 1"
                 :href="crumb.url"
-                class="px-1 py-0.5 rounded-sm hover:text-brand-700 hover:bg-paper-100 transition-colors"
+                class="px-1 py-0.5 rounded-[2px] text-brand-700 hover:underline hover:text-brand-800 transition-colors"
             >
                 {{ crumb.label }}
             </Link>
             <span
                 v-else
-                class="px-1 py-0.5 text-ink-700 font-semibold"
+                class="px-1 py-0.5 text-ink-900 font-semibold"
             >
                 {{ crumb.label }}
             </span>
 
             <ChevronRight
                 v-if="i < page.props.breadcrumbs.length - 1"
-                class="w-3 h-3 text-ink-300 rtl:rotate-180"
+                class="w-3 h-3 text-ink-400 rtl:rotate-180"
             />
         </template>
     </nav>

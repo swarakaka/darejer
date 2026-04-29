@@ -11,16 +11,16 @@ export { default as SheetTitle } from "./SheetTitle.vue"
 export { default as SheetTrigger } from "./SheetTrigger.vue"
 
 export const sheetVariants = cva(
-  "fixed z-50 gap-4 bg-background p-6 shadow-lg transition ease-in-out data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:duration-300 data-[state=open]:duration-500",
+  "fixed z-50 gap-4 bg-white p-6 shadow-[-12.8px_0_28.8px_rgba(0,0,0,0.13),_-2.4px_0_7.2px_rgba(0,0,0,0.10)] transition ease-in-out data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:duration-200 data-[state=open]:duration-300",
   {
     variants: {
       side: {
-        top: "inset-x-0 top-0 border-b data-[state=closed]:slide-out-to-top data-[state=open]:slide-in-from-top",
+        top: "inset-x-0 top-0 border-b border-paper-200 data-[state=closed]:slide-out-to-top data-[state=open]:slide-in-from-top",
         bottom:
-            "inset-x-0 bottom-0 border-t data-[state=closed]:slide-out-to-bottom data-[state=open]:slide-in-from-bottom",
-        left: "inset-y-0 start-0 h-full w-3/4 border-e data-[state=closed]:slide-out-to-left data-[state=open]:slide-in-from-left sm:max-w-sm",
+            "inset-x-0 bottom-0 border-t border-paper-200 data-[state=closed]:slide-out-to-bottom data-[state=open]:slide-in-from-bottom",
+        left: "inset-y-0 start-0 h-full w-3/4 border-e border-paper-200 data-[state=closed]:slide-out-to-left data-[state=open]:slide-in-from-left sm:max-w-md",
         right:
-            "inset-y-0 end-0 h-full w-3/4 border-s data-[state=closed]:slide-out-to-right data-[state=open]:slide-in-from-right sm:max-w-sm",
+            "inset-y-0 end-0 h-full w-3/4 border-s border-paper-200 data-[state=closed]:slide-out-to-right data-[state=open]:slide-in-from-right sm:max-w-md",
       },
     },
     defaultVariants: {

@@ -100,11 +100,11 @@ function flatIndex(groupIdx: number, itemIdx: number): number {
 </script>
 
 <template>
-    <div ref="wrapper" class="relative flex-1 max-w-md min-w-0">
+    <div ref="wrapper" class="relative w-full max-w-2xl min-w-0">
         <div class="relative group">
             <Search
                 class="absolute inset-s-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5
-                       text-ink-400 group-focus-within:text-brand-600 transition-colors pointer-events-none"
+                       text-white/60 group-focus-within:text-brand-400 transition-colors pointer-events-none"
             />
             <input
                 ref="inputEl"
@@ -112,32 +112,32 @@ function flatIndex(groupIdx: number, itemIdx: number): number {
                 type="search"
                 autocomplete="off"
                 spellcheck="false"
-                :placeholder="__('Search records, screens, or run a command…')"
-                class="w-full h-9 ps-9 pe-16 text-sm bg-paper-100/70 border border-transparent rounded-md
-                       placeholder:text-ink-400 focus:outline-none focus:bg-white focus:border-paper-300
-                       focus:ring-2 focus:ring-brand-500/15 transition-all"
+                :placeholder="__('Search resources, services, and docs')"
+                class="w-full h-7 ps-9 pe-16 text-[13px] bg-white/[0.08] border border-white/15 rounded-none text-white
+                       placeholder:text-white/55 focus:outline-none focus:bg-white focus:text-ink-900
+                       focus:placeholder:text-ink-400 focus:border-brand-400 focus:ring-0 transition-colors duration-100"
                 @focus="open = true"
                 @keydown="onKeyDown"
             />
             <kbd
                 v-if="!term"
                 class="absolute inset-e-2 top-1/2 -translate-y-1/2 hidden md:flex items-center gap-1
-                       text-2xs font-medium text-ink-500 bg-white
-                       border border-paper-300 rounded-sm px-1.5 h-5 tabular-nums pointer-events-none shadow-xs"
+                       text-2xs font-medium text-white/70 bg-white/10
+                       border border-white/20 rounded-none px-1.5 h-4 tabular-nums pointer-events-none"
             >
                 <Command class="w-2.5 h-2.5" />K
             </kbd>
             <Loader2
                 v-else-if="loading"
-                class="absolute inset-e-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-ink-400 animate-spin"
+                class="absolute inset-e-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-white/70 animate-spin"
             />
         </div>
 
         <!-- Results dropdown -->
         <div
             v-if="open && term"
-            class="absolute start-0 end-0 mt-1.5 z-50 max-h-[28rem] overflow-y-auto
-                   rounded-lg border border-paper-200 bg-white shadow-2xl ring-1 ring-ink-950/5"
+            class="absolute start-0 end-0 mt-1 z-50 max-h-[28rem] overflow-y-auto
+                   rounded-none border border-paper-200 bg-white shadow-[0_6.4px_14.4px_rgba(0,0,0,0.13),_0_1.2px_3.6px_rgba(0,0,0,0.10)]"
         >
             <div
                 v-if="loading && !hasResults"
