@@ -7,7 +7,7 @@ import {
     DialogHeader,
     DialogTitle,
 }                           from '@/components/ui/dialog'
-import { ChevronDown, FileText, Circle } from 'lucide-vue-next'
+import { ChevronDown, Circle } from 'lucide-vue-next'
 import DarejerComponent     from '@/components/darejer/DarejerComponent.vue'
 import DarejerActions       from '@/components/darejer/DarejerActions.vue'
 import AppBreadcrumbs       from '@/components/darejer/AppBreadcrumbs.vue'
@@ -253,20 +253,11 @@ function sectionIndex(section: ScreenSection): number {
                     <div class="absolute inset-y-0 inset-e-0 w-2/3 bg-linear-to-s from-brand-50/60 via-white/0 to-transparent pointer-events-none" />
 
                     <div class="relative flex items-start justify-between gap-6 px-6 pt-5 pb-5">
-                        <div class="flex items-start gap-3 min-w-0">
-                            <div
-                                class="hidden sm:flex shrink-0 items-center justify-center w-10 h-10 mt-0.5
-                                       bg-gradient-to-be from-brand-500 to-brand-700 text-white
-                                       shadow-[0_2px_6px_-2px_rgba(0,120,212,0.6)] rounded-md"
-                            >
-                                <FileText class="w-5 h-5" />
-                            </div>
-                            <div class="flex flex-col min-w-0">
-                                <AppBreadcrumbs class="mb-2" />
-                                <h1 class="text-[28px] leading-[1.05] tracking-[-0.02em] text-ink-900 font-semibold">
-                                    {{ title }}
-                                </h1>
-                            </div>
+                        <div class="flex flex-col min-w-0">
+                            <AppBreadcrumbs class="mb-2" />
+                            <h1 class="text-[28px] leading-[1.05] tracking-[-0.02em] text-ink-900 font-semibold">
+                                {{ title }}
+                            </h1>
                         </div>
                     </div>
                 </header>
