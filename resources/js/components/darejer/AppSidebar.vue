@@ -74,12 +74,40 @@ function pathFromUrl(url: string): string {
     }
 }
 
+// All leaf-item URLs (flattened, including nested children) — used to ensure
+// the longest matching nav URL wins, so e.g. Dashboard at `/darejer` does not
+// stay active when the user is on `/darejer/sales/sales-invoices`.
+const allNavPaths = computed((): string[] => {
+    const paths: string[] = []
+    const walk = (items: NavItem[]) => {
+        for (const item of items) {
+            if (item.url) paths.push(pathFromUrl(item.url))
+            if (item.children?.length) walk(item.children)
+        }
+    }
+    walk(navItems.value)
+    return paths
+})
+
+function pathMatches(navPath: string, currentPath: string): boolean {
+    if (navPath === '/') return currentPath === '/'
+    return currentPath === navPath || currentPath.startsWith(navPath + '/')
+}
+
 function isActive(item: NavItem): boolean {
     if (!item.url) return false
     const navPath = pathFromUrl(item.url)
-    if (navPath === '/') return currentPath.value === '/'
-    return currentPath.value === navPath
-        || currentPath.value.startsWith(navPath + '/')
+    if (!pathMatches(navPath, currentPath.value)) return false
+
+    // If another nav URL is a more specific match for the current path,
+    // defer to it. This makes `/darejer/sales/sales-invoices/123/edit`
+    // light up Sales Invoices instead of Dashboard (`/darejer`).
+    for (const other of allNavPaths.value) {
+        if (other.length > navPath.length && pathMatches(other, currentPath.value)) {
+            return false
+        }
+    }
+    return true
 }
 
 function isGroupActive(item: NavItem): boolean {
