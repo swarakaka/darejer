@@ -40,6 +40,8 @@ class DataTable
 
     protected bool $selectable = true;
 
+    protected string $rowActionsDisplay = 'inline';
+
     protected ?string $emptyMessage = null;
 
     protected array $extraProps = [];
@@ -144,6 +146,19 @@ class DataTable
     public function selectable(bool $selectable = true): static
     {
         $this->selectable = $selectable;
+
+        return $this;
+    }
+
+    /**
+     * Choose how row actions render in the last column.
+     *
+     * - 'inline'   (default) — each action renders as an icon button with a tooltip.
+     * - 'dropdown'           — actions collapse into a `…` menu.
+     */
+    public function rowActionsDisplay(string $mode): static
+    {
+        $this->rowActionsDisplay = $mode === 'dropdown' ? 'dropdown' : 'inline';
 
         return $this;
     }
@@ -281,6 +296,7 @@ class DataTable
                 ->values()
                 ->all(),
             'selectable' => $this->selectable,
+            'rowActionsDisplay' => $this->rowActionsDisplay,
             'reorderable' => $this->reorderable,
             'reorderField' => $this->reorderable ? $this->reorderField : null,
             'reorderUrl' => $this->reorderable

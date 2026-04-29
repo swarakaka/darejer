@@ -19,6 +19,12 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip'
+import {
   Dialog,
   DialogContent,
   DialogHeader,
@@ -81,6 +87,7 @@ const props = defineProps<{
   headerActions: DarejerAction[]
   bulkActions?:  DarejerAction[]
   selectable:    boolean
+  rowActionsDisplay?: 'inline' | 'dropdown'
   emptyMessage?: string
   defaultSort:   string
   defaultOrder:  string
@@ -639,19 +646,7 @@ function clearFilter(field: string) {
 
                 <td v-if="rowActions.length" class="px-2 h-10">
                   <div class="flex items-center justify-end gap-0.5">
-                    <template v-if="rowActions.length === 1">
-                      <button
-                          type="button"
-                          class="flex items-center justify-center w-8 h-8 rounded-md
-                                 text-ink-400 hover:text-brand-700 hover:bg-brand-50 transition-colors"
-                          :title="rowActions[0].label"
-                          @click="handleRowAction(rowActions[0], row)"
-                      >
-                        <component :is="resolveIcon(rowActions[0].icon)" v-if="rowActions[0].icon" class="w-3.5 h-3.5" />
-                        <span v-else class="text-[11px] font-semibold">{{ rowActions[0].label }}</span>
-                      </button>
-                    </template>
-                    <template v-else>
+                    <template v-if="(rowActionsDisplay ?? 'inline') === 'dropdown'">
                       <DropdownMenu>
                         <DropdownMenuTrigger as-child>
                           <button type="button" class="flex items-center justify-center w-8 h-8 rounded-md text-ink-400 hover:text-brand-700 hover:bg-brand-50 transition-colors opacity-60 group-hover/row:opacity-100">
@@ -671,6 +666,30 @@ function clearFilter(field: string) {
                           </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
+                    </template>
+                    <template v-else>
+                      <TooltipProvider :delay-duration="0">
+                        <Tooltip
+                            v-for="action in rowActions"
+                            :key="action.label"
+                        >
+                          <TooltipTrigger as-child>
+                            <button
+                                type="button"
+                                class="flex items-center justify-center w-8 h-8 rounded-md transition-colors"
+                                :class="action.variant === 'destructive'
+                                    ? 'text-ink-400 hover:text-danger-700 hover:bg-danger-50'
+                                    : 'text-ink-400 hover:text-brand-700 hover:bg-brand-50'"
+                                :aria-label="__(action.label)"
+                                @click="handleRowAction(action, row)"
+                            >
+                              <component :is="resolveIcon(action.icon)" v-if="action.icon" class="w-3.5 h-3.5" />
+                              <span v-else class="text-[11px] font-semibold">{{ __(action.label) }}</span>
+                            </button>
+                          </TooltipTrigger>
+                          <TooltipContent>{{ __(action.label) }}</TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
                     </template>
                   </div>
                 </td>
