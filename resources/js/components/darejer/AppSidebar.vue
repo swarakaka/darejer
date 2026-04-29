@@ -117,7 +117,10 @@ function pathFromUrl(url: string): string {
 
 function isActive(item: NavItem): boolean {
     if (!item.url) return false
-    return currentPath.value === pathFromUrl(item.url)
+    const navPath = pathFromUrl(item.url)
+    if (navPath === '/') return currentPath.value === '/'
+    return currentPath.value === navPath
+        || currentPath.value.startsWith(navPath + '/')
 }
 
 function isGroupActive(item: NavItem): boolean {
