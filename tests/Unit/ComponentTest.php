@@ -1,6 +1,7 @@
 <?php
 
 use Darejer\Components\Combobox;
+use Darejer\Components\Display;
 use Darejer\Components\SelectComponent;
 use Darejer\Components\TextInput;
 
@@ -109,4 +110,53 @@ it('serializes prefillUrl when prefillFrom is set', function () {
         ->toArray();
 
     expect($array)->toHaveKey('prefillUrl', '/darejer/sales/sales-invoices/prefill-from-order');
+});
+
+it('serializes a plain Display component', function () {
+    $array = Display::make('voucher_no')->label('No.')->toArray();
+
+    expect($array)
+        ->toHaveKey('type', 'Display')
+        ->toHaveKey('name', 'voucher_no')
+        ->toHaveKey('label', 'No.')
+        ->toHaveKey('displayType', 'text');
+});
+
+it('serializes a Display badge with color map', function () {
+    $array = Display::make('status')
+        ->label('Status')
+        ->badge(['posted' => 'success', 'draft' => 'neutral'])
+        ->toArray();
+
+    expect($array)
+        ->toHaveKey('displayType', 'badge')
+        ->toHaveKey('badgeMap', ['posted' => 'success', 'draft' => 'neutral']);
+});
+
+it('serializes a Display date with default format', function () {
+    $array = Display::make('voucher_date')->date()->toArray();
+
+    expect($array)
+        ->toHaveKey('displayType', 'date')
+        ->toHaveKey('dateFormat', 'Y-m-d');
+});
+
+it('serializes a Display money component with decimals and currency field', function () {
+    $array = Display::make('grand_total')
+        ->money(2, 'currency.code')
+        ->toArray();
+
+    expect($array)
+        ->toHaveKey('displayType', 'money')
+        ->toHaveKey('decimals', 2)
+        ->toHaveKey('currencyField', 'currency.code');
+});
+
+it('serializes a Display boolean with default labels', function () {
+    $array = Display::make('is_active')->boolean()->toArray();
+
+    expect($array)
+        ->toHaveKey('displayType', 'boolean')
+        ->toHaveKey('booleanTrueLabel', 'Yes')
+        ->toHaveKey('booleanFalseLabel', 'No');
 });
