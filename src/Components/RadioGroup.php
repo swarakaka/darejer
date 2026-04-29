@@ -2,6 +2,9 @@
 
 namespace Darejer\Components;
 
+use BackedEnum;
+use Darejer\Support\EnumOptions;
+
 class RadioGroup extends BaseComponent
 {
     protected array $options = [];
@@ -11,11 +14,11 @@ class RadioGroup extends BaseComponent
     protected bool $disabled = false;
 
     /**
-     * @param  array<string, string>  $options  ['value' => 'Label', ...]
+     * @param  array<string, string>|class-string<BackedEnum>  $options
      */
-    public function options(array $options): static
+    public function options(array|string $options): static
     {
-        $this->options = $options;
+        $this->options = EnumOptions::labels($options);
 
         return $this;
     }

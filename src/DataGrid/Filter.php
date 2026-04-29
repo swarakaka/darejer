@@ -2,6 +2,9 @@
 
 namespace Darejer\DataGrid;
 
+use BackedEnum;
+use Darejer\Support\EnumOptions;
+
 class Filter
 {
     protected string $field;
@@ -67,11 +70,15 @@ class Filter
     }
 
     /**
-     * @param  array<string, string>  $options
+     * Set selectable options. Accepts either a `[value => label]` array or a
+     * backed-enum class string (label resolved via `label()` or static
+     * `options()` on the enum).
+     *
+     * @param  array<string, string>|class-string<BackedEnum>  $options
      */
-    public function options(array $options): static
+    public function options(array|string $options): static
     {
-        $this->options = $options;
+        $this->options = EnumOptions::labels($options);
 
         return $this;
     }

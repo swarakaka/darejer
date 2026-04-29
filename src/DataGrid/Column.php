@@ -2,7 +2,9 @@
 
 namespace Darejer\DataGrid;
 
+use BackedEnum;
 use Closure;
+use Darejer\Support\EnumOptions;
 
 class Column
 {
@@ -111,11 +113,15 @@ class Column
     }
 
     /**
-     * @param  array<string, string>  $colorMap
+     * Map case values to a badge color. Accepts either a `[value => color]`
+     * array or a backed-enum class string that exposes per-case colors via
+     * `color()` instance methods or a static `colors()` helper.
+     *
+     * @param  array<string, string>|class-string<BackedEnum>  $colorMap
      */
-    public function badge(array $colorMap): static
+    public function badge(array|string $colorMap): static
     {
-        $this->badge = json_encode($colorMap);
+        $this->badge = json_encode(EnumOptions::colors($colorMap));
 
         return $this;
     }

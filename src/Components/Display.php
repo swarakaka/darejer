@@ -2,6 +2,9 @@
 
 namespace Darejer\Components;
 
+use BackedEnum;
+use Darejer\Support\EnumOptions;
+
 /**
  * A read-only display field used on Show screens. Renders a value using the
  * element that matches its type — badges for status enums, formatted dates,
@@ -37,15 +40,18 @@ class Display extends BaseComponent
      * Render the value as a colored badge using the given value→variant map.
      *
      * Variants: 'success' | 'warning' | 'danger' | 'info' | 'neutral'.
+     * Accepts either an array or a backed-enum class string that exposes
+     * per-case colors via `color()` instance methods or a static `colors()`.
      *
      *   Display::make('status')->badge(['posted' => 'success', 'draft' => 'neutral'])
+     *   Display::make('status')->badge(DocumentStatus::class)
      *
-     * @param  array<string, string>  $colorMap
+     * @param  array<string, string>|class-string<BackedEnum>  $colorMap
      */
-    public function badge(array $colorMap): static
+    public function badge(array|string $colorMap): static
     {
         $this->displayType = 'badge';
-        $this->badgeMap = $colorMap;
+        $this->badgeMap = EnumOptions::colors($colorMap);
 
         return $this;
     }
