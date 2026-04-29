@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue'
-import { Input }    from '@/components/ui/input'
-import FieldWrapper from '@/components/darejer/FieldWrapper.vue'
+import { ref, computed }   from 'vue'
+import { Input }           from '@/components/ui/input'
+import FieldWrapper        from '@/components/darejer/FieldWrapper.vue'
 import type { DarejerComponent } from '@/types/darejer'
 
 const props = defineProps<{
@@ -24,22 +24,8 @@ function onInput(e: Event) {
     emit('update', props.component.name, val)
 }
 
-const prefixEl    = ref<HTMLElement | null>(null)
-const suffixEl    = ref<HTMLElement | null>(null)
-const prefixWidth = ref(0)
-const suffixWidth = ref(0)
-
-onMounted(() => {
-    if (prefixEl.value) prefixWidth.value = prefixEl.value.offsetWidth
-    if (suffixEl.value) suffixWidth.value = suffixEl.value.offsetWidth
-})
-
-const inputPaddingLeft = computed(() =>
-    prefixWidth.value > 0 ? `${prefixWidth.value + 6}px` : undefined
-)
-const inputPaddingRight = computed(() =>
-    suffixWidth.value > 0 ? `${suffixWidth.value + 6}px` : undefined
-)
+const hasPrefix = computed(() => !!props.component.prefix)
+const hasSuffix = computed(() => !!props.component.suffix)
 </script>
 
 <template>
@@ -49,11 +35,11 @@ const inputPaddingRight = computed(() =>
 
                 <!-- Prefix -->
                 <span
-                    v-if="component.prefix"
-                    ref="prefixEl"
-                    class="absolute start-0 flex items-center h-full px-2 text-sm
-                           text-ink-500 border-e border-paper-300 bg-paper-75
-                           rounded-s-sm pointer-events-none select-none whitespace-nowrap z-10"
+                    v-if="hasPrefix"
+                    class="absolute inset-y-0 inset-s-0 flex items-center px-2.5 text-sm
+                           text-ink-500 border-e border-paper-300 bg-paper-50
+                           rounded-s-md pointer-events-none select-none whitespace-nowrap z-10
+                           max-w-[40%] truncate"
                 >
                     {{ component.prefix }}
                 </span>
@@ -69,21 +55,21 @@ const inputPaddingRight = computed(() =>
                     :maxlength="(component.maxLength as number)"
                     :autofocus="(component.autofocus as boolean)"
                     class="w-full"
-                    :class="hasError ? 'border-danger-600' : ''"
-                    :style="{
-                        paddingLeft:  inputPaddingLeft,
-                        paddingRight: inputPaddingRight,
-                    }"
+                    :class="[
+                        hasError ? 'border-danger-600' : '',
+                        hasPrefix ? 'ps-20' : '',
+                        hasSuffix ? 'pe-20' : '',
+                    ]"
                     @input="onInput"
                 />
 
                 <!-- Suffix -->
                 <span
-                    v-if="component.suffix"
-                    ref="suffixEl"
-                    class="absolute end-0 flex items-center h-full px-2 text-sm
-                           text-ink-500 border-s border-paper-300 bg-paper-75
-                           rounded-e-sm pointer-events-none select-none whitespace-nowrap z-10"
+                    v-if="hasSuffix"
+                    class="absolute inset-y-0 inset-e-0 flex items-center px-2.5 text-sm
+                           text-ink-500 border-s border-paper-300 bg-paper-50
+                           rounded-e-md pointer-events-none select-none whitespace-nowrap z-10
+                           max-w-[40%] truncate"
                 >
                     {{ component.suffix }}
                 </span>

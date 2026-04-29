@@ -248,10 +248,6 @@ function executeConfirmed() {
 }
 
 function formatCell(value: unknown, col: Object|unknown): unknown {
-
-  //if (!col) return value
-  //if (col?.field === 'id') return value
-
   return value
 }
 
@@ -265,7 +261,7 @@ function badgeClass(col: GridColumn, value: unknown): string {
     warning: 'bg-warning-50 text-warning-700 border-warning-100',
     danger:  'bg-danger-50 text-danger-700 border-danger-100',
     info:    'bg-brand-50 text-brand-700 border-brand-100',
-    neutral: 'bg-paper-100 text-ink-500 border-paper-200',
+    neutral: 'bg-paper-100 text-ink-600 border-paper-200',
   }
   return classes[variant] ?? classes.neutral
 }
@@ -278,71 +274,73 @@ const resolveIcon = (name?: string) => name ? (iconMap[name] ?? null) : null
   <div class="flex flex-col h-full overflow-hidden bg-paper-50">
 
     <!-- Action Pane -->
-    <div
-        class="flex items-center gap-1.5 px-6 border-b border-paper-200 bg-paper-75 shrink-0 overflow-x-auto"
-        :style="{ height: 'var(--action-pane-height)' }"
-    >
+    <div class="flex items-center gap-1.5 h-(--action-pane-height) px-6 border-b border-paper-200 bg-white shrink-0 overflow-x-auto">
       <DarejerActions :actions="headerActions" placement="header" />
     </div>
 
     <!-- Page title -->
-    <div class="flex items-start justify-between gap-6 px-6 pt-5 pb-4 border-b border-paper-200 shrink-0">
-      <div class="flex flex-col min-w-0">
-        <AppBreadcrumbs class="mb-3" />
-        <h1 class="text-[1.75rem] leading-[1.1] tracking-tight text-ink-900">
-          {{ title }}
-        </h1>
-      </div>
+    <header class="shrink-0 bg-white border-b border-paper-200">
+      <div class="flex items-start justify-between gap-6 px-6 pt-5 pb-4">
+        <div class="flex flex-col min-w-0">
+          <AppBreadcrumbs class="mb-3" />
+          <h1 class="text-2xl leading-[1.1] tracking-tight text-ink-900 font-semibold">
+            {{ title }}
+          </h1>
+          <p class="mt-1.5 text-sm text-ink-500 tabular-nums">
+            {{ __(':n records', { n: tableData.total }) }}
+          </p>
+        </div>
 
-      <button
-          v-if="filters.length"
-          type="button"
-          class="flex items-center gap-1.5 h-8 px-3 text-sm border border-paper-300 rounded-sm
-                       text-ink-600 hover:bg-paper-100 transition-colors"
-          @click="showFilters = !showFilters"
-      >
-        <SlidersHorizontal class="w-3.5 h-3.5" />
-        {{ __('Filters') }}
-        <span
-            v-if="activeFilterCount > 0"
-            class="inline-flex items-center justify-center w-4 h-4 rounded-full
-                           bg-brand-600 text-white text-[9px] font-bold tabular-nums"
+        <button
+            v-if="filters.length"
+            type="button"
+            class="flex items-center gap-1.5 h-9 px-3 text-sm font-medium border border-paper-300 rounded-md
+                   bg-white text-ink-700 hover:bg-paper-50 hover:border-paper-400 shadow-xs transition-colors"
+            @click="showFilters = !showFilters"
         >
-                    {{ activeFilterCount }}
-                </span>
-      </button>
-    </div>
+          <SlidersHorizontal class="w-3.5 h-3.5" />
+          {{ __('Filters') }}
+          <span
+              v-if="activeFilterCount > 0"
+              class="inline-flex items-center justify-center min-w-4 h-4 px-1 rounded-full
+                     bg-brand-600 text-white text-[9px] font-bold tabular-nums"
+          >
+            {{ activeFilterCount }}
+          </span>
+        </button>
+      </div>
+    </header>
 
     <!-- Content -->
-    <div class="flex-1 overflow-y-auto px-6 pt-4 pb-6">
+    <div class="flex-1 overflow-y-auto px-6 pt-5 pb-6">
 
       <!-- Filter bar -->
       <div
           v-if="showFilters && filters.length"
-          class="flex flex-wrap items-end gap-3 p-3 bg-paper-75 border border-paper-200 rounded-md mb-3"
+          class="flex flex-wrap items-end gap-3 p-4 bg-white border border-paper-200 rounded-lg mb-4 shadow-xs"
       >
         <div
             v-for="filter in filters"
             :key="filter.field"
-            class="flex flex-col gap-1 min-w-[10rem]"
+            class="flex flex-col gap-1.5 min-w-[10rem]"
         >
-          <label class="text-xs font-medium text-ink-500">{{ filter.label }}</label>
+          <label class="text-[11px] font-semibold uppercase tracking-[0.1em] text-ink-500">{{ filter.label }}</label>
 
           <input
               v-if="filter.type === 'text'"
               v-model="filterValues[filter.field]"
               type="text"
               :placeholder="filter.placeholder ?? ''"
-              class="h-8 px-2.5 text-sm border border-paper-300 rounded-sm bg-white
-                               placeholder:text-ink-400 focus:outline-none focus:border-brand-500 transition-colors"
+              class="h-9 px-3 text-sm border border-paper-300 rounded-md bg-white
+                     placeholder:text-ink-400 focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/15 transition-colors"
               @input="onFilterChange"
           />
 
           <select
               v-else-if="filter.type === 'select'"
               v-model="filterValues[filter.field]"
-              class="h-8 px-2 text-sm border border-paper-300 rounded-sm bg-white
-                               focus:outline-none focus:border-brand-500 transition-colors"
+              class="h-9 px-2.5 text-sm border border-paper-300 rounded-md bg-white
+                     focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/15 transition-colors"
               @change="onFilterChange"
           >
             <option value="">{{ __('All') }}</option>
@@ -355,8 +353,8 @@ const resolveIcon = (name?: string) => name ? (iconMap[name] ?? null) : null
               v-else-if="filter.type === 'date'"
               v-model="filterValues[filter.field]"
               type="date"
-              class="h-8 px-2.5 text-sm border border-paper-300 rounded-sm bg-white
-                               focus:outline-none focus:border-brand-500 transition-colors"
+              class="h-9 px-3 text-sm border border-paper-300 rounded-md bg-white
+                     focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/15 transition-colors"
               @change="onFilterChange"
           />
         </div>
@@ -364,8 +362,8 @@ const resolveIcon = (name?: string) => name ? (iconMap[name] ?? null) : null
         <button
             v-if="activeFilterCount > 0"
             type="button"
-            class="flex items-center gap-1.5 h-8 px-3 text-sm text-ink-500
-                           hover:text-ink-800 transition-colors"
+            class="flex items-center gap-1.5 h-9 px-3 text-sm font-medium text-ink-500 rounded-md
+                   hover:text-ink-800 hover:bg-paper-100 transition-colors"
             @click="resetFilters"
         >
           <X class="w-3.5 h-3.5" />
@@ -374,16 +372,16 @@ const resolveIcon = (name?: string) => name ? (iconMap[name] ?? null) : null
       </div>
 
       <!-- Table card -->
-      <div class="border border-paper-200 rounded-md overflow-hidden bg-white">
+      <div class="border border-paper-200 rounded-lg overflow-hidden bg-white shadow-xs">
 
         <!-- Bulk-action strip: visible only while rows are selected -->
         <div
             v-if="hasBulkActions && hasSelection"
-            class="flex items-center gap-2 px-3 py-2 bg-brand-50 border-b border-brand-100"
+            class="flex items-center gap-2 px-4 py-2.5 bg-brand-50 border-b border-brand-100"
         >
-                    <span class="text-xs font-medium text-brand-700 tabular-nums">
-                        {{ __(':count selected', { count: selected.size }) }}
-                    </span>
+          <span class="text-xs font-semibold text-brand-800 tabular-nums">
+            {{ __(':count selected', { count: selected.size }) }}
+          </span>
           <button
               type="button"
               class="text-xs text-ink-500 hover:text-ink-800 underline-offset-2 hover:underline"
@@ -402,154 +400,157 @@ const resolveIcon = (name?: string) => name ? (iconMap[name] ?? null) : null
         </div>
 
         <!-- Table toolbar -->
-        <div class="flex items-center gap-2 px-3 py-2 bg-paper-75 border-b border-paper-200">
+        <div class="flex items-center gap-2 px-3 py-2.5 bg-paper-50 border-b border-paper-200">
           <div class="relative max-w-xs flex-1">
-            <Search class="absolute start-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-ink-400" />
+            <Search class="absolute start-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-ink-400 pointer-events-none" />
             <input
                 v-model="globalSearch"
                 type="search"
                 :placeholder="__('Search…')"
-                class="w-full h-8 ps-8 pe-3 text-sm bg-white border border-paper-300 rounded-sm
-                                   placeholder:text-ink-400 focus:outline-none focus:border-brand-500 transition-colors"
+                class="w-full h-8 ps-9 pe-3 text-sm bg-white border border-paper-300 rounded-md
+                       placeholder:text-ink-400 focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/15 transition-colors"
             />
           </div>
-          <span class="ms-auto text-xs text-ink-400 tabular-nums">
-                        {{ tableData.from }}–{{ tableData.to }} {{ __('of') }} {{ tableData.total }}
-                    </span>
+          <span class="ms-auto text-xs text-ink-500 tabular-nums font-medium">
+            {{ tableData.from }}–{{ tableData.to }} {{ __('of') }} {{ tableData.total }}
+          </span>
         </div>
 
         <!-- Table -->
         <div class="overflow-x-auto">
           <table class="w-full border-collapse">
             <thead>
-            <tr class="bg-paper-75 border-b border-paper-200">
-              <th v-if="selectable" class="w-9 px-3 h-9">
-                <input
-                    type="checkbox"
-                    :checked="allSelected"
-                    :indeterminate.prop="someSelected"
-                    class="w-4 h-4 rounded-sm accent-brand-600 cursor-pointer"
-                    @change="toggleAll"
-                />
-              </th>
-              <th
-                  v-for="col in visibleColumns"
-                  :key="col.field"
-                  class="px-3 h-9 text-start whitespace-nowrap"
-                  :class="[
-                                        col.sortable ? 'cursor-pointer hover:bg-paper-100 select-none transition-colors' : '',
-                                        col.align === 'right'  ? 'text-end'  : '',
-                                        col.align === 'center' ? 'text-center' : '',
-                                    ]"
-                  :style="col.width ? { width: col.width } : {}"
-                  @click="toggleSort(col.field, col.sortable)"
-              >
-                <div
-                    class="flex items-center gap-1"
-                    :class="col.align === 'right' ? 'justify-end' : col.align === 'center' ? 'justify-center' : ''"
+              <tr class="bg-paper-50 border-b border-paper-200">
+                <th v-if="selectable" class="w-10 px-3 h-10">
+                  <input
+                      type="checkbox"
+                      :checked="allSelected"
+                      :indeterminate.prop="someSelected"
+                      class="w-4 h-4 rounded-sm accent-brand-600 cursor-pointer"
+                      @change="toggleAll"
+                  />
+                </th>
+                <th
+                    v-for="col in visibleColumns"
+                    :key="col.field"
+                    class="px-3 h-10 text-start whitespace-nowrap"
+                    :class="[
+                        col.sortable ? 'cursor-pointer hover:bg-paper-100 select-none transition-colors' : '',
+                        col.align === 'right'  ? 'text-end'  : '',
+                        col.align === 'center' ? 'text-center' : '',
+                    ]"
+                    :style="col.width ? { width: col.width } : {}"
+                    @click="toggleSort(col.field, col.sortable)"
                 >
-                                        <span class="text-[10px] font-semibold uppercase tracking-[0.08em] text-ink-400">
-                                            {{ col.label }}
-                                        </span>
-                  <template v-if="col.sortable">
-                    <ChevronUp      v-if="sortField === col.field && sortOrder === 'asc'"   class="w-3 h-3 text-brand-600" />
-                    <ChevronDown    v-else-if="sortField === col.field && sortOrder === 'desc'" class="w-3 h-3 text-brand-600" />
-                    <ChevronsUpDown v-else class="w-3 h-3 text-ink-300" />
-                  </template>
-                </div>
-              </th>
-              <th v-if="rowActions.length" class="w-16 px-3 h-9" />
-            </tr>
+                  <div
+                      class="flex items-center gap-1.5"
+                      :class="col.align === 'right' ? 'justify-end' : col.align === 'center' ? 'justify-center' : ''"
+                  >
+                    <span class="text-[10px] font-semibold uppercase tracking-[0.12em] text-ink-500">
+                      {{ col.label }}
+                    </span>
+                    <template v-if="col.sortable">
+                      <ChevronUp      v-if="sortField === col.field && sortOrder === 'asc'"   class="w-3 h-3 text-brand-600" />
+                      <ChevronDown    v-else-if="sortField === col.field && sortOrder === 'desc'" class="w-3 h-3 text-brand-600" />
+                      <ChevronsUpDown v-else class="w-3 h-3 text-ink-300" />
+                    </template>
+                  </div>
+                </th>
+                <th v-if="rowActions.length" class="w-16 px-3 h-10" />
+              </tr>
             </thead>
 
             <tbody>
-            <tr v-if="tableData.data.length === 0">
-              <td
-                  :colspan="visibleColumns.length + (selectable ? 1 : 0) + (rowActions.length ? 1 : 0)"
-                  class="px-3 py-10 text-center"
+              <tr v-if="tableData.data.length === 0">
+                <td
+                    :colspan="visibleColumns.length + (selectable ? 1 : 0) + (rowActions.length ? 1 : 0)"
+                    class="px-3 py-12 text-center"
+                >
+                  <div class="flex flex-col items-center gap-2 text-ink-400">
+                    <div class="w-12 h-12 rounded-full bg-paper-100 flex items-center justify-center">
+                      <Inbox class="w-5 h-5 text-ink-400" />
+                    </div>
+                    <span class="text-sm font-medium text-ink-700">{{ emptyMessage ?? __('No records found.') }}</span>
+                    <span class="text-xs text-ink-400">{{ __('Adjust your filters or search to see results.') }}</span>
+                  </div>
+                </td>
+              </tr>
+
+              <tr
+                  v-for="row in tableData.data"
+                  :key="String(row.id ?? row)"
+                  class="border-b border-paper-100 last:border-b-0 hover:bg-paper-50 transition-colors duration-75"
+                  :class="selected.has(row.id ?? row) ? 'bg-brand-50/60' : ''"
               >
-                <div class="flex flex-col items-center gap-2 text-ink-400">
-                  <Inbox class="w-8 h-8" />
-                  <span class="text-sm">{{ emptyMessage ?? __('No records found.') }}</span>
-                </div>
-              </td>
-            </tr>
+                <td v-if="selectable" class="px-3 h-10">
+                  <input
+                      type="checkbox"
+                      :checked="selected.has(row.id ?? row)"
+                      class="w-4 h-4 rounded-sm accent-brand-600 cursor-pointer"
+                      @change="toggleRow(row.id ?? row)"
+                  />
+                </td>
 
-            <tr
-                v-for="row in tableData.data"
-                :key="String(row.id ?? row)"
-                class="border-b border-paper-100 hover:bg-paper-50 transition-colors duration-75"
-                :class="selected.has(row.id ?? row) ? 'bg-brand-50' : ''"
-            >
-              <td v-if="selectable" class="px-3 h-9">
-                <input
-                    type="checkbox"
-                    :checked="selected.has(row.id ?? row)"
-                    class="w-4 h-4 rounded-sm accent-brand-600 cursor-pointer"
-                    @change="toggleRow(row.id ?? row)"
-                />
-              </td>
+                <td
+                    v-for="col in visibleColumns"
+                    :key="col.field"
+                    class="px-3 h-10 text-sm text-ink-800"
+                    :class="[
+                        col.align === 'right'  ? 'text-end tabular-nums'  : '',
+                        col.align === 'center' ? 'text-center'              : '',
+                    ]"
+                >
+                  <span
+                      v-if="col.badge"
+                      class="inline-flex items-center px-1.5 py-0.5 rounded-sm
+                             text-2xs font-semibold uppercase tracking-wide border"
+                      :class="badgeClass(col, row[col.field])"
+                  >
+                    {{ formatCell(row[col.field], col) }}
+                  </span>
+                  <span v-else class="block truncate max-w-xs">
+                    {{ formatCell(row[col.field], col) ?? '—' }}
+                  </span>
+                </td>
 
-              <td
-                  v-for="col in visibleColumns"
-                  :key="col.field"
-                  class="px-3 h-9 text-sm text-ink-800"
-                  :class="[
-                                        col.align === 'right'  ? 'text-end tabular-nums'  : '',
-                                        col.align === 'center' ? 'text-center'              : '',
-                                    ]"
-              >
-                                    <span
-                                        v-if="col.badge"
-                                        class="inline-flex items-center px-1.5 py-0.5 rounded-sm
-                                               text-2xs font-semibold uppercase tracking-wide border"
-                                        :class="badgeClass(col, row[col.field])"
-                                    >
-                                        {{ formatCell(row[col.field], col) }}
-                                    </span>
-                <span v-else class="block truncate max-w-xs">
-                                        {{ formatCell(row[col.field], col) ?? '—' }}
-                                    </span>
-              </td>
-
-              <td v-if="rowActions.length" class="px-2 h-9">
-                <div class="flex items-center justify-end gap-0.5">
-                  <template v-if="rowActions.length === 1">
-                    <button
-                        type="button"
-                        class="flex items-center justify-center w-7 h-7 rounded-sm
-                                                       text-ink-400 hover:text-ink-700 hover:bg-paper-100 transition-colors"
-                        :title="rowActions[0].label"
-                        @click="handleRowAction(rowActions[0], row)"
-                    >
-                      <component :is="resolveIcon(rowActions[0].icon)" v-if="rowActions[0].icon" class="w-3.5 h-3.5" />
-                      <span v-else class="text-xs">{{ rowActions[0].label }}</span>
-                    </button>
-                  </template>
-                  <template v-else>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger as-child>
-                        <button type="button" class="flex items-center justify-center w-7 h-7 rounded-sm text-ink-400 hover:text-ink-700 hover:bg-paper-100 transition-colors">
-                          <MoreHorizontal class="w-4 h-4" />
-                        </button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end" class="w-36">
-                        <DropdownMenuItem
-                            v-for="action in rowActions"
-                            :key="action.label"
-                            class="flex items-center gap-2 text-sm cursor-pointer"
-                            :class="action.variant === 'destructive' ? 'text-danger-700 focus:text-danger-700' : ''"
-                            @click="handleRowAction(action, row)"
-                        >
-                          <component :is="resolveIcon(action.icon)" v-if="action.icon" class="w-3.5 h-3.5 shrink-0" />
-                          {{ action.label }}
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </template>
-                </div>
-              </td>
-            </tr>
+                <td v-if="rowActions.length" class="px-2 h-10">
+                  <div class="flex items-center justify-end gap-0.5">
+                    <template v-if="rowActions.length === 1">
+                      <button
+                          type="button"
+                          class="flex items-center justify-center w-8 h-8 rounded-md
+                                 text-ink-400 hover:text-ink-700 hover:bg-paper-100 transition-colors"
+                          :title="rowActions[0].label"
+                          @click="handleRowAction(rowActions[0], row)"
+                      >
+                        <component :is="resolveIcon(rowActions[0].icon)" v-if="rowActions[0].icon" class="w-3.5 h-3.5" />
+                        <span v-else class="text-xs">{{ rowActions[0].label }}</span>
+                      </button>
+                    </template>
+                    <template v-else>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger as-child>
+                          <button type="button" class="flex items-center justify-center w-8 h-8 rounded-md text-ink-400 hover:text-ink-700 hover:bg-paper-100 transition-colors">
+                            <MoreHorizontal class="w-4 h-4" />
+                          </button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" class="w-40">
+                          <DropdownMenuItem
+                              v-for="action in rowActions"
+                              :key="action.label"
+                              class="flex items-center gap-2 text-sm cursor-pointer"
+                              :class="action.variant === 'destructive' ? 'text-danger-700 focus:text-danger-700' : ''"
+                              @click="handleRowAction(action, row)"
+                          >
+                            <component :is="resolveIcon(action.icon)" v-if="action.icon" class="w-3.5 h-3.5 shrink-0" />
+                            {{ action.label }}
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </template>
+                  </div>
+                </td>
+              </tr>
             </tbody>
           </table>
         </div>
@@ -557,29 +558,29 @@ const resolveIcon = (name?: string) => name ? (iconMap[name] ?? null) : null
         <!-- Pagination -->
         <div
             v-if="tableData.total > tableData.per_page"
-            class="flex items-center justify-between px-3 py-2 bg-paper-75 border-t border-paper-200"
+            class="flex items-center justify-between px-3 py-2.5 bg-paper-50 border-t border-paper-200"
         >
-                    <span class="text-xs text-ink-400 tabular-nums">
-                        {{ __('Showing') }} {{ tableData.from }}–{{ tableData.to }} {{ __('of') }} {{ tableData.total }} {{ __('records') }}
-                    </span>
+          <span class="text-xs text-ink-500 tabular-nums">
+            {{ __('Showing') }} <span class="font-semibold text-ink-700">{{ tableData.from }}–{{ tableData.to }}</span> {{ __('of') }} <span class="font-semibold text-ink-700">{{ tableData.total }}</span> {{ __('records') }}
+          </span>
           <div class="flex items-center gap-1">
             <button
                 type="button"
                 :disabled="tableData.current_page <= 1"
-                class="flex items-center justify-center w-7 h-7 rounded-sm border border-paper-300 text-ink-500 hover:bg-paper-100 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                class="flex items-center justify-center w-8 h-8 rounded-md border border-paper-300 bg-white text-ink-500 hover:bg-paper-100 disabled:opacity-40 disabled:cursor-not-allowed transition-colors rtl:rotate-180"
                 @click="goToPage(tableData.current_page - 1)"
             >
               <ChevronLeft class="w-3.5 h-3.5" />
             </button>
             <template v-for="(p, idx) in pages" :key="`${idx}-${p}`">
-              <span v-if="p === '...'" class="flex items-center justify-center w-7 h-7 text-xs text-ink-300">…</span>
+              <span v-if="p === '...'" class="flex items-center justify-center w-8 h-8 text-xs text-ink-300">…</span>
               <button
                   v-else
                   type="button"
-                  class="flex items-center justify-center w-7 h-7 rounded-sm text-xs border tabular-nums transition-colors"
+                  class="flex items-center justify-center w-8 h-8 rounded-md text-xs font-medium border tabular-nums transition-colors"
                   :class="tableData.current_page === p
-                                    ? 'bg-brand-600 text-white border-brand-600'
-                                    : 'border-paper-300 text-ink-600 hover:bg-paper-100'"
+                            ? 'bg-brand-600 text-white border-brand-600 shadow-xs'
+                            : 'bg-white border-paper-300 text-ink-600 hover:bg-paper-100'"
                   @click="goToPage(p as number)"
               >
                 {{ p }}
@@ -588,7 +589,7 @@ const resolveIcon = (name?: string) => name ? (iconMap[name] ?? null) : null
             <button
                 type="button"
                 :disabled="tableData.current_page >= tableData.last_page"
-                class="flex items-center justify-center w-7 h-7 rounded-sm border border-paper-300 text-ink-500 hover:bg-paper-100 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                class="flex items-center justify-center w-8 h-8 rounded-md border border-paper-300 bg-white text-ink-500 hover:bg-paper-100 disabled:opacity-40 disabled:cursor-not-allowed transition-colors rtl:rotate-180"
                 @click="goToPage(tableData.current_page + 1)"
             >
               <ChevronRight class="w-3.5 h-3.5" />
@@ -602,16 +603,16 @@ const resolveIcon = (name?: string) => name ? (iconMap[name] ?? null) : null
   <!-- Confirm dialog -->
   <Dialog :open="confirmOpen" @update:open="confirmOpen = $event">
     <DialogContent class="max-w-sm p-0 overflow-hidden">
-      <DialogHeader class="px-4 py-3 border-b border-paper-200 bg-paper-75">
-        <DialogTitle class="text-lg">{{ __('Confirm') }}</DialogTitle>
+      <DialogHeader class="px-5 py-4 border-b border-paper-200 bg-paper-50">
+        <DialogTitle class="text-base font-semibold text-ink-900">{{ __('Confirm') }}</DialogTitle>
       </DialogHeader>
-      <div class="px-4 py-4">
-        <DialogDescription class="text-sm text-ink-600">{{ confirmMsg }}</DialogDescription>
+      <div class="px-5 py-5">
+        <DialogDescription class="text-sm text-ink-700 leading-relaxed">{{ confirmMsg }}</DialogDescription>
       </div>
-      <DialogFooter class="flex justify-end gap-2 px-4 py-3 border-t border-paper-200 bg-paper-75">
-        <Button variant="outline" class="h-8 text-sm" @click="confirmOpen = false">{{ __('Cancel') }}</Button>
+      <DialogFooter class="flex justify-end gap-2 px-5 py-3 border-t border-paper-200 bg-paper-50">
+        <Button variant="outline" class="h-9 text-sm" @click="confirmOpen = false">{{ __('Cancel') }}</Button>
         <Button
-            class="h-8 text-sm bg-danger-600 hover:bg-danger-700 text-white border-transparent"
+            class="h-9 text-sm bg-danger-600 hover:bg-danger-700 text-white border-transparent"
             @click="executeConfirmed"
         >
           {{ confirmAction?.label }}

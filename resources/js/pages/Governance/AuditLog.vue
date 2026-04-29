@@ -155,49 +155,54 @@ watch(() => props.filters, (next) => {
     <div class="flex flex-col h-full overflow-hidden bg-paper-50">
 
         <!-- Page title -->
-        <div class="flex items-start justify-between gap-6 px-6 pt-5 pb-4 border-b border-paper-200 shrink-0">
-            <div class="flex flex-col min-w-0">
-                <AppBreadcrumbs class="mb-3" />
-                <h1 class="text-[1.75rem] leading-[1.1] tracking-tight text-ink-900">
-                    {{ title }}
-                </h1>
-            </div>
+        <header class="shrink-0 bg-white border-b border-paper-200">
+            <div class="flex items-start justify-between gap-6 px-6 pt-5 pb-4">
+                <div class="flex flex-col min-w-0">
+                    <AppBreadcrumbs class="mb-3" />
+                    <h1 class="text-2xl leading-[1.1] tracking-tight text-ink-900 font-semibold">
+                        {{ title }}
+                    </h1>
+                    <p class="mt-1.5 text-sm text-ink-500 tabular-nums">
+                        {{ __(':n events recorded', { n: total }) }}
+                    </p>
+                </div>
 
-            <button
-                type="button"
-                class="flex items-center gap-1.5 h-8 px-3 text-sm border border-paper-300 rounded-sm
-                       text-ink-600 hover:bg-paper-100 transition-colors"
-                @click="showFilters = !showFilters"
-            >
-                <SlidersHorizontal class="w-3.5 h-3.5" />
-                {{ __('Filters') }}
-                <span
-                    v-if="activeFilterCount > 0"
-                    class="inline-flex items-center justify-center w-4 h-4 rounded-full
-                           bg-brand-600 text-white text-[9px] font-bold tabular-nums"
+                <button
+                    type="button"
+                    class="flex items-center gap-1.5 h-9 px-3 text-sm font-medium border border-paper-300 rounded-md
+                           bg-white text-ink-700 hover:bg-paper-50 hover:border-paper-400 shadow-xs transition-colors"
+                    @click="showFilters = !showFilters"
                 >
-                    {{ activeFilterCount }}
-                </span>
-            </button>
-        </div>
+                    <SlidersHorizontal class="w-3.5 h-3.5" />
+                    {{ __('Filters') }}
+                    <span
+                        v-if="activeFilterCount > 0"
+                        class="inline-flex items-center justify-center min-w-4 h-4 px-1 rounded-full
+                               bg-brand-600 text-white text-[9px] font-bold tabular-nums"
+                    >
+                        {{ activeFilterCount }}
+                    </span>
+                </button>
+            </div>
+        </header>
 
         <!-- Content -->
-        <div class="flex-1 overflow-y-auto px-6 pt-4 pb-6">
+        <div class="flex-1 overflow-y-auto px-6 pt-5 pb-6">
 
             <!-- Filter bar -->
             <div
                 v-if="showFilters"
-                class="flex flex-wrap items-end gap-3 p-3 bg-paper-75 border border-paper-200 rounded-md mb-3"
+                class="flex flex-wrap items-end gap-3 p-4 bg-white border border-paper-200 rounded-lg mb-4 shadow-xs"
             >
-                <div class="flex flex-col gap-1 min-w-[12rem]">
-                    <label class="text-xs font-medium text-ink-500">{{ __('Event') }}</label>
+                <div class="flex flex-col gap-1.5 min-w-[12rem]">
+                    <label class="text-[11px] font-semibold uppercase tracking-[0.1em] text-ink-500">{{ __('Event') }}</label>
                     <input
                         v-model="filterValues.event"
                         type="text"
                         list="audit-event-options"
                         :placeholder="__('e.g. document.posted')"
-                        class="h-8 px-2.5 text-sm border border-paper-300 rounded-sm bg-white
-                               placeholder:text-ink-400 focus:outline-none focus:border-brand-500 transition-colors"
+                        class="h-9 px-3 text-sm border border-paper-300 rounded-md bg-white
+                               placeholder:text-ink-400 focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/15 transition-colors"
                         @input="onFilterChange"
                     />
                     <datalist id="audit-event-options">
@@ -205,12 +210,12 @@ watch(() => props.filters, (next) => {
                     </datalist>
                 </div>
 
-                <div class="flex flex-col gap-1 min-w-[12rem]">
-                    <label class="text-xs font-medium text-ink-500">{{ __('Subject type') }}</label>
+                <div class="flex flex-col gap-1.5 min-w-[12rem]">
+                    <label class="text-[11px] font-semibold uppercase tracking-[0.1em] text-ink-500">{{ __('Subject type') }}</label>
                     <select
                         v-model="filterValues.subject_type"
-                        class="h-8 px-2 text-sm border border-paper-300 rounded-sm bg-white
-                               focus:outline-none focus:border-brand-500 transition-colors"
+                        class="h-9 px-2.5 text-sm border border-paper-300 rounded-md bg-white
+                               focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/15 transition-colors"
                         @change="onFilterChange"
                     >
                         <option value="">{{ __('All') }}</option>
@@ -218,46 +223,46 @@ watch(() => props.filters, (next) => {
                     </select>
                 </div>
 
-                <div class="flex flex-col gap-1 w-32">
-                    <label class="text-xs font-medium text-ink-500">{{ __('Subject id') }}</label>
+                <div class="flex flex-col gap-1.5 w-32">
+                    <label class="text-[11px] font-semibold uppercase tracking-[0.1em] text-ink-500">{{ __('Subject id') }}</label>
                     <input
                         v-model="filterValues.subject_id"
                         type="number"
-                        class="h-8 px-2.5 text-sm border border-paper-300 rounded-sm bg-white tabular-nums
-                               focus:outline-none focus:border-brand-500 transition-colors"
+                        class="h-9 px-3 text-sm border border-paper-300 rounded-md bg-white tabular-nums
+                               focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/15 transition-colors"
                         @input="onFilterChange"
                     />
                 </div>
 
-                <div class="flex flex-col gap-1 w-32">
-                    <label class="text-xs font-medium text-ink-500">{{ __('User id') }}</label>
+                <div class="flex flex-col gap-1.5 w-32">
+                    <label class="text-[11px] font-semibold uppercase tracking-[0.1em] text-ink-500">{{ __('User id') }}</label>
                     <input
                         v-model="filterValues.causer_id"
                         type="number"
-                        class="h-8 px-2.5 text-sm border border-paper-300 rounded-sm bg-white tabular-nums
-                               focus:outline-none focus:border-brand-500 transition-colors"
+                        class="h-9 px-3 text-sm border border-paper-300 rounded-md bg-white tabular-nums
+                               focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/15 transition-colors"
                         @input="onFilterChange"
                     />
                 </div>
 
-                <div class="flex flex-col gap-1">
-                    <label class="text-xs font-medium text-ink-500">{{ __('From') }}</label>
+                <div class="flex flex-col gap-1.5">
+                    <label class="text-[11px] font-semibold uppercase tracking-[0.1em] text-ink-500">{{ __('From') }}</label>
                     <input
                         v-model="filterValues.from"
                         type="date"
-                        class="h-8 px-2.5 text-sm border border-paper-300 rounded-sm bg-white
-                               focus:outline-none focus:border-brand-500 transition-colors"
+                        class="h-9 px-3 text-sm border border-paper-300 rounded-md bg-white
+                               focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/15 transition-colors"
                         @change="onFilterChange"
                     />
                 </div>
 
-                <div class="flex flex-col gap-1">
-                    <label class="text-xs font-medium text-ink-500">{{ __('To') }}</label>
+                <div class="flex flex-col gap-1.5">
+                    <label class="text-[11px] font-semibold uppercase tracking-[0.1em] text-ink-500">{{ __('To') }}</label>
                     <input
                         v-model="filterValues.to"
                         type="date"
-                        class="h-8 px-2.5 text-sm border border-paper-300 rounded-sm bg-white
-                               focus:outline-none focus:border-brand-500 transition-colors"
+                        class="h-9 px-3 text-sm border border-paper-300 rounded-md bg-white
+                               focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/15 transition-colors"
                         @change="onFilterChange"
                     />
                 </div>
@@ -265,8 +270,8 @@ watch(() => props.filters, (next) => {
                 <button
                     v-if="activeFilterCount > 0"
                     type="button"
-                    class="flex items-center gap-1.5 h-8 px-3 text-sm text-ink-500
-                           hover:text-ink-800 transition-colors"
+                    class="flex items-center gap-1.5 h-9 px-3 text-sm font-medium text-ink-500 rounded-md
+                           hover:text-ink-800 hover:bg-paper-100 transition-colors"
                     @click="resetFilters"
                 >
                     <X class="w-3.5 h-3.5" />
@@ -277,16 +282,16 @@ watch(() => props.filters, (next) => {
             <!-- Truncation warning -->
             <div
                 v-if="truncated"
-                class="flex items-center gap-2 px-3 py-2 mb-3 bg-warning-50 border border-warning-100 rounded-md text-warning-700 text-xs"
+                class="flex items-start gap-2 px-3 py-2.5 mb-4 bg-warning-50 border border-warning-100 rounded-md text-warning-700 text-xs"
             >
-                <AlertTriangle class="w-3.5 h-3.5 shrink-0" />
-                {{ __('Showing the most recent :n events. Narrow the filters to see older entries.', { n: rowLimit }) }}
+                <AlertTriangle class="w-4 h-4 shrink-0 mt-px" />
+                <span class="leading-relaxed">{{ __('Showing the most recent :n events. Narrow the filters to see older entries.', { n: rowLimit }) }}</span>
             </div>
 
             <!-- Table card -->
-            <div class="border border-paper-200 rounded-md overflow-hidden bg-white">
-                <div class="flex items-center gap-2 px-3 py-2 bg-paper-75 border-b border-paper-200">
-                    <span class="text-xs text-ink-400 tabular-nums">
+            <div class="border border-paper-200 rounded-lg overflow-hidden bg-white shadow-xs">
+                <div class="flex items-center gap-2 px-4 py-2.5 bg-paper-50 border-b border-paper-200">
+                    <span class="text-xs text-ink-500 tabular-nums font-medium">
                         {{ __(':n events', { n: total }) }}
                     </span>
                 </div>
@@ -294,29 +299,29 @@ watch(() => props.filters, (next) => {
                 <div class="overflow-x-auto">
                     <table class="w-full border-collapse">
                         <thead>
-                            <tr class="bg-paper-75 border-b border-paper-200">
-                                <th class="px-3 h-9 text-start whitespace-nowrap w-44">
-                                    <span class="text-[10px] font-semibold uppercase tracking-[0.08em] text-ink-400">
+                            <tr class="bg-paper-50 border-b border-paper-200">
+                                <th class="px-4 h-10 text-start whitespace-nowrap w-44">
+                                    <span class="text-[10px] font-semibold uppercase tracking-[0.12em] text-ink-500">
                                         {{ __('When') }}
                                     </span>
                                 </th>
-                                <th class="px-3 h-9 text-start whitespace-nowrap">
-                                    <span class="text-[10px] font-semibold uppercase tracking-[0.08em] text-ink-400">
+                                <th class="px-4 h-10 text-start whitespace-nowrap">
+                                    <span class="text-[10px] font-semibold uppercase tracking-[0.12em] text-ink-500">
                                         {{ __('What happened') }}
                                     </span>
                                 </th>
-                                <th class="px-3 h-9 text-start whitespace-nowrap">
-                                    <span class="text-[10px] font-semibold uppercase tracking-[0.08em] text-ink-400">
+                                <th class="px-4 h-10 text-start whitespace-nowrap">
+                                    <span class="text-[10px] font-semibold uppercase tracking-[0.12em] text-ink-500">
                                         {{ __('User') }}
                                     </span>
                                 </th>
-                                <th class="px-3 h-9 text-start whitespace-nowrap">
-                                    <span class="text-[10px] font-semibold uppercase tracking-[0.08em] text-ink-400">
+                                <th class="px-4 h-10 text-start whitespace-nowrap">
+                                    <span class="text-[10px] font-semibold uppercase tracking-[0.12em] text-ink-500">
                                         {{ __('Reason') }}
                                     </span>
                                 </th>
-                                <th class="px-3 h-9 text-start whitespace-nowrap w-28">
-                                    <span class="text-[10px] font-semibold uppercase tracking-[0.08em] text-ink-400">
+                                <th class="px-4 h-10 text-start whitespace-nowrap w-28">
+                                    <span class="text-[10px] font-semibold uppercase tracking-[0.12em] text-ink-500">
                                         {{ __('IP') }}
                                     </span>
                                 </th>
@@ -325,10 +330,12 @@ watch(() => props.filters, (next) => {
 
                         <tbody>
                             <tr v-if="rows.length === 0">
-                                <td colspan="5" class="px-3 py-10 text-center">
+                                <td colspan="5" class="px-3 py-12 text-center">
                                     <div class="flex flex-col items-center gap-2 text-ink-400">
-                                        <Inbox class="w-8 h-8" />
-                                        <span class="text-sm">{{ __('No audit events match the current filters.') }}</span>
+                                        <div class="w-12 h-12 rounded-full bg-paper-100 flex items-center justify-center">
+                                            <Inbox class="w-5 h-5 text-ink-400" />
+                                        </div>
+                                        <span class="text-sm font-medium text-ink-700">{{ __('No audit events match the current filters.') }}</span>
                                     </div>
                                 </td>
                             </tr>
@@ -336,13 +343,13 @@ watch(() => props.filters, (next) => {
                             <tr
                                 v-for="row in rows"
                                 :key="row.id"
-                                class="border-b border-paper-100 hover:bg-paper-50 transition-colors duration-75 cursor-pointer"
+                                class="border-b border-paper-100 last:border-b-0 hover:bg-paper-50 transition-colors duration-75 cursor-pointer"
                                 @click="openRow(row)"
                             >
-                                <td class="px-3 h-9 text-sm text-ink-700 tabular-nums whitespace-nowrap">
+                                <td class="px-4 h-10 text-sm text-ink-700 tabular-nums whitespace-nowrap">
                                     {{ formatDate(row.created_at) }}
                                 </td>
-                                <td class="px-3 h-9 text-sm text-ink-800">
+                                <td class="px-4 h-10 text-sm text-ink-800">
                                     <template v-if="row.summary">
                                         <span class="text-ink-800">{{ row.summary }}</span>
                                     </template>
@@ -362,13 +369,13 @@ watch(() => props.filters, (next) => {
                                         </span>
                                     </template>
                                 </td>
-                                <td class="px-3 h-9 text-sm text-ink-800">
+                                <td class="px-4 h-10 text-sm text-ink-800">
                                     {{ row.causer ?? (row.causer_id ? `#${row.causer_id}` : '—') }}
                                 </td>
-                                <td class="px-3 h-9 text-sm text-ink-600">
+                                <td class="px-4 h-10 text-sm text-ink-600">
                                     <span class="block truncate max-w-xs">{{ row.reason ?? '—' }}</span>
                                 </td>
-                                <td class="px-3 h-9 text-xs text-ink-500 tabular-nums">
+                                <td class="px-4 h-10 text-xs text-ink-500 tabular-nums">
                                     {{ row.ip ?? '—' }}
                                 </td>
                             </tr>
@@ -381,10 +388,10 @@ watch(() => props.filters, (next) => {
         <!-- Slideover with full event details -->
         <Sheet :open="sheetOpen" @update:open="sheetOpen = $event">
             <SheetContent class="w-full sm:max-w-xl flex flex-col gap-0 p-0 overflow-hidden" side="right">
-                <SheetHeader class="shrink-0 px-5 py-4 border-b border-paper-200 bg-paper-75 text-start">
-                    <SheetTitle class="text-xl text-ink-900">
+                <SheetHeader class="shrink-0 px-5 py-4 border-b border-paper-200 bg-paper-50 text-start">
+                    <SheetTitle class="text-base font-semibold text-ink-900 tracking-tight">
                         {{ __('Audit Event') }}
-                        <span v-if="selected" class="text-ink-400 tabular-nums">#{{ selected.id }}</span>
+                        <span v-if="selected" class="text-ink-400 tabular-nums font-normal">#{{ selected.id }}</span>
                     </SheetTitle>
                     <SheetDescription v-if="selected" class="text-xs text-ink-500 tabular-nums">
                         {{ formatDate(selected.created_at) }}

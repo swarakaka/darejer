@@ -103,7 +103,7 @@ function flatIndex(groupIdx: number, itemIdx: number): number {
     <div ref="wrapper" class="relative flex-1 max-w-md min-w-0">
         <div class="relative group">
             <Search
-                class="absolute inset-s-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5
+                class="absolute inset-s-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5
                        text-ink-400 group-focus-within:text-brand-600 transition-colors pointer-events-none"
             />
             <input
@@ -113,35 +113,35 @@ function flatIndex(groupIdx: number, itemIdx: number): number {
                 autocomplete="off"
                 spellcheck="false"
                 :placeholder="__('Search records, screens, or run a command…')"
-                class="w-full h-8 ps-8 pe-14 text-sm bg-paper-100/70 border-none rounded-sm
-                       placeholder:text-ink-400 focus:outline-none focus:bg-white
-                       focus:ring-1 focus:ring-brand-500/50 transition-all"
+                class="w-full h-9 ps-9 pe-16 text-sm bg-paper-100/70 border border-transparent rounded-md
+                       placeholder:text-ink-400 focus:outline-none focus:bg-white focus:border-paper-300
+                       focus:ring-2 focus:ring-brand-500/15 transition-all"
                 @focus="open = true"
                 @keydown="onKeyDown"
             />
             <kbd
                 v-if="!term"
                 class="absolute inset-e-2 top-1/2 -translate-y-1/2 hidden md:flex items-center gap-1
-                       text-2xs font-medium text-ink-400 bg-paper-200/70
-                       border border-paper-300 rounded-sm px-1 h-4.5 tabular-nums pointer-events-none"
+                       text-2xs font-medium text-ink-500 bg-white
+                       border border-paper-300 rounded-sm px-1.5 h-5 tabular-nums pointer-events-none shadow-xs"
             >
                 <Command class="w-2.5 h-2.5" />K
             </kbd>
             <Loader2
                 v-else-if="loading"
-                class="absolute inset-e-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-ink-400 animate-spin"
+                class="absolute inset-e-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-ink-400 animate-spin"
             />
         </div>
 
         <!-- Results dropdown -->
         <div
             v-if="open && term"
-            class="absolute start-0 end-0 mt-1 z-50 max-h-[28rem] overflow-y-auto
-                   rounded-md border border-paper-200 bg-white shadow-lg"
+            class="absolute start-0 end-0 mt-1.5 z-50 max-h-[28rem] overflow-y-auto
+                   rounded-lg border border-paper-200 bg-white shadow-2xl ring-1 ring-ink-950/5"
         >
             <div
                 v-if="loading && !hasResults"
-                class="flex items-center gap-2 px-3 py-3 text-xs text-ink-400"
+                class="flex items-center gap-2 px-4 py-3 text-xs text-ink-400"
             >
                 <Loader2 class="w-3.5 h-3.5 animate-spin" />
                 {{ __('Searching…') }}
@@ -149,9 +149,9 @@ function flatIndex(groupIdx: number, itemIdx: number): number {
 
             <div
                 v-else-if="!hasResults"
-                class="px-3 py-6 text-center"
+                class="px-4 py-8 text-center"
             >
-                <p class="text-sm text-ink-500">{{ __('No matches for ":q"', { q: term }) }}</p>
+                <p class="text-sm text-ink-700 font-medium">{{ __('No matches for ":q"', { q: term }) }}</p>
                 <p class="text-xs text-ink-400 mt-1">{{ __('Try a different name, code, or email.') }}</p>
             </div>
 
@@ -162,7 +162,7 @@ function flatIndex(groupIdx: number, itemIdx: number): number {
                     class="border-b border-paper-100 last:border-b-0"
                 >
                     <div
-                        class="px-3 pt-2 pb-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-ink-400"
+                        class="px-4 pt-2.5 pb-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-ink-400 bg-paper-50/60"
                     >
                         {{ group.type }}
                     </div>
@@ -171,7 +171,7 @@ function flatIndex(groupIdx: number, itemIdx: number): number {
                         v-for="(item, iIdx) in group.items"
                         :key="`${group.slug}-${item.id}`"
                         type="button"
-                        class="w-full flex items-center justify-between gap-3 px-3 py-2 text-left
+                        class="w-full flex items-center justify-between gap-3 px-4 py-2 text-start
                                transition-colors"
                         :class="[
                             activeIndex === flatIndex(gIdx, iIdx)
@@ -184,7 +184,7 @@ function flatIndex(groupIdx: number, itemIdx: number): number {
                         @click="go(item)"
                     >
                         <div class="flex flex-col items-start min-w-0">
-                            <span class="text-sm truncate">{{ item.label }}</span>
+                            <span class="text-sm truncate font-medium">{{ item.label }}</span>
                             <span
                                 v-if="item.subtitle"
                                 class="text-xs text-ink-400 truncate tabular-nums"
@@ -194,16 +194,16 @@ function flatIndex(groupIdx: number, itemIdx: number): number {
                         </div>
                         <CornerDownLeft
                             v-if="activeIndex === flatIndex(gIdx, iIdx) && item.url"
-                            class="w-3.5 h-3.5 text-ink-400 shrink-0"
+                            class="w-3.5 h-3.5 text-ink-400 shrink-0 rtl:rotate-180"
                         />
                     </button>
                 </div>
 
-                <div class="px-3 py-2 border-t border-paper-100 text-2xs text-ink-400 flex items-center gap-3">
-                    <span><kbd class="px-1 py-0.5 rounded-sm border border-paper-200 bg-paper-50">↑↓</kbd> {{ __('navigate') }}</span>
-                    <span><kbd class="px-1 py-0.5 rounded-sm border border-paper-200 bg-paper-50">↵</kbd> {{ __('open') }}</span>
-                    <span><kbd class="px-1 py-0.5 rounded-sm border border-paper-200 bg-paper-50">esc</kbd> {{ __('close') }}</span>
-                    <span class="ms-auto tabular-nums">{{ __(':n results', { n: total }) }}</span>
+                <div class="px-4 py-2 border-t border-paper-100 text-2xs text-ink-400 flex items-center gap-3 bg-paper-50/60">
+                    <span class="flex items-center gap-1"><kbd class="px-1.5 py-0.5 rounded-sm border border-paper-200 bg-white shadow-xs">↑↓</kbd> {{ __('navigate') }}</span>
+                    <span class="flex items-center gap-1"><kbd class="px-1.5 py-0.5 rounded-sm border border-paper-200 bg-white shadow-xs">↵</kbd> {{ __('open') }}</span>
+                    <span class="flex items-center gap-1"><kbd class="px-1.5 py-0.5 rounded-sm border border-paper-200 bg-white shadow-xs">esc</kbd> {{ __('close') }}</span>
+                    <span class="ms-auto tabular-nums font-medium">{{ __(':n results', { n: total }) }}</span>
                 </div>
             </template>
         </div>
