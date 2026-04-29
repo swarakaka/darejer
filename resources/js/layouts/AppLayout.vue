@@ -23,11 +23,11 @@ watchEffect(() => {
 
 <template>
     <ConfigProvider :dir="direction" :locale="locale">
-        <div class="flex h-screen overflow-hidden bg-paper-50 text-ink-900 antialiased">
-            <AppSidebar />
-            <div class="flex flex-col flex-1 min-w-0 overflow-hidden">
-                <AppTopbar />
-                <main class="flex-1 min-h-0 overflow-hidden">
+        <div class="flex flex-col h-screen overflow-hidden bg-paper-50 text-ink-900 antialiased">
+            <AppTopbar />
+            <div class="flex flex-1 min-h-0 overflow-hidden">
+                <AppSidebar />
+                <main class="flex-1 min-w-0 min-h-0 overflow-hidden">
                     <slot />
                 </main>
             </div>
