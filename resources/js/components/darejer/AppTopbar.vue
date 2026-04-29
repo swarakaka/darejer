@@ -22,7 +22,15 @@ import type { DarejerSharedProps } from '@/types/darejer'
 const page = usePage<DarejerSharedProps>()
 
 const { __ } = useTranslation()
-const { toggleMobile } = useSidebar()
+const { toggleMobile, toggleCollapsed, isMobile } = useSidebar()
+
+function onMenuClick() {
+    if (isMobile.value) {
+        toggleMobile()
+    } else {
+        toggleCollapsed()
+    }
+}
 
 // `currentLocale` comes from `page.props.darejer.locale` (set server-side
 // by the locale middleware). It's reactive via `usePage()`, so the topbar
@@ -55,19 +63,19 @@ function logout() {
         class="flex items-center h-(--topbar-height) shrink-0 gap-0
                bg-(--topbar-bg) text-(--topbar-foreground) border-b border-(--topbar-border)"
     >
-        <!-- Hamburger / mobile menu toggle — always visible like the Azure portal -->
+        <!-- Hamburger — collapses/expands the sidebar (or opens the drawer on mobile) -->
         <button
             type="button"
             class="flex items-center justify-center w-11 h-(--topbar-height) rounded-none text-white hover:bg-white/[0.12] transition-colors shrink-0"
-            :aria-label="__('Show portal menu')"
-            @click="toggleMobile"
+            :aria-label="__('Toggle navigation')"
+            @click="onMenuClick"
         >
             <Menu class="w-[18px] h-[18px]" />
         </button>
 
-        <!-- Product wordmark — Azure portal "Microsoft Azure" placement -->
+        <!-- Product wordmark -->
         <span class="hidden md:inline-flex items-center h-full pe-3 text-[15px] font-normal tracking-tight text-white select-none">
-            {{ __('Microsoft Darejer') }}
+            {{ __('Darejer') }}
         </span>
 
         <!-- Global search — sits in the centre column on Azure portal -->
