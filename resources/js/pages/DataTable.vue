@@ -10,7 +10,7 @@ import {
   Search, Inbox,
   SlidersHorizontal, X,
   Pencil, Eye, Trash2, MoreHorizontal,
-  Database, CheckCircle2,
+  CheckCircle2,
 } from 'lucide-vue-next'
 import {
   DropdownMenu,
@@ -311,13 +311,6 @@ function clearFilter(field: string) {
 
       <div class="relative flex items-start justify-between gap-6 px-6 pt-5 pb-5">
         <div class="flex items-start gap-3 min-w-0">
-          <div
-              class="hidden sm:flex shrink-0 items-center justify-center w-10 h-10 mt-0.5
-                     bg-gradient-to-br from-brand-500 to-brand-700 text-white
-                     shadow-[0_2px_6px_-2px_rgba(0,120,212,0.6)] rounded-md"
-          >
-            <Database class="w-5 h-5" />
-          </div>
           <div class="flex flex-col min-w-0">
             <AppBreadcrumbs class="mb-2" />
             <h1 class="text-[28px] leading-[1.05] tracking-[-0.02em] text-ink-900 font-semibold">

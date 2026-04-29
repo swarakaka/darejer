@@ -85,14 +85,6 @@ const chartIcon = (type: 'line' | 'bar' | 'doughnut') => {
 
             <div class="relative flex items-start justify-between gap-6 px-6 pt-5 pb-5">
                 <div class="flex items-start gap-3 min-w-0">
-                    <!-- Title icon plate -->
-                    <div
-                        class="hidden sm:flex shrink-0 items-center justify-center w-10 h-10 mt-0.5
-                               bg-gradient-to-br from-brand-500 to-brand-700 text-white
-                               shadow-[0_2px_6px_-2px_rgba(0,120,212,0.6)] rounded-md"
-                    >
-                        <LayoutDashboard class="w-5 h-5" />
-                    </div>
                     <div class="flex flex-col min-w-0">
                         <AppBreadcrumbs class="mb-2" />
                         <div class="flex items-baseline gap-2.5">
