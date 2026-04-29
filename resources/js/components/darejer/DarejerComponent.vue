@@ -35,6 +35,7 @@ import IconComponent                  from '@/components/darejer/components/Icon
 import TooltipComponentVue            from '@/components/darejer/components/TooltipComponentVue.vue'
 import BreadcrumbsComponentVue        from '@/components/darejer/components/BreadcrumbsComponentVue.vue'
 import NavigationComponent            from '@/components/darejer/components/NavigationComponent.vue'
+import DisplayComponent               from '@/components/darejer/components/DisplayComponent.vue'
 
 const props = defineProps<{
     component: DarejerComponentType
@@ -83,6 +84,7 @@ const componentMap: Record<string, unknown> = {
     TooltipComponent:      TooltipComponentVue,
     BreadcrumbsComponent:  BreadcrumbsComponentVue,
     Navigation:            NavigationComponent,
+    Display:               DisplayComponent,
 }
 
 const resolvedComponent = computed(() => componentMap[props.component.type] ?? null)
