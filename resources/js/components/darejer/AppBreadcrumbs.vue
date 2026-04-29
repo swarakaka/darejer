@@ -22,13 +22,13 @@ const { __ } = useTranslation()
             <Link
                 v-if="crumb.url && i < page.props.breadcrumbs.length - 1"
                 :href="crumb.url"
-                class="hover:text-brand-600 transition-colors"
+                class="px-1 py-0.5 rounded-sm hover:text-brand-700 hover:bg-paper-100 transition-colors"
             >
                 {{ crumb.label }}
             </Link>
             <span
                 v-else
-                class="text-ink-500 font-medium"
+                class="px-1 py-0.5 text-ink-700 font-semibold"
             >
                 {{ crumb.label }}
             </span>

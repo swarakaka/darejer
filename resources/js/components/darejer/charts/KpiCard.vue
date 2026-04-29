@@ -46,11 +46,12 @@ const trendIcon = computed(() => {
     }
 })
 
-const trendClass = computed(() => {
+const trendBgClass = computed(() => {
     switch (props.trend) {
-        case 'up':   return 'text-success-600'
-        case 'down': return 'text-danger-600'
-        default:     return 'text-ink-400'
+        case 'up':   return 'bg-success-50 text-success-700 border-success-100'
+        case 'down': return 'bg-danger-50 text-danger-700 border-danger-100'
+        case 'flat': return 'bg-paper-100 text-ink-600 border-paper-200'
+        default:     return 'bg-paper-100 text-ink-600 border-paper-200'
     }
 })
 </script>
@@ -59,18 +60,25 @@ const trendClass = computed(() => {
     <component
         :is="href ? Link : 'div'"
         :href="href ?? undefined"
-        class="block bg-white border border-paper-200 rounded-md p-4 hover:border-paper-300 transition-colors no-underline"
+        class="group relative block bg-white border border-paper-200 rounded-lg p-4 shadow-xs hover:border-paper-300 hover:shadow-sm transition-all no-underline overflow-hidden"
     >
-        <div v-if="eyebrow" class="text-[10px] font-semibold uppercase tracking-[0.14em] text-ink-400 tabular-nums mb-1">
+        <span class="absolute inset-y-0 inset-s-0 w-0.5 bg-brand-500 opacity-0 group-hover:opacity-100 transition-opacity" />
+
+        <div v-if="eyebrow" class="text-[10px] font-semibold uppercase tracking-[0.16em] text-brand-700 tabular-nums mb-1.5">
             {{ eyebrow }}
         </div>
-        <div class="text-xs text-ink-500 mb-2">{{ label }}</div>
-        <div class="flex items-baseline justify-between gap-3">
-            <div class="text-2xl text-ink-900 tabular-nums leading-none">
+        <div class="text-[11px] font-semibold uppercase tracking-[0.1em] text-ink-500 mb-2">{{ label }}</div>
+
+        <div class="flex items-end justify-between gap-3">
+            <div class="text-2xl font-semibold text-ink-900 tabular-nums leading-none tracking-tight">
                 {{ formatted }}
             </div>
-            <div v-if="delta || trendIcon" class="flex items-center gap-1 text-xs" :class="trendClass">
-                <component :is="trendIcon" v-if="trendIcon" class="w-3.5 h-3.5" />
+            <div
+                v-if="delta || trendIcon"
+                class="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full border text-[10px] font-semibold tabular-nums"
+                :class="trendBgClass"
+            >
+                <component :is="trendIcon" v-if="trendIcon" class="w-3 h-3" />
                 <span v-if="delta">{{ delta }}</span>
             </div>
         </div>

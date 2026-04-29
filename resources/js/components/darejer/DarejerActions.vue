@@ -74,14 +74,14 @@ function resolveIcon(name?: string) {
 }
 
 function buttonClasses(action: DarejerAction): string {
-    const base = 'inline-flex items-center gap-1.5 text-sm h-8 px-3 rounded-sm border transition-colors'
+    const base = 'inline-flex items-center gap-1.5 text-sm font-medium h-8 px-3 rounded-md border shadow-xs transition-colors'
     if (action.type === 'Save') {
-        return `${base} bg-brand-600 hover:bg-brand-700 text-white border-transparent`
+        return `${base} bg-brand-600 hover:bg-brand-700 text-white border-transparent shadow-sm`
     }
     if (action.variant === 'destructive') {
-        return `${base} bg-white hover:bg-danger-50 text-danger-700 border-danger-200`
+        return `${base} bg-white hover:bg-danger-50 hover:border-danger-300 text-danger-700 border-danger-200`
     }
-    return `${base} bg-white hover:bg-paper-100 text-ink-700 border-paper-300`
+    return `${base} bg-white hover:bg-paper-50 hover:border-paper-400 text-ink-700 border-paper-300`
 }
 
 function resolveVariant(action: DarejerAction): ButtonVariant {

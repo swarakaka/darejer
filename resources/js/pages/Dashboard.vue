@@ -64,17 +64,22 @@ withDefaults(defineProps<{
     <div class="flex flex-col h-full overflow-hidden bg-paper-50">
 
         <!-- Page header -->
-        <div class="flex items-start justify-between gap-6 px-6 pt-5 pb-4 border-b border-paper-200 shrink-0 bg-white">
-            <div class="flex flex-col min-w-0">
-                <AppBreadcrumbs class="mb-3" />
-                <h1 class="text-[1.75rem] leading-[1.1] tracking-tight text-ink-900">
-                    {{ title }}
-                </h1>
+        <header class="shrink-0 bg-white border-b border-paper-200">
+            <div class="flex items-start justify-between gap-6 px-6 pt-5 pb-4">
+                <div class="flex flex-col min-w-0">
+                    <AppBreadcrumbs class="mb-3" />
+                    <h1 class="text-2xl leading-[1.1] tracking-tight text-ink-900 font-semibold">
+                        {{ title }}
+                    </h1>
+                    <p class="mt-1.5 text-sm text-ink-500">
+                        {{ __('Live overview of operational performance.') }}
+                    </p>
+                </div>
             </div>
-        </div>
+        </header>
 
         <!-- Scrolling body -->
-        <div class="flex-1 overflow-y-auto px-6 py-5 space-y-5">
+        <div class="flex-1 overflow-y-auto px-6 py-6 space-y-6">
 
             <!-- KPI strip -->
             <section
@@ -103,11 +108,11 @@ withDefaults(defineProps<{
                 <div
                     v-for="(c, i) in charts"
                     :key="`chart-${i}`"
-                    class="bg-white border border-paper-200 rounded-md p-4"
+                    class="bg-white border border-paper-200 rounded-lg p-5 shadow-xs"
                     :class="(c.span ?? 1) === 2 ? 'lg:col-span-2' : ''"
                 >
-                    <div class="flex items-baseline justify-between mb-3">
-                        <h2 class="text-base text-ink-700">{{ c.title }}</h2>
+                    <div class="flex items-baseline justify-between mb-4">
+                        <h2 class="text-sm font-semibold text-ink-800 tracking-tight">{{ c.title }}</h2>
                     </div>
 
                     <LineChart
@@ -145,19 +150,25 @@ withDefaults(defineProps<{
                 <div
                     v-for="(panel, pi) in lists"
                     :key="`list-${pi}`"
-                    class="bg-white border border-paper-200 rounded-md overflow-hidden"
+                    class="bg-white border border-paper-200 rounded-lg overflow-hidden shadow-xs"
                 >
-                    <div class="flex items-baseline justify-between px-4 py-3 border-b border-paper-200">
-                        <h2 class="text-base text-ink-700">{{ panel.title }}</h2>
-                        <a v-if="panel.href" :href="panel.href" class="text-xs text-brand-600 hover:text-brand-700">{{ __('View all') }} →</a>
+                    <div class="flex items-center justify-between px-5 py-3 border-b border-paper-200 bg-paper-50">
+                        <h2 class="text-sm font-semibold text-ink-800 tracking-tight">{{ panel.title }}</h2>
+                        <a
+                            v-if="panel.href"
+                            :href="panel.href"
+                            class="text-xs font-medium text-brand-700 hover:text-brand-800 hover:underline transition-colors"
+                        >
+                            {{ __('View all') }} <span class="rtl:hidden">→</span><span class="hidden rtl:inline">←</span>
+                        </a>
                     </div>
                     <table v-if="panel.rows.length" class="w-full text-sm">
-                        <thead class="bg-paper-50 text-[10px] uppercase tracking-[0.12em] text-ink-500">
+                        <thead class="bg-paper-50/50 text-[10px] uppercase tracking-[0.14em] text-ink-500">
                             <tr>
                                 <th
                                     v-for="col in panel.columns"
                                     :key="col.key"
-                                    class="px-4 py-2 font-semibold"
+                                    class="px-5 py-2.5 font-semibold border-b border-paper-200"
                                     :class="col.align === 'right' ? 'text-end' : 'text-start'"
                                 >
                                     {{ col.label }}
@@ -168,12 +179,12 @@ withDefaults(defineProps<{
                             <tr
                                 v-for="(row, ri) in panel.rows"
                                 :key="`row-${ri}`"
-                                class="border-t border-paper-100"
+                                class="border-t border-paper-100 hover:bg-paper-50/60 transition-colors"
                             >
                                 <td
                                     v-for="col in panel.columns"
                                     :key="col.key"
-                                    class="px-4 py-2 text-ink-700 tabular-nums"
+                                    class="px-5 py-2.5 text-ink-700 tabular-nums"
                                     :class="col.align === 'right' ? 'text-end' : 'text-start'"
                                 >
                                     {{ row[col.key] ?? '—' }}
@@ -181,14 +192,18 @@ withDefaults(defineProps<{
                             </tr>
                         </tbody>
                     </table>
-                    <div v-else class="px-4 py-8 text-center text-sm text-ink-400">
+                    <div v-else class="px-4 py-10 text-center text-sm text-ink-400">
                         {{ __('No data') }}
                     </div>
                 </div>
             </section>
 
-            <div v-if="!kpis?.length && !charts?.length && !lists?.length" class="text-center text-ink-400 py-16 text-sm">
-                {{ __('Dashboard is empty. Wire props from your DashboardController.') }}
+            <div
+                v-if="!kpis?.length && !charts?.length && !lists?.length"
+                class="flex flex-col items-center justify-center text-center py-20 rounded-lg border border-dashed border-paper-300 bg-white"
+            >
+                <p class="text-sm font-semibold text-ink-700">{{ __('Dashboard is empty') }}</p>
+                <p class="text-xs text-ink-400 mt-1">{{ __('Wire props from your DashboardController to populate this view.') }}</p>
             </div>
 
         </div>

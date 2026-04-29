@@ -74,6 +74,14 @@ const expandAll  = computed(() => !!props.component.expandAll)
 const emptyMsg   = computed(() => (props.component.emptyMessage as string) ?? __('No records found.'))
 const keyField   = computed(() => (props.component.keyField as string) ?? 'id')
 
+// Tree depth → logical inline-start padding class (RTL-safe).
+// Extends the original `${depth * 1.25}rem` rule using only static Tailwind
+// spacing utilities so the JIT can pre-generate the classes at build time.
+const indentMap = ['', 'ps-5', 'ps-10', 'ps-14', 'ps-20', 'ps-24', 'ps-28', 'ps-32', 'ps-40', 'ps-48', 'ps-56']
+function indentClass(depth: number): string {
+    return indentMap[Math.min(depth, indentMap.length - 1)] ?? 'ps-56'
+}
+
 async function fetchData() {
     const result = await load()
     if (!result) return
@@ -226,7 +234,7 @@ const treeCol = computed(() => columns.value.find(c => c.isTree) ?? columns.valu
                                 <div
                                     v-if="col.field === treeCol?.field"
                                     class="flex items-center gap-1"
-                                    :style="{ paddingLeft: `${depth * 1.25}rem` }"
+                                    :class="indentClass(depth)"
                                 >
                                     <button
                                         v-if="hasChildren"

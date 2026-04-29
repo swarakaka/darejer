@@ -60,7 +60,14 @@ const levelClass: Record<AlertLevel, string> = {
     success: 'text-success-600',
     error:   'text-danger-600',
     warning: 'text-warning-600',
-    info:    'text-info-600',
+    info:    'text-brand-600',
+}
+
+const levelBg: Record<AlertLevel, string> = {
+    success: 'bg-success-50',
+    error:   'bg-danger-50',
+    warning: 'bg-warning-50',
+    info:    'bg-brand-50',
 }
 
 function timeAgo(iso: string | null): string {
@@ -90,8 +97,8 @@ function onClick(alert: AlertRecord): void {
             side="right"
             class="w-full sm:max-w-md flex flex-col gap-0 p-0"
         >
-            <SheetHeader class="px-5 py-4 border-b border-paper-200">
-                <SheetTitle class="text-base font-semibold text-ink-800 flex items-center gap-2">
+            <SheetHeader class="px-5 py-4 border-b border-paper-200 bg-paper-50">
+                <SheetTitle class="text-base font-semibold text-ink-900 flex items-center gap-2">
                     {{ __('Notifications') }}
                     <span
                         v-if="unreadCount > 0"
@@ -101,26 +108,26 @@ function onClick(alert: AlertRecord): void {
                         {{ unreadCount }}
                     </span>
                 </SheetTitle>
-                <SheetDescription class="text-xs text-ink-400">
+                <SheetDescription class="text-xs text-ink-500">
                     {{ __('Recent alerts and updates for your account.') }}
                 </SheetDescription>
 
                 <div class="flex items-center gap-2 mt-2">
                     <button
                         type="button"
-                        class="inline-flex items-center gap-1.5 text-xs text-ink-600 hover:text-ink-900
-                               disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                        class="inline-flex items-center gap-1.5 h-7 px-2 rounded-md text-xs font-medium text-ink-600
+                               hover:text-ink-900 hover:bg-paper-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                         :disabled="unreadCount === 0"
                         @click="markAllRead"
                     >
                         <CheckCheck class="w-3.5 h-3.5" />
                         {{ __('Mark all read') }}
                     </button>
-                    <span class="h-3 w-px bg-paper-300" />
+                    <span class="h-4 w-px bg-paper-300" />
                     <button
                         type="button"
-                        class="inline-flex items-center gap-1.5 text-xs text-ink-600 hover:text-danger-600
-                               disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                        class="inline-flex items-center gap-1.5 h-7 px-2 rounded-md text-xs font-medium text-ink-600
+                               hover:text-danger-600 hover:bg-danger-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                         :disabled="items.length === 0"
                         @click="clearAll"
                     >
@@ -130,13 +137,13 @@ function onClick(alert: AlertRecord): void {
                 </div>
             </SheetHeader>
 
-            <div class="flex-1 overflow-y-auto">
+            <div class="flex-1 overflow-y-auto bg-paper-50">
                 <!-- Skeleton -->
                 <div v-if="loading && !loaded" class="p-4 space-y-3">
                     <div
                         v-for="i in 4"
                         :key="i"
-                        class="h-14 rounded-sm bg-paper-100 animate-pulse"
+                        class="h-16 rounded-md bg-white border border-paper-200 animate-pulse"
                     />
                 </div>
 
@@ -145,10 +152,10 @@ function onClick(alert: AlertRecord): void {
                     v-else-if="loaded && items.length === 0"
                     class="flex flex-col items-center justify-center py-16 px-6 text-center"
                 >
-                    <div class="w-12 h-12 rounded-full bg-paper-100 flex items-center justify-center mb-3">
+                    <div class="w-14 h-14 rounded-full bg-white border border-paper-200 flex items-center justify-center mb-3 shadow-xs">
                         <BellOff class="w-5 h-5 text-ink-400" />
                     </div>
-                    <p class="text-sm font-medium text-ink-700">{{ __('You\'re all caught up') }}</p>
+                    <p class="text-sm font-semibold text-ink-700">{{ __('You\'re all caught up') }}</p>
                     <p class="text-xs text-ink-400 mt-1">{{ __('New notifications will appear here.') }}</p>
                 </div>
 
@@ -157,20 +164,25 @@ function onClick(alert: AlertRecord): void {
                     <li
                         v-for="alert in items"
                         :key="alert.id"
-                        class="group relative px-5 py-3 transition-colors hover:bg-paper-50 cursor-pointer"
-                        :class="alert.read_at ? '' : 'bg-brand-50/60'"
+                        class="group relative px-5 py-3 transition-colors hover:bg-paper-100/70 cursor-pointer bg-white"
+                        :class="alert.read_at ? '' : 'bg-brand-50/60 hover:bg-brand-50'"
                         @click="onClick(alert)"
                     >
                         <div class="flex items-start gap-3">
-                            <component
-                                :is="levelIcon[alert.level]"
-                                class="w-4 h-4 mt-0.5 shrink-0"
-                                :class="levelClass[alert.level]"
-                            />
+                            <span
+                                class="shrink-0 w-7 h-7 rounded-md flex items-center justify-center"
+                                :class="levelBg[alert.level]"
+                            >
+                                <component
+                                    :is="levelIcon[alert.level]"
+                                    class="w-3.5 h-3.5"
+                                    :class="levelClass[alert.level]"
+                                />
+                            </span>
                             <div class="flex-1 min-w-0">
                                 <p
                                     class="text-sm leading-snug text-ink-800"
-                                    :class="alert.read_at ? 'font-normal' : 'font-medium'"
+                                    :class="alert.read_at ? 'font-normal' : 'font-semibold'"
                                 >
                                     {{ alert.message }}
                                 </p>
@@ -184,8 +196,8 @@ function onClick(alert: AlertRecord): void {
                             </div>
                             <button
                                 type="button"
-                                class="opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded-sm
-                                       text-ink-400 hover:text-danger-600 hover:bg-paper-100"
+                                class="opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded-md
+                                       text-ink-400 hover:text-danger-600 hover:bg-danger-50"
                                 :aria-label="__('Delete notification')"
                                 @click.stop="destroy(alert.id)"
                             >

@@ -184,13 +184,13 @@ function componentsForTab(tab: ScreenTab) {
     )
 }
 
-const dialogSizeMap: Record<string, string> = {
-    xs:   '20rem',
-    sm:   '28rem',
-    md:   '36rem',
-    lg:   '48rem',
-    xl:   '60rem',
-    full: '95vw',
+const dialogSizeClass: Record<string, string> = {
+    xs:   'sm:max-w-xs',
+    sm:   'sm:max-w-md',
+    md:   'sm:max-w-lg',
+    lg:   'sm:max-w-3xl',
+    xl:   'sm:max-w-5xl',
+    full: 'sm:max-w-[95vw]',
 }
 </script>
 
@@ -201,10 +201,7 @@ const dialogSizeMap: Record<string, string> = {
         <div class="flex flex-col h-full overflow-hidden bg-paper-50">
 
             <!-- Action Pane -->
-            <div
-                class="flex items-center gap-1.5 px-6 border-b border-paper-200 bg-paper-75 shrink-0 overflow-x-auto"
-                :style="{ height: 'var(--action-pane-height)' }"
-            >
+            <div class="flex items-center gap-1.5 h-(--action-pane-height) px-6 border-b border-paper-200 bg-white shrink-0 overflow-x-auto">
                 <DarejerActions
                     :actions="actions"
                     placement="header"
@@ -216,22 +213,25 @@ const dialogSizeMap: Record<string, string> = {
                 />
                 <span
                     v-if="isDirty && !processing"
-                    class="ms-auto text-[11px] font-medium uppercase tracking-[0.12em] text-warning-600"
+                    class="ms-auto inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-warning-50 border border-warning-100 text-[10px] font-semibold uppercase tracking-[0.14em] text-warning-700"
                 >
+                    <span class="w-1.5 h-1.5 rounded-full bg-warning-500 animate-pulse" />
                     {{ __('Unsaved changes') }}
                 </span>
             </div>
 
             <!-- Scrolling content -->
-            <div :class="['flex-1 overflow-y-auto', fullWidth ? 'px-0 pb-0 flex flex-col' : 'px-6 pb-6']">
+            <div :class="['flex-1 overflow-y-auto bg-paper-50', fullWidth ? 'px-0 pb-0 flex flex-col' : 'px-6 pb-6']">
 
                 <!-- Page title -->
-                <div :class="['flex items-start justify-between gap-6 pt-5 pb-4 border-b border-paper-200 mb-5', fullWidth ? 'px-6' : '']">
-                    <div class="flex flex-col min-w-0">
-                        <AppBreadcrumbs class="mb-3" />
-                        <h1 class="text-[1.75rem] leading-[1.1] tracking-tight text-ink-900">
-                            {{ title }}
-                        </h1>
+                <div :class="['bg-white border-b border-paper-200 mb-5', fullWidth ? 'px-6' : '-mx-6 px-6']">
+                    <div class="flex items-start justify-between gap-6 pt-5 pb-4">
+                        <div class="flex flex-col min-w-0">
+                            <AppBreadcrumbs class="mb-3" />
+                            <h1 class="text-2xl leading-[1.1] tracking-tight text-ink-900 font-semibold">
+                                {{ title }}
+                            </h1>
+                        </div>
                     </div>
                 </div>
 
@@ -253,15 +253,15 @@ const dialogSizeMap: Record<string, string> = {
                 </template>
 
                 <!-- Horizontal tabs -->
-                <div v-else class="space-y-6">
+                <div v-else class="space-y-5">
                     <template v-if="hasTabs">
                         <Tabs :default-value="defaultTabValue" class="w-full">
-                            <TabsList class="h-auto w-full justify-start gap-1 rounded-md bg-paper-100 p-1 mb-4 overflow-x-auto">
+                            <TabsList class="h-auto w-full justify-start gap-1 rounded-lg bg-paper-100 p-1 mb-4 overflow-x-auto border border-paper-200">
                                 <TabsTrigger
                                     v-for="tab in visibleTabs"
                                     :key="tab.title"
                                     :value="tab.title"
-                                    class="text-sm tracking-tight text-ink-700"
+                                    class="text-sm font-medium tracking-tight text-ink-700"
                                 >
                                     {{ tab.title }}
                                 </TabsTrigger>
@@ -272,7 +272,7 @@ const dialogSizeMap: Record<string, string> = {
                                 :value="tab.title"
                                 class="mt-0"
                             >
-                                <section class="border border-paper-200 rounded-md overflow-hidden bg-white p-4">
+                                <section class="border border-paper-200 rounded-lg overflow-hidden bg-white p-5 shadow-xs">
                                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-5 gap-y-5 w-full">
                                         <DarejerComponent
                                             v-for="component in componentsForTab(tab)"
@@ -296,30 +296,30 @@ const dialogSizeMap: Record<string, string> = {
                         v-for="section in (sections ?? [])"
                         v-show="isSectionVisible(section)"
                         :key="section.title"
-                        class="border border-paper-200 rounded-md overflow-hidden bg-white"
+                        class="border border-paper-200 rounded-lg overflow-hidden bg-white shadow-xs"
                     >
                         <header
-                            class="flex items-center justify-between gap-3 px-4 py-2.5 select-none transition-colors"
+                            class="flex items-center justify-between gap-3 px-5 py-3 select-none transition-colors"
                             :class="[
-                                !collapsed[section.title] ? 'border-b border-paper-200' : '',
+                                !collapsed[section.title] ? 'border-b border-paper-200 bg-paper-50' : '',
                                 section.alwaysExpanded ? '' : 'cursor-pointer hover:bg-paper-50',
                             ]"
                             :role="section.alwaysExpanded ? undefined : 'button'"
                             :aria-expanded="section.alwaysExpanded ? undefined : !collapsed[section.title]"
                             @click="toggleSection(section.title)"
                         >
-                            <h2 class="text-lg tracking-tight leading-[1.15] text-ink-700 truncate min-w-0">
+                            <h2 class="text-sm font-semibold tracking-tight leading-tight text-ink-800 truncate min-w-0">
                                 {{ section.title }}
                             </h2>
                             <ChevronDown
                                 v-if="!section.alwaysExpanded"
                                 class="w-4 h-4 text-ink-400 transition-transform duration-150 shrink-0"
-                                :class="collapsed[section.title] ? '-rotate-90' : 'rotate-0'"
+                                :class="collapsed[section.title] ? '-rotate-90 rtl:rotate-90' : 'rotate-0'"
                             />
                         </header>
                         <div
                             v-if="!collapsed[section.title]"
-                            class="p-4"
+                            class="p-5"
                         >
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-5 gap-y-5 w-full">
                                 <DarejerComponent
@@ -339,22 +339,22 @@ const dialogSizeMap: Record<string, string> = {
 
                     <!-- Fallback: single FastTab -->
                     <template v-if="!hasTabs && !hasSections">
-                        <section class="border border-paper-200 rounded-md overflow-hidden bg-white">
+                        <section class="border border-paper-200 rounded-lg overflow-hidden bg-white shadow-xs">
                             <header
-                                class="flex items-center justify-between gap-3 px-4 py-2.5 cursor-pointer select-none hover:bg-paper-50 transition-colors"
-                                :class="!collapsed['General'] ? 'border-b border-paper-200' : ''"
+                                class="flex items-center justify-between gap-3 px-5 py-3 cursor-pointer select-none hover:bg-paper-50 transition-colors"
+                                :class="!collapsed['General'] ? 'border-b border-paper-200 bg-paper-50' : ''"
                                 role="button"
                                 @click="toggleSection('General')"
                             >
-                                <h2 class="text-lg tracking-tight leading-[1.15] text-ink-700">{{ __('General') }}</h2>
+                                <h2 class="text-sm font-semibold tracking-tight leading-tight text-ink-800">{{ __('General') }}</h2>
                                 <ChevronDown
                                     class="w-4 h-4 text-ink-400 transition-transform duration-150"
-                                    :class="collapsed['General'] ? '-rotate-90' : 'rotate-0'"
+                                    :class="collapsed['General'] ? '-rotate-90 rtl:rotate-90' : 'rotate-0'"
                                 />
                             </header>
                             <div
                                 v-if="!collapsed['General']"
-                                class="p-4"
+                                class="p-5"
                             >
                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-5 gap-y-5 w-full">
                                     <DarejerComponent
@@ -381,15 +381,15 @@ const dialogSizeMap: Record<string, string> = {
     <template v-else>
         <Dialog :open="true">
             <DialogContent
-                class="p-0 flex flex-col w-[calc(100vw-2rem)] max-h-[calc(100dvh-2rem)] overflow-hidden"
-                :style="{ maxWidth: dialogSizeMap[dialogSize ?? 'md'] ?? '36rem' }"
+                class="p-0 flex flex-col w-[calc(100vw-2rem)] max-h-[calc(100dvh-2rem)] overflow-hidden rounded-lg"
+                :class="dialogSizeClass[dialogSize ?? 'md'] ?? 'sm:max-w-lg'"
             >
-                <DialogHeader class="shrink-0 px-5 py-4 border-b border-paper-200 bg-paper-75">
-                    <DialogTitle class="text-xl">{{ title }}</DialogTitle>
+                <DialogHeader class="shrink-0 px-5 py-4 border-b border-paper-200 bg-paper-50">
+                    <DialogTitle class="text-base font-semibold text-ink-900 tracking-tight">{{ title }}</DialogTitle>
                 </DialogHeader>
 
-                <div class="flex-1 min-h-0 overflow-y-auto px-5 py-4">
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-5 gap-y-3.5 w-full">
+                <div class="flex-1 min-h-0 overflow-y-auto px-5 py-5 bg-white">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-5 gap-y-4 w-full">
                         <DarejerComponent
                             v-for="component in components"
                             :key="component.name"
@@ -403,7 +403,7 @@ const dialogSizeMap: Record<string, string> = {
                     </div>
                 </div>
 
-                <div class="shrink-0 flex justify-end gap-2 px-5 py-3 border-t border-paper-200 bg-paper-75">
+                <div class="shrink-0 flex justify-end gap-2 px-5 py-3 border-t border-paper-200 bg-paper-50">
                     <DarejerActions
                         :actions="actions"
                         placement="dialog"

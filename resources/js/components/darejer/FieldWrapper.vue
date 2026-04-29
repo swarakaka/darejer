@@ -44,8 +44,8 @@ const hasError   = computed(() => !!fieldError.value)
         <div v-if="component.label" class="flex items-center gap-1.5 min-h-[14px]">
             <Label
                 :for="component.name"
-                class="flex items-center gap-1"
-                :class="hasError ? 'text-danger-600' : 'text-ink-500'"
+                class="flex items-center gap-1 text-xs font-semibold tracking-tight"
+                :class="hasError ? 'text-danger-600' : 'text-ink-700'"
             >
                 <span>{{ component.label }}</span>
                 <span v-if="component.required" class="text-danger-600 leading-none">*</span>
