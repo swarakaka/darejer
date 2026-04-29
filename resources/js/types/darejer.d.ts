@@ -142,10 +142,11 @@ export interface DependOnRule {
 }
 
 export interface ScreenSection {
-    title:      string
-    components: string[]
-    collapsed?: boolean
-    dependOn?:  DependOnRule
+    title:           string
+    components:      string[]
+    collapsed?:      boolean
+    alwaysExpanded?: boolean
+    dependOn?:       DependOnRule
 }
 
 export interface ScreenTab {

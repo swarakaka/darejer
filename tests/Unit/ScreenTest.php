@@ -88,6 +88,21 @@ it('serializes sections from Section instances', function () {
     expect($array['sections'][1]['collapsed'])->toBeTrue();
 });
 
+it('serializes alwaysExpanded sections and forces collapsed false', function () {
+    $screen = Screen::make('Test')
+        ->components([
+            TextInput::make('name')->label('Name'),
+        ])
+        ->sections([
+            Section::make('General')->components(['name'])->collapsed()->alwaysExpanded(),
+        ]);
+
+    $array = $screen->toArray();
+
+    expect($array['sections'][0]['alwaysExpanded'])->toBeTrue();
+    expect($array['sections'][0]['collapsed'])->toBeFalse();
+});
+
 it('rejects array form for sections', function () {
     Screen::make('Test')->sections([
         ['title' => 'General', 'components' => ['name']],
