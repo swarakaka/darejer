@@ -5,6 +5,7 @@ import KpiCard         from '@/components/darejer/charts/KpiCard.vue'
 import LineChart       from '@/components/darejer/charts/LineChart.vue'
 import BarChart        from '@/components/darejer/charts/BarChart.vue'
 import DoughnutChart   from '@/components/darejer/charts/DoughnutChart.vue'
+import { Activity, BarChart3, PieChart, LineChart as LineIcon, LayoutDashboard, ArrowRight } from 'lucide-vue-next'
 import useTranslation  from '@/composables/useTranslation'
 
 defineOptions({ layout: AppLayout })
@@ -58,22 +59,55 @@ withDefaults(defineProps<{
     charts: () => [],
     lists:  () => [],
 })
+
+const chartIcon = (type: 'line' | 'bar' | 'doughnut') => {
+    if (type === 'line')     return LineIcon
+    if (type === 'bar')      return BarChart3
+    return PieChart
+}
 </script>
 
 <template>
-    <div class="flex flex-col h-full overflow-hidden bg-paper-50">
+    <div class="flex flex-col h-full overflow-hidden bg-paper-100">
 
-        <!-- Page header -->
-        <header class="shrink-0 bg-white border-b border-paper-200">
-            <div class="flex items-start justify-between gap-6 px-6 pt-5 pb-4">
-                <div class="flex flex-col min-w-0">
-                    <AppBreadcrumbs class="mb-3" />
-                    <h1 class="text-2xl leading-[1.1] tracking-tight text-ink-900 font-semibold">
-                        {{ title }}
-                    </h1>
-                    <p class="mt-1.5 text-sm text-ink-500">
-                        {{ __('Live overview of operational performance.') }}
-                    </p>
+        <!-- Page header — refined hero with subtle gradient and accent rail -->
+        <header class="shrink-0 relative bg-white border-b border-paper-200 overflow-hidden">
+            <!-- Decorative dotted background -->
+            <div
+                class="absolute inset-0 opacity-[0.35] pointer-events-none"
+                style="
+                    background-image: radial-gradient(circle at 1px 1px, var(--color-paper-200) 1px, transparent 0);
+                    background-size: 20px 20px;
+                "
+            />
+            <!-- Hero gradient wash on the trailing edge -->
+            <div class="absolute inset-y-0 end-0 w-2/3 bg-gradient-to-l from-brand-50/60 via-white/0 to-transparent pointer-events-none" />
+
+            <div class="relative flex items-start justify-between gap-6 px-6 pt-5 pb-5">
+                <div class="flex items-start gap-3 min-w-0">
+                    <!-- Title icon plate -->
+                    <div
+                        class="hidden sm:flex shrink-0 items-center justify-center w-10 h-10 mt-0.5
+                               bg-gradient-to-br from-brand-500 to-brand-700 text-white
+                               shadow-[0_2px_6px_-2px_rgba(0,120,212,0.6)] rounded-md"
+                    >
+                        <LayoutDashboard class="w-5 h-5" />
+                    </div>
+                    <div class="flex flex-col min-w-0">
+                        <AppBreadcrumbs class="mb-2" />
+                        <div class="flex items-baseline gap-2.5">
+                            <h1 class="text-[28px] leading-[1.05] tracking-[-0.02em] text-ink-900 font-semibold">
+                                {{ title }}
+                            </h1>
+                            <span class="hidden md:inline-flex items-center gap-1 px-1.5 py-0.5 rounded-sm bg-success-50 ring-1 ring-inset ring-success-100 text-[9px] font-bold uppercase tracking-[0.14em] text-success-700">
+                                <span class="w-1 h-1 rounded-full bg-success-500 animate-pulse" />
+                                {{ __('Live') }}
+                            </span>
+                        </div>
+                        <p class="mt-1.5 text-[12.5px] text-ink-500 tabular-nums">
+                            {{ __('Live overview of operational performance.') }}
+                        </p>
+                    </div>
                 </div>
             </div>
         </header>
@@ -105,41 +139,61 @@ withDefaults(defineProps<{
                 v-if="charts?.length"
                 class="grid grid-cols-1 lg:grid-cols-2 gap-4"
             >
-                <div
+                <article
                     v-for="(c, i) in charts"
                     :key="`chart-${i}`"
-                    class="bg-white border border-paper-200 rounded-lg p-5 shadow-xs"
+                    class="group relative bg-white border border-paper-200 rounded-md
+                           shadow-[0_1px_0_rgba(0,0,0,0.02)] overflow-hidden
+                           hover:border-paper-300 hover:shadow-[0_4px_14px_-4px_rgba(0,0,0,0.08)] transition-all duration-150"
                     :class="(c.span ?? 1) === 2 ? 'lg:col-span-2' : ''"
                 >
-                    <div class="flex items-baseline justify-between mb-4">
-                        <h2 class="text-sm font-semibold text-ink-800 tracking-tight">{{ c.title }}</h2>
-                    </div>
+                    <header
+                        class="flex items-center justify-between gap-3 px-5 h-11
+                               border-b border-paper-200 bg-gradient-to-b from-paper-75 to-white"
+                    >
+                        <div class="flex items-center gap-2.5 min-w-0">
+                            <span
+                                class="inline-flex items-center justify-center w-6 h-6 rounded-sm
+                                       bg-brand-50 text-brand-600 ring-1 ring-inset ring-brand-100"
+                            >
+                                <component :is="chartIcon(c.type)" class="w-3.5 h-3.5" />
+                            </span>
+                            <h2 class="text-[13px] font-semibold text-ink-900 tracking-tight truncate">
+                                {{ c.title }}
+                            </h2>
+                        </div>
+                        <span class="text-[10px] font-bold uppercase tracking-[0.12em] text-ink-400">
+                            {{ c.type }}
+                        </span>
+                    </header>
 
-                    <LineChart
-                        v-if="c.type === 'line'"
-                        :labels="c.labels ?? []"
-                        :series="c.series ?? []"
-                        :height="c.height ?? 260"
-                        :smooth="c.smooth !== false"
-                        :area="c.area === true"
-                    />
-                    <BarChart
-                        v-else-if="c.type === 'bar'"
-                        :labels="c.labels ?? []"
-                        :series="c.series ?? []"
-                        :height="c.height ?? 260"
-                        :horizontal="c.horizontal === true"
-                        :stacked="c.stacked === true"
-                    />
-                    <DoughnutChart
-                        v-else-if="c.type === 'doughnut'"
-                        :labels="c.labels ?? []"
-                        :values="c.values ?? []"
-                        :colors="c.colors"
-                        :height="c.height ?? 260"
-                        :cutout="c.cutout ?? '60%'"
-                    />
-                </div>
+                    <div class="p-5">
+                        <LineChart
+                            v-if="c.type === 'line'"
+                            :labels="c.labels ?? []"
+                            :series="c.series ?? []"
+                            :height="c.height ?? 260"
+                            :smooth="c.smooth !== false"
+                            :area="c.area === true"
+                        />
+                        <BarChart
+                            v-else-if="c.type === 'bar'"
+                            :labels="c.labels ?? []"
+                            :series="c.series ?? []"
+                            :height="c.height ?? 260"
+                            :horizontal="c.horizontal === true"
+                            :stacked="c.stacked === true"
+                        />
+                        <DoughnutChart
+                            v-else-if="c.type === 'doughnut'"
+                            :labels="c.labels ?? []"
+                            :values="c.values ?? []"
+                            :colors="c.colors"
+                            :height="c.height ?? 260"
+                            :cutout="c.cutout ?? '60%'"
+                        />
+                    </div>
+                </article>
             </section>
 
             <!-- Side-by-side list panels -->
@@ -147,63 +201,118 @@ withDefaults(defineProps<{
                 v-if="lists?.length"
                 class="grid grid-cols-1 lg:grid-cols-2 gap-4"
             >
-                <div
+                <article
                     v-for="(panel, pi) in lists"
                     :key="`list-${pi}`"
-                    class="bg-white border border-paper-200 rounded-lg overflow-hidden shadow-xs"
+                    class="group relative bg-white border border-paper-200 rounded-md overflow-hidden
+                           shadow-[0_1px_0_rgba(0,0,0,0.02)]
+                           hover:border-paper-300 hover:shadow-[0_4px_14px_-4px_rgba(0,0,0,0.08)] transition-all duration-150"
                 >
-                    <div class="flex items-center justify-between px-5 py-3 border-b border-paper-200 bg-paper-50">
-                        <h2 class="text-sm font-semibold text-ink-800 tracking-tight">{{ panel.title }}</h2>
+                    <header class="flex items-center justify-between px-5 h-11 border-b border-paper-200 bg-gradient-to-b from-paper-75 to-white">
+                        <div class="flex items-center gap-2.5 min-w-0">
+                            <span
+                                class="inline-flex items-center justify-center w-6 h-6 rounded-sm
+                                       bg-brand-50 text-brand-600 ring-1 ring-inset ring-brand-100"
+                            >
+                                <Activity class="w-3.5 h-3.5" />
+                            </span>
+                            <h2 class="text-[13px] font-semibold text-ink-900 tracking-tight truncate">
+                                {{ panel.title }}
+                            </h2>
+                            <span class="text-[10.5px] font-semibold tabular-nums text-ink-400 ms-1">
+                                {{ panel.rows.length }}
+                            </span>
+                        </div>
                         <a
                             v-if="panel.href"
                             :href="panel.href"
-                            class="text-xs font-medium text-brand-700 hover:text-brand-800 hover:underline transition-colors"
+                            class="inline-flex items-center gap-1 text-[11px] font-semibold text-brand-700 hover:text-brand-800 transition-colors group/link"
                         >
-                            {{ __('View all') }} <span class="rtl:hidden">→</span><span class="hidden rtl:inline">←</span>
+                            {{ __('View all') }}
+                            <ArrowRight class="w-3 h-3 transition-transform group-hover/link:translate-x-0.5 rtl:rotate-180 rtl:group-hover/link:-translate-x-0.5" />
                         </a>
-                    </div>
-                    <table v-if="panel.rows.length" class="w-full text-sm">
-                        <thead class="bg-paper-50/50 text-[10px] uppercase tracking-[0.14em] text-ink-500">
-                            <tr>
-                                <th
-                                    v-for="col in panel.columns"
-                                    :key="col.key"
-                                    class="px-5 py-2.5 font-semibold border-b border-paper-200"
-                                    :class="col.align === 'right' ? 'text-end' : 'text-start'"
+                    </header>
+
+                    <div v-if="panel.rows.length" class="overflow-x-auto">
+                        <table class="w-full text-sm">
+                            <thead>
+                                <tr class="border-b border-paper-200 bg-paper-75/60">
+                                    <th
+                                        v-for="col in panel.columns"
+                                        :key="col.key"
+                                        class="px-5 py-2 text-[10px] font-bold uppercase tracking-[0.12em] text-ink-500"
+                                        :class="col.align === 'right' ? 'text-end' : 'text-start'"
+                                    >
+                                        {{ col.label }}
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr
+                                    v-for="(row, ri) in panel.rows"
+                                    :key="`row-${ri}`"
+                                    class="relative border-t border-paper-100 first:border-t-0 hover:bg-brand-50/40 transition-colors duration-75"
                                 >
-                                    {{ col.label }}
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr
-                                v-for="(row, ri) in panel.rows"
-                                :key="`row-${ri}`"
-                                class="border-t border-paper-100 hover:bg-paper-50/60 transition-colors"
-                            >
-                                <td
-                                    v-for="col in panel.columns"
-                                    :key="col.key"
-                                    class="px-5 py-2.5 text-ink-700 tabular-nums"
-                                    :class="col.align === 'right' ? 'text-end' : 'text-start'"
-                                >
-                                    {{ row[col.key] ?? '—' }}
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <div v-else class="px-4 py-10 text-center text-sm text-ink-400">
-                        {{ __('No data') }}
+                                    <td
+                                        v-for="(col, ci) in panel.columns"
+                                        :key="col.key"
+                                        class="px-5 py-2.5 text-[13px] text-ink-700 tabular-nums relative"
+                                        :class="[
+                                            col.align === 'right' ? 'text-end' : 'text-start',
+                                            ci === 0 ? 'font-medium text-ink-900' : '',
+                                        ]"
+                                    >
+                                        <!-- Leading accent bar on hover (first column only) -->
+                                        <span
+                                            v-if="ci === 0"
+                                            class="absolute inset-y-0 start-0 w-0.5 bg-brand-500 scale-y-0 group-hover/row:scale-y-100 transition-transform"
+                                        />
+                                        {{ row[col.key] ?? '—' }}
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
-                </div>
+
+                    <!-- Empty state for list panel -->
+                    <div
+                        v-else
+                        class="flex flex-col items-center justify-center gap-1.5 py-12 px-5 text-center bg-paper-75/40"
+                    >
+                        <div class="inline-flex items-center justify-center w-9 h-9 rounded-full bg-paper-100 text-ink-400 ring-1 ring-paper-200">
+                            <Activity class="w-4 h-4" />
+                        </div>
+                        <p class="text-[12.5px] font-medium text-ink-600">{{ __('No data') }}</p>
+                    </div>
+                </article>
             </section>
 
+            <!-- Empty state — no data of any kind -->
             <div
                 v-if="!kpis?.length && !charts?.length && !lists?.length"
-                class="flex flex-col items-center justify-center text-center py-20 rounded-lg border border-dashed border-paper-300 bg-white"
+                class="relative flex flex-col items-center justify-center text-center py-20 px-6 rounded-md bg-white border border-dashed border-paper-300 overflow-hidden"
             >
-                <p class="text-sm font-semibold text-ink-700">{{ __('Dashboard is empty') }}</p>
-                <p class="text-xs text-ink-400 mt-1">{{ __('Wire props from your DashboardController to populate this view.') }}</p>
+                <!-- Pattern background -->
+                <div
+                    class="absolute inset-0 opacity-[0.5] pointer-events-none"
+                    style="
+                        background-image: radial-gradient(circle at 1px 1px, var(--color-paper-200) 1px, transparent 0);
+                        background-size: 18px 18px;
+                    "
+                />
+                <div class="relative flex flex-col items-center gap-3">
+                    <div
+                        class="inline-flex items-center justify-center w-14 h-14 rounded-md
+                               bg-gradient-to-br from-brand-50 to-brand-100 text-brand-700
+                               ring-1 ring-inset ring-brand-200/60 shadow-[0_2px_8px_-3px_rgba(0,120,212,0.3)]"
+                    >
+                        <LayoutDashboard class="w-6 h-6" />
+                    </div>
+                    <p class="text-[14px] font-semibold text-ink-800 tracking-tight">{{ __('Dashboard is empty') }}</p>
+                    <p class="text-[12px] text-ink-500 max-w-md">
+                        {{ __('Wire props from your DashboardController to populate this view.') }}
+                    </p>
+                </div>
             </div>
 
         </div>
