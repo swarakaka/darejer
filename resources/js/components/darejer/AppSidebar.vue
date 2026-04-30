@@ -276,7 +276,7 @@ function badgeClass(color?: string): string {
                                     class="w-4 h-4 shrink-0"
                                     :class="isGroupActive(item) ? 'text-brand-600' : 'text-ink-600'"
                                 />
-                                <span class="flex-1 text-[13px] truncate">{{ item.label }}</span>
+                                <span class="flex-1 text-md truncate">{{ item.label }}</span>
 
                                 <span
                                     v-if="item.badge"
