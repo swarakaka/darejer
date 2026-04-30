@@ -460,7 +460,7 @@ watch(() => props.filters, (next) => {
                             {{ __('Payload') }}
                         </h3>
                         <pre
-                            class="text-xs text-ink-800 bg-paper-75 border border-paper-200 rounded-md
+                            class="text-xs font-mono text-ink-800 bg-paper-75 border border-paper-200 rounded-md
                                    p-3 overflow-x-auto whitespace-pre-wrap break-all leading-relaxed"
                         >{{ prettyPayload }}</pre>
                     </section>
