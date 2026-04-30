@@ -81,7 +81,7 @@ const chartIcon = (type: 'line' | 'bar' | 'doughnut') => {
                 "
             />
             <!-- Hero gradient wash on the trailing edge -->
-            <div class="absolute inset-y-0 end-0 w-2/3 bg-gradient-to-l from-brand-50/60 via-white/0 to-transparent pointer-events-none" />
+            <div class="absolute inset-y-0 inset-e-0 w-2/3 bg-gradient-to-s from-brand-50/60 via-white/0 to-transparent pointer-events-none" />
 
             <div class="relative flex items-start justify-between gap-6 px-6 pt-5 pb-5">
                 <div class="flex items-start gap-3 min-w-0">
