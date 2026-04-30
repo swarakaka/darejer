@@ -172,6 +172,30 @@ const defaultTabValue = computed<string | undefined>(() =>
     visibleTabs.value[0]?.title
 )
 
+// Persist the active tab in localStorage, scoped per Screen by title.
+const tabsPersistKey = computed<string | undefined>(() =>
+    props.title ? `screen:${props.title}` : undefined,
+)
+
+// Tab is "in error" when any of its components have a validation error
+// in mergedErrors. Errors may be nested (e.g. "field.0.subfield"), so
+// match by exact key or by "name." prefix.
+function tabHasError(tab: ScreenTab): boolean {
+    const errorKeys = Object.keys(mergedErrors.value)
+    if (errorKeys.length === 0) {
+        return false
+    }
+    for (const componentName of tab.components) {
+        const prefix = `${componentName}.`
+        for (const errorKey of errorKeys) {
+            if (errorKey === componentName || errorKey.startsWith(prefix)) {
+                return true
+            }
+        }
+    }
+    return false
+}
+
 function componentsForSection(section: ScreenSection) {
     return props.components.filter(c =>
         section.components.includes(c.name)
@@ -285,12 +309,13 @@ function sectionIndex(section: ScreenSection): number {
                     <!-- Horizontal tabs / FastTabs -->
                     <div v-else class="space-y-4">
                         <template v-if="hasTabs">
-                            <Tabs :default-value="defaultTabValue" class="w-full">
+                            <Tabs :default-value="defaultTabValue" :persist-key="tabsPersistKey" class="w-full">
                                 <TabsList class="h-auto w-full justify-start gap-0 rounded-md bg-white p-1 mb-4 overflow-x-auto border border-paper-200 shadow-[0_1px_0_rgba(0,0,0,0.02)]">
                                     <TabsTrigger
                                         v-for="tab in visibleTabs"
                                         :key="tab.title"
                                         :value="tab.title"
+                                        :has-error="tabHasError(tab)"
                                         class="text-[13px] font-semibold tracking-tight text-ink-600 data-[state=active]:text-brand-700 data-[state=active]:bg-brand-50 data-[state=active]:shadow-[inset_0_-2px_0_var(--color-brand-500)] data-[state=active]:rounded-[2px] hover:text-ink-900 transition-colors px-4 py-2"
                                     >
                                         {{ tab.title }}
