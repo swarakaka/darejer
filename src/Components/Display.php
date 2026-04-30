@@ -20,6 +20,9 @@ class Display extends BaseComponent
     /** @var array<string, string>|null Map of value → badge variant. */
     protected ?array $badgeMap = null;
 
+    /** @var array<string, string>|null Map of value → translated label. */
+    protected ?array $badgeLabels = null;
+
     protected ?string $dateFormat = null;
 
     protected int $decimals = 0;
@@ -54,6 +57,7 @@ class Display extends BaseComponent
     {
         $this->displayType = 'badge';
         $this->badgeMap = EnumOptions::colors($colorMap);
+        $this->badgeLabels = is_string($colorMap) ? EnumOptions::labels($colorMap) : null;
 
         return $this;
     }
@@ -156,6 +160,7 @@ class Display extends BaseComponent
         return [
             'displayType' => $this->displayType,
             'badgeMap' => $this->badgeMap,
+            'badgeLabels' => $this->badgeLabels,
             'dateFormat' => $this->dateFormat,
             'decimals' => $this->decimals ?: null,
             'currencyField' => $this->currencyField,

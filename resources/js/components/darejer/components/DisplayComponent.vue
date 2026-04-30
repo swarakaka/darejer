@@ -156,6 +156,17 @@ const badgeKey = computed<string>(() => {
 const badgeVariant = computed<BadgeVariant>(() => badgeVariantMap[badgeKey.value] ?? 'outline')
 
 const badgeToneClass = computed<string>(() => badgeToneMap[badgeKey.value] ?? badgeToneMap.neutral)
+
+// Translated label sent from PHP via `Display::badge(EnumClass::class)`. Falls
+// back to the raw value when no labels map was provided (e.g. plain array form).
+const badgeLabel = computed<string>(() => {
+    const labels = props.component.badgeLabels as Record<string, string> | null | undefined
+    if (labels && rawValue.value !== null && rawValue.value !== undefined) {
+        const hit = labels[String(rawValue.value)]
+        if (hit) return hit
+    }
+    return String(rawValue.value ?? '')
+})
 </script>
 
 <template>
@@ -173,7 +184,7 @@ const badgeToneClass = computed<string>(() => badgeToneMap[badgeKey.value] ?? ba
                 :variant="badgeVariant"
                 :class="badgeToneClass"
             >
-                {{ rawValue }}
+                {{ badgeLabel }}
             </Badge>
 
             <!-- Boolean -->
