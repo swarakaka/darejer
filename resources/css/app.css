@@ -264,6 +264,10 @@ body {
     font-feature-settings: 'cv11', 'ss01', 'ss03';
 }
 
+html[dir="rtl"] body {
+    font-family: var(--font-darejer);
+}
+
 ::selection {
     @apply bg-brand-200 text-brand-900;
 }
