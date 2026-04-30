@@ -2,6 +2,7 @@
 import { computed }     from 'vue'
 import { Badge }        from '@/components/ui/badge'
 import FieldWrapper     from '@/components/darejer/FieldWrapper.vue'
+import { useLanguages } from '@/composables/useLanguages'
 import useTranslation   from '@/composables/useTranslation'
 import type { DarejerComponent } from '@/types/darejer'
 
@@ -17,10 +18,27 @@ const props = defineProps<{
 }>()
 
 const { __ } = useTranslation()
+const { currentLocale, defaultLanguage } = useLanguages()
 
 const source = computed(() => props.formData ?? props.record)
 
-const rawValue = computed<unknown>(() => source.value[props.component.name])
+// Resolve a translatable JSON value (`{en: '...', ar: '...'}`) to the user's
+// active locale, falling back to the configured default language and finally
+// the first non-empty entry. Plain strings/numbers pass through untouched.
+function resolveTranslatable(value: unknown): unknown {
+    if (value === null || value === undefined) return value
+    if (typeof value !== 'object' || Array.isArray(value)) return value
+    const map = value as Record<string, unknown>
+    return map[currentLocale.value]
+        ?? map[defaultLanguage.value]
+        ?? Object.values(map).find(v => v !== null && v !== undefined && v !== '')
+        ?? ''
+}
+
+const rawValue = computed<unknown>(() => {
+    const v = source.value[props.component.name]
+    return props.component.translatable ? resolveTranslatable(v) : v
+})
 
 const displayType = computed<DisplayType>(
     () => (props.component.displayType as DisplayType) ?? 'text'
