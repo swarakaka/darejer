@@ -35,13 +35,9 @@ function submit() {
                 </div>
                 <span class="text-xs font-semibold tracking-[0.28em] uppercase text-ink-700">Darejer</span>
             </div>
-            <span class="text-2xs font-semibold uppercase tracking-[0.24em] text-brand-700">{{ __('Welcome back') }}</span>
             <h1 class="text-3xl font-semibold leading-tight text-ink-900 tracking-tight">
-                {{ __('Sign in to your workspace') }}
+                {{ __('Sign in to your account') }}
             </h1>
-            <p class="text-sm text-ink-500 leading-relaxed">
-                {{ __('Enter your credentials to continue.') }}
-            </p>
         </div>
 
         <form class="space-y-5" @submit.prevent="submit">
@@ -109,8 +105,8 @@ function submit() {
         </form>
 
         <div class="flex items-center justify-between text-2xs uppercase tracking-[0.18em] text-ink-400 tabular-nums pt-5 border-t border-paper-200">
-            <p>{{ __('© :year Darejer', { year: new Date().getFullYear() }) }}</p>
-            <p>{{ __('Secured with TLS') }}</p>
+            <p>{{ __('© :year', { year: new Date().getFullYear() }) }}</p>
+            <p>{{ __('Darejer') }}</p>
         </div>
     </div>
 </template>
