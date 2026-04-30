@@ -36,6 +36,8 @@ class Display extends BaseComponent
 
     protected ?string $emptyText = null;
 
+    protected bool $translatable = false;
+
     /**
      * Render the value as a colored badge using the given value→variant map.
      *
@@ -131,6 +133,19 @@ class Display extends BaseComponent
         return $this;
     }
 
+    /**
+     * Mark the value as translatable JSON (e.g. `{"en": "Hello", "ar": "مرحبا"}`).
+     * The frontend resolves the active locale, falling back to the configured
+     * default language. Use for plain text and badge displays whose underlying
+     * column is cast as a translatable array on the model.
+     */
+    public function translatable(bool $translatable = true): static
+    {
+        $this->translatable = $translatable;
+
+        return $this;
+    }
+
     protected function componentType(): string
     {
         return 'Display';
@@ -149,6 +164,7 @@ class Display extends BaseComponent
             'prefix' => $this->prefix,
             'suffix' => $this->suffix,
             'emptyText' => $this->emptyText,
+            'translatable' => $this->translatable ?: null,
         ];
     }
 }
