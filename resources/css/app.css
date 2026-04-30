@@ -251,7 +251,7 @@
  * ─── Base reset ─────────────────────────────────────────────────────────────
  */
 *, *::before, *::after {
-    box-sizing: border-box;
+    @apply box-border;
 }
 
 html {
@@ -260,21 +260,31 @@ html {
 }
 
 body {
-    background: var(--background);
-    color: var(--foreground);
-    font-size: var(--text-base);
+    @apply bg-background text-foreground text-base antialiased leading-[1.45];
     font-feature-settings: 'cv11', 'ss01', 'ss03';
-    line-height: 1.45;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
 }
 
-::selection { background: var(--color-brand-200); color: var(--color-brand-900); }
+::selection {
+    @apply bg-brand-200 text-brand-900;
+}
 
-::-webkit-scrollbar         { width: 10px; height: 10px; }
-::-webkit-scrollbar-track   { background: transparent; }
-::-webkit-scrollbar-thumb   { background: var(--color-paper-300); border-radius: 0; border: 2px solid transparent; background-clip: padding-box; }
-::-webkit-scrollbar-thumb:hover { background: var(--color-ink-400); border: 2px solid transparent; background-clip: padding-box; }
+::-webkit-scrollbar {
+    @apply w-2.5 h-2.5;
+}
+
+::-webkit-scrollbar-track {
+    @apply bg-transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    @apply bg-paper-300 rounded-none border-2 border-transparent;
+    background-clip: padding-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    @apply bg-ink-400 border-2 border-transparent;
+    background-clip: padding-box;
+}
 
 /*
  * ─── TipTap RichTextEditor ───────────────────────────────────────────────────
@@ -283,157 +293,109 @@ body {
  */
 
 .darejer-rte {
-    border: 1px solid var(--input-border);
-    border-radius: var(--radius-md);
-    overflow: hidden;
-    background: var(--input);
-    transition: border-color 120ms ease;
+    @apply border border-[color:var(--input-border)] rounded-md overflow-hidden bg-[color:var(--input)] transition-colors duration-[120ms];
 }
 
 .darejer-rte:focus-within {
-    border-color: var(--input-border-focus);
-    box-shadow: 0 0 0 1px var(--input-border-focus);
+    @apply border-[color:var(--input-border-focus)] ring-1 ring-[color:var(--input-border-focus)];
 }
 
 .darejer-rte.is-disabled {
-    opacity: 0.6;
-    pointer-events: none;
+    @apply opacity-60 pointer-events-none;
 }
 
 .darejer-rte-toolbar {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 2px;
-    padding: 0.3rem 0.5rem;
-    background: var(--color-paper-75);
-    border-bottom: 1px solid var(--color-paper-200);
+    @apply flex flex-wrap items-center gap-0.5 px-2 py-[0.3rem] bg-paper-75 border-b border-paper-200;
 }
 
 .darejer-rte-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 2rem;
-    height: 2rem;
-    border: none;
-    background: transparent;
-    border-radius: var(--radius-sm);
-    color: var(--color-ink-500);
-    cursor: pointer;
-    transition: background 100ms, color 100ms;
-    padding: 0;
-    font-size: var(--text-xs);
-    flex-shrink: 0;
+    @apply flex items-center justify-center w-8 h-8 border-0 bg-transparent rounded-sm text-ink-500 cursor-pointer p-0 text-xs shrink-0 transition-colors duration-100;
 }
 
 .darejer-rte-btn:hover {
-    background: var(--color-paper-150);
-    color: var(--color-ink-800);
+    @apply bg-paper-150 text-ink-800;
 }
 
 .darejer-rte-btn.is-active {
-    background: var(--color-brand-50);
-    color: var(--color-brand-600);
+    @apply bg-brand-50 text-brand-600;
 }
 
 .darejer-rte-divider {
-    width: 1px;
-    height: 1.375rem;
-    background: var(--color-paper-200);
-    margin: 0 0.25rem;
+    @apply w-px h-[1.375rem] bg-paper-200 mx-1;
 }
 
 .darejer-rte-content {
-    padding: 0.625rem 0.75rem;
-    overflow-y: auto;
+    @apply px-3 py-2.5 overflow-y-auto;
 }
 
 .darejer-rte-content:focus {
-    outline: none;
+    @apply outline-none;
 }
 
 .darejer-rte-content .tiptap {
-    outline: none;
-    font-size: var(--text-base);
-    line-height: 1.5;
-    color: var(--foreground);
+    @apply outline-none text-base text-foreground leading-[1.5];
 }
 
-.darejer-rte-content .tiptap p { margin: 0 0 0.5rem; }
-.darejer-rte-content .tiptap p:last-child { margin-bottom: 0; }
+.darejer-rte-content .tiptap p {
+    @apply mb-2;
+}
 
-.darejer-rte-content .tiptap h1 { font-size: var(--text-xl);  font-weight: 600; margin: 0.75rem 0 0.375rem; letter-spacing: -0.01em; }
-.darejer-rte-content .tiptap h2 { font-size: var(--text-lg);  font-weight: 600; margin: 0.625rem 0 0.3rem;   letter-spacing: -0.005em; }
-.darejer-rte-content .tiptap h3 { font-size: var(--text-md);  font-weight: 600; margin: 0.5rem 0 0.25rem;    }
+.darejer-rte-content .tiptap p:last-child {
+    @apply mb-0;
+}
+
+.darejer-rte-content .tiptap h1 {
+    @apply text-xl font-semibold mt-3 mb-1.5 tracking-[-0.01em];
+}
+
+.darejer-rte-content .tiptap h2 {
+    @apply text-lg font-semibold mt-2.5 mb-[0.3rem] tracking-[-0.005em];
+}
+
+.darejer-rte-content .tiptap h3 {
+    @apply text-md font-semibold mt-2 mb-1;
+}
 
 .darejer-rte-content .tiptap ul,
 .darejer-rte-content .tiptap ol {
-    padding-left: 1.25rem;
-    margin: 0.375rem 0;
+    @apply ps-5 my-1.5;
 }
 
-.darejer-rte-content .tiptap li { margin: 0.125rem 0; }
+.darejer-rte-content .tiptap li {
+    @apply my-0.5;
+}
 
 .darejer-rte-content .tiptap blockquote {
-    border-left: 3px solid var(--color-brand-500);
-    padding-left: 0.75rem;
-    margin: 0.5rem 0;
-    color: var(--color-ink-500);
-    font-style: italic;
+    @apply border-s-[3px] border-brand-500 ps-3 my-2 text-ink-500 italic;
 }
 
 .darejer-rte-content .tiptap code {
-    background: var(--color-paper-100);
-    border: 1px solid var(--color-paper-200);
-    border-radius: var(--radius-xs);
-    padding: 0.1rem 0.3rem;
-    font-size: var(--text-sm);
+    @apply bg-paper-100 border border-paper-200 rounded-xs px-[0.3rem] py-[0.1rem] text-sm;
 }
 
 .darejer-rte-content .tiptap pre {
-    background: var(--color-paper-100);
-    border: 1px solid var(--color-paper-200);
-    border-radius: var(--radius-md);
-    padding: 0.625rem 0.875rem;
-    overflow-x: auto;
-    margin: 0.5rem 0;
+    @apply bg-paper-100 border border-paper-200 rounded-md px-3.5 py-2.5 overflow-x-auto my-2;
 }
 
 .darejer-rte-content .tiptap pre code {
-    background: none;
-    border: none;
-    padding: 0;
+    @apply bg-transparent border-0 p-0;
 }
 
 .darejer-rte-content .tiptap a {
-    color: var(--color-brand-600);
-    text-decoration: underline;
-    cursor: pointer;
+    @apply text-brand-600 underline cursor-pointer;
 }
 
 .darejer-rte-content .tiptap .is-editor-empty::before {
     content: attr(data-placeholder);
-    color: var(--color-ink-400);
-    pointer-events: none;
-    float: left;
-    height: 0;
+    @apply text-ink-400 pointer-events-none float-left h-0;
 }
 
 .darejer-rte-footer {
-    display: flex;
-    justify-content: flex-end;
-    padding: 0.25rem 0.625rem;
-    background: var(--color-paper-75);
-    border-top: 1px solid var(--color-paper-200);
-    font-size: var(--text-2xs);
-    color: var(--color-ink-400);
-    font-variant-numeric: tabular-nums;
-    letter-spacing: 0.04em;
+    @apply flex justify-end px-2.5 py-1 bg-paper-75 border-t border-paper-200 text-2xs text-ink-400 tabular-nums tracking-[0.04em];
 }
 
 .darejer-rte-footer.is-over-limit {
-    color: var(--color-danger-600);
+    @apply text-danger-600;
 }
 
 /*
@@ -441,36 +403,26 @@ body {
  */
 
 .vue-flow__node {
-    font-size: 0.8125rem !important;
+    @apply text-sm!;
 }
 
 .vue-flow__node-default,
 .vue-flow__node-input,
 .vue-flow__node-output {
-    border-radius: var(--radius-md) !important;
-    border: 1px solid var(--color-paper-300) !important;
-    background: #ffffff !important;
-    padding: 0.5rem 0.875rem !important;
-    font-size: 0.8125rem !important;
-    color: var(--color-ink-800) !important;
-    box-shadow: var(--shadow-blade) !important;
+    @apply rounded-md! border! border-paper-300! bg-white! py-2! px-3.5! text-sm! text-ink-800! shadow-[var(--shadow-blade)]!;
 }
 
 .vue-flow__node-input {
-    border-color: var(--color-brand-500) !important;
-    background: var(--color-brand-50) !important;
-    color: var(--color-brand-800) !important;
+    @apply border-brand-500! bg-brand-50! text-brand-800!;
 }
 
 .vue-flow__node-output {
-    border-color: var(--color-paper-400) !important;
-    background: var(--color-paper-100) !important;
+    @apply border-paper-400! bg-paper-100!;
 }
 
 .vue-flow__node.selected .vue-flow__node-default,
 .vue-flow__node.selected > div {
-    border-color: var(--color-brand-500) !important;
-    outline: 2px solid var(--color-brand-200) !important;
+    @apply border-brand-500! outline-2! outline-solid! outline-brand-200!;
 }
 
 .vue-flow__edge-path {
@@ -483,39 +435,28 @@ body {
 }
 
 .vue-flow__edge-label {
-    font-size: 0.6875rem !important;
+    @apply text-[0.6875rem]!;
     fill: var(--color-ink-600) !important;
 }
 
 .vue-flow__controls {
-    border: 1px solid var(--color-paper-200) !important;
-    border-radius: var(--radius-md) !important;
-    overflow: hidden !important;
-    box-shadow: var(--shadow-blade) !important;
+    @apply border! border-paper-200! rounded-md! overflow-hidden! shadow-[var(--shadow-blade)]!;
 }
 
 .vue-flow__controls-button {
-    border: none !important;
-    border-bottom: 1px solid var(--color-paper-200) !important;
-    background: #ffffff !important;
-    color: var(--color-ink-500) !important;
-    width: 1.75rem !important;
-    height: 1.75rem !important;
-    padding: 0 !important;
+    @apply border-0! border-b! border-paper-200! bg-white! text-ink-500! w-7! h-7! p-0!;
 }
 
 .vue-flow__controls-button:hover {
-    background: var(--color-paper-100) !important;
-    color: var(--color-brand-600) !important;
+    @apply bg-paper-100! text-brand-600!;
 }
 
 .vue-flow__minimap {
-    border: 1px solid var(--color-paper-200) !important;
-    border-radius: var(--radius-md) !important;
+    @apply border! border-paper-200! rounded-md!;
 }
 
 .vue-flow__background {
-    background-color: var(--color-paper-75) !important;
+    @apply bg-paper-75!;
 }
 
 /*
@@ -523,106 +464,76 @@ body {
  */
 
 .fc {
-    font-size: 0.8125rem !important;
+    @apply text-sm!;
 }
 
 .fc-toolbar-title {
-    font-size: 0.9375rem !important;
-    font-weight: 600 !important;
-    color: var(--color-ink-800) !important;
+    @apply text-[0.9375rem]! font-semibold! text-ink-800!;
 }
 
 .fc-button {
-    background: #ffffff !important;
-    border: 1px solid var(--color-paper-300) !important;
-    color: var(--color-ink-700) !important;
-    font-size: 0.75rem !important;
-    font-weight: 600 !important;
-    padding: 0.25rem 0.625rem !important;
-    border-radius: var(--radius-sm) !important;
-    height: 2rem !important;
-    box-shadow: none !important;
-    transition: background 100ms, border-color 100ms !important;
+    @apply bg-white! border! border-paper-300! text-ink-700! text-xs! font-semibold! py-1! px-2.5! rounded-sm! h-8! shadow-none! transition-colors! duration-100!;
 }
 
 .fc-button:hover {
-    background: var(--color-paper-100) !important;
-    border-color: var(--color-paper-400) !important;
-    color: var(--color-ink-900) !important;
+    @apply bg-paper-100! border-paper-400! text-ink-900!;
 }
 
 .fc-button-primary:not(:disabled).fc-button-active,
 .fc-button-primary:not(:disabled):active {
-    background: var(--color-brand-500) !important;
-    border-color: var(--color-brand-500) !important;
-    color: #ffffff !important;
+    @apply bg-brand-500! border-brand-500! text-white!;
 }
 
 .fc-button-group .fc-button {
-    border-radius: 0 !important;
+    @apply rounded-none!;
 }
 
 .fc-button-group .fc-button:first-child {
-    border-radius: var(--radius-sm) 0 0 var(--radius-sm) !important;
+    @apply rounded-s-sm!;
 }
 
 .fc-button-group .fc-button:last-child {
-    border-radius: 0 var(--radius-sm) var(--radius-sm) 0 !important;
+    @apply rounded-e-sm!;
 }
 
 .fc-col-header-cell-cushion {
-    font-size: 0.6875rem !important;
-    font-weight: 600 !important;
-    text-transform: uppercase !important;
-    letter-spacing: 0.04em !important;
-    color: var(--color-ink-500) !important;
-    text-decoration: none !important;
+    @apply text-[0.6875rem]! font-semibold! uppercase! tracking-[0.04em]! text-ink-500! no-underline!;
 }
 
 .fc-daygrid-day-number {
-    font-size: 0.75rem !important;
-    color: var(--color-ink-600) !important;
-    text-decoration: none !important;
+    @apply text-xs! text-ink-600! no-underline!;
 }
 
 .fc-day-today {
-    background: var(--color-brand-50) !important;
+    @apply bg-brand-50!;
 }
 
 .fc-day-today .fc-daygrid-day-number {
-    color: var(--color-brand-700) !important;
-    font-weight: 600 !important;
+    @apply text-brand-700! font-semibold!;
 }
 
 .fc-event {
-    border-radius: var(--radius-sm) !important;
-    border: none !important;
-    font-size: 0.6875rem !important;
-    font-weight: 500 !important;
-    padding: 1px 4px !important;
-    cursor: pointer !important;
+    @apply rounded-sm! border-0! text-[0.6875rem]! font-medium! py-px! px-1! cursor-pointer!;
 }
 
 .fc-event-title {
-    font-weight: 500 !important;
+    @apply font-medium!;
 }
 
 .fc-list-event-title a {
-    font-size: 0.8125rem !important;
-    text-decoration: none !important;
-    color: var(--color-ink-800) !important;
+    @apply text-sm! no-underline! text-ink-800!;
 }
 
 .fc-list-event:hover td {
-    background: var(--color-paper-100) !important;
+    @apply bg-paper-100!;
 }
 
 .fc th, .fc td {
-    border-color: var(--color-paper-200) !important;
+    @apply border-paper-200!;
 }
 
 .fc-scrollgrid {
-    border-color: var(--color-paper-200) !important;
+    @apply border-paper-200!;
 }
 
 /*
@@ -630,59 +541,44 @@ body {
  */
 
 .gantt_container {
-    font-size: 0.8125rem !important;
-    border: 1px solid var(--color-paper-200) !important;
-    border-radius: var(--radius-md) !important;
-    overflow: hidden !important;
+    @apply text-sm! border! border-paper-200! rounded-md! overflow-hidden!;
 }
 
 .gantt_grid_head_cell,
 .gantt_scale_cell {
-    font-size: 0.6875rem !important;
-    font-weight: 600 !important;
-    text-transform: uppercase !important;
-    letter-spacing: 0.04em !important;
-    color: var(--color-ink-500) !important;
-    background: var(--color-paper-75) !important;
-    border-color: var(--color-paper-200) !important;
+    @apply text-[0.6875rem]! font-semibold! uppercase! tracking-[0.04em]! text-ink-500! bg-paper-75! border-paper-200!;
 }
 
 .gantt_row {
-    border-color: var(--color-paper-150) !important;
+    @apply border-paper-150!;
 }
 
 .gantt_row:hover,
 .gantt_row.odd:hover {
-    background: var(--color-brand-50) !important;
+    @apply bg-brand-50!;
 }
 
 .gantt_row.odd {
-    background: var(--color-paper-75) !important;
+    @apply bg-paper-75!;
 }
 
 .gantt_task_line {
-    border-radius: var(--radius-sm) !important;
-    border: none !important;
-    background: var(--color-brand-500) !important;
+    @apply rounded-sm! border-0! bg-brand-500!;
 }
 
 .gantt_task_line .gantt_task_content {
-    font-size: 0.6875rem !important;
-    font-weight: 500 !important;
+    @apply text-[0.6875rem]! font-medium!;
 }
 
 .gantt_task_progress {
-    border-radius: var(--radius-sm) 0 0 var(--radius-sm) !important;
-    opacity: 0.35 !important;
+    @apply rounded-s-sm! opacity-[0.35]!;
 }
 
 .gantt_link_arrow,
 .gantt_line_wrapper div {
-    background: var(--color-ink-400) !important;
+    @apply bg-ink-400!;
 }
 
 .gantt_grid_data .gantt_cell {
-    font-size: 0.8125rem !important;
-    color: var(--color-ink-700) !important;
-    border-color: var(--color-paper-150) !important;
+    @apply text-sm! text-ink-700! border-paper-150!;
 }
