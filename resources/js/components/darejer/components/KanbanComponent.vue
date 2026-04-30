@@ -265,109 +265,105 @@ function onDragEnd(col: KanbanCol) {
                         v-model="columnCards[col.value]"
                         group="kanban"
                         :disabled="isDisabled || col.locked"
-                        item-key="id"
                         class="flex flex-col gap-2 p-2 flex-1 min-h-[8rem] bg-paper-50/60"
                         ghost-class="opacity-40"
                         chosen-class="rotate-1 scale-[1.02]"
                         drag-class="opacity-90"
                         @end="onDragEnd(col)"
                     >
-                        <template #item="{ element: card }">
-                            <div
-                                :key="String(card.id ?? card)"
-                                class="relative bg-white border border-paper-200 rounded-md p-2.5 transition-all duration-100 group"
-                                :class="[
-                                    isDisabled || col.locked
-                                        ? 'cursor-default'
-                                        : 'cursor-grab active:cursor-grabbing hover:border-paper-300',
-                                    updating.has(card.id ?? card) ? 'opacity-50' : '',
-                                ]"
-                                @click="onCardClick(card)"
-                            >
-                                <!-- Title + drag handle -->
-                                <div class="flex items-start justify-between gap-2 mb-1">
-                                    <p
-                                        class="text-sm font-medium text-ink-800 leading-tight line-clamp-2"
-                                        :class="editUrl ? 'group-hover:text-brand-600 cursor-pointer' : ''"
-                                    >
-                                        {{ cardTitle(card) }}
-                                    </p>
-                                    <GripVertical
-                                        v-if="!isDisabled && !col.locked"
-                                        class="w-3.5 h-3.5 text-ink-300 shrink-0 mt-0.5 opacity-0 group-hover:opacity-100 transition-opacity"
-                                    />
-                                </div>
-
-                                <!-- Subtitle -->
+                        <div
+                            v-for="card in (columnCards[col.value] ?? [])"
+                            :key="String(card.id ?? card)"
+                            class="relative bg-white border border-paper-200 rounded-md p-2.5 transition-all duration-100 group"
+                            :class="[
+                                isDisabled || col.locked
+                                    ? 'cursor-default'
+                                    : 'cursor-grab active:cursor-grabbing hover:border-paper-300',
+                                updating.has(card.id ?? card) ? 'opacity-50' : '',
+                            ]"
+                            @click="onCardClick(card)"
+                        >
+                            <!-- Title + drag handle -->
+                            <div class="flex items-start justify-between gap-2 mb-1">
                                 <p
-                                    v-if="cardSubtitle(card)"
-                                    class="text-xs text-ink-500 mb-1.5 line-clamp-1 tabular-nums"
+                                    class="text-sm font-medium text-ink-800 leading-tight line-clamp-2"
+                                    :class="editUrl ? 'group-hover:text-brand-600 cursor-pointer' : ''"
                                 >
-                                    {{ cardSubtitle(card) }}
+                                    {{ cardTitle(card) }}
                                 </p>
+                                <GripVertical
+                                    v-if="!isDisabled && !col.locked"
+                                    class="w-3.5 h-3.5 text-ink-300 shrink-0 mt-0.5 opacity-0 group-hover:opacity-100 transition-opacity"
+                                />
+                            </div>
 
-                                <!-- Meta -->
+                            <!-- Subtitle -->
+                            <p
+                                v-if="cardSubtitle(card)"
+                                class="text-xs text-ink-500 mb-1.5 line-clamp-1 tabular-nums"
+                            >
+                                {{ cardSubtitle(card) }}
+                            </p>
+
+                            <!-- Meta -->
+                            <div
+                                v-if="cardTpl.metaFields?.length"
+                                class="flex flex-col gap-0.5 mb-1.5"
+                            >
                                 <div
-                                    v-if="cardTpl.metaFields?.length"
-                                    class="flex flex-col gap-0.5 mb-1.5"
+                                    v-for="meta in cardTpl.metaFields"
+                                    :key="meta.field"
+                                    class="flex items-center gap-1 text-xs text-ink-500"
                                 >
-                                    <div
-                                        v-for="meta in cardTpl.metaFields"
-                                        :key="meta.field"
-                                        class="flex items-center gap-1 text-xs text-ink-500"
-                                    >
-                                        <span class="text-ink-400 shrink-0">{{ meta.label }}:</span>
-                                        <span class="truncate">{{ card[meta.field] ?? '—' }}</span>
-                                    </div>
-                                </div>
-
-                                <!-- Footer -->
-                                <div class="flex items-center justify-between gap-1 mt-1.5">
-                                    <div class="flex items-center gap-1">
-                                        <span
-                                            v-if="cardBadge(card)"
-                                            class="inline-flex items-center px-1.5 py-0.5 rounded-sm
-                                                   text-[10px] font-semibold uppercase tracking-wide
-                                                   bg-paper-100 text-ink-600 border border-paper-200"
-                                        >
-                                            {{ cardBadge(card) }}
-                                        </span>
-
-                                        <span
-                                            v-if="cardDate(card)"
-                                            class="text-[10px] text-ink-400 tabular-nums"
-                                        >
-                                            {{ cardDate(card) }}
-                                        </span>
-                                    </div>
-
-                                    <div
-                                        v-if="cardTpl.avatarField && card[cardTpl.avatarField]"
-                                        class="w-5 h-5 rounded-full bg-brand-100 flex items-center justify-center text-[9px] font-bold text-brand-700 shrink-0"
-                                    >
-                                        {{ avatarInitials(card) }}
-                                    </div>
-                                </div>
-
-                                <!-- Updating spinner overlay -->
-                                <div
-                                    v-if="updating.has(card.id ?? card)"
-                                    class="absolute inset-0 flex items-center justify-center bg-white/60 rounded-md"
-                                >
-                                    <Loader2 class="w-4 h-4 animate-spin text-brand-600" />
+                                    <span class="text-ink-400 shrink-0">{{ meta.label }}:</span>
+                                    <span class="truncate">{{ card[meta.field] ?? '—' }}</span>
                                 </div>
                             </div>
-                        </template>
+
+                            <!-- Footer -->
+                            <div class="flex items-center justify-between gap-1 mt-1.5">
+                                <div class="flex items-center gap-1">
+                                    <span
+                                        v-if="cardBadge(card)"
+                                        class="inline-flex items-center px-1.5 py-0.5 rounded-sm
+                                               text-[10px] font-semibold uppercase tracking-wide
+                                               bg-paper-100 text-ink-600 border border-paper-200"
+                                    >
+                                        {{ cardBadge(card) }}
+                                    </span>
+
+                                    <span
+                                        v-if="cardDate(card)"
+                                        class="text-[10px] text-ink-400 tabular-nums"
+                                    >
+                                        {{ cardDate(card) }}
+                                    </span>
+                                </div>
+
+                                <div
+                                    v-if="cardTpl.avatarField && card[cardTpl.avatarField]"
+                                    class="w-5 h-5 rounded-full bg-brand-100 flex items-center justify-center text-[9px] font-bold text-brand-700 shrink-0"
+                                >
+                                    {{ avatarInitials(card) }}
+                                </div>
+                            </div>
+
+                            <!-- Updating spinner overlay -->
+                            <div
+                                v-if="updating.has(card.id ?? card)"
+                                class="absolute inset-0 flex items-center justify-center bg-white/60 rounded-md"
+                            >
+                                <Loader2 class="w-4 h-4 animate-spin text-brand-600" />
+                            </div>
+                        </div>
 
                         <!-- Empty column placeholder -->
-                        <template #footer>
-                            <div
-                                v-if="!columnCards[col.value]?.length"
-                                class="flex items-center justify-center h-16 rounded-md border border-dashed border-paper-300 text-xs text-ink-300"
-                            >
-                                {{ __('Drop cards here') }}
-                            </div>
-                        </template>
+                        <div
+                            v-if="!columnCards[col.value]?.length"
+                            class="flex items-center justify-center h-16 rounded-md border border-dashed border-paper-300 text-xs text-ink-300"
+                        >
+                            {{ __('Drop cards here') }}
+                        </div>
                     </VueDraggable>
                 </div>
             </div>
