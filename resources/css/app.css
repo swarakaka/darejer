@@ -200,7 +200,7 @@
     --radius:               var(--radius-md);
 
     /* Chrome — current Azure portal: Azure-blue header, white left rail. */
-    --sidebar-bg:             #ffffff;
+    --sidebar-bg:             var(--color-brand-950);
     --sidebar-border:         var(--color-paper-200);
     --sidebar-item-bg-active: var(--color-brand-50);
     --sidebar-foreground:     var(--color-ink-900);
@@ -236,7 +236,7 @@
     --input:                var(--color-ink-800);
     --input-border:         var(--color-ink-600);
 
-    --sidebar-bg:             var(--color-ink-900);
+    --sidebar-bg:             var(--color-brand-950);
     --sidebar-border:         var(--color-ink-700);
     --sidebar-item-bg-active: color-mix(in srgb, var(--color-brand-500) 18%, transparent);
     --sidebar-foreground:     var(--color-paper-50);
