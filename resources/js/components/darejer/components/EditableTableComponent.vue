@@ -171,6 +171,14 @@ const gridTemplate = computed(() => [
     ...columns.value.map(c => c.width ?? '1fr'),
     isDeletable.value ? '2.5rem' : '',
 ].filter(Boolean).join(' '))
+
+/** Date inputs only accept YYYY-MM-DD; ISO 8601 from Laravel needs slicing. */
+function formatCellValue(value: unknown, type: string): string {
+    if (value === null || value === undefined) return ''
+    const s = String(value)
+    if (type === 'date') return s.slice(0, 10)
+    return s
+}
 </script>
 
 <template>
@@ -230,8 +238,8 @@ const gridTemplate = computed(() => [
                             <input
                                 v-if="col.type === 'text' || col.type === 'number' || col.type === 'date'"
                                 :type="col.type === 'number' ? 'number' : col.type === 'date' ? 'date' : 'text'"
-                                :value="String(row[col.field] ?? '')"
-                                :disabled="isDisabled"
+                                :value="formatCellValue(row[col.field], col.type)"
+                                :disabled="isDisabled || col.disabled"
                                 class="w-full h-full px-2.5 text-sm bg-transparent border-none
                                        outline-none focus:bg-brand-50 focus:ring-0
                                        disabled:opacity-50 disabled:cursor-not-allowed
@@ -252,7 +260,7 @@ const gridTemplate = computed(() => [
                             <select
                                 v-else-if="col.type === 'select'"
                                 :value="String(row[col.field] ?? '')"
-                                :disabled="isDisabled"
+                                :disabled="isDisabled || col.disabled"
                                 class="w-full h-full px-2.5 text-sm bg-transparent border-none
                                        outline-none focus:bg-brand-50 cursor-pointer
                                        disabled:opacity-50 disabled:cursor-not-allowed"
@@ -268,7 +276,7 @@ const gridTemplate = computed(() => [
                                 <input
                                     type="checkbox"
                                     :checked="!!row[col.field]"
-                                    :disabled="isDisabled"
+                                    :disabled="isDisabled || col.disabled"
                                     class="w-4 h-4 accent-brand-600 cursor-pointer
                                            disabled:opacity-50 disabled:cursor-not-allowed"
                                     @change="onCheckChange(row, col.field, $event)"
