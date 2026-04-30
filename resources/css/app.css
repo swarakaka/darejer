@@ -110,7 +110,7 @@
     --font-sans:    'Segoe UI', 'Segoe UI Web (West European)', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
     --font-serif:   'Segoe UI', Georgia, serif;
     --font-mono:    'Cascadia Code', 'Cascadia Mono', Consolas, 'Courier New', monospace;
-    --font-darejer: 'Segoe UI', 'IBM Plex Sans Arabic', system-ui, sans-serif;
+    --font-darejer: 'IBM Plex Sans Arabic', 'Segoe UI', system-ui, sans-serif;
 
     /* ── Type scale ──────────────────────────────────────────────── */
     --text-2xs:  0.625rem;
