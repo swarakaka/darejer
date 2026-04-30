@@ -293,11 +293,11 @@ body {
  */
 
 .darejer-rte {
-    @apply border border-[color:var(--input-border)] rounded-md overflow-hidden bg-[color:var(--input)] transition-colors duration-[120ms];
+    @apply border border-(--input-border) rounded-md overflow-hidden bg-input transition-colors duration-120;
 }
 
 .darejer-rte:focus-within {
-    @apply border-[color:var(--input-border-focus)] ring-1 ring-[color:var(--input-border-focus)];
+    @apply border-(--input-border-focus) ring-1 ring-(--input-border-focus);
 }
 
 .darejer-rte.is-disabled {
@@ -321,7 +321,7 @@ body {
 }
 
 .darejer-rte-divider {
-    @apply w-px h-[1.375rem] bg-paper-200 mx-1;
+    @apply w-px h-5.5 bg-paper-200 mx-1;
 }
 
 .darejer-rte-content {
@@ -333,7 +333,7 @@ body {
 }
 
 .darejer-rte-content .tiptap {
-    @apply outline-none text-base text-foreground leading-[1.5];
+    @apply outline-none text-base text-foreground leading-normal;
 }
 
 .darejer-rte-content .tiptap p {
@@ -409,7 +409,7 @@ body {
 .vue-flow__node-default,
 .vue-flow__node-input,
 .vue-flow__node-output {
-    @apply rounded-md! border! border-paper-300! bg-white! py-2! px-3.5! text-sm! text-ink-800! shadow-[var(--shadow-blade)]!;
+    @apply rounded-md! border! border-paper-300! bg-white! py-2! px-3.5! text-sm! text-ink-800! shadow-(--shadow-blade)!;
 }
 
 .vue-flow__node-input {
@@ -440,7 +440,7 @@ body {
 }
 
 .vue-flow__controls {
-    @apply border! border-paper-200! rounded-md! overflow-hidden! shadow-[var(--shadow-blade)]!;
+    @apply border! border-paper-200! rounded-md! overflow-hidden! shadow-(--shadow-blade)!;
 }
 
 .vue-flow__controls-button {
