@@ -398,15 +398,6 @@ function sectionIndex(section: ScreenSection): number {
                                     @click="toggleSection('General')"
                                 >
                                     <div class="flex items-center gap-3 min-w-0">
-                                        <span
-                                            class="inline-flex items-center justify-center w-6 h-6 rounded-sm
-                                                   text-[10.5px] font-bold tabular-nums tracking-tight"
-                                            :class="!collapsed['General']
-                                                      ? 'bg-brand-500 text-white ring-1 ring-brand-600 shadow-[0_1px_2px_rgba(0,120,212,0.4)]'
-                                                      : 'bg-paper-100 text-ink-500 ring-1 ring-paper-200'"
-                                        >
-                                            01
-                                        </span>
                                         <h2 class="text-[14px] font-semibold tracking-tight leading-tight text-ink-900">{{ __('General') }}</h2>
                                     </div>
                                     <ChevronDown
