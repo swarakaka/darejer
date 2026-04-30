@@ -24,7 +24,7 @@ class AuditLogTestUser extends Authenticatable
 beforeEach(function (): void {
     Schema::create('users', function (Blueprint $table): void {
         $table->id();
-        $table->string('name')->nullable();
+        $table->string('username')->nullable();
         $table->string('email')->nullable();
         $table->unsignedBigInteger('active_company_id')->nullable();
     });
@@ -51,7 +51,7 @@ beforeEach(function (): void {
     Gate::before(fn () => true);
 
     $user = AuditLogTestUser::query()->create([
-        'name' => 'Auditor',
+        'username' => 'Auditor',
         'email' => 'auditor@example.test',
         'active_company_id' => 1,
     ]);
@@ -170,6 +170,24 @@ it('exposes distinct event and subject type options for filter dropdowns', funct
         ->toEqualCanonicalizing(['document.created', 'document.posted', 'lead.qualified']);
     expect($page['props']['subjectTypeOptions'])
         ->toEqualCanonicalizing(['A\\B', 'L\\Lead']);
+});
+
+it('joins users to expose the causer username on each row', function (): void {
+    $causer = AuditLogTestUser::query()->create([
+        'username' => 'jane.doe',
+        'email' => 'jane@example.test',
+        'active_company_id' => 1,
+    ]);
+    seedAuditRow(['causer_id' => $causer->id]);
+    seedAuditRow(['causer_id' => null]);
+
+    $request = Request::create('/darejer/governance/audit-log', 'GET');
+    $response = (new AuditLogController)->index($request);
+    $page = inertiaPage($response, $request);
+
+    $byCauser = collect($page['props']['rows'])->keyBy('causer_id');
+    expect($byCauser[$causer->id]['causer'])->toBe('jane.doe');
+    expect($byCauser['']['causer'] ?? null)->toBeNull();
 });
 
 it('exposes the human summary in the row props', function (): void {
