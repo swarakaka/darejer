@@ -4,6 +4,7 @@ use Darejer\Components\Combobox;
 use Darejer\Components\Display;
 use Darejer\Components\SelectComponent;
 use Darejer\Components\TextInput;
+use Darejer\Tests\Fixtures\BadgeFixtureStatus;
 
 it('serializes a TextInput component', function () {
     $component = TextInput::make('email')
@@ -130,7 +131,20 @@ it('serializes a Display badge with color map', function () {
 
     expect($array)
         ->toHaveKey('displayType', 'badge')
-        ->toHaveKey('badgeMap', ['posted' => 'success', 'draft' => 'neutral']);
+        ->toHaveKey('badgeMap', ['posted' => 'success', 'draft' => 'neutral'])
+        ->not->toHaveKey('badgeLabels');
+});
+
+it('serializes a Display badge with translated labels from an enum class', function () {
+    $array = Display::make('status')
+        ->label('Status')
+        ->badge(BadgeFixtureStatus::class)
+        ->toArray();
+
+    expect($array)
+        ->toHaveKey('displayType', 'badge')
+        ->toHaveKey('badgeMap', ['posted' => 'success', 'draft' => 'neutral'])
+        ->toHaveKey('badgeLabels', ['posted' => 'Posted', 'draft' => 'Draft']);
 });
 
 it('serializes a Display date with default format', function () {

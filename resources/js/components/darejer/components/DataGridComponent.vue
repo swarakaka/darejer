@@ -36,14 +36,15 @@ const props = defineProps<{
 }>()
 
 interface GridColumn {
-    field:      string
-    label:      string
-    sortable?:  boolean
-    searchable?: boolean
-    width?:     string
-    hidden?:    boolean
-    align?:     'left' | 'center' | 'right'
-    badge?:     string
+    field:        string
+    label:        string
+    sortable?:    boolean
+    searchable?:  boolean
+    width?:       string
+    hidden?:      boolean
+    align?:       'left' | 'center' | 'right'
+    badge?:       string
+    badgeLabels?: string
 }
 
 interface GridRowAction {
@@ -208,6 +209,16 @@ function badgeClass(column: GridColumn, value: unknown): string {
         neutral: 'bg-paper-100 text-ink-500 border-paper-200',
     }
     return classes[variant] ?? classes.neutral
+}
+
+// Translated case label sent from PHP via `Column::badge(EnumClass::class)`.
+// Falls back to the raw value when no labels map was provided (plain array form).
+function badgeLabel(column: GridColumn, value: unknown): string {
+    if (value === null || value === undefined) return ''
+    if (!column.badgeLabels) return String(value)
+    let map: Record<string, string> = {}
+    try { map = JSON.parse(column.badgeLabels) } catch { map = {} }
+    return map[String(value)] ?? String(value)
 }
 
 const iconMap: Record<string, unknown> = {
@@ -392,7 +403,7 @@ const pages = computed(() => {
                                     class="inline-flex items-center px-1.5 py-0.5 rounded-sm text-[10px] font-semibold uppercase tracking-wide border"
                                     :class="badgeClass(col, row[col.field])"
                                 >
-                                    {{ row[col.field] }}
+                                    {{ badgeLabel(col, row[col.field]) }}
                                 </span>
 
                                 <span v-else class="truncate block max-w-xs">

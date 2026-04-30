@@ -28,6 +28,8 @@ class Column
 
     protected ?string $badge = null;
 
+    protected ?string $badgeLabels = null;
+
     protected ?string $displayType = null;   // 'date' | 'datetime' | 'boolean' | 'plain' | …
 
     protected ?string $dateFormat = null;   // PHP date() format string
@@ -122,6 +124,10 @@ class Column
     public function badge(array|string $colorMap): static
     {
         $this->badge = json_encode(EnumOptions::colors($colorMap));
+
+        if (is_string($colorMap)) {
+            $this->badgeLabels = json_encode(EnumOptions::labels($colorMap));
+        }
 
         return $this;
     }
@@ -219,6 +225,7 @@ class Column
             'hidden' => $this->hidden ?: null,
             'align' => $this->align !== 'left' ? $this->align : null,
             'badge' => $this->badge,
+            'badgeLabels' => $this->badgeLabels,
             'displayType' => $this->displayType,
             'dateFormat' => $this->dateFormat,
         ], fn ($v) => $v !== null && $v !== false);
