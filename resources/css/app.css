@@ -201,10 +201,10 @@
 
     /* Chrome — current Azure portal: Azure-blue header, white left rail. */
     --sidebar-bg:             var(--color-brand-950);
-    --sidebar-border:         var(--color-paper-200);
-    --sidebar-item-bg-active: var(--color-brand-50);
-    --sidebar-foreground:     var(--color-ink-900);
-    --sidebar-foreground-muted: var(--color-ink-500);
+    --sidebar-border:         var(--color-brand-900);
+    --sidebar-item-bg-active: color-mix(in srgb, var(--color-brand-500) 22%, transparent);
+    --sidebar-foreground:     var(--color-paper-50);
+    --sidebar-foreground-muted: var(--color-paper-300);
 
     --topbar-bg:              #0078d4;
     --topbar-border:          #006cbe;
