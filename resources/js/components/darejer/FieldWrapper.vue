@@ -30,7 +30,21 @@ watch(isVisible, (visible, wasVisible) => {
     }
 })
 
-const fieldError = computed(() => props.errors[props.component.name] ?? null)
+// Errors arrive flat with dotted keys (Inertia/Laravel convention). For
+// nested-shape fields like translatable (`name.en`) or array-shape fields,
+// the parent key (`name`) is never set — so a literal `errors[name]` lookup
+// would render nothing. Fall back to the first matching `{name}.*` so the
+// inline error message surfaces regardless of how the rule keyed it.
+const fieldError = computed(() => {
+    const direct = props.errors[props.component.name]
+    if (direct) return direct
+
+    const prefix = `${props.component.name}.`
+    for (const key in props.errors) {
+        if (key.startsWith(prefix)) return props.errors[key]
+    }
+    return null
+})
 const hasError   = computed(() => !!fieldError.value)
 </script>
 

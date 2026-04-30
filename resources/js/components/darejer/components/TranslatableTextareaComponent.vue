@@ -54,6 +54,10 @@ function onSingleInput(e: Event) {
     translations[currentLocale.value] = (e.target as HTMLTextAreaElement).value
     emitUpdate()
 }
+
+function localeError(locale: string): string | null {
+    return props.errors[`${props.component.name}.${locale}`] ?? null
+}
 </script>
 
 <template>
@@ -101,13 +105,18 @@ function onSingleInput(e: Event) {
                                 class="inline-flex items-center justify-center w-6 h-3.5
                                        bg-slate-200 rounded text-[9px] font-bold tracking-wide
                                        data-[state=active]:bg-brand-100 data-[state=active]:text-brand-700"
+                                :class="localeError(locale) ? 'bg-danger-100 text-danger-700' : ''"
                             >
                                 {{ localeLabel(locale) }}
                             </span>
                             {{ localeName(locale) }}
-                            <!-- Dot indicator if filled -->
+                            <!-- Dot indicator: error (red) wins over filled (brand) -->
                             <span
-                                v-if="(translations[locale] ?? '').trim().length > 0"
+                                v-if="localeError(locale)"
+                                class="w-1 h-1 rounded-full bg-danger-600"
+                            />
+                            <span
+                                v-else-if="(translations[locale] ?? '').trim().length > 0"
                                 class="w-1 h-1 rounded-full bg-brand-600"
                             />
                         </TabsTrigger>
@@ -130,6 +139,12 @@ function onSingleInput(e: Event) {
                             class="w-full text-sm resize-y border-none rounded-none focus:ring-0"
                             @input="onInput(locale, $event)"
                         />
+                        <p
+                            v-if="localeError(locale)"
+                            class="px-2 py-1 text-xs text-danger-600 leading-snug border-t border-slate-200 bg-danger-50"
+                        >
+                            {{ localeError(locale) }}
+                        </p>
                     </TabsContent>
 
                 </Tabs>
