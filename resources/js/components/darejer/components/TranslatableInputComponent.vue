@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, reactive }     from 'vue'
+import { ref, reactive, computed } from 'vue'
 import { Input }             from '@/components/ui/input'
 import { Button }            from '@/components/ui/button'
 import {
@@ -63,6 +63,14 @@ const displayValue = ref<string>(
 const filledCount = ref(computeFilled())
 
 const dialogOpen = ref(false)
+
+function localeError(locale: string): string | null {
+    return props.errors[`${props.component.name}.${locale}`] ?? null
+}
+
+const hasAnyLocaleError = computed(() =>
+    languages.value.some(l => !!localeError(l)),
+)
 
 function computeFilled(): number {
     return languages.value
@@ -130,14 +138,18 @@ function saveDialog() {
                 <button
                     type="button"
                     class="absolute end-0 flex items-center justify-center w-9 h-full
-                           text-slate-400 hover:text-brand-600 transition-colors duration-100
-                           border-s border-slate-200 rounded-e"
+                           transition-colors duration-100 border-s border-slate-200 rounded-e"
+                    :class="hasAnyLocaleError ? 'text-danger-600 hover:text-danger-700' : 'text-slate-400 hover:text-brand-600'"
                     :title="__('Translate (:filled/:total filled)', { filled: filledCount, total: languages.length - 1 })"
                     @click="dialogOpen = true"
                 >
                     <Globe class="w-3.5 h-3.5" />
                     <span
-                        v-if="filledCount > 0"
+                        v-if="hasAnyLocaleError"
+                        class="absolute top-1 end-1 w-1.5 h-1.5 rounded-full bg-danger-600"
+                    />
+                    <span
+                        v-else-if="filledCount > 0"
                         class="absolute top-1 end-1 w-1.5 h-1.5 rounded-full bg-brand-600"
                     />
                 </button>
@@ -174,8 +186,15 @@ function saveDialog() {
                                 :placeholder="(component.placeholder as string) ?? ''"
                                 :value="translations[locale] ?? ''"
                                 class="w-full"
+                                :class="localeError(locale) ? 'border-danger-600' : ''"
                                 @input="onDialogInput(locale, $event)"
                             />
+                            <p
+                                v-if="localeError(locale)"
+                                class="text-xs text-danger-600 leading-snug"
+                            >
+                                {{ localeError(locale) }}
+                            </p>
                         </div>
                     </div>
 
