@@ -186,6 +186,19 @@ function cardDate(card: CardRecord): string | null {
     return new Date(String(val)).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
 }
 
+const ISO_DATE_RE = /^\d{4}-\d{2}-\d{2}(?:[T ]\d{2}:\d{2}(?::\d{2})?(?:\.\d+)?(?:Z|[+-]\d{2}:?\d{2})?)?$/
+
+function formatMetaValue(value: unknown): string {
+    if (value === null || value === undefined || value === '') return '—'
+    if (typeof value === 'string' && ISO_DATE_RE.test(value)) {
+        const d = new Date(value)
+        if (!isNaN(d.getTime())) {
+            return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+        }
+    }
+    return String(value)
+}
+
 function avatarInitials(card: CardRecord): string {
     if (!cardTpl.value.avatarField) return ''
     const name = String(card[cardTpl.value.avatarField] ?? '')
@@ -316,7 +329,7 @@ function onDragEnd(col: KanbanCol) {
                                     class="flex items-center gap-1 text-xs text-ink-500"
                                 >
                                     <span class="text-ink-400 shrink-0">{{ meta.label }}:</span>
-                                    <span class="truncate">{{ card[meta.field] ?? '—' }}</span>
+                                    <span class="truncate">{{ formatMetaValue(card[meta.field]) }}</span>
                                 </div>
                             </div>
 
