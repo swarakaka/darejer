@@ -4,6 +4,7 @@ import { Plus, Trash2, GripVertical } from 'lucide-vue-next'
 import { VueDraggable } from 'vue-draggable-plus'
 import FieldWrapper from '@/components/darejer/FieldWrapper.vue'
 import EditableTableComboboxCell from '@/components/darejer/components/EditableTableComboboxCell.vue'
+import EditableTableDateCell from '@/components/darejer/components/EditableTableDateCell.vue'
 import useTranslation from '@/composables/useTranslation'
 import type { DarejerComponent } from '@/types/darejer'
 
@@ -172,12 +173,9 @@ const gridTemplate = computed(() => [
     isDeletable.value ? '2.5rem' : '',
 ].filter(Boolean).join(' '))
 
-/** Date inputs only accept YYYY-MM-DD; ISO 8601 from Laravel needs slicing. */
-function formatCellValue(value: unknown, type: string): string {
+function formatCellValue(value: unknown, _type: string): string {
     if (value === null || value === undefined) return ''
-    const s = String(value)
-    if (type === 'date') return s.slice(0, 10)
-    return s
+    return String(value)
 }
 </script>
 
@@ -236,8 +234,8 @@ function formatCellValue(value: unknown, type: string): string {
                             class="flex items-center border-e border-paper-100 last:border-e-0 h-8"
                         >
                             <input
-                                v-if="col.type === 'text' || col.type === 'number' || col.type === 'date'"
-                                :type="col.type === 'number' ? 'number' : col.type === 'date' ? 'date' : 'text'"
+                                v-if="col.type === 'text' || col.type === 'number'"
+                                :type="col.type === 'number' ? 'number' : 'text'"
                                 :value="formatCellValue(row[col.field], col.type)"
                                 :disabled="isDisabled || col.disabled"
                                 class="w-full h-full px-2.5 text-sm bg-transparent border-none
@@ -245,6 +243,15 @@ function formatCellValue(value: unknown, type: string): string {
                                        disabled:opacity-50 disabled:cursor-not-allowed
                                        transition-colors duration-100"
                                 @input="onCellInput(row, col.field, $event)"
+                            />
+
+                            <EditableTableDateCell
+                                v-else-if="col.type === 'date'"
+                                :model-value="row[col.field]"
+                                :disabled="isDisabled || col.disabled"
+                                :placeholder="col.placeholder"
+                                class="w-full h-full"
+                                @update:model-value="onComboboxUpdate(row, col.field, $event)"
                             />
 
                             <EditableTableComboboxCell
