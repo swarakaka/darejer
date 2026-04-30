@@ -51,6 +51,8 @@ return [
     'Forgot password?' => 'تێپەڕەوشەت لەبیرچووە؟',
     'Send reset link' => 'ناردنی بەستەری ڕێکخستنەوە',
     'Sign in' => 'چوونەژوورەوە',
+    'Sign in to your account' => 'چوونەژوورەوە بۆ هەژمارەکەت',
+    'Signing in' => 'چوونەژوورەوە...',
     'Sign out' => 'دەرچوون',
     'Keep me signed in' => 'بمهێڵەرەوە چووبیتمە ژوورەوە',
     'Back to sign in' => 'گەڕانەوە بۆ چوونەژوورەوە',

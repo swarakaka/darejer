@@ -51,6 +51,8 @@ return [
     'Forgot password?' => 'Forgot password?',
     'Send reset link' => 'Send reset link',
     'Sign in' => 'Sign in',
+    'Sign in to your account' => 'Sign in to your account',
+    'Signing in' => 'Signing in',
     'Sign out' => 'Sign out',
     'Keep me signed in' => 'Keep me signed in',
     'Back to sign in' => 'Back to sign in',

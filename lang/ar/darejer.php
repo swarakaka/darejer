@@ -51,6 +51,8 @@ return [
     'Forgot password?' => 'نسيت كلمة المرور؟',
     'Send reset link' => 'إرسال رابط الإعادة',
     'Sign in' => 'تسجيل الدخول',
+    'Sign in to your account' => 'تسجيل الدخول إلى حسابك',
+    'Signing in' => 'جارٍ تسجيل الدخول',
     'Sign out' => 'تسجيل الخروج',
     'Keep me signed in' => 'إبقائي مسجَّل الدخول',
     'Back to sign in' => 'العودة إلى تسجيل الدخول',
