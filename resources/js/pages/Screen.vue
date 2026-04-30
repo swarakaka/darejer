@@ -392,9 +392,9 @@ function sectionIndex(section: ScreenSection): number {
                                 <header
                                     class="flex items-center justify-between gap-3 px-5 py-3 cursor-pointer select-none transition-colors"
                                     :class="!collapsed['General']
-                                              ? 'border-b border-paper-200 bg-gradient-to-b from-paper-75 to-white'
+                                              ? 'border-b border-paper-200 bg-linear-to-b from-paper-75 to-white'
                                               : 'hover:bg-paper-75'"
-                                    role="button"
+                                    role="banner"
                                     @click="toggleSection('General')"
                                 >
                                     <div class="flex items-center gap-3 min-w-0">
