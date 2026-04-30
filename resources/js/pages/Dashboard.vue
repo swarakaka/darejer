@@ -96,9 +96,6 @@ const chartIcon = (type: 'line' | 'bar' | 'doughnut') => {
                                 {{ __('Live') }}
                             </span>
                         </div>
-                        <p class="mt-1.5 text-[12.5px] text-ink-500 tabular-nums">
-                            {{ __('Live overview of operational performance.') }}
-                        </p>
                     </div>
                 </div>
             </div>

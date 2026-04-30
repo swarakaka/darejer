@@ -112,7 +112,7 @@ function flatIndex(groupIdx: number, itemIdx: number): number {
                 type="search"
                 autocomplete="off"
                 spellcheck="false"
-                :placeholder="__('Search resources, services, and docs (G+/)')"
+                :placeholder="__('Search')"
                 class="w-full h-7 ps-8 pe-16 text-[13px] bg-white/95 border border-transparent rounded-[2px] text-ink-900
                        placeholder:text-ink-500 focus:outline-none focus:bg-white focus:border-brand-300 focus:ring-0
                        focus:shadow-[inset_0_0_0_1px_var(--color-brand-300)] transition-colors duration-100"
