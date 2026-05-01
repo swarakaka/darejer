@@ -28,7 +28,7 @@ class EditableTable extends BaseComponent
      * Preferred form is a list of {@see Column} instances:
      *
      *   ->columns([
-     *       Column::make('item_id')->combobox(Item::class)->showPrice('selling_price'),
+     *       Column::make('item_id')->combobox(Item::class)->subLabel('selling_price'),
      *       Column::make('qty')->number()->width('6rem'),
      *   ])
      *

@@ -337,7 +337,7 @@ async function onCreateDialogSaved(payload: { url: string | null; flash: unknown
                             v-if="component.searchable !== false"
                             v-model="search"
                             :placeholder="__('Search…')"
-                            class="text-sm h-8 border-b border-slate-200"
+                            class="text-sm h-8 border-none"
                         />
 
                         <CommandList

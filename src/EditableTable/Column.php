@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Model;
  * with a chainable API instead of opaque associative arrays.
  *
  *   Column::make('item_id')->label('Item')->combobox(Item::class)
- *       ->showPrice('selling_price')->showImage('image')
+ *       ->subLabel('selling_price')->showImage('image')
  *       ->fillFrom(['rate' => 'selling_price', 'uom_id' => 'default_uom_id'])
  */
 class Column
@@ -42,7 +42,7 @@ class Column
     /** @var array<int, string>|null */
     protected ?array $searchFields = null;
 
-    protected ?string $priceField = null;
+    protected ?string $subLabelField = null;
 
     protected ?string $imageField = null;
 
@@ -137,7 +137,7 @@ class Column
 
     /**
      * Searchable combobox bound to a registered Eloquent model. Each option
-     * renders its label and — when configured — a price and image. Selecting
+     * renders its label and — when configured — a sub-label and image. Selecting
      * an option may auto-fill sibling row columns via {@see fillFrom()}.
      *
      * Pass a string for a single label field (`'name'`), or an array to
@@ -182,9 +182,9 @@ class Column
         return $this;
     }
 
-    public function showPrice(string $field = 'price'): static
+    public function subLabel(string $field): static
     {
-        $this->priceField = $field;
+        $this->subLabelField = $field;
 
         return $this;
     }
@@ -236,7 +236,7 @@ class Column
                 $primaryLabel,
                 ...($labelFields ?? []),
                 ...($searchFields ?? []),
-                $this->priceField,
+                $this->subLabelField,
                 $this->imageField,
                 ...array_values($this->fillFrom),
             ])));
@@ -247,7 +247,7 @@ class Column
                 'labelField' => $primaryLabel,
                 'labelFields' => $labelFields,
                 'searchFields' => $searchFields,
-                'priceField' => $this->priceField,
+                'subLabelField' => $this->subLabelField,
                 'imageField' => $this->imageField,
                 'fillFrom' => $this->fillFrom ?: null,
                 'optionFields' => $extras,

@@ -26,7 +26,7 @@ interface ComboboxColumn {
     labelField?:   string
     labelFields?:  string[]
     searchFields?: string[]
-    priceField?:   string
+    subLabelField?: string
     imageField?:   string
     optionFields?: string[]
     fillFrom?:     Record<string, string> | null
@@ -60,8 +60,8 @@ const cache = ref<Record<string, Record_>>({})
 const keyField    = computed(() => props.column.keyField   ?? 'id')
 const labelField  = computed(() => props.column.labelField ?? 'name')
 const labelFields = computed(() => props.column.labelFields ?? null)
-const priceField  = computed(() => props.column.priceField)
-const imageField  = computed(() => props.column.imageField)
+const subLabelField = computed(() => props.column.subLabelField)
+const imageField    = computed(() => props.column.imageField)
 
 /** Match Combobox's server-side join character. Hardcoded so it survives
  *  Laravel's TrimStrings middleware. */
@@ -147,12 +147,6 @@ function pick(record: Record_) {
     open.value = false
 }
 
-function formatPrice(v: unknown): string {
-    if (v === null || v === undefined || v === '') return ''
-    const n = Number(v)
-    if (Number.isNaN(n)) return String(v)
-    return n.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
-}
 </script>
 
 <template>
@@ -218,10 +212,10 @@ function formatPrice(v: unknown): string {
                                     {{ composeLabel(record) }}
                                 </div>
                                 <div
-                                    v-if="priceField && record[priceField] !== undefined"
-                                    class="text-[11px] text-ink-400 tabular-nums"
+                                    v-if="subLabelField && record[subLabelField] !== undefined && record[subLabelField] !== null && record[subLabelField] !== ''"
+                                    class="text-[11px] text-ink-400 truncate"
                                 >
-                                    {{ formatPrice(record[priceField]) }}
+                                    {{ record[subLabelField] }}
                                 </div>
                             </div>
                         </CommandItem>
