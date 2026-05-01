@@ -331,7 +331,7 @@ async function onCreateDialogSaved(payload: { url: string | null; flash: unknown
                     </button>
                 </div>
 
-                <PopoverContent class="p-0 w-[var(--reka-popper-anchor-width)] min-w-[14rem]" align="start">
+                <PopoverContent class="p-0 w-(--reka-popper-anchor-width) min-w-56" align="start">
                     <Command :should-filter="false">
                         <CommandInput
                             v-if="component.searchable !== false"
