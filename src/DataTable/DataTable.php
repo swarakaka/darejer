@@ -50,6 +50,15 @@ class DataTable
 
     protected string $reorderField = 'sort_order';
 
+    protected bool $numeric = false;
+
+    /**
+     * Field name used by the synthetic row-number column.
+     *
+     * Underscored prefix avoids collisions with real model attributes.
+     */
+    protected const NUMERIC_FIELD = '__row_number';
+
     protected function __construct(string $modelClass)
     {
         $this->modelClass = $modelClass;
@@ -200,12 +209,27 @@ class DataTable
     }
 
     /**
+     * Prepend a continuous row-number column (`#`) whose value is the
+     * absolute position of the row across pages — i.e. row 16 on page 2
+     * with perPage 15 still shows `16`, not `1`. Off by default.
+     */
+    public function numeric(bool $numeric = true): static
+    {
+        $this->numeric = $numeric;
+
+        return $this;
+    }
+
+    /**
      * Handle the request and return an Inertia response.
      */
     public function render(Request $request): Response
     {
         $query = $this->buildQuery($request);
         $paginated = $query->paginate($this->perPage)->withQueryString();
+
+        $renderColumns = $this->buildRenderColumns();
+        $startIndex = $paginated->firstItem() ?? 1;
 
         // Pre-resolve which columns request server-side date formatting so we
         // don't reflect over the column list per row.
@@ -246,8 +270,13 @@ class DataTable
             })
             ->all();
 
-        $data = collect($paginated->items())->map(function ($item) use ($dateColumns, $booleanColumns, $displayUsingColumns, $formatColumns) {
+        $numeric = $this->numeric;
+        $data = collect($paginated->items())->values()->map(function ($item, $index) use ($dateColumns, $booleanColumns, $displayUsingColumns, $formatColumns, $numeric, $startIndex) {
             $arr = $item->toArray();
+
+            if ($numeric) {
+                $arr[self::NUMERIC_FIELD] = $startIndex + $index;
+            }
 
             if (method_exists($item, 'getTranslatableAttributes')) {
                 foreach ($item->getTranslatableAttributes() as $attr) {
@@ -302,7 +331,7 @@ class DataTable
 
         return Inertia::render('DataTable', array_merge([
             'title' => $this->title,
-            'columns' => array_map(fn (Column $c) => $c->toArray(), $this->columns),
+            'columns' => array_map(fn (Column $c) => $c->toArray(), $renderColumns),
             'filters' => array_map(fn (Filter $f) => $f->toArray(), $this->filters),
             'rowActions' => array_map(fn (RowAction $a) => $a->toArray(), $this->rowActions),
             'headerActions' => collect($this->headerActions)
@@ -342,6 +371,36 @@ class DataTable
             'sort' => $request->get('sort', $this->defaultSort ?? 'id'),
             'order' => $request->get('order', $this->defaultOrder),
         ], $this->extraProps));
+    }
+
+    /**
+     * Build the column list sent to the frontend.
+     *
+     * Hides the `id` column when present (the value is still serialized in
+     * each row so row actions / selection can read `row.id`) and, if
+     * {@see self::numeric()} was enabled, prepends a synthetic `#` column
+     * carrying the absolute row position across pages.
+     *
+     * @return Column[]
+     */
+    protected function buildRenderColumns(): array
+    {
+        $columns = $this->columns;
+
+        foreach ($columns as $column) {
+            if ($column->getField() === 'id') {
+                $column->hidden(true);
+            }
+        }
+
+        if ($this->numeric) {
+            array_unshift($columns, Column::make(self::NUMERIC_FIELD)
+                ->label('#')
+                ->width('60px')
+                ->alignRight());
+        }
+
+        return $columns;
     }
 
     protected function buildQuery(Request $request): Builder
