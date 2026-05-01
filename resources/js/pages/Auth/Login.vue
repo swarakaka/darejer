@@ -25,7 +25,7 @@ function submit() {
 </script>
 
 <template>
-    <div class="space-y-7">
+    <div class="space-y-7 p-4">
 
         <!-- Header (mobile-only brand mark, the desktop hero handles it on larger screens) -->
         <div class="flex flex-col gap-3 lg:gap-2">
