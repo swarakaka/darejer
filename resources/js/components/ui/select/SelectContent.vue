@@ -32,7 +32,7 @@ const forwarded = useForwardPropsEmits(delegatedProps, emits)
   <SelectPortal>
     <SelectContent
       v-bind="{ ...forwarded, ...$attrs }" :class="cn(
-        'relative z-50 max-h-96 w-[var(--reka-select-trigger-width)] min-w-[var(--reka-select-trigger-width)] overflow-hidden rounded-[2px] border border-paper-200 bg-white text-ink-800 shadow-[0_6.4px_14.4px_rgba(0,0,0,0.13),_0_1.2px_3.6px_rgba(0,0,0,0.10)] data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95',
+        'relative z-50 max-h-96 w-[var(--reka-select-trigger-width)] min-w-[var(--reka-select-trigger-width)] overflow-hidden rounded-[2px] border border-(--border) bg-popover text-popover-foreground shadow-[0_6.4px_14.4px_rgba(0,0,0,0.13),_0_1.2px_3.6px_rgba(0,0,0,0.10)] data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95',
         position === 'popper'
           && 'data-[side=bottom]:translate-y-1 data-[side=left]:-translate-x-1 data-[side=right]:translate-x-1 data-[side=top]:-translate-y-1',
         props.class,

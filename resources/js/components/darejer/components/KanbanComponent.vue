@@ -246,7 +246,7 @@ function onDragEnd(col: KanbanCol) {
                 <div
                     v-for="col in columns"
                     :key="col.value"
-                    class="flex flex-col flex-1 min-w-[16rem] rounded-md border overflow-hidden bg-white"
+                    class="flex flex-col flex-1 min-w-[16rem] rounded-md border overflow-hidden bg-card"
                     :class="isOverLimit(col) ? 'border-danger-300' : 'border-paper-200'"
                 >
                     <!-- Column header -->
@@ -287,7 +287,7 @@ function onDragEnd(col: KanbanCol) {
                         <div
                             v-for="card in (columnCards[col.value] ?? [])"
                             :key="String(card.id ?? card)"
-                            class="relative bg-white border border-paper-200 rounded-md p-2.5 transition-all duration-100 group"
+                            class="relative bg-card border border-paper-200 rounded-md p-2.5 transition-all duration-100 group"
                             :class="[
                                 isDisabled || col.locked
                                     ? 'cursor-default'

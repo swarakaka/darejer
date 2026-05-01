@@ -90,7 +90,7 @@ const atMax = computed(() =>
                 <!-- Tag container -->
                 <div
                     class="flex flex-wrap items-center gap-1 min-h-[2.125rem] px-2 py-1
-                           bg-white border rounded cursor-text transition-colors duration-100
+                           bg-card border rounded cursor-text transition-colors duration-100
                            focus-within:border-brand-500 focus-within:ring-1 focus-within:ring-brand-500/20"
                     :class="hasError ? 'border-danger-600' : 'border-slate-300'"
                     @click="inputEl?.focus()"
@@ -135,7 +135,7 @@ const atMax = computed(() =>
                 <!-- Suggestions dropdown -->
                 <div
                     v-if="showSuggest && filtered.length > 0"
-                    class="absolute z-50 top-full start-0 end-0 mt-1 bg-white border
+                    class="absolute z-50 top-full start-0 end-0 mt-1 bg-card border
                            border-slate-200 rounded overflow-hidden"
                 >
                     <button

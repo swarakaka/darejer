@@ -34,7 +34,7 @@ function onInternalInput(e: Event) {
 <template>
   <input
     :value="modelValue ?? undefined"
-    :class="cn('flex h-8 w-full rounded-[2px] border border-paper-300 bg-white px-2.5 text-[13px] text-ink-900 placeholder:text-ink-400 transition-colors duration-100 hover:border-ink-700 focus:border-brand-500 focus:outline-none focus:ring-0 focus:shadow-[inset_0_0_0_1px_var(--color-brand-500)] disabled:cursor-not-allowed disabled:opacity-50 disabled:bg-paper-100', props.class)"
+    :class="cn('flex h-8 w-full rounded-[2px] border border-(--input-border) bg-input px-2.5 text-[13px] text-ink-900 placeholder:text-ink-400 transition-colors duration-100 hover:border-ink-700 focus:border-brand-500 focus:outline-none focus:ring-0 focus:shadow-[inset_0_0_0_1px_var(--color-brand-500)] disabled:cursor-not-allowed disabled:opacity-50 disabled:bg-muted', props.class)"
     @input="onInternalInput"
   >
 </template>

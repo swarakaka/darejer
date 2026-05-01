@@ -27,7 +27,7 @@ const forwarded = useForwardPropsEmits(delegatedProps, emits)
     )"
   >
     <SwitchThumb
-      :class="cn('pointer-events-none block h-2.5 w-2.5 rounded-full bg-ink-700 translate-x-1 rtl:-translate-x-1 transition-transform duration-150 data-[state=checked]:translate-x-[1.375rem] rtl:data-[state=checked]:-translate-x-[1.375rem] data-[state=checked]:bg-white')"
+      :class="cn('pointer-events-none block h-2.5 w-2.5 rounded-full bg-ink-700 translate-x-1 rtl:-translate-x-1 transition-transform duration-150 data-[state=checked]:translate-x-[1.375rem] rtl:data-[state=checked]:-translate-x-[1.375rem] data-[state=checked]:bg-card')"
     >
       <slot name="thumb" />
     </SwitchThumb>

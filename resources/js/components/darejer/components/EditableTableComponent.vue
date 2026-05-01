@@ -191,7 +191,7 @@ function formatCellValue(value: unknown, _type: string): string {
     >
         <template #default="{ hasError }">
             <div
-                class="border rounded-md overflow-hidden bg-white"
+                class="border rounded-md overflow-hidden bg-card"
                 :class="hasError ? 'border-danger-600' : 'border-paper-200'"
             >
                 <!-- Header -->

@@ -91,7 +91,7 @@ const iframeSrc = computed(() => {
             </div>
 
             <!-- PDF viewer -->
-            <div v-else ref="containerEl" class="flex flex-col border border-paper-200 rounded-md overflow-hidden bg-white">
+            <div v-else ref="containerEl" class="flex flex-col border border-paper-200 rounded-md overflow-hidden bg-card">
 
                 <!-- Toolbar -->
                 <div class="flex items-center gap-1 px-3 py-1.5 bg-paper-75 border-b border-paper-200">

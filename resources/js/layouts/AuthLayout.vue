@@ -12,7 +12,7 @@ const direction = computed(() => page.props.darejer?.direction ?? 'ltr')
 <template>
     <ConfigProvider :dir="direction" :locale="locale">
         <div class="min-h-screen flex items-center justify-center bg-paper-50 text-ink-900 antialiased px-6 sm:px-10 py-12 lg:py-16">
-            <div class="w-full max-w-sm shadow-md bg-white">
+            <div class="w-full max-w-sm shadow-md bg-card">
                 <slot />
             </div>
         </div>

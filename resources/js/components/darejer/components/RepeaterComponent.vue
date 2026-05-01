@@ -146,7 +146,7 @@ const atMin = computed(() => minItems.value ? items.value.length <= minItems.val
                     <template #item="{ element: item, index }">
                         <div
                             :key="item._id"
-                            class="border border-paper-200 rounded-md overflow-hidden bg-white"
+                            class="border border-paper-200 rounded-md overflow-hidden bg-card"
                         >
                             <!-- Item header -->
                             <div
@@ -185,7 +185,7 @@ const atMin = computed(() => minItems.value ? items.value.length <= minItems.val
                             <!-- Item body -->
                             <div
                                 v-if="!collapsed.has(item._id)"
-                                class="p-4 bg-white"
+                                class="p-4 bg-card"
                             >
                                 <div class="grid grid-cols-2 gap-x-5 gap-y-3.5 w-full">
                                     <DarejerComponent

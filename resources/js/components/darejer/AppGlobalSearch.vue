@@ -137,7 +137,7 @@ function flatIndex(groupIdx: number, itemIdx: number): number {
         <div
             v-if="open && term"
             class="absolute start-0 end-0 mt-1 z-50 max-h-[28rem] overflow-y-auto
-                   rounded-none border border-paper-200 bg-white shadow-[0_6.4px_14.4px_rgba(0,0,0,0.13),_0_1.2px_3.6px_rgba(0,0,0,0.10)]"
+                   rounded-none border border-(--border) bg-popover text-popover-foreground shadow-[0_6.4px_14.4px_rgba(0,0,0,0.13),_0_1.2px_3.6px_rgba(0,0,0,0.10)]"
         >
             <div
                 v-if="loading && !hasResults"
@@ -200,9 +200,9 @@ function flatIndex(groupIdx: number, itemIdx: number): number {
                 </div>
 
                 <div class="px-4 py-2 border-t border-paper-100 text-2xs text-ink-400 flex items-center gap-3 bg-paper-50/60">
-                    <span class="flex items-center gap-1"><kbd class="px-1.5 py-0.5 rounded-sm border border-paper-200 bg-white shadow-xs">↑↓</kbd> {{ __('navigate') }}</span>
-                    <span class="flex items-center gap-1"><kbd class="px-1.5 py-0.5 rounded-sm border border-paper-200 bg-white shadow-xs">↵</kbd> {{ __('open') }}</span>
-                    <span class="flex items-center gap-1"><kbd class="px-1.5 py-0.5 rounded-sm border border-paper-200 bg-white shadow-xs">esc</kbd> {{ __('close') }}</span>
+                    <span class="flex items-center gap-1"><kbd class="px-1.5 py-0.5 rounded-sm border border-paper-200 bg-paper-50 shadow-xs">↑↓</kbd> {{ __('navigate') }}</span>
+                    <span class="flex items-center gap-1"><kbd class="px-1.5 py-0.5 rounded-sm border border-paper-200 bg-paper-50 shadow-xs">↵</kbd> {{ __('open') }}</span>
+                    <span class="flex items-center gap-1"><kbd class="px-1.5 py-0.5 rounded-sm border border-paper-200 bg-paper-50 shadow-xs">esc</kbd> {{ __('close') }}</span>
                     <span class="ms-auto tabular-nums font-medium">{{ __(':n results', { n: total }) }}</span>
                 </div>
             </template>

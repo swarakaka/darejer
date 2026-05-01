@@ -75,7 +75,7 @@ const railColor = computed(() => {
     <component
         :is="href ? Link : 'div'"
         :href="href ?? undefined"
-        class="group relative isolate flex flex-col bg-white border border-paper-200 rounded-md
+        class="group relative isolate flex flex-col bg-card border border-paper-200 rounded-md
                shadow-[0_1px_0_rgba(0,0,0,0.02)] hover:shadow-[0_4px_12px_-4px_rgba(0,0,0,0.08),0_1px_0_rgba(0,0,0,0.02)]
                hover:border-paper-300 transition-all duration-150 no-underline overflow-hidden"
     >

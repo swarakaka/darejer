@@ -254,7 +254,7 @@ const pages = computed(() => {
 </script>
 
 <template>
-    <div class="flex flex-col border border-paper-200 rounded-md overflow-hidden bg-white col-span-full">
+    <div class="flex flex-col border border-paper-200 rounded-md overflow-hidden bg-card col-span-full">
 
         <!-- Toolbar -->
         <div class="flex items-center gap-2 px-3 py-2 bg-paper-75 border-b border-paper-200">
@@ -265,7 +265,7 @@ const pages = computed(() => {
                     v-model="globalSearch"
                     type="search"
                     :placeholder="__('Search…')"
-                    class="w-full h-8 ps-8 pe-3 text-sm bg-white border border-paper-300 rounded-sm
+                    class="w-full h-8 ps-8 pe-3 text-sm bg-card border border-paper-300 rounded-sm
                            placeholder:text-ink-400 focus:outline-none focus:border-brand-500
                            transition-colors duration-100"
                 />

@@ -108,7 +108,7 @@ function onUnitInput(unit: 'h' | 'm' | 's', e: Event) {
                         type="button"
                         :disabled="(component.disabled as boolean)"
                         class="flex items-center justify-between w-full h-[2.125rem] px-2.5
-                               text-sm bg-white border rounded transition-colors duration-100
+                               text-sm bg-card border rounded transition-colors duration-100
                                disabled:opacity-50 disabled:cursor-not-allowed"
                         :class="[
                             hasError ? 'border-danger-600' : 'border-slate-300',

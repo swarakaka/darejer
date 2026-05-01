@@ -183,7 +183,7 @@ function clearField(field: string) {
                             :id="filter.field"
                             type="button"
                             class="flex items-center justify-between w-full h-8 px-2.5
-                                   text-[13px] text-start bg-white border rounded-[2px]
+                                   text-[13px] text-start bg-card border rounded-[2px]
                                    text-ink-900 transition-colors duration-100
                                    hover:border-ink-700
                                    focus:outline-none focus:ring-0 focus:border-brand-500"
