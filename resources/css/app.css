@@ -220,40 +220,42 @@
      * (bg-paper-50, text-ink-900, border-paper-200, etc.) flips automatically.
      * paper-* = surface scale (page → elevated). ink-* = content scale
      * (subtle → bold text). In dark mode both directions reverse.
+     * Tuned for Azure-portal-style dark theme: deep near-black surfaces
+     * with bright near-white text for maximum readability.
      */
     --color-paper-50:  #1b1a19;
-    --color-paper-75:  #201f1e;
-    --color-paper-100: #252423;
-    --color-paper-150: #2d2c2b;
-    --color-paper-200: #323130;
-    --color-paper-300: #3b3a39;
+    --color-paper-75:  #252423;
+    --color-paper-100: #2d2c2b;
+    --color-paper-150: #323130;
+    --color-paper-200: #3b3a39;
+    --color-paper-300: #4a4948;
     --color-paper-400: #605e5c;
 
     --color-ink-50:  #2d2c2b;
-    --color-ink-100: #323130;
-    --color-ink-200: #3b3a39;
-    --color-ink-300: #605e5c;
-    --color-ink-400: #8a8886;
-    --color-ink-500: #a19f9d;
-    --color-ink-600: #c8c6c4;
-    --color-ink-700: #d2d0ce;
-    --color-ink-800: #e1dfdd;
+    --color-ink-100: #3b3a39;
+    --color-ink-200: #605e5c;
+    --color-ink-300: #8a8886;
+    --color-ink-400: #a19f9d;
+    --color-ink-500: #c8c6c4;
+    --color-ink-600: #d2d0ce;
+    --color-ink-700: #e1dfdd;
+    --color-ink-800: #edebe9;
     --color-ink-900: #f3f2f1;
-    --color-ink-950: #faf9f8;
+    --color-ink-950: #ffffff;
 
-    --background:           var(--color-paper-100);
+    --background:           var(--color-paper-50);
     --foreground:           var(--color-ink-900);
     --card:                 var(--color-paper-75);
     --card-foreground:      var(--color-ink-900);
     --card-border:          var(--color-paper-200);
-    --popover:              var(--color-paper-75);
+    --popover:              var(--color-paper-100);
     --popover-foreground:   var(--color-ink-900);
     --primary:              var(--color-brand-400);
     --primary-foreground:   #ffffff;
     --secondary:            var(--color-paper-150);
     --secondary-foreground: var(--color-ink-800);
     --muted:                var(--color-paper-150);
-    --muted-foreground:     var(--color-ink-500);
+    --muted-foreground:     var(--color-ink-400);
     --accent:               var(--color-paper-200);
     --accent-foreground:    var(--color-ink-900);
     --destructive:          var(--color-danger-500);
@@ -262,15 +264,18 @@
     --input:                var(--color-paper-75);
     --input-border:         var(--color-paper-300);
 
-    --sidebar-bg:             var(--color-brand-950);
-    --sidebar-border:         var(--color-paper-200);
-    --sidebar-item-bg-active: color-mix(in srgb, var(--color-brand-500) 18%, transparent);
-    --sidebar-foreground:     #ffffff;
-    --sidebar-foreground-muted: var(--color-ink-500);
+    /* Chrome — Azure portal dark mode: deep near-black topbar/sidebar with
+       Azure-blue brand accents. The bright blue topbar would be jarring
+       against a dark page, so it tones down to match. */
+    --sidebar-bg:             #11141a;
+    --sidebar-border:         #1f232b;
+    --sidebar-item-bg-active: color-mix(in srgb, var(--color-brand-500) 28%, transparent);
+    --sidebar-foreground:     #f3f2f1;
+    --sidebar-foreground-muted: #a19f9d;
 
-    --topbar-bg:              #0078d4;
-    --topbar-border:          #006cbe;
-    --topbar-foreground:      #ffffff;
+    --topbar-bg:              #11141a;
+    --topbar-border:          #1f232b;
+    --topbar-foreground:      #f3f2f1;
 }
 
 /*
