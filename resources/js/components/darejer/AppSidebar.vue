@@ -4,10 +4,10 @@ import { usePage, Link } from '@inertiajs/vue3'
 import {
     Layers, LayoutDashboard, Package, Users, Settings, LifeBuoy,
     BookOpen, BarChart3, BarChart2, Folders, ShoppingCart,
-    FileText, Tag, Truck, Building, CreditCard, Calendar,
+    FileText, Tag, Truck, Building, Building2, CreditCard, Calendar,
     Bell, Search, ChevronRight, ChevronDown, ChevronLeft,
     Inbox, Star, Archive, Globe, Shield, Wrench, Database,
-    HelpCircle, X,
+    HelpCircle, X, Landmark, UserSquare, ClipboardCheck,
 } from 'lucide-vue-next'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { useSidebar }      from '@/composables/useSidebar'
@@ -50,10 +50,10 @@ const navItems = computed((): NavItem[] => {
 const iconMap: Record<string, unknown> = {
     Layers, LayoutDashboard, Package, Users, Settings, LifeBuoy,
     BookOpen, BarChart3, BarChart2, Folders, ShoppingCart,
-    FileText, Tag, Truck, Building, CreditCard, Calendar,
+    FileText, Tag, Truck, Building, Building2, CreditCard, Calendar,
     Bell, Search, ChevronRight, ChevronDown, ChevronLeft,
     Inbox, Star, Archive, Globe, Shield, Wrench, Database,
-    HelpCircle,
+    HelpCircle, Landmark, UserSquare, ClipboardCheck,
 }
 function getIcon(name?: string) {
     return name ? (iconMap[name] ?? LayoutDashboard) : LayoutDashboard
