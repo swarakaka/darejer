@@ -2,6 +2,7 @@
 import { computed } from 'vue'
 import { Doughnut } from 'vue-chartjs'
 import { brand, baseOptions } from './chartSetup'
+import useTranslation from '@/composables/useTranslation'
 
 interface Props {
     labels:  string[]
@@ -13,8 +14,10 @@ interface Props {
 
 const props = withDefaults(defineProps<Props>(), { height: 260, cutout: '60%' })
 
+const { resolveTranslatable } = useTranslation()
+
 const data = computed(() => ({
-    labels: props.labels,
+    labels: props.labels.map(label => resolveTranslatable(label)),
     datasets: [{
         data: props.values,
         backgroundColor: props.colors ?? brand.palette,
