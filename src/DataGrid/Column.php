@@ -119,17 +119,37 @@ class Column
      * array or a backed-enum class string that exposes per-case colors via
      * `color()` instance methods or a static `colors()` helper.
      *
+     * Optionally pass `$labels` to override the rendered text per value.
+     * For boolean-keyed arrays (`'1'`/`'0'`) a translated Yes/No is used
+     * automatically when labels aren't given.
+     *
      * @param  array<string, string>|class-string<BackedEnum>  $colorMap
+     * @param  array<string, string>|null  $labels
      */
-    public function badge(array|string $colorMap): static
+    public function badge(array|string $colorMap, ?array $labels = null): static
     {
         $this->badge = json_encode(EnumOptions::colors($colorMap));
 
-        if (is_string($colorMap)) {
+        if ($labels !== null) {
+            $this->badgeLabels = json_encode($labels);
+        } elseif (is_string($colorMap)) {
             $this->badgeLabels = json_encode(EnumOptions::labels($colorMap));
+        } elseif ($this->isBooleanColorMap($colorMap)) {
+            $this->badgeLabels = json_encode(['1' => __('Yes'), '0' => __('No')]);
         }
 
         return $this;
+    }
+
+    /**
+     * @param  array<string, string>  $map
+     */
+    protected function isBooleanColorMap(array $map): bool
+    {
+        $keys = array_map('strval', array_keys($map));
+        sort($keys);
+
+        return $keys === ['0', '1'];
     }
 
     /**
