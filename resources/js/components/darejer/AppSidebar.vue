@@ -204,7 +204,7 @@ function badgeClass(color?: string): string {
                     <span class="text-[13px] font-semibold text-white truncate">{{ __('Menu') }}</span>
                     <button
                         type="button"
-                        class="md:hidden ms-auto flex items-center justify-center w-7 h-7 rounded-[2px] text-paper-200 hover:text-white hover:bg-white/[0.08] transition-colors"
+                        class="md:hidden ms-auto flex items-center justify-center w-7 h-7 rounded-[2px] text-[#e1dfdd] hover:text-white hover:bg-white/[0.08] transition-colors"
                         :aria-label="__('Close menu')"
                         @click="closeMobile"
                     >
@@ -224,7 +224,7 @@ function badgeClass(color?: string): string {
                                         class="relative flex items-center justify-center h-9 transition-colors duration-100 no-underline"
                                         :class="isGroupActive(item) || (activeGroup?.label === item.label && flyoutOpen)
                                             ? 'text-white bg-[color:var(--sidebar-item-bg-active)]'
-                                            : 'text-paper-200 hover:text-white hover:bg-white/[0.08]'"
+                                            : 'text-[#e1dfdd] hover:text-white hover:bg-white/[0.08]'"
                                         @click="(e) => onItemClick(item, e)"
                                     >
                                         <span
@@ -264,7 +264,7 @@ function badgeClass(color?: string): string {
                                 class="relative flex items-center gap-3 h-9 px-3 transition-colors duration-100 no-underline overflow-hidden"
                                 :class="isGroupActive(item)
                                     ? 'text-white bg-[color:var(--sidebar-item-bg-active)] font-semibold'
-                                    : 'text-paper-200 hover:text-white hover:bg-white/[0.08]'"
+                                    : 'text-[#e1dfdd] hover:text-white hover:bg-white/[0.08]'"
                                 @click="(e) => onItemClick(item, e)"
                             >
                                 <span
@@ -274,7 +274,7 @@ function badgeClass(color?: string): string {
                                 <component
                                     :is="getIcon(item.icon)"
                                     class="w-4 h-4 shrink-0"
-                                    :class="isGroupActive(item) ? 'text-white' : 'text-paper-300'"
+                                    :class="isGroupActive(item) ? 'text-white' : 'text-[#c8c6c4]'"
                                 />
                                 <span class="flex-1 text-md truncate">{{ item.label }}</span>
 
@@ -289,7 +289,7 @@ function badgeClass(color?: string): string {
                                 <component
                                     v-if="item.children?.length"
                                     :is="expandedGroups.has(item.label) ? ChevronDown : ChevronRight"
-                                    class="w-3.5 h-3.5 shrink-0 text-paper-300 rtl:[&:not(.lucide-chevron-down)]:rotate-180"
+                                    class="w-3.5 h-3.5 shrink-0 text-[#c8c6c4] rtl:[&:not(.lucide-chevron-down)]:rotate-180"
                                 />
                             </Link>
 
@@ -301,7 +301,7 @@ function badgeClass(color?: string): string {
                                 <template v-for="(child, i) in item.children" :key="child.label">
                                     <div
                                         v-if="child.group && (i === 0 || (item.children?.[i - 1]?.group !== child.group))"
-                                        class="ps-10 pt-2 pb-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-paper-400 select-none"
+                                        class="ps-10 pt-2 pb-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#a19f9d] select-none"
                                     >
                                         {{ child.group }}
                                     </div>
@@ -311,7 +311,7 @@ function badgeClass(color?: string): string {
                                         class="relative flex items-center gap-2 h-8 ps-10 pe-3 text-[12.5px] no-underline transition-colors duration-100"
                                         :class="isActive(child)
                                             ? 'text-white font-semibold bg-[color:var(--sidebar-item-bg-active)]'
-                                            : 'text-paper-200 hover:text-white hover:bg-white/[0.08]'"
+                                            : 'text-[#e1dfdd] hover:text-white hover:bg-white/[0.08]'"
                                     >
                                         <span
                                             v-if="isActive(child)"
@@ -321,7 +321,7 @@ function badgeClass(color?: string): string {
                                             v-if="child.icon"
                                             :is="getIcon(child.icon)"
                                             class="w-3.5 h-3.5 shrink-0"
-                                            :class="isActive(child) ? 'text-white' : 'text-paper-300'"
+                                            :class="isActive(child) ? 'text-white' : 'text-[#c8c6c4]'"
                                         />
                                         <span class="flex-1 truncate">{{ child.label }}</span>
 

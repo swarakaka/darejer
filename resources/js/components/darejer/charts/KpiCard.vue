@@ -88,11 +88,11 @@ const railColor = computed(() => {
 
         <!-- Background sheen — radial gradient that fades on hover -->
         <div
-            class="absolute inset-0 -z-10 bg-gradient-to-br from-white via-white to-paper-75/60 opacity-100
+            class="absolute inset-0 -z-10 bg-gradient-to-br from-card via-card to-paper-75/60 opacity-100
                    group-hover:opacity-0 transition-opacity duration-200"
         />
         <div
-            class="absolute inset-0 -z-10 bg-gradient-to-br from-white via-brand-50/30 to-paper-75/40
+            class="absolute inset-0 -z-10 bg-gradient-to-br from-card via-brand-50/30 to-paper-75/40
                    opacity-0 group-hover:opacity-100 transition-opacity duration-200"
         />
 
