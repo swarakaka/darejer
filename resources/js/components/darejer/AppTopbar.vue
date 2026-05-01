@@ -13,6 +13,7 @@ import {
 import { LogOut, Bell, Globe, Menu, ChevronDown } from 'lucide-vue-next'
 import AppNotifications            from '@/components/darejer/AppNotifications.vue'
 import AppGlobalSearch             from '@/components/darejer/AppGlobalSearch.vue'
+import AppThemeToggle              from '@/components/darejer/AppThemeToggle.vue'
 import { useLanguages }            from '@/composables/useLanguages'
 import { useAlerts }               from '@/composables/useAlerts'
 import { useSidebar }              from '@/composables/useSidebar'
@@ -104,6 +105,9 @@ function logout() {
             </button>
 
             <AppNotifications v-model:open="notificationsOpen" />
+
+            <!-- Theme switcher: light / dark / system -->
+            <AppThemeToggle />
 
             <!-- Language switcher (only when multiple languages configured) -->
             <DropdownMenu v-if="isMultilingual">

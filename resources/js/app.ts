@@ -7,6 +7,10 @@ import type { DefineComponent } from 'vue'
 // AssetHelper::tags() then emits a <link> for it from the published build output.
 import '../css/app.css'
 
+// Apply persisted theme (light/dark/system) before the app mounts so the
+// first paint already has the right `dark` class on <html>.
+import '@/composables/useTheme'
+
 createInertiaApp({
     title: (title) => `${title} - Darejer`,
 
