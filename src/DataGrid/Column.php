@@ -214,6 +214,11 @@ class Column
         return $this->displayUsing;
     }
 
+    public function getFormat(): ?Closure
+    {
+        return $this->format;
+    }
+
     public function toArray(): array
     {
         return array_filter([
