@@ -48,13 +48,12 @@ const hasMore   = ref(false)
 const { load, http } = useDataUrl<Option>(
     props.component.dataUrl as string | undefined,
     {
-        perPage:        50,
-        combobox:       true,
-        keyField:       (props.component.keyField       as string)            ?? 'id',
-        labelField:     (props.component.labelField     as string)            ?? 'name',
-        labelFields:    (props.component.labelFields    as string[] | undefined) ?? undefined,
-        labelSeparator: (props.component.labelSeparator as string | undefined) ?? undefined,
-        searchFields:   (props.component.searchFields   as string[] | undefined) ?? undefined,
+        perPage:      50,
+        combobox:     true,
+        keyField:     (props.component.keyField     as string)               ?? 'id',
+        labelField:   (props.component.labelField   as string)               ?? 'name',
+        labelFields:  (props.component.labelFields  as string[] | undefined) ?? undefined,
+        searchFields: (props.component.searchFields as string[] | undefined) ?? undefined,
     },
 )
 

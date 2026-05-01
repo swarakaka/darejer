@@ -54,7 +54,7 @@ it('returns a single label field as the combobox label', function (): void {
     ]);
 });
 
-it('composes a multi-field label with the configured separator', function (): void {
+it('composes a multi-field label with leading/trailing spaces around the separator', function (): void {
     $cat = DataTransformerCategoryFixture::query()->create([
         'code' => 'CAT-PROD',
         'name' => ['en' => 'Products', 'ar' => 'المنتجات'],
@@ -66,11 +66,12 @@ it('composes a multi-field label with the configured separator', function (): vo
         'code',
         true,
         ['code', 'name'],
-        ' — ',
     );
 
     expect($transformer->transform($cat))->toMatchArray([
         'value' => (string) $cat->id,
+        // Spaces on both sides of the em-dash — see the LABEL_SEPARATOR
+        // constant on DataTransformer for why this is server-side only.
         'label' => 'CAT-PROD — Products',
     ]);
 });

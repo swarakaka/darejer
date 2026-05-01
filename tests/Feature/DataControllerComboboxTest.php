@@ -74,7 +74,7 @@ function comboboxRequest(array $params): Request
     return $request;
 }
 
-it('returns labels composed from multiple fields', function (): void {
+it('returns labels composed from multiple fields with spaces around the separator', function (): void {
     DataControllerCategory::query()->create([
         'code' => 'CAT-PROD',
         'name' => ['en' => 'Products', 'ar' => 'المنتجات'],
@@ -83,12 +83,14 @@ it('returns labels composed from multiple fields', function (): void {
     $request = comboboxRequest([
         'key' => 'id',
         'label_fields' => ['code', 'name'],
-        'label_separator' => ' — ',
     ]);
 
     $payload = (new DataController)->index($request, 'itemcategory')->getData(true);
 
     expect($payload['data'])->toHaveCount(1)
+        // Spaces on both sides of the em-dash. The separator is hardcoded
+        // server-side because Laravel's TrimStrings middleware would strip
+        // the leading and trailing spaces if it were sent over the wire.
         ->and($payload['data'][0]['label'])->toBe('CAT-PROD — Products');
 });
 

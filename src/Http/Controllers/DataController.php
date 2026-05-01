@@ -49,15 +49,12 @@ class DataController extends Controller
             $labelFields = null;
         }
 
-        $labelSeparator = (string) $request->get('label_separator', ' — ');
-
         $transformer = new DataTransformer(
             $modelClass,
             $keyField,
             $labelField,
             $isCombobox,
             $labelFields,
-            $labelSeparator,
         );
 
         $query = $modelClass::query();

@@ -121,8 +121,7 @@ it('serializes a single label field as a string', function () {
     expect($array)
         ->toHaveKey('labelField', 'name')
         ->not->toHaveKey('labelFields')
-        ->not->toHaveKey('searchFields')
-        ->not->toHaveKey('labelSeparator');
+        ->not->toHaveKey('searchFields');
 });
 
 it('serializes labelFields and defaults searchFields when label is an array', function () {
@@ -137,7 +136,6 @@ it('serializes labelFields and defaults searchFields when label is an array', fu
     expect($array)
         ->toHaveKey('labelField', 'code')           // first field for legacy fallback
         ->toHaveKey('labelFields', ['code', 'name'])
-        ->toHaveKey('labelSeparator', ' — ')
         ->toHaveKey('searchFields', ['code', 'name']);
 });
 
@@ -152,14 +150,6 @@ it('lets searchFields be overridden independently of labelFields', function () {
     expect($array)
         ->toHaveKey('labelFields', ['code', 'name'])
         ->toHaveKey('searchFields', ['code', 'name', 'email', 'phone']);
-});
-
-it('honors a custom labelSeparator', function () {
-    $combobox = Combobox::make('item_category_id')->labelSeparator(' / ');
-    $reflection = new ReflectionClass($combobox);
-    $reflection->getProperty('labelField')->setValue($combobox, ['code', 'name']);
-
-    expect($combobox->toArray())->toHaveKey('labelSeparator', ' / ');
 });
 
 it('serializes a plain Display component', function () {

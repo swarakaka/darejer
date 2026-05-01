@@ -21,9 +21,15 @@ class DataTransformer
     /** @var array<int, string>|null */
     protected ?array $labelFields;
 
-    protected string $labelSeparator;
-
     protected bool $isCombobox;
+
+    /**
+     * Separator inserted between fields when composing a multi-field
+     * combobox label. Hardcoded server-side so it survives Laravel's
+     * `TrimStrings` middleware (which would otherwise strip the leading
+     * and trailing spaces if it were sent over the wire).
+     */
+    protected const LABEL_SEPARATOR = ' — ';
 
     /**
      * @param  array<int, string>|null  $labelFields
@@ -34,14 +40,12 @@ class DataTransformer
         string $labelField = 'name',
         bool $isCombobox = false,
         ?array $labelFields = null,
-        string $labelSeparator = ' — ',
     ) {
         $this->modelClass = $modelClass;
         $this->keyField = $keyField;
         $this->labelField = $labelField;
         $this->isCombobox = $isCombobox;
         $this->labelFields = $labelFields ? array_values($labelFields) : null;
-        $this->labelSeparator = $labelSeparator;
     }
 
     public function transform(Model $item): array
@@ -72,7 +76,7 @@ class DataTransformer
 
     /**
      * Build the combobox label. When `labelFields` is set, join the
-     * non-empty values with the configured separator (e.g. "ABC — Widget").
+     * non-empty values with the standard separator (e.g. "ABC — Widget").
      * Falls back to the single `labelField` otherwise.
      *
      * @param  array<string, mixed>  $arr
@@ -89,7 +93,7 @@ class DataTransformer
                 $parts[] = (string) $value;
             }
 
-            return implode($this->labelSeparator, $parts);
+            return implode(self::LABEL_SEPARATOR, $parts);
         }
 
         return (string) ($arr[$this->labelField] ?? '');
