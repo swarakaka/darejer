@@ -20,15 +20,17 @@ import useTranslation from '@/composables/useTranslation'
 const { __ } = useTranslation()
 
 interface ComboboxColumn {
-    field:        string
-    dataUrl?:     string
-    keyField?:    string
-    labelField?:  string
-    priceField?:  string
-    imageField?:  string
+    field:         string
+    dataUrl?:      string
+    keyField?:     string
+    labelField?:   string
+    labelFields?:  string[]
+    searchFields?: string[]
+    priceField?:   string
+    imageField?:   string
     optionFields?: string[]
-    fillFrom?:    Record<string, string> | null
-    placeholder?: string
+    fillFrom?:     Record<string, string> | null
+    placeholder?:  string
 }
 
 type Record_ = Record<string, unknown>
@@ -55,18 +57,38 @@ const hasMore = ref(false)
  *  even when the option isn't on the first page. */
 const cache = ref<Record<string, Record_>>({})
 
-const keyField   = computed(() => props.column.keyField   ?? 'id')
-const labelField = computed(() => props.column.labelField ?? 'name')
-const priceField = computed(() => props.column.priceField)
-const imageField = computed(() => props.column.imageField)
+const keyField    = computed(() => props.column.keyField   ?? 'id')
+const labelField  = computed(() => props.column.labelField ?? 'name')
+const labelFields = computed(() => props.column.labelFields ?? null)
+const priceField  = computed(() => props.column.priceField)
+const imageField  = computed(() => props.column.imageField)
+
+/** Match Combobox's server-side join character. Hardcoded so it survives
+ *  Laravel's TrimStrings middleware. */
+const LABEL_SEPARATOR = ' — '
+
+function composeLabel(record: Record_): string {
+    if (labelFields.value && labelFields.value.length > 0) {
+        const parts: string[] = []
+        for (const f of labelFields.value) {
+            const v = record[f]
+            if (v === null || v === undefined || v === '') continue
+            parts.push(String(v))
+        }
+        return parts.join(LABEL_SEPARATOR)
+    }
+    return String(record[labelField.value] ?? '')
+}
 
 const { load, http } = useDataUrl<Record_>(
     props.column.dataUrl,
     {
-        perPage:    25,
-        keyField:   keyField.value,
-        labelField: labelField.value,
-        fields:     props.column.optionFields ?? [],
+        perPage:      25,
+        keyField:     keyField.value,
+        labelField:   labelField.value,
+        labelFields:  labelFields.value ?? undefined,
+        searchFields: props.column.searchFields ?? undefined,
+        fields:       props.column.optionFields ?? [],
     },
 )
 
@@ -109,7 +131,10 @@ const selectedRecord = computed<Record_ | null>(() =>
 )
 
 const triggerLabel = computed(() => {
-    if (selectedRecord.value) return String(selectedRecord.value[labelField.value] ?? selectedKey.value)
+    if (selectedRecord.value) {
+        const composed = composeLabel(selectedRecord.value)
+        return composed !== '' ? composed : selectedKey.value
+    }
     if (selectedKey.value)    return selectedKey.value
     return props.column.placeholder ?? __('Select…')
 })
@@ -190,7 +215,7 @@ function formatPrice(v: unknown): string {
 
                             <div class="flex-1 min-w-0">
                                 <div class="truncate font-medium text-ink-900">
-                                    {{ String(record[labelField] ?? '') }}
+                                    {{ composeLabel(record) }}
                                 </div>
                                 <div
                                     v-if="priceField && record[priceField] !== undefined"

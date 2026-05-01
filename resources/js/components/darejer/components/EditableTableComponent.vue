@@ -28,13 +28,15 @@ interface TableCol {
     placeholder?: string
     options?: { value: string; label: string }[]
     // combobox-only:
-    dataUrl?:     string
-    keyField?:    string
-    labelField?:  string
-    priceField?:  string
-    imageField?:  string
+    dataUrl?:      string
+    keyField?:     string
+    labelField?:   string
+    labelFields?:  string[]
+    searchFields?: string[]
+    priceField?:   string
+    imageField?:   string
     optionFields?: string[]
-    fillFrom?:    Record<string, string> | null
+    fillFrom?:     Record<string, string> | null
 }
 
 type TableRow = Record<string, unknown> & { _id: number }

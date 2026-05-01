@@ -36,7 +36,11 @@ class Column
 
     protected string $keyField = 'id';
 
-    protected string $labelField = 'name';
+    /** @var string|array<int, string> */
+    protected string|array $labelField = 'name';
+
+    /** @var array<int, string>|null */
+    protected ?array $searchFields = null;
 
     protected ?string $priceField = null;
 
@@ -136,16 +140,37 @@ class Column
      * renders its label and — when configured — a price and image. Selecting
      * an option may auto-fill sibling row columns via {@see fillFrom()}.
      *
+     * Pass a string for a single label field (`'name'`), or an array to
+     * compose the label from multiple fields (`['code', 'name']` →
+     * "ABC — Widget"). When an array is given, search defaults to matching
+     * across those same fields unless {@see searchFields()} overrides it.
+     *
      * @param  class-string<Model>  $modelClass
+     * @param  string|array<int, string>  $labelField
      */
-    public function combobox(string $modelClass, string $keyField = 'id', string $labelField = 'name'): static
+    public function combobox(string $modelClass, string $keyField = 'id', string|array $labelField = 'name'): static
     {
         $this->type = 'combobox';
         $this->keyField = $keyField;
-        $this->labelField = $labelField;
+        $this->labelField = is_array($labelField) ? array_values($labelField) : $labelField;
 
         $modelSlug = strtolower(class_basename($modelClass));
         $this->dataUrl = route('darejer.data.index', ['model' => $modelSlug]);
+
+        return $this;
+    }
+
+    /**
+     * Override the fields searched by the combobox input. By default,
+     * search runs against the label field(s). Use this when you want to
+     * search across more (or different) columns than the ones displayed
+     * — e.g. display `name`, but also search by `email` and `phone`.
+     *
+     * @param  array<int, string>  $fields
+     */
+    public function searchFields(array $fields): static
+    {
+        $this->searchFields = array_values(array_filter($fields, 'is_string'));
 
         return $this;
     }
@@ -201,9 +226,16 @@ class Column
         ];
 
         if ($this->type === 'combobox') {
+            $labelIsArray = is_array($this->labelField);
+            $labelFields = $labelIsArray ? array_values($this->labelField) : null;
+            $primaryLabel = $labelIsArray ? ($labelFields[0] ?? 'name') : $this->labelField;
+            $searchFields = $this->searchFields ?? $labelFields;
+
             $extras = array_values(array_unique(array_filter([
                 $this->keyField,
-                $this->labelField,
+                $primaryLabel,
+                ...($labelFields ?? []),
+                ...($searchFields ?? []),
                 $this->priceField,
                 $this->imageField,
                 ...array_values($this->fillFrom),
@@ -212,7 +244,9 @@ class Column
             $base = array_merge($base, [
                 'dataUrl' => $this->dataUrl,
                 'keyField' => $this->keyField,
-                'labelField' => $this->labelField,
+                'labelField' => $primaryLabel,
+                'labelFields' => $labelFields,
+                'searchFields' => $searchFields,
                 'priceField' => $this->priceField,
                 'imageField' => $this->imageField,
                 'fillFrom' => $this->fillFrom ?: null,
