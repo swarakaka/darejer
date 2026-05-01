@@ -382,12 +382,12 @@ function clearFilter(field: string) {
   <div class="flex flex-col h-full overflow-hidden bg-paper-100">
 
     <!-- Action Pane -->
-    <div class="flex items-center gap-1.5 h-(--action-pane-height) px-6 border-b border-paper-200 bg-white shrink-0 overflow-x-auto">
+    <div class="flex items-center gap-1.5 h-(--action-pane-height) px-6 border-b border-paper-200 bg-card shrink-0 overflow-x-auto">
       <DarejerActions :actions="headerActions" placement="header" />
     </div>
 
     <!-- Page header — refined hero with subtle gradient -->
-    <header class="shrink-0 relative bg-white border-b border-paper-200 overflow-hidden">
+    <header class="shrink-0 relative bg-card border-b border-paper-200 overflow-hidden">
       <div
           class="absolute inset-0 opacity-[0.35] pointer-events-none"
           style="
@@ -415,7 +415,7 @@ function clearFilter(field: string) {
                      shadow-[0_1px_0_rgba(0,0,0,0.02)] transition-all"
               :class="showFilters
                         ? 'bg-brand-50 border-brand-200 text-brand-800 hover:bg-brand-100'
-                        : 'bg-white border-paper-300 text-ink-700 hover:bg-paper-75 hover:border-paper-400'"
+                        : 'bg-card border-paper-300 text-ink-700 hover:bg-paper-75 hover:border-paper-400'"
               @click="showFilters = !showFilters"
           >
             <SlidersHorizontal class="w-3.5 h-3.5" />
@@ -457,7 +457,7 @@ function clearFilter(field: string) {
         <span
             v-for="entry in activeFilterEntries"
             :key="entry.field"
-            class="inline-flex items-center gap-1.5 ps-2 pe-1 h-6 rounded-full bg-white ring-1 ring-inset ring-brand-200
+            class="inline-flex items-center gap-1.5 ps-2 pe-1 h-6 rounded-full bg-card ring-1 ring-inset ring-brand-200
                    text-[11px] font-semibold text-brand-800 shadow-[0_1px_0_rgba(0,0,0,0.02)]"
         >
           <span class="text-[10px] font-bold uppercase tracking-[0.1em] text-brand-500">{{ entry.label }}:</span>
@@ -483,7 +483,7 @@ function clearFilter(field: string) {
       <!-- Filter bar -->
       <div
           v-if="showFilters && filters.length"
-          class="relative flex flex-wrap items-end gap-3 p-4 mb-4 bg-white border border-paper-200 rounded-md
+          class="relative flex flex-wrap items-end gap-3 p-4 mb-4 bg-card border border-paper-200 rounded-md
                  shadow-[0_1px_0_rgba(0,0,0,0.02)]"
       >
         <span class="absolute inset-x-0 top-0 h-0.5 bg-gradient-to-r from-brand-500 via-brand-300 to-transparent rounded-t-md" />
@@ -553,7 +553,7 @@ function clearFilter(field: string) {
                   :id="`filter-${filter.field}`"
                   type="button"
                   class="flex items-center justify-between w-full h-9 px-3
-                         text-[13px] text-start bg-white border rounded-md
+                         text-[13px] text-start bg-card border rounded-md
                          text-ink-900 transition-colors duration-100
                          hover:border-ink-700
                          focus:outline-none focus:ring-2 focus:ring-brand-500/15 focus:border-brand-500"
@@ -601,7 +601,7 @@ function clearFilter(field: string) {
       </div>
 
       <!-- Table card -->
-      <div class="relative bg-white border border-paper-200 rounded-md overflow-hidden shadow-[0_1px_0_rgba(0,0,0,0.02)]">
+      <div class="relative bg-card border border-paper-200 rounded-md overflow-hidden shadow-[0_1px_0_rgba(0,0,0,0.02)]">
 
         <!-- Bulk-action strip -->
         <div
@@ -638,7 +638,7 @@ function clearFilter(field: string) {
                 v-model="globalSearch"
                 type="search"
                 :placeholder="__('Search…')"
-                class="w-full h-8 ps-9 pe-3 text-[13px] bg-white border border-paper-300 rounded-md
+                class="w-full h-8 ps-9 pe-3 text-[13px] bg-card border border-paper-300 rounded-md
                        placeholder:text-ink-400 focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/15 transition-colors"
             />
           </div>
@@ -859,7 +859,7 @@ function clearFilter(field: string) {
             <button
                 type="button"
                 :disabled="tableData.current_page <= 1"
-                class="flex items-center justify-center w-8 h-8 rounded-md border border-paper-300 bg-white text-ink-500 hover:bg-brand-50 hover:text-brand-700 hover:border-brand-200 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:text-ink-500 disabled:hover:border-paper-300 transition-colors rtl:rotate-180"
+                class="flex items-center justify-center w-8 h-8 rounded-md border border-paper-300 bg-card text-ink-500 hover:bg-brand-50 hover:text-brand-700 hover:border-brand-200 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-card disabled:hover:text-ink-500 disabled:hover:border-paper-300 transition-colors rtl:rotate-180"
                 @click="goToPage(tableData.current_page - 1)"
             >
               <ChevronLeft class="w-3.5 h-3.5" />
@@ -872,7 +872,7 @@ function clearFilter(field: string) {
                   class="flex items-center justify-center w-8 h-8 rounded-md text-[12px] font-semibold border tabular-nums transition-all"
                   :class="tableData.current_page === p
                             ? 'bg-gradient-to-b from-brand-500 to-brand-600 text-white border-brand-600 shadow-[0_1px_2px_rgba(0,120,212,0.4)]'
-                            : 'bg-white border-paper-300 text-ink-600 hover:bg-brand-50 hover:text-brand-700 hover:border-brand-200'"
+                            : 'bg-card border-paper-300 text-ink-600 hover:bg-brand-50 hover:text-brand-700 hover:border-brand-200'"
                   @click="goToPage(p as number)"
               >
                 {{ p }}
@@ -881,7 +881,7 @@ function clearFilter(field: string) {
             <button
                 type="button"
                 :disabled="tableData.current_page >= tableData.last_page"
-                class="flex items-center justify-center w-8 h-8 rounded-md border border-paper-300 bg-white text-ink-500 hover:bg-brand-50 hover:text-brand-700 hover:border-brand-200 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:text-ink-500 disabled:hover:border-paper-300 transition-colors rtl:rotate-180"
+                class="flex items-center justify-center w-8 h-8 rounded-md border border-paper-300 bg-card text-ink-500 hover:bg-brand-50 hover:text-brand-700 hover:border-brand-200 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-card disabled:hover:text-ink-500 disabled:hover:border-paper-300 transition-colors rtl:rotate-180"
                 @click="goToPage(tableData.current_page + 1)"
             >
               <ChevronRight class="w-3.5 h-3.5" />

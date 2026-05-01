@@ -155,7 +155,7 @@ watch(() => props.filters, (next) => {
     <div class="flex flex-col h-full overflow-hidden bg-paper-50">
 
         <!-- Page title -->
-        <header class="shrink-0 bg-white border-b border-paper-200">
+        <header class="shrink-0 bg-card border-b border-paper-200">
             <div class="flex items-start justify-between gap-6 px-6 pt-5 pb-4">
                 <div class="flex flex-col min-w-0">
                     <AppBreadcrumbs class="mb-3" />
@@ -170,7 +170,7 @@ watch(() => props.filters, (next) => {
                 <button
                     type="button"
                     class="flex items-center gap-1.5 h-9 px-3 text-sm font-medium border border-paper-300 rounded-md
-                           bg-white text-ink-700 hover:bg-paper-50 hover:border-paper-400 shadow-xs transition-colors"
+                           bg-card text-ink-700 hover:bg-paper-50 hover:border-paper-400 shadow-xs transition-colors"
                     @click="showFilters = !showFilters"
                 >
                     <SlidersHorizontal class="w-3.5 h-3.5" />
@@ -192,7 +192,7 @@ watch(() => props.filters, (next) => {
             <!-- Filter bar -->
             <div
                 v-if="showFilters"
-                class="flex flex-wrap items-end gap-3 p-4 bg-white border border-paper-200 rounded-lg mb-4 shadow-xs"
+                class="flex flex-wrap items-end gap-3 p-4 bg-card border border-paper-200 rounded-lg mb-4 shadow-xs"
             >
                 <div class="flex flex-col gap-1.5 min-w-[12rem]">
                     <label class="text-[11px] font-semibold uppercase tracking-[0.1em] text-ink-500">{{ __('Event') }}</label>
@@ -201,7 +201,7 @@ watch(() => props.filters, (next) => {
                         type="text"
                         list="audit-event-options"
                         :placeholder="__('e.g. document.posted')"
-                        class="h-9 px-3 text-sm border border-paper-300 rounded-md bg-white
+                        class="h-9 px-3 text-sm border border-paper-300 rounded-md bg-card
                                placeholder:text-ink-400 focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/15 transition-colors"
                         @input="onFilterChange"
                     />
@@ -214,7 +214,7 @@ watch(() => props.filters, (next) => {
                     <label class="text-[11px] font-semibold uppercase tracking-[0.1em] text-ink-500">{{ __('Subject type') }}</label>
                     <select
                         v-model="filterValues.subject_type"
-                        class="h-9 px-2.5 text-sm border border-paper-300 rounded-md bg-white
+                        class="h-9 px-2.5 text-sm border border-paper-300 rounded-md bg-card
                                focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/15 transition-colors"
                         @change="onFilterChange"
                     >
@@ -228,7 +228,7 @@ watch(() => props.filters, (next) => {
                     <input
                         v-model="filterValues.subject_id"
                         type="number"
-                        class="h-9 px-3 text-sm border border-paper-300 rounded-md bg-white tabular-nums
+                        class="h-9 px-3 text-sm border border-paper-300 rounded-md bg-card tabular-nums
                                focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/15 transition-colors"
                         @input="onFilterChange"
                     />
@@ -239,7 +239,7 @@ watch(() => props.filters, (next) => {
                     <input
                         v-model="filterValues.causer_id"
                         type="number"
-                        class="h-9 px-3 text-sm border border-paper-300 rounded-md bg-white tabular-nums
+                        class="h-9 px-3 text-sm border border-paper-300 rounded-md bg-card tabular-nums
                                focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/15 transition-colors"
                         @input="onFilterChange"
                     />
@@ -250,7 +250,7 @@ watch(() => props.filters, (next) => {
                     <input
                         v-model="filterValues.from"
                         type="date"
-                        class="h-9 px-3 text-sm border border-paper-300 rounded-md bg-white
+                        class="h-9 px-3 text-sm border border-paper-300 rounded-md bg-card
                                focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/15 transition-colors"
                         @change="onFilterChange"
                     />
@@ -261,7 +261,7 @@ watch(() => props.filters, (next) => {
                     <input
                         v-model="filterValues.to"
                         type="date"
-                        class="h-9 px-3 text-sm border border-paper-300 rounded-md bg-white
+                        class="h-9 px-3 text-sm border border-paper-300 rounded-md bg-card
                                focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/15 transition-colors"
                         @change="onFilterChange"
                     />
@@ -289,7 +289,7 @@ watch(() => props.filters, (next) => {
             </div>
 
             <!-- Table card -->
-            <div class="border border-paper-200 rounded-lg overflow-hidden bg-white shadow-xs">
+            <div class="border border-paper-200 rounded-lg overflow-hidden bg-card shadow-xs">
                 <div class="flex items-center gap-2 px-4 py-2.5 bg-paper-50 border-b border-paper-200">
                     <span class="text-xs text-ink-500 tabular-nums font-medium">
                         {{ __(':n events', { n: total }) }}

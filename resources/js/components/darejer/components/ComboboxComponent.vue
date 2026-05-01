@@ -273,7 +273,7 @@ async function onCreateDialogSaved(payload: { url: string | null; flash: unknown
                             type="button"
                             :disabled="(component.disabled as boolean)"
                             class="flex items-center justify-between w-full h-8 px-2.5
-                                   text-sm text-start bg-white border rounded-sm
+                                   text-sm text-start bg-input border rounded-sm
                                    text-ink-900 transition-colors duration-100
                                    focus:outline-none focus:ring-0
                                    disabled:opacity-50 disabled:cursor-not-allowed"
@@ -382,8 +382,8 @@ async function onCreateDialogSaved(payload: { url: string | null; flash: unknown
                             v-if="component.addable"
                             type="button"
                             class="flex items-center gap-2 text-sm h-8 px-2.5 w-full text-start
-                                   cursor-pointer text-brand-600 font-medium border-t border-slate-200
-                                   bg-white hover:bg-paper-50 shrink-0 focus:outline-none"
+                                   cursor-pointer text-brand-600 font-medium border-t border-(--border)
+                                   bg-popover hover:bg-accent shrink-0 focus:outline-none"
                             @click="openAddDialog"
                         >
                             <Plus class="w-3.5 h-3.5" />

@@ -233,7 +233,7 @@ function sectionIndex(section: ScreenSection): number {
         <div class="flex flex-col h-full overflow-hidden bg-paper-100">
 
             <!-- Action Pane -->
-            <div class="flex items-center gap-1.5 h-(--action-pane-height) px-6 border-b border-paper-200 bg-white shrink-0 overflow-x-auto">
+            <div class="flex items-center gap-1.5 h-(--action-pane-height) px-6 border-b border-paper-200 bg-card shrink-0 overflow-x-auto">
                 <DarejerActions
                     :actions="actions"
                     placement="header"
@@ -266,7 +266,7 @@ function sectionIndex(section: ScreenSection): number {
             <div :class="['flex-1 overflow-y-auto', fullWidth ? 'flex flex-col' : '']">
 
                 <!-- Page title — hero with subtle gradient -->
-                <header class="shrink-0 relative bg-white border-b border-paper-200 overflow-hidden">
+                <header class="shrink-0 relative bg-card border-b border-paper-200 overflow-hidden">
                     <div
                         class="absolute inset-0 opacity-[0.35] pointer-events-none"
                         style="
@@ -310,7 +310,7 @@ function sectionIndex(section: ScreenSection): number {
                     <div v-else class="space-y-4">
                         <template v-if="hasTabs">
                             <Tabs :default-value="defaultTabValue" :persist-key="tabsPersistKey" class="w-full">
-                                <TabsList class="h-auto w-full justify-start gap-0 rounded-md bg-white p-1 mb-4 overflow-x-auto border border-paper-200 shadow-[0_1px_0_rgba(0,0,0,0.02)]">
+                                <TabsList class="h-auto w-full justify-start gap-0 rounded-md bg-card p-1 mb-4 overflow-x-auto border border-paper-200 shadow-[0_1px_0_rgba(0,0,0,0.02)]">
                                     <TabsTrigger
                                         v-for="tab in visibleTabs"
                                         :key="tab.title"
@@ -327,7 +327,7 @@ function sectionIndex(section: ScreenSection): number {
                                     :value="tab.title"
                                     class="mt-0"
                                 >
-                                    <section class="relative bg-white border border-paper-200 rounded-md overflow-hidden p-5 shadow-[0_1px_0_rgba(0,0,0,0.02)]">
+                                    <section class="relative bg-card border border-paper-200 rounded-md overflow-hidden p-5 shadow-[0_1px_0_rgba(0,0,0,0.02)]">
                                         <span class="absolute inset-x-0 top-0 h-0.5 bg-gradient-to-r from-brand-500 via-brand-400 to-transparent" />
                                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-5 gap-y-5 w-full">
                                             <DarejerComponent
@@ -352,7 +352,7 @@ function sectionIndex(section: ScreenSection): number {
                                 v-for="section in (sections ?? [])"
                                 v-show="isSectionVisible(section)"
                                 :key="section.title"
-                                class="group/section relative bg-white border border-paper-200 rounded-md overflow-hidden
+                                class="group/section relative bg-card border border-paper-200 rounded-md overflow-hidden
                                        shadow-[0_1px_0_rgba(0,0,0,0.02)] transition-all duration-150"
                                 :class="!collapsed[section.title]
                                           ? 'ring-1 ring-brand-100/50 border-paper-300'
@@ -369,7 +369,7 @@ function sectionIndex(section: ScreenSection): number {
                                     :class="[
                                         !collapsed[section.title]
                                             ? 'border-b border-paper-200 bg-gradient-to-b from-paper-75 to-white'
-                                            : 'bg-white',
+                                            : 'bg-card',
                                         section.alwaysExpanded ? '' : 'cursor-pointer hover:bg-paper-75',
                                     ]"
                                     :role="section.alwaysExpanded ? undefined : 'button'"
@@ -409,7 +409,7 @@ function sectionIndex(section: ScreenSection): number {
 
                         <!-- Fallback: single FastTab -->
                         <template v-if="!hasTabs && !hasSections">
-                            <section class="relative bg-white border border-paper-200 rounded-md overflow-hidden shadow-[0_1px_0_rgba(0,0,0,0.02)]">
+                            <section class="relative bg-card border border-paper-200 rounded-md overflow-hidden shadow-[0_1px_0_rgba(0,0,0,0.02)]">
                                 <span
                                     v-if="!collapsed['General']"
                                     class="absolute inset-y-0 start-0 w-0.5 bg-gradient-to-b from-brand-500 via-brand-400 to-brand-500/30"
@@ -468,7 +468,7 @@ function sectionIndex(section: ScreenSection): number {
                     <DialogTitle class="text-[15px] font-semibold text-ink-900 tracking-tight">{{ title }}</DialogTitle>
                 </DialogHeader>
 
-                <div class="flex-1 min-h-0 overflow-y-auto px-5 py-5 bg-white">
+                <div class="flex-1 min-h-0 overflow-y-auto px-5 py-5 bg-card">
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-5 gap-y-4 w-full">
                         <DarejerComponent
                             v-for="component in components"

@@ -353,7 +353,7 @@ function badgeClass(color?: string): string {
         >
             <div
                 v-if="effectiveCollapsed && flyoutOpen && activeGroup"
-                class="absolute start-full top-0 h-full z-10 w-(--flyout-width) bg-white border-s border-paper-200 shadow-[var(--shadow-blade)] flex flex-col"
+                class="absolute start-full top-0 h-full z-10 w-(--flyout-width) bg-card border-s border-paper-200 shadow-[var(--shadow-blade)] flex flex-col"
             >
                 <!-- Flyout header -->
                 <div class="flex items-center justify-between h-(--topbar-height) px-4 border-b border-paper-200 shrink-0 bg-paper-75">

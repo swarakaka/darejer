@@ -181,7 +181,7 @@ const treeCol = computed(() => columns.value.find(c => c.isTree) ?? columns.valu
         class="col-span-full"
     >
         <template #default>
-            <div class="border border-paper-200 rounded-md overflow-hidden bg-white">
+            <div class="border border-paper-200 rounded-md overflow-hidden bg-card">
 
                 <!-- Loading -->
                 <div

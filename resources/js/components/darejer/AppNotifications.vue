@@ -143,7 +143,7 @@ function onClick(alert: AlertRecord): void {
                     <div
                         v-for="i in 4"
                         :key="i"
-                        class="h-16 rounded-md bg-white border border-paper-200 animate-pulse"
+                        class="h-16 rounded-md bg-card border border-paper-200 animate-pulse"
                     />
                 </div>
 
@@ -152,7 +152,7 @@ function onClick(alert: AlertRecord): void {
                     v-else-if="loaded && items.length === 0"
                     class="flex flex-col items-center justify-center py-16 px-6 text-center"
                 >
-                    <div class="w-14 h-14 rounded-full bg-white border border-paper-200 flex items-center justify-center mb-3 shadow-xs">
+                    <div class="w-14 h-14 rounded-full bg-card border border-paper-200 flex items-center justify-center mb-3 shadow-xs">
                         <BellOff class="w-5 h-5 text-ink-400" />
                     </div>
                     <p class="text-sm font-semibold text-ink-700">{{ __('You\'re all caught up') }}</p>
@@ -164,7 +164,7 @@ function onClick(alert: AlertRecord): void {
                     <li
                         v-for="alert in items"
                         :key="alert.id"
-                        class="group relative px-5 py-3 transition-colors hover:bg-paper-100/70 cursor-pointer bg-white"
+                        class="group relative px-5 py-3 transition-colors hover:bg-paper-100/70 cursor-pointer bg-card"
                         :class="alert.read_at ? '' : 'bg-brand-50/60 hover:bg-brand-50'"
                         @click="onClick(alert)"
                     >

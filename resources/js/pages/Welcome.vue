@@ -37,7 +37,7 @@ const checks = [
             </div>
 
             <!-- Eyebrow -->
-            <div class="inline-flex items-center gap-1.5 mb-5 px-2.5 py-1 rounded-full bg-white border border-paper-200 shadow-xs">
+            <div class="inline-flex items-center gap-1.5 mb-5 px-2.5 py-1 rounded-full bg-card border border-paper-200 shadow-xs">
                 <Sparkles class="w-3 h-3 text-brand-600" />
                 <span class="text-2xs font-semibold uppercase tracking-[0.16em] text-ink-600">{{ __('Playground') }}</span>
             </div>
@@ -65,7 +65,7 @@ const checks = [
                     <div
                         v-for="check in checks"
                         :key="check.label"
-                        class="flex items-center justify-between gap-2 px-3 py-2.5 rounded-md bg-white border border-paper-200 shadow-xs"
+                        class="flex items-center justify-between gap-2 px-3 py-2.5 rounded-md bg-card border border-paper-200 shadow-xs"
                     >
                         <span class="text-sm font-medium text-ink-800 truncate">{{ check.label }}</span>
                         <CheckCircle class="w-4 h-4 text-success-600 shrink-0" />
@@ -74,7 +74,7 @@ const checks = [
             </section>
 
             <!-- Shared props -->
-            <section class="mt-8 rounded-lg border border-paper-200 bg-white shadow-xs p-5">
+            <section class="mt-8 rounded-lg border border-paper-200 bg-card shadow-xs p-5">
                 <h3 class="text-[10px] font-semibold uppercase tracking-[0.18em] text-ink-500 mb-3">
                     {{ __('Inertia shared props') }}
                 </h3>

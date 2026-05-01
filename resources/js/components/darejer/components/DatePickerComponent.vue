@@ -119,7 +119,7 @@ function clear() {
                         type="button"
                         :disabled="(component.disabled as boolean)"
                         class="flex items-center justify-between w-full h-8 px-2.5
-                               text-sm text-start bg-white border rounded-sm
+                               text-sm text-start bg-card border rounded-sm
                                text-ink-900 transition-colors duration-100
                                focus:outline-none focus:ring-0
                                disabled:opacity-50 disabled:cursor-not-allowed"

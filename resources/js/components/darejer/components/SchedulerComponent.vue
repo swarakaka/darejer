@@ -156,7 +156,7 @@ const calendarOptions = computed((): CalendarOptions => ({
             <!-- Calendar -->
             <div
                 v-else
-                class="border border-paper-200 rounded-md overflow-hidden bg-white"
+                class="border border-paper-200 rounded-md overflow-hidden bg-card"
             >
                 <FullCalendar :options="calendarOptions" />
             </div>

@@ -57,7 +57,7 @@ function itemClass(item: NavItemDef): string {
             'transition-colors duration-100 whitespace-nowrap no-underline',
             stretch.value ? 'flex-1 justify-center' : '',
             isActive
-                ? 'bg-white text-ink-800 border border-paper-300'
+                ? 'bg-card text-ink-800 border border-paper-300'
                 : 'text-ink-500 hover:text-ink-800 hover:bg-paper-100 border border-transparent',
         ].join(' ')
     }

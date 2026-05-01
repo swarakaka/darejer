@@ -97,7 +97,7 @@ function localeError(locale: string): string | null {
                             :key="locale"
                             :value="locale"
                             class="flex items-center gap-1.5 h-6 px-2 rounded text-xs font-medium
-                                   data-[state=active]:bg-white data-[state=active]:text-brand-600
+                                   data-[state=active]:bg-card data-[state=active]:text-brand-600
                                    data-[state=active]:border data-[state=active]:border-slate-200
                                    text-slate-500 hover:text-slate-700 transition-colors duration-100"
                         >

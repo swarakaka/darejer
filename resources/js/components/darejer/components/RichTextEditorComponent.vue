@@ -264,7 +264,7 @@ const isOverLimit = computed(() => maxChars.value ? charCount.value > maxChars.v
                 class="fixed inset-0 z-50 flex items-center justify-center bg-black/20"
                 @click.self="linkDialogOpen = false"
             >
-                <div class="bg-white border border-paper-200 rounded-md p-4 w-80 flex flex-col gap-3">
+                <div class="bg-card border border-paper-200 rounded-md p-4 w-80 flex flex-col gap-3">
                     <p class="text-sm font-semibold text-ink-800">{{ __('Insert link') }}</p>
                     <input
                         v-model="linkUrl"

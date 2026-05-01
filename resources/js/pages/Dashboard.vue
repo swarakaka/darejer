@@ -71,7 +71,7 @@ const chartIcon = (type: 'line' | 'bar' | 'doughnut') => {
     <div class="flex flex-col h-full overflow-hidden bg-paper-100">
 
         <!-- Page header — refined hero with subtle gradient and accent rail -->
-        <header class="shrink-0 relative bg-white border-b border-paper-200 overflow-hidden">
+        <header class="shrink-0 relative bg-card border-b border-paper-200 overflow-hidden">
             <!-- Decorative dotted background -->
             <div
                 class="absolute inset-0 opacity-[0.35] pointer-events-none"
@@ -127,7 +127,7 @@ const chartIcon = (type: 'line' | 'bar' | 'doughnut') => {
                 <article
                     v-for="(c, i) in charts"
                     :key="`chart-${i}`"
-                    class="group relative bg-white border border-paper-200 rounded-md
+                    class="group relative bg-card border border-paper-200 rounded-md
                            shadow-[0_1px_0_rgba(0,0,0,0.02)] overflow-hidden
                            hover:border-paper-300 hover:shadow-[0_4px_14px_-4px_rgba(0,0,0,0.08)] transition-all duration-150"
                     :class="(c.span ?? 1) === 2 ? 'lg:col-span-2' : ''"
@@ -189,7 +189,7 @@ const chartIcon = (type: 'line' | 'bar' | 'doughnut') => {
                 <article
                     v-for="(panel, pi) in lists"
                     :key="`list-${pi}`"
-                    class="group relative bg-white border border-paper-200 rounded-md overflow-hidden
+                    class="group relative bg-card border border-paper-200 rounded-md overflow-hidden
                            shadow-[0_1px_0_rgba(0,0,0,0.02)]
                            hover:border-paper-300 hover:shadow-[0_4px_14px_-4px_rgba(0,0,0,0.08)] transition-all duration-150"
                 >
@@ -275,7 +275,7 @@ const chartIcon = (type: 'line' | 'bar' | 'doughnut') => {
             <!-- Empty state — no data of any kind -->
             <div
                 v-if="!kpis?.length && !charts?.length && !lists?.length"
-                class="relative flex flex-col items-center justify-center text-center py-20 px-6 rounded-md bg-white border border-dashed border-paper-300 overflow-hidden"
+                class="relative flex flex-col items-center justify-center text-center py-20 px-6 rounded-md bg-card border border-dashed border-paper-300 overflow-hidden"
             >
                 <!-- Pattern background -->
                 <div

@@ -116,7 +116,7 @@ function download() {
                 :class="hasError ? 'border-danger-600' : 'border-paper-300'"
             >
                 <!-- Canvas -->
-                <div class="relative bg-white" :style="{ height: height + 'px' }">
+                <div class="relative bg-card" :style="{ height: height + 'px' }">
 
                     <canvas
                         ref="canvasEl"

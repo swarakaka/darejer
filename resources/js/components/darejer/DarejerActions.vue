@@ -79,9 +79,9 @@ function buttonClasses(action: DarejerAction): string {
         return `${base} bg-brand-600 hover:bg-brand-700 text-white border-transparent shadow-sm`
     }
     if (action.variant === 'destructive') {
-        return `${base} bg-white hover:bg-danger-50 hover:border-danger-300 text-danger-700 border-danger-200`
+        return `${base} bg-card hover:bg-danger-50 hover:border-danger-300 text-danger-700 border-danger-200`
     }
-    return `${base} bg-white hover:bg-paper-50 hover:border-paper-400 text-ink-700 border-paper-300`
+    return `${base} bg-card hover:bg-paper-100 hover:border-paper-400 text-ink-700 border-paper-300`
 }
 
 function resolveVariant(action: DarejerAction): ButtonVariant {
@@ -276,7 +276,7 @@ const placementClass = computed(() => {
                     <button
                         type="button"
                         class="inline-flex items-center h-8 px-3 text-sm text-ink-700
-                               bg-white border border-paper-300 hover:bg-paper-100 rounded-sm transition-colors"
+                               bg-card border border-paper-300 hover:bg-paper-100 rounded-sm transition-colors"
                         @click="confirmOpen = false"
                     >
                         {{ __('Cancel') }}

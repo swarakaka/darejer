@@ -189,7 +189,7 @@ const dropLabel = computed(() => {
                     v-for="entry in files"
                     :key="entry.id"
                     class="flex items-center gap-2 p-2 border rounded-md"
-                    :class="entry.error ? 'border-danger-200 bg-danger-50' : 'border-slate-200 bg-white'"
+                    :class="entry.error ? 'border-danger-200 bg-danger-50' : 'border-slate-200 bg-card'"
                 >
                     <!-- Preview or icon -->
                     <div class="shrink-0">

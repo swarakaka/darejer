@@ -115,7 +115,7 @@ const displayLabel = computed(() => {
                     v-model="editValue"
                     :type="cellType === 'number' ? 'number' : cellType === 'date' ? 'date' : 'text'"
                     :placeholder="(component.placeholder as string) ?? ''"
-                    class="flex-1 h-8 px-2.5 text-sm border border-brand-500 rounded-sm bg-white
+                    class="flex-1 h-8 px-2.5 text-sm border border-brand-500 rounded-sm bg-card
                            focus:outline-none focus:ring-1 focus:ring-brand-500/20"
                     @keydown="onKeydown"
                     @blur="save"
@@ -125,7 +125,7 @@ const displayLabel = computed(() => {
                     v-else
                     ref="inputEl"
                     v-model="editValue"
-                    class="flex-1 h-8 px-2 text-sm border border-brand-500 rounded-sm bg-white focus:outline-none"
+                    class="flex-1 h-8 px-2 text-sm border border-brand-500 rounded-sm bg-card focus:outline-none"
                     @change="save"
                     @keydown.escape="cancel"
                 >

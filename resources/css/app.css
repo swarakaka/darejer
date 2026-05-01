@@ -215,32 +215,58 @@
 }
 
 .dark {
-    --background:           var(--color-ink-900);
-    --foreground:           var(--color-paper-50);
-    --card:                 var(--color-ink-800);
-    --card-foreground:      var(--color-paper-50);
-    --card-border:          var(--color-ink-700);
-    --popover:              var(--color-ink-800);
-    --popover-foreground:   var(--color-paper-50);
+    /*
+     * Invert the paper/ink scales so every utility built on these tokens
+     * (bg-paper-50, text-ink-900, border-paper-200, etc.) flips automatically.
+     * paper-* = surface scale (page → elevated). ink-* = content scale
+     * (subtle → bold text). In dark mode both directions reverse.
+     */
+    --color-paper-50:  #1b1a19;
+    --color-paper-75:  #201f1e;
+    --color-paper-100: #252423;
+    --color-paper-150: #2d2c2b;
+    --color-paper-200: #323130;
+    --color-paper-300: #3b3a39;
+    --color-paper-400: #605e5c;
+
+    --color-ink-50:  #2d2c2b;
+    --color-ink-100: #323130;
+    --color-ink-200: #3b3a39;
+    --color-ink-300: #605e5c;
+    --color-ink-400: #8a8886;
+    --color-ink-500: #a19f9d;
+    --color-ink-600: #c8c6c4;
+    --color-ink-700: #d2d0ce;
+    --color-ink-800: #e1dfdd;
+    --color-ink-900: #f3f2f1;
+    --color-ink-950: #faf9f8;
+
+    --background:           var(--color-paper-100);
+    --foreground:           var(--color-ink-900);
+    --card:                 var(--color-paper-75);
+    --card-foreground:      var(--color-ink-900);
+    --card-border:          var(--color-paper-200);
+    --popover:              var(--color-paper-75);
+    --popover-foreground:   var(--color-ink-900);
     --primary:              var(--color-brand-400);
     --primary-foreground:   #ffffff;
-    --secondary:            var(--color-ink-700);
-    --secondary-foreground: var(--color-paper-100);
-    --muted:                var(--color-ink-700);
-    --muted-foreground:     var(--color-ink-300);
-    --accent:               var(--color-ink-700);
-    --accent-foreground:    var(--color-paper-100);
+    --secondary:            var(--color-paper-150);
+    --secondary-foreground: var(--color-ink-800);
+    --muted:                var(--color-paper-150);
+    --muted-foreground:     var(--color-ink-500);
+    --accent:               var(--color-paper-200);
+    --accent-foreground:    var(--color-ink-900);
     --destructive:          var(--color-danger-500);
     --destructive-foreground:#ffffff;
-    --border:               var(--color-ink-700);
-    --input:                var(--color-ink-800);
-    --input-border:         var(--color-ink-600);
+    --border:               var(--color-paper-200);
+    --input:                var(--color-paper-75);
+    --input-border:         var(--color-paper-300);
 
     --sidebar-bg:             var(--color-brand-950);
-    --sidebar-border:         var(--color-ink-700);
+    --sidebar-border:         var(--color-paper-200);
     --sidebar-item-bg-active: color-mix(in srgb, var(--color-brand-500) 18%, transparent);
-    --sidebar-foreground:     var(--color-paper-50);
-    --sidebar-foreground-muted: var(--color-paper-300);
+    --sidebar-foreground:     #ffffff;
+    --sidebar-foreground-muted: var(--color-ink-500);
 
     --topbar-bg:              #0078d4;
     --topbar-border:          #006cbe;
@@ -413,7 +439,7 @@ html[dir="rtl"] body {
 .vue-flow__node-default,
 .vue-flow__node-input,
 .vue-flow__node-output {
-    @apply rounded-md! border! border-paper-300! bg-white! py-2! px-3.5! text-sm! text-ink-800! shadow-(--shadow-blade)!;
+    @apply rounded-md! border! border-paper-300! bg-paper-50! py-2! px-3.5! text-sm! text-ink-800! shadow-(--shadow-blade)!;
 }
 
 .vue-flow__node-input {
@@ -448,7 +474,7 @@ html[dir="rtl"] body {
 }
 
 .vue-flow__controls-button {
-    @apply border-0! border-b! border-paper-200! bg-white! text-ink-500! w-7! h-7! p-0!;
+    @apply border-0! border-b! border-paper-200! bg-paper-50! text-ink-500! w-7! h-7! p-0!;
 }
 
 .vue-flow__controls-button:hover {
@@ -476,7 +502,7 @@ html[dir="rtl"] body {
 }
 
 .fc-button {
-    @apply bg-white! border! border-paper-300! text-ink-700! text-xs! font-semibold! py-1! px-2.5! rounded-sm! h-8! shadow-none! transition-colors! duration-100!;
+    @apply bg-paper-50! border! border-paper-300! text-ink-700! text-xs! font-semibold! py-1! px-2.5! rounded-sm! h-8! shadow-none! transition-colors! duration-100!;
 }
 
 .fc-button:hover {
