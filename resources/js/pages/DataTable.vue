@@ -11,6 +11,7 @@ import {
   SlidersHorizontal, X,
   Pencil, Eye, Trash2, MoreHorizontal,
   CheckCircle2,
+  CalendarIcon,
 } from 'lucide-vue-next'
 import {
   DropdownMenu,
@@ -33,6 +34,27 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover'
+import { Calendar } from '@/components/ui/calendar'
+import {
+  CalendarDate,
+  DateFormatter,
+  getLocalTimeZone,
+  parseDate,
+} from '@internationalized/date'
 import type { DarejerAction } from '@/types/darejer'
 import useTranslation from '@/composables/useTranslation'
 
@@ -182,6 +204,50 @@ function onFilterChange() {
 function resetFilters() {
   filterValues.value = Object.fromEntries(props.filters.map(f => [f.field, '']))
   navigate({ page: 1 })
+}
+
+// Reka UI's <SelectItem> rejects an empty-string value, so the legacy
+// `<option value="">All</option>` pattern can't be ported verbatim. We
+// model "no filter applied" as this sentinel internally and translate
+// it back to '' before pushing values to the URL.
+const ALL_SENTINEL = '__all__'
+
+function selectModelValue(field: string): string {
+  const v = filterValues.value[field]
+  return v === '' || v == null ? ALL_SENTINEL : v
+}
+
+function onSelectChange(field: string, val: unknown) {
+  filterValues.value[field] = val === ALL_SENTINEL || val == null ? '' : String(val)
+  onFilterChange()
+}
+
+function onTextInput(field: string, e: Event) {
+  filterValues.value[field] = (e.target as HTMLInputElement).value
+  onFilterChange()
+}
+
+const dateFormatter = new DateFormatter('en-US', { dateStyle: 'medium' })
+
+function parseToCalendarDate(s: string): CalendarDate | undefined {
+  if (!s) return undefined
+  const trimmed = s.slice(0, 10)
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(trimmed)) return undefined
+  try { return parseDate(trimmed) } catch { return undefined }
+}
+
+function formatDate(s: string): string | null {
+  const d = parseToCalendarDate(s)
+  return d ? dateFormatter.format(d.toDate(getLocalTimeZone())) : null
+}
+
+const datePopoverOpen = ref<Record<string, boolean>>({})
+
+function onDateSelect(field: string, date: unknown) {
+  const d = Array.isArray(date) ? date[0] : (date as CalendarDate | undefined)
+  filterValues.value[field] = d ? d.toString() : ''
+  if (d) datePopoverOpen.value[field] = false
+  onFilterChange()
 }
 
 const pages = computed(() => {
@@ -423,39 +489,100 @@ function clearFilter(field: string) {
             :key="filter.field"
             class="flex flex-col gap-1.5 min-w-[10rem]"
         >
-          <label class="text-[10.5px] font-bold uppercase tracking-[0.12em] text-ink-500">{{ filter.label }}</label>
+          <Label
+              :for="`filter-${filter.field}`"
+              class="text-[10.5px] font-bold uppercase tracking-[0.12em] text-ink-500"
+          >
+            {{ filter.label }}
+          </Label>
 
-          <input
+          <Input
               v-if="filter.type === 'text'"
-              v-model="filterValues[filter.field]"
+              :id="`filter-${filter.field}`"
               type="text"
               :placeholder="filter.placeholder ?? ''"
-              class="h-9 px-3 text-[13px] border border-paper-300 rounded-md bg-white
-                     placeholder:text-ink-400 focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/15 transition-colors"
-              @input="onFilterChange"
+              :value="filterValues[filter.field]"
+              @input="(e: Event) => onTextInput(filter.field, e)"
           />
 
-          <select
+          <Select
               v-else-if="filter.type === 'select'"
-              v-model="filterValues[filter.field]"
-              class="h-9 px-2.5 text-[13px] border border-paper-300 rounded-md bg-white
-                     focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/15 transition-colors"
-              @change="onFilterChange"
+              :model-value="selectModelValue(filter.field)"
+              @update:model-value="(v: unknown) => onSelectChange(filter.field, v)"
           >
-            <option value="">{{ __('All') }}</option>
-            <option v-for="opt in filter.options" :key="opt.value" :value="opt.value">
-              {{ opt.label }}
-            </option>
-          </select>
+            <SelectTrigger :id="`filter-${filter.field}`">
+              <SelectValue :placeholder="__('All')" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem :value="ALL_SENTINEL">{{ __('All') }}</SelectItem>
+              <SelectItem
+                  v-for="opt in filter.options"
+                  :key="opt.value"
+                  :value="opt.value"
+              >
+                {{ opt.label }}
+              </SelectItem>
+            </SelectContent>
+          </Select>
 
-          <input
+          <Select
+              v-else-if="filter.type === 'boolean'"
+              :model-value="selectModelValue(filter.field)"
+              @update:model-value="(v: unknown) => onSelectChange(filter.field, v)"
+          >
+            <SelectTrigger :id="`filter-${filter.field}`">
+              <SelectValue :placeholder="__('All')" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem :value="ALL_SENTINEL">{{ __('All') }}</SelectItem>
+              <SelectItem value="1">{{ __('Yes') }}</SelectItem>
+              <SelectItem value="0">{{ __('No') }}</SelectItem>
+            </SelectContent>
+          </Select>
+
+          <Popover
               v-else-if="filter.type === 'date'"
-              v-model="filterValues[filter.field]"
-              type="date"
-              class="h-9 px-3 text-[13px] border border-paper-300 rounded-md bg-white
-                     focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/15 transition-colors"
-              @change="onFilterChange"
-          />
+              :open="datePopoverOpen[filter.field] ?? false"
+              @update:open="datePopoverOpen[filter.field] = $event"
+          >
+            <PopoverTrigger as-child>
+              <button
+                  :id="`filter-${filter.field}`"
+                  type="button"
+                  class="flex items-center justify-between w-full h-9 px-3
+                         text-[13px] text-start bg-white border rounded-md
+                         text-ink-900 transition-colors duration-100
+                         hover:border-ink-700
+                         focus:outline-none focus:ring-2 focus:ring-brand-500/15 focus:border-brand-500"
+                  :class="[
+                    datePopoverOpen[filter.field] ? 'border-brand-500' : 'border-paper-300',
+                  ]"
+              >
+                <span :class="filterValues[filter.field] ? 'text-ink-900' : 'text-ink-400'">
+                  {{ formatDate(filterValues[filter.field]) ?? (filter.placeholder ?? __('Pick a date…')) }}
+                </span>
+                <div class="flex items-center gap-1">
+                  <button
+                      v-if="filterValues[filter.field]"
+                      type="button"
+                      class="text-ink-300 hover:text-ink-500 transition-colors"
+                      @click.stop="clearFilter(filter.field)"
+                  >
+                    <X class="w-3 h-3" />
+                  </button>
+                  <CalendarIcon class="w-3.5 h-3.5 text-ink-400" />
+                </div>
+              </button>
+            </PopoverTrigger>
+            <PopoverContent class="p-0 w-auto" align="start">
+              <Calendar
+                  :model-value="parseToCalendarDate(filterValues[filter.field]) as any"
+                  initial-focus
+                  class="border-none"
+                  @update:model-value="(d: unknown) => onDateSelect(filter.field, d)"
+              />
+            </PopoverContent>
+          </Popover>
         </div>
 
         <button
