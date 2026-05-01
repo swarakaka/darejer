@@ -117,7 +117,32 @@ async function fetchOptions(reset = false): Promise<void> {
     page.value    = result.current_page + 1
 }
 
-onMounted(() => fetchOptions(true))
+/**
+ * Fetch the currently-bound record by id when it isn't yet cached — keeps
+ * the trigger from showing the raw id when the selection lives outside
+ * the first paginated page (typical on edit screens).
+ */
+async function resolveSelectedRecord(): Promise<void> {
+    const key = selectedKey.value
+    if (key === '' || cache.value[key]) return
+
+    const result = await load({
+        ids:     [key],
+        page:    1,
+        perPage: 1,
+    })
+    if (!result) return
+
+    for (const r of result.data) {
+        const k = String(r[keyField.value] ?? '')
+        if (k !== '') cache.value[k] = r
+    }
+}
+
+onMounted(async () => {
+    await resolveSelectedRecord()
+    fetchOptions(true)
+})
 watch(search, () => fetchOptions(true))
 
 const selectedKey = computed(() =>

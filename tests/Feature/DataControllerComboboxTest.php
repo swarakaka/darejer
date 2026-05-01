@@ -127,6 +127,31 @@ it('searches across all label fields with OR semantics', function (): void {
         ->and($payload['data'][0]['label'])->toContain('CAT-SVC');
 });
 
+it('restricts the result set to the given ids[] filter', function (): void {
+    $a = DataControllerCategory::query()->create([
+        'code' => 'CAT-A', 'name' => ['en' => 'Alpha'],
+    ]);
+    DataControllerCategory::query()->create([
+        'code' => 'CAT-B', 'name' => ['en' => 'Beta'],
+    ]);
+    $c = DataControllerCategory::query()->create([
+        'code' => 'CAT-C', 'name' => ['en' => 'Gamma'],
+    ]);
+
+    $request = comboboxRequest([
+        'ids' => [(string) $a->id, (string) $c->id],
+    ]);
+
+    $payload = (new DataController)->index($request, 'itemcategory')->getData(true);
+
+    $labels = collect($payload['data'])->pluck('label')->all();
+
+    expect($payload['data'])->toHaveCount(2)
+        ->and($labels)->toContain('Alpha')
+        ->and($labels)->toContain('Gamma')
+        ->and($labels)->not->toContain('Beta');
+});
+
 it('honors search_fields override when broader than the displayed fields', function (): void {
     DataControllerCategory::query()->create([
         'code' => 'CAT-PROD',
