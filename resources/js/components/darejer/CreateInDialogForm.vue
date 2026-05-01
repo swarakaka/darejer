@@ -67,6 +67,7 @@ function updateField(name: string, value: unknown) {
 
 type InertiaPageJson = {
     url?:   string
+    flash?: unknown
     props?: Record<string, unknown>
 }
 
@@ -79,9 +80,12 @@ function submit() {
     http[method](url, {
         onSuccess: (response: InertiaPageJson) => {
             isDirty.value = false
+            // Inertia v3 emits flash data at the top-level page key, not
+            // under props. The host (e.g. ComboboxComponent) reads
+            // `payload.flash.created_id` to auto-select the new record.
             emit('created', {
                 url:   response?.url ?? null,
-                flash: (response?.props as { flash?: unknown } | undefined)?.flash ?? null,
+                flash: response?.flash ?? null,
             })
         },
     })

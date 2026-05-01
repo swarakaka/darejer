@@ -267,13 +267,13 @@
     /* Chrome — Azure portal dark mode: deep near-black topbar/sidebar with
        Azure-blue brand accents. The bright blue topbar would be jarring
        against a dark page, so it tones down to match. */
-    --sidebar-bg:             #11141a;
+    --sidebar-bg:             var(--color-paper-100);
     --sidebar-border:         #1f232b;
     --sidebar-item-bg-active: color-mix(in srgb, var(--color-brand-500) 28%, transparent);
     --sidebar-foreground:     #f3f2f1;
     --sidebar-foreground-muted: #a19f9d;
 
-    --topbar-bg:              #11141a;
+    --topbar-bg:              var(--color-paper-100);
     --topbar-border:          #1f232b;
     --topbar-foreground:      #f3f2f1;
 }

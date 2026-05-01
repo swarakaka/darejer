@@ -89,16 +89,17 @@ export function useDarejerForm(options: DarejerFormOptions) {
         const submitOptions = {
             preserveScroll: true,
             forceFormData:  hasFiles,
-            onSuccess: (page?: { url?: string; props?: Record<string, unknown> }) => {
+            onSuccess: (page?: { url?: string; flash?: unknown; props?: Record<string, unknown> }) => {
                 isDirty.value = false
                 if (options.dialog && typeof window !== 'undefined') {
                     // Broadcast so the parent screen (e.g. a Combobox that opened
                     // this dialog) can react — typically by refreshing its data
-                    // and auto-selecting the newly created record.
+                    // and auto-selecting the newly created record. Inertia v3
+                    // emits flash at the top-level page key, not under props.
                     window.dispatchEvent(new CustomEvent('darejer:dialog-saved', {
                         detail: {
                             url: page?.url ?? null,
-                            flash: (page?.props as { flash?: unknown } | undefined)?.flash ?? null,
+                            flash: page?.flash ?? null,
                         },
                     }))
                     window.history.back()

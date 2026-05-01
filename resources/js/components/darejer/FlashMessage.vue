@@ -3,10 +3,13 @@ import { computed, watch } from 'vue'
 import { usePage }         from '@inertiajs/vue3'
 import { toast }           from 'vue-sonner'
 import { Toaster }         from '@/components/ui/sonner'
-import type { DarejerSharedProps } from '@/types/darejer'
+import type { DarejerSharedProps, FlashProps } from '@/types/darejer'
 
-// Flash messages come from Laravel session via Inertia shared props.
-// shadcn-vue's Toast primitive is deprecated; we use Sonner (vue-sonner) instead.
+// Inertia v3 emits flash data at the top-level page key (`page.flash`) —
+// not under shared props. Controllers populate it via `Inertia::flash()`,
+// which the Inertia middleware pulls from session and serializes onto the
+// next page response, then auto-clears. shadcn-vue's Toast primitive is
+// deprecated, so we render via Sonner (vue-sonner).
 const page = usePage<DarejerSharedProps>()
 
 const direction = computed(() => page.props.darejer?.direction ?? 'ltr')
@@ -17,7 +20,7 @@ const toasterPosition = computed<'top-right' | 'top-left'>(() =>
 )
 
 watch(
-    () => page.props.flash,
+    () => (page as unknown as { flash?: FlashProps | null }).flash,
     (flash) => {
         if (!flash) return
         if (flash.success) toast.success(flash.success)

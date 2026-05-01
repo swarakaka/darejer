@@ -22,6 +22,7 @@ use Inertia\Response;
 use Spatie\Permission\Models\Permission as SpatiePermission;
 use Spatie\Permission\Models\Role as SpatieRole;
 use Spatie\Permission\PermissionRegistrar;
+use Inertia\Inertia;
 
 /**
  * Admin → Roles. CRUD over Spatie roles with attached-permission editing.
@@ -135,9 +136,10 @@ class RoleController extends DarejerController
 
         app(PermissionRegistrar::class)->forgetCachedPermissions();
 
+        Inertia::flash('success', __darejer('Role created.'));
+
         return redirect()
-            ->route('darejer.admin.roles.index')
-            ->with('flash', ['type' => 'success', 'message' => __darejer('Role created.')]);
+            ->route('darejer.admin.roles.index');
     }
 
     public function update(Request $request, int $role)
@@ -164,9 +166,10 @@ class RoleController extends DarejerController
 
         app(PermissionRegistrar::class)->forgetCachedPermissions();
 
+        Inertia::flash('success', __darejer('Role updated.'));
+
         return redirect()
-            ->route('darejer.admin.roles.index')
-            ->with('flash', ['type' => 'success', 'message' => __darejer('Role updated.')]);
+            ->route('darejer.admin.roles.index');
     }
 
     public function destroy(int $role)
@@ -182,9 +185,10 @@ class RoleController extends DarejerController
         $record->delete();
         app(PermissionRegistrar::class)->forgetCachedPermissions();
 
+        Inertia::flash('success', __darejer('Role deleted.'));
+
         return redirect()
-            ->route('darejer.admin.roles.index')
-            ->with('flash', ['type' => 'success', 'message' => __darejer('Role deleted.')]);
+            ->route('darejer.admin.roles.index');
     }
 
     public function form(): Form
