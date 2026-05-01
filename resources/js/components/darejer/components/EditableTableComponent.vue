@@ -27,6 +27,7 @@ interface TableCol {
     disabled?: boolean
     placeholder?: string
     options?: { value: string; label: string }[]
+    money?:   number
     // combobox-only:
     dataUrl?:      string
     keyField?:     string
@@ -175,8 +176,12 @@ const gridTemplate = computed(() => [
     isDeletable.value ? '2.5rem' : '',
 ].filter(Boolean).join(' '))
 
-function formatCellValue(value: unknown, _type: string): string {
-    if (value === null || value === undefined) return ''
+function formatCellValue(value: unknown, col: TableCol): string {
+    if (value === null || value === undefined || value === '') return ''
+    if (col.type === 'number' && typeof col.money === 'number') {
+        const n = Number(value)
+        if (Number.isFinite(n)) return n.toFixed(col.money)
+    }
     return String(value)
 }
 </script>
@@ -238,7 +243,7 @@ function formatCellValue(value: unknown, _type: string): string {
                             <input
                                 v-if="col.type === 'text' || col.type === 'number'"
                                 :type="col.type === 'number' ? 'number' : 'text'"
-                                :value="formatCellValue(row[col.field], col.type)"
+                                :value="formatCellValue(row[col.field], col)"
                                 :disabled="isDisabled || col.disabled"
                                 class="w-full h-full px-2.5 text-sm bg-transparent border-none
                                        outline-none focus:bg-brand-50 focus:ring-0

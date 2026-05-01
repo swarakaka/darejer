@@ -31,6 +31,8 @@ class Column
     /** @var array<int,array{value:string,label:string}>|null */
     protected ?array $options = null;
 
+    protected ?int $money = null;
+
     // ── combobox-only ────────────────────────────────────────────────────────
     protected ?string $dataUrl = null;
 
@@ -103,6 +105,18 @@ class Column
     public function number(): static
     {
         $this->type = 'number';
+
+        return $this;
+    }
+
+    /**
+     * Format a `number` column as money with a fixed number of decimal places.
+     * Display-only — the underlying model value keeps full precision. Use on
+     * amount columns whose DB type stores more decimals than you want shown.
+     */
+    public function money(int $decimals = 2): static
+    {
+        $this->money = $decimals;
 
         return $this;
     }
@@ -223,6 +237,7 @@ class Column
             'disabled' => $this->disabled ?: null,
             'placeholder' => $this->placeholder,
             'options' => $this->options,
+            'money' => $this->money,
         ];
 
         if ($this->type === 'combobox') {
