@@ -260,11 +260,17 @@ function formatCell(value: unknown, col: Object|unknown): unknown {
   return value
 }
 
+function badgeKey(value: unknown): string {
+  if (value === true)  return '1'
+  if (value === false) return '0'
+  return value == null ? '' : String(value)
+}
+
 function badgeClass(col: GridColumn, value: unknown): string {
   if (!col.badge) return ''
   let map: Record<string, string> = {}
   try { map = JSON.parse(col.badge) } catch { map = {} }
-  const variant = map[String(value)] ?? 'neutral'
+  const variant = map[badgeKey(value)] ?? 'neutral'
   const classes: Record<string, string> = {
     success: 'bg-success-50 text-success-700 ring-success-100',
     warning: 'bg-warning-50 text-warning-700 ring-warning-100',
@@ -276,11 +282,11 @@ function badgeClass(col: GridColumn, value: unknown): string {
 }
 
 function badgeLabel(col: GridColumn, value: unknown): string {
-  const raw = value == null ? '' : String(value)
-  if (!col.badgeLabels) return raw
+  const key = badgeKey(value)
+  if (!col.badgeLabels) return key
   let labels: Record<string, string> = {}
   try { labels = JSON.parse(col.badgeLabels) } catch { labels = {} }
-  return labels[raw] ?? raw
+  return labels[key] ?? key
 }
 
 const iconMap: Record<string, unknown> = { Pencil, Eye, Trash2, MoreHorizontal }
