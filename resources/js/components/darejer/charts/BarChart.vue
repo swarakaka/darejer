@@ -2,6 +2,7 @@
 import { computed } from 'vue'
 import { Bar }      from 'vue-chartjs'
 import { brand, baseOptions } from './chartSetup'
+import useTranslation from '@/composables/useTranslation'
 
 interface Series { label: string; data: number[]; color?: string }
 
@@ -15,10 +16,12 @@ interface Props {
 
 const props = withDefaults(defineProps<Props>(), { height: 280, horizontal: false, stacked: false })
 
+const { resolveTranslatable } = useTranslation()
+
 const data = computed(() => ({
-    labels: props.labels,
+    labels: props.labels.map(label => resolveTranslatable(label)),
     datasets: props.series.map((s, i) => ({
-        label: s.label,
+        label: resolveTranslatable(s.label),
         data:  s.data,
         backgroundColor: s.color ?? brand.palette[i % brand.palette.length],
         borderRadius: 4,

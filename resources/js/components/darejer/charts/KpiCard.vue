@@ -2,6 +2,7 @@
 import { computed } from 'vue'
 import { Link }     from '@inertiajs/vue3'
 import { ArrowUpRight, ArrowDownRight, Minus } from 'lucide-vue-next'
+import useTranslation from '@/composables/useTranslation'
 
 interface Props {
     label:    string
@@ -18,6 +19,11 @@ const props = withDefaults(defineProps<Props>(), {
     delta: null, trend: null, href: null, format: 'plain',
     currency: null, eyebrow: null,
 })
+
+const { resolveTranslatable } = useTranslation()
+
+const localizedLabel   = computed(() => resolveTranslatable(props.label))
+const localizedEyebrow = computed(() => (props.eyebrow ? resolveTranslatable(props.eyebrow) : null))
 
 const formatted = computed(() => {
     const v = props.value
@@ -95,13 +101,13 @@ const railColor = computed(() => {
             <div class="flex items-start justify-between gap-2 min-w-0">
                 <div class="flex flex-col gap-1 min-w-0">
                     <div
-                        v-if="eyebrow"
+                        v-if="localizedEyebrow"
                         class="text-[9px] font-bold uppercase tracking-[0.18em] text-brand-700 tabular-nums truncate"
                     >
-                        {{ eyebrow }}
+                        {{ localizedEyebrow }}
                     </div>
                     <div class="text-[10.5px] font-semibold uppercase tracking-[0.12em] text-ink-500 truncate">
-                        {{ label }}
+                        {{ localizedLabel }}
                     </div>
                 </div>
                 <div

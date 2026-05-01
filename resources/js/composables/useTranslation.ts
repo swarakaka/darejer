@@ -52,9 +52,47 @@ const useTranslation = () => {
     return __(resolved, replace);
   };
 
+  const resolveTranslatable = (value: unknown): string => {
+    if (value === null || value === undefined) {
+      return '';
+    }
+    if (typeof value !== 'string') {
+      return String(value);
+    }
+
+    const trimmed = value.trim();
+    if (trimmed.startsWith('{') && trimmed.endsWith('}')) {
+      try {
+        const parsed = JSON.parse(trimmed);
+        if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
+          const page = usePage<SharedProps>();
+          const currentLocale = page.props.darejer?.locale ?? 'en';
+          const defaultLang = page.props.darejer?.default_language ?? 'en';
+          const dict = parsed as Record<string, string>;
+
+          if (typeof dict[currentLocale] === 'string' && dict[currentLocale] !== '') {
+            return dict[currentLocale];
+          }
+          if (typeof dict[defaultLang] === 'string' && dict[defaultLang] !== '') {
+            return dict[defaultLang];
+          }
+          const firstFilled = Object.values(dict).find(v => typeof v === 'string' && v !== '');
+          if (typeof firstFilled === 'string') {
+            return firstFilled;
+          }
+        }
+      } catch {
+        // Not valid JSON — fall through and return the original string.
+      }
+    }
+
+    return value;
+  };
+
   return {
     __,
     __n,
+    resolveTranslatable,
   };
 };
 

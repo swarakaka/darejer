@@ -10,7 +10,7 @@ import useTranslation  from '@/composables/useTranslation'
 
 defineOptions({ layout: AppLayout })
 
-const { __ } = useTranslation()
+const { __, resolveTranslatable } = useTranslation()
 
 interface Kpi {
     label:    string
@@ -144,7 +144,7 @@ const chartIcon = (type: 'line' | 'bar' | 'doughnut') => {
                                 <component :is="chartIcon(c.type)" class="w-3.5 h-3.5" />
                             </span>
                             <h2 class="text-[13px] font-semibold text-ink-900 tracking-tight truncate">
-                                {{ c.title }}
+                                {{ resolveTranslatable(c.title) }}
                             </h2>
                         </div>
                         <span class="text-[10px] font-bold uppercase tracking-[0.12em] text-ink-400">
@@ -202,7 +202,7 @@ const chartIcon = (type: 'line' | 'bar' | 'doughnut') => {
                                 <Activity class="w-3.5 h-3.5" />
                             </span>
                             <h2 class="text-[13px] font-semibold text-ink-900 tracking-tight truncate">
-                                {{ panel.title }}
+                                {{ resolveTranslatable(panel.title) }}
                             </h2>
                             <span class="text-[10.5px] font-semibold tabular-nums text-ink-400 ms-1">
                                 {{ panel.rows.length }}
@@ -228,7 +228,7 @@ const chartIcon = (type: 'line' | 'bar' | 'doughnut') => {
                                         class="px-5 py-2 text-[10px] font-bold uppercase tracking-[0.12em] text-ink-500"
                                         :class="col.align === 'right' ? 'text-end' : 'text-start'"
                                     >
-                                        {{ col.label }}
+                                        {{ resolveTranslatable(col.label) }}
                                     </th>
                                 </tr>
                             </thead>
@@ -252,7 +252,7 @@ const chartIcon = (type: 'line' | 'bar' | 'doughnut') => {
                                             v-if="ci === 0"
                                             class="absolute inset-y-0 start-0 w-0.5 bg-brand-500 scale-y-0 group-hover/row:scale-y-100 transition-transform"
                                         />
-                                        {{ row[col.key] ?? '—' }}
+                                        {{ row[col.key] != null ? resolveTranslatable(row[col.key]) : '—' }}
                                     </td>
                                 </tr>
                             </tbody>
