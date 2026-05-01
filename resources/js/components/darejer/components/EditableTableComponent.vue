@@ -33,7 +33,7 @@ interface TableCol {
     labelField?:   string
     labelFields?:  string[]
     searchFields?: string[]
-    priceField?:   string
+    subLabelField?: string
     imageField?:   string
     optionFields?: string[]
     fillFrom?:     Record<string, string> | null
