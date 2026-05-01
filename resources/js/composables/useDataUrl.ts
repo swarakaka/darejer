@@ -6,7 +6,6 @@ export interface DataUrlOptions {
     keyField?:       string
     labelField?:     string
     labelFields?:    string[]
-    labelSeparator?: string
     searchFields?:   string[]
     combobox?:       boolean
     tree?:           boolean
@@ -57,17 +56,16 @@ export function useDataUrl<T = Record<string, unknown>>(
     function buildParams(options: DataUrlOptions): URLSearchParams {
         const params = new URLSearchParams()
 
-        if (options.perPage)        params.set('per_page',        String(options.perPage))
-        if (options.keyField)       params.set('key',             options.keyField)
-        if (options.labelField)     params.set('label',           options.labelField)
-        if (options.labelSeparator) params.set('label_separator', options.labelSeparator)
-        if (options.combobox)       params.set('combobox',        '1')
-        if (options.tree)           params.set('tree',            '1')
-        if (options.parentField)    params.set('parent_field',    options.parentField)
-        if (options.sort)           params.set('sort',            options.sort)
-        if (options.order)          params.set('order',           options.order)
-        if (options.search)         params.set('search',          options.search)
-        if (options.page)           params.set('page',            String(options.page))
+        if (options.perPage)        params.set('per_page',     String(options.perPage))
+        if (options.keyField)       params.set('key',          options.keyField)
+        if (options.labelField)     params.set('label',        options.labelField)
+        if (options.combobox)       params.set('combobox',     '1')
+        if (options.tree)           params.set('tree',         '1')
+        if (options.parentField)    params.set('parent_field', options.parentField)
+        if (options.sort)           params.set('sort',         options.sort)
+        if (options.order)          params.set('order',        options.order)
+        if (options.search)         params.set('search',       options.search)
+        if (options.page)           params.set('page',         String(options.page))
 
         for (const field of options.labelFields ?? []) {
             params.append('label_fields[]', field)

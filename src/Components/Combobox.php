@@ -15,8 +15,6 @@ class Combobox extends BaseComponent
     /** @var string|array<int, string> */
     protected string|array $labelField = 'name';
 
-    protected string $labelSeparator = ' — ';
-
     /** @var array<int, string>|null */
     protected ?array $searchFields = null;
 
@@ -245,17 +243,6 @@ class Combobox extends BaseComponent
     }
 
     /**
-     * Separator inserted between label fields when `model()` is given an
-     * array of label columns. Defaults to ` — `.
-     */
-    public function labelSeparator(string $separator): static
-    {
-        $this->labelSeparator = $separator;
-
-        return $this;
-    }
-
-    /**
      * On selection, fetch a JSON record from `$url?id=<chosen-id>` and merge
      * the response into the surrounding form's fields. Lets create screens
      * prefill related fields (e.g. line items from a Sales Order) in place,
@@ -296,7 +283,6 @@ class Combobox extends BaseComponent
             'keyField' => $this->keyField,
             'labelField' => $labelIsArray ? ($labelFields[0] ?? 'name') : $this->labelField,
             'labelFields' => $labelFields,
-            'labelSeparator' => $labelIsArray ? $this->labelSeparator : null,
             'searchFields' => $this->searchFields ?? $labelFields,
             'prefillUrl' => $this->prefillUrl,
         ];
