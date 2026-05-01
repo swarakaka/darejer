@@ -49,6 +49,7 @@ interface GridColumn {
   hidden?:     boolean
   align?:      'left' | 'center' | 'right'
   badge?:      string
+  badgeLabels?: string
 }
 
 interface FilterDef {
@@ -272,6 +273,14 @@ function badgeClass(col: GridColumn, value: unknown): string {
     neutral: 'bg-paper-100 text-ink-600 ring-paper-200',
   }
   return classes[variant] ?? classes.neutral
+}
+
+function badgeLabel(col: GridColumn, value: unknown): string {
+  const raw = value == null ? '' : String(value)
+  if (!col.badgeLabels) return raw
+  let labels: Record<string, string> = {}
+  try { labels = JSON.parse(col.badgeLabels) } catch { labels = {} }
+  return labels[raw] ?? raw
 }
 
 const iconMap: Record<string, unknown> = { Pencil, Eye, Trash2, MoreHorizontal }
@@ -633,7 +642,7 @@ function clearFilter(field: string) {
                              text-[10px] font-bold uppercase tracking-[0.04em] ring-1 ring-inset"
                       :class="badgeClass(col, row[col.field])"
                   >
-                    {{ formatCell(row[col.field], col) }}
+                    {{ badgeLabel(col, row[col.field]) }}
                   </span>
                   <span
                       v-else
