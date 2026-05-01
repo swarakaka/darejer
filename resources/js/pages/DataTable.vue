@@ -404,42 +404,45 @@ function clearFilter(field: string) {
             <h1 class="text-[28px] leading-[1.05] tracking-[-0.02em] text-ink-900 font-semibold">
               {{ title }}
             </h1>
-            <div class="mt-1.5 flex items-center gap-2">
-              <span
-                  class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-sm bg-paper-100 ring-1 ring-inset ring-paper-200
-                         text-[10.5px] font-bold uppercase tracking-[0.12em] text-ink-600 tabular-nums"
-              >
-                {{ tableData.total.toLocaleString() }}
-                <span class="text-ink-400 font-semibold">{{ __('records') }}</span>
-              </span>
-              <span v-if="hasSelection" class="inline-flex items-center gap-1 px-2 py-0.5 rounded-sm bg-brand-50 ring-1 ring-inset ring-brand-100 text-[10.5px] font-bold uppercase tracking-[0.12em] text-brand-700 tabular-nums">
-                <CheckCircle2 class="w-3 h-3" />
-                {{ selected.size }} {{ __('selected') }}
-              </span>
-            </div>
           </div>
         </div>
 
-        <button
-            v-if="filters.length"
-            type="button"
-            class="flex items-center gap-1.5 h-9 px-3 text-[12.5px] font-semibold border rounded-md
-                   shadow-[0_1px_0_rgba(0,0,0,0.02)] transition-all"
-            :class="showFilters
-                      ? 'bg-brand-50 border-brand-200 text-brand-800 hover:bg-brand-100'
-                      : 'bg-white border-paper-300 text-ink-700 hover:bg-paper-75 hover:border-paper-400'"
-            @click="showFilters = !showFilters"
-        >
-          <SlidersHorizontal class="w-3.5 h-3.5" />
-          {{ __('Filters') }}
-          <span
-              v-if="activeFilterCount > 0"
-              class="inline-flex items-center justify-center min-w-4 h-4 px-1 rounded-full
-                     bg-brand-600 text-white text-[9px] font-bold tabular-nums"
+        <div class="flex flex-col items-end gap-2 shrink-0">
+          <button
+              v-if="filters.length"
+              type="button"
+              class="flex items-center gap-1.5 h-9 px-3 text-[12.5px] font-semibold border rounded-md
+                     shadow-[0_1px_0_rgba(0,0,0,0.02)] transition-all"
+              :class="showFilters
+                        ? 'bg-brand-50 border-brand-200 text-brand-800 hover:bg-brand-100'
+                        : 'bg-white border-paper-300 text-ink-700 hover:bg-paper-75 hover:border-paper-400'"
+              @click="showFilters = !showFilters"
           >
-            {{ activeFilterCount }}
-          </span>
-        </button>
+            <SlidersHorizontal class="w-3.5 h-3.5" />
+            {{ __('Filters') }}
+            <span
+                v-if="activeFilterCount > 0"
+                class="inline-flex items-center justify-center min-w-4 h-4 px-1 rounded-full
+                       bg-brand-600 text-white text-[9px] font-bold tabular-nums"
+            >
+              {{ activeFilterCount }}
+            </span>
+          </button>
+
+          <div class="flex items-center gap-2">
+            <span
+                class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-sm bg-paper-100 ring-1 ring-inset ring-paper-200
+                       text-[10.5px] font-bold uppercase tracking-[0.12em] text-ink-600 tabular-nums"
+            >
+              {{ tableData.total.toLocaleString() }}
+              <span class="text-ink-400 font-semibold">{{ __('records') }}</span>
+            </span>
+            <span v-if="hasSelection" class="inline-flex items-center gap-1 px-2 py-0.5 rounded-sm bg-brand-50 ring-1 ring-inset ring-brand-100 text-[10.5px] font-bold uppercase tracking-[0.12em] text-brand-700 tabular-nums">
+              <CheckCircle2 class="w-3 h-3" />
+              {{ selected.size }} {{ __('selected') }}
+            </span>
+          </div>
+        </div>
       </div>
     </header>
 
