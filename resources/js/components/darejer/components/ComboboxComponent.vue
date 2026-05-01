@@ -44,6 +44,21 @@ const options   = ref<Option[]>([])
 const page      = ref(1)
 const hasMore   = ref(false)
 
+// Labels for currently-selected values, kept around independent of `options`
+// so the trigger can render the selection's name even after the popover
+// closes (which clears `options` to bound memory) or after a search reset
+// pushes the chosen option off the visible list.
+const labelMap = ref<Record<string, string>>({})
+
+function rememberLabels(items: Option[]): void {
+    if (selected.value.length === 0) return
+    for (const item of items) {
+        if (selected.value.includes(item.value)) {
+            labelMap.value[item.value] = item.label
+        }
+    }
+}
+
 // Shared data-loading composable — always goes through Inertia useHttp.
 const { load, http } = useDataUrl<Option>(
     props.component.dataUrl as string | undefined,
@@ -103,11 +118,37 @@ async function fetchOptions(reset = false): Promise<void> {
     } else {
         options.value.push(...items)
     }
+    rememberLabels(items)
     hasMore.value = result.current_page < result.last_page
     page.value    = result.current_page + 1
 }
 
-onMounted(() => fetchOptions(true))
+/**
+ * Resolve labels for any pre-selected values that aren't already known —
+ * needed on edit screens where the chosen record may sit beyond the first
+ * paginated page (and would otherwise leave the trigger showing the raw id).
+ */
+async function resolveSelectedLabels(): Promise<void> {
+    if (staticOptions.value) {
+        rememberLabels(staticOptions.value)
+        return
+    }
+
+    const missing = selected.value.filter(v => !labelMap.value[v])
+    if (missing.length === 0) return
+
+    const result = await load({
+        ids:     missing,
+        page:    1,
+        perPage: missing.length,
+    })
+    if (result) rememberLabels(result.data)
+}
+
+onMounted(async () => {
+    await resolveSelectedLabels()
+    fetchOptions(true)
+})
 
 watch(search, () => fetchOptions(true))
 
@@ -136,6 +177,9 @@ function toggle(value: string) {
         selected.value = isSelected(value) ? [] : [value]
         open.value = false
     }
+
+    const picked = options.value.find(o => o.value === value)
+    if (picked) labelMap.value[value] = picked.label
 
     emit('update', props.component.name,
         isMultiple.value ? selected.value : (selected.value[0] ?? null)
@@ -174,7 +218,9 @@ function onScroll(event: Event) {
 }
 
 function labelFor(value: string): string {
-    return options.value.find(o => o.value === value)?.label ?? value
+    return labelMap.value[value]
+        ?? options.value.find(o => o.value === value)?.label
+        ?? value
 }
 
 const selectedLabels = computed(() =>

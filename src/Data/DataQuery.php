@@ -27,6 +27,7 @@ class DataQuery
     {
         $this
             ->applyDarejerScope()
+            ->applyIds()
             ->applySearch()
             ->applyFilters()
             ->applyRelations()
@@ -34,6 +35,33 @@ class DataQuery
             ->applySorting();
 
         return $this->query;
+    }
+
+    /**
+     * ?ids[]=1&ids[]=2 — restrict the result set to a specific set of primary
+     * keys. Used by the Combobox to resolve labels for currently-selected
+     * values that may live outside the first paginated page.
+     */
+    protected function applyIds(): static
+    {
+        $ids = $this->request->input('ids');
+        if (! is_array($ids) || $ids === []) {
+            return $this;
+        }
+
+        $safe = array_values(array_filter(
+            $ids,
+            fn ($v) => (is_string($v) || is_int($v)) && (string) $v !== '',
+        ));
+
+        if ($safe === []) {
+            return $this;
+        }
+
+        $key = (new $this->modelClass)->getKeyName();
+        $this->query->whereIn($key, $safe);
+
+        return $this;
     }
 
     /**

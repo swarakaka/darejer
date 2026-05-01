@@ -17,6 +17,7 @@ export interface DataUrlOptions {
     filters?:        Record<string, string>
     fields?:         string[]
     with?:           string[]
+    ids?:            (string | number)[]
 }
 
 export interface DataUrlResult<T = Record<string, unknown>> {
@@ -78,6 +79,9 @@ export function useDataUrl<T = Record<string, unknown>>(
         }
         for (const rel of options.with ?? []) {
             params.append('with[]', rel)
+        }
+        for (const id of options.ids ?? []) {
+            params.append('ids[]', String(id))
         }
         if (options.filters) {
             for (const [field, value] of Object.entries(options.filters)) {
