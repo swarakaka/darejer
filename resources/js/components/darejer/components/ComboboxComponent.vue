@@ -156,6 +156,13 @@ function maybePrefillFromUrl(value: string | null) {
     })
 }
 
+function onScroll(event: Event) {
+    const target = event.target as HTMLElement | null
+    if (!target || !hasMore.value || http.processing.value) return
+    const distanceFromBottom = target.scrollHeight - target.scrollTop - target.clientHeight
+    if (distanceFromBottom < 32) fetchOptions(false)
+}
+
 function labelFor(value: string): string {
     return options.value.find(o => o.value === value)?.label ?? value
 }
@@ -323,7 +330,10 @@ async function onCreateDialogSaved(payload: { url: string | null; flash: unknown
                             class="text-sm h-8 border-b border-slate-200"
                         />
 
-                        <CommandList class="max-h-56 overflow-y-auto">
+                        <CommandList
+                            class="max-h-56 overflow-y-auto"
+                            @scroll.passive="onScroll"
+                        >
                             <CommandEmpty class="py-4 text-center text-sm text-slate-400">
                                 <span v-if="http.processing" class="flex items-center justify-center gap-2">
                                     <Loader2 class="w-3.5 h-3.5 animate-spin" /> {{ __('Loading…') }}
@@ -346,15 +356,13 @@ async function onCreateDialogSaved(payload: { url: string | null; flash: unknown
                                     {{ option.label }}
                                 </CommandItem>
 
-                                <!-- Load more -->
-                                <CommandItem
-                                    v-if="hasMore"
-                                    value="__load_more__"
-                                    class="text-xs text-slate-400 h-7 px-2.5 cursor-pointer justify-center"
-                                    @select="fetchOptions(false)"
+                                <!-- Infinite-scroll loader -->
+                                <div
+                                    v-if="hasMore && options.length > 0 && http.processing"
+                                    class="flex items-center justify-center h-7 text-xs text-slate-400"
                                 >
-                                    {{ __('Load more…') }}
-                                </CommandItem>
+                                    <Loader2 class="w-3.5 h-3.5 animate-spin" />
+                                </div>
                             </CommandGroup>
                         </CommandList>
 
