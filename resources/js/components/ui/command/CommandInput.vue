@@ -23,7 +23,7 @@ const { filterState } = useCommand()
 </script>
 
 <template>
-  <div class="flex items-center border-b px-3" cmdk-input-wrapper>
+  <div class="flex items-center border-b border-paper-300 px-3" cmdk-input-wrapper>
     <Search class="me-2 h-4 w-4 shrink-0 opacity-50" />
     <ListboxFilter
       v-bind="{ ...forwardedProps, ...$attrs }"
