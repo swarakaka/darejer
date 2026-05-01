@@ -158,7 +158,7 @@ function maybePrefillFromUrl(value: string | null) {
 
 function onScroll(event: Event) {
     const target = event.target as HTMLElement | null
-    if (!target || !hasMore.value || http.processing.value) return
+    if (!target || !hasMore.value || http.processing) return
     const distanceFromBottom = target.scrollHeight - target.scrollTop - target.clientHeight
     if (distanceFromBottom < 32) fetchOptions(false)
 }
