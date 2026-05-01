@@ -14,6 +14,9 @@ declare module 'vue' {
 }
 
 // ─── Inertia Shared Props ────────────────────────────────────────────────────
+//
+// Note: Inertia v3 flash data lives at the top-level page key
+// (`usePage().flash`), not under shared props. See FlashProps below.
 export interface DarejerSharedProps {
     darejer: {
         languages:        string[]
@@ -22,12 +25,6 @@ export interface DarejerSharedProps {
         direction?:       'ltr' | 'rtl'
         is_rtl?:          boolean
         directions?:      Record<string, 'ltr' | 'rtl'>
-    }
-    flash: {
-        success: string | null
-        error:   string | null
-        warning: string | null
-        info:    string | null
     }
     auth: {
         user: DarejerUser | null
@@ -73,7 +70,6 @@ export interface ScreenProps {
     components:  DarejerComponent[]
     actions:     DarejerAction[]
     errors?:     Record<string, string>
-    flash?:      FlashProps | null
     breadcrumbs?: Breadcrumb[]
 }
 

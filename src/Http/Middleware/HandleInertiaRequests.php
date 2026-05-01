@@ -14,9 +14,13 @@ use Inertia\Middleware;
  * by Inertia. It owns every shared prop the Darejer frontend needs:
  *  - `darejer`: configured languages, default, per-locale text direction,
  *    current locale + direction + is_rtl flag
- *  - `flash`:   Laravel session flash bag
  *  - `auth`:    current user with permissions / roles / super-admin flag
  *  - `navigation` + `breadcrumbs`: resolved via NavigationManager + route
+ *
+ * Flash messages are NOT shared here — Inertia v3 emits flash data at the
+ * top-level page key (`page.flash`) via its own `resolveFlashData()`, so
+ * controllers should call `Inertia::flash('success', '...')` and the
+ * frontend should read `usePage().flash`. See the FlashMessage component.
  *
  * Locale handling is built in: reads `?lang=` (persisting to session),
  * falls back to `session('darejer_locale')`, then the config default, and
@@ -61,12 +65,6 @@ class HandleInertiaRequests extends Middleware
                 'direction' => Locales::direction($current),
                 'is_rtl' => Locales::isRtl($current),
                 'directions' => $directions,
-            ],
-            'flash' => fn () => [
-                'success' => session('success'),
-                'error' => session('error'),
-                'warning' => session('warning'),
-                'info' => session('info'),
             ],
             'auth' => fn () => [
                 'user' => auth()->check() ? $this->shareUser(auth()->user()) : null,

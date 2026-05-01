@@ -23,6 +23,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 use Inertia\Response;
 use Spatie\Permission\Models\Role as SpatieRole;
+use Inertia\Inertia;
 
 /**
  * Admin → Users. CRUD over the host's `User` model with Spatie role
@@ -141,9 +142,10 @@ class UserController extends DarejerController
             $user->syncRoles($this->resolveRoleNames($data['role_ids'] ?? []));
         }
 
+        Inertia::flash('success', __darejer('User created.'));
+
         return redirect()
-            ->route('darejer.admin.users.index')
-            ->with('flash', ['type' => 'success', 'message' => __darejer('User created.')]);
+            ->route('darejer.admin.users.index');
     }
 
     public function update(Request $request, int $user)
@@ -171,9 +173,10 @@ class UserController extends DarejerController
             $record->syncRoles($this->resolveRoleNames($data['role_ids'] ?? []));
         }
 
+        Inertia::flash('success', __darejer('User updated.'));
+
         return redirect()
-            ->route('darejer.admin.users.index')
-            ->with('flash', ['type' => 'success', 'message' => __darejer('User updated.')]);
+            ->route('darejer.admin.users.index');
     }
 
     public function destroy(int $user)
@@ -188,9 +191,10 @@ class UserController extends DarejerController
 
         $record->delete();
 
+        Inertia::flash('success', __darejer('User deleted.'));
+
         return redirect()
-            ->route('darejer.admin.users.index')
-            ->with('flash', ['type' => 'success', 'message' => __darejer('User deleted.')]);
+            ->route('darejer.admin.users.index');
     }
 
     public function form(): Form
