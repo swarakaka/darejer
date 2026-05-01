@@ -64,11 +64,12 @@ In your root Blade layout (`resources/views/app.blade.php` or wherever your Iner
 <!DOCTYPE html>
 <html>
 <head>
-    @darejerAssets
-    @inertiaHead
+   @routes
+   @darejerAssets
+   <x-inertia::head />
 </head>
 <body>
-    @inertia
+     <x-inertia::app />
 </body>
 </html>
 ```
