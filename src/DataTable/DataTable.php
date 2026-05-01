@@ -234,7 +234,19 @@ class DataTable
             })
             ->all();
 
-        $data = collect($paginated->items())->map(function ($item) use ($dateColumns, $booleanColumns, $displayUsingColumns) {
+        $formatColumns = collect($this->columns)
+            ->mapWithKeys(function (Column $column): array {
+                $callback = $column->getFormat();
+
+                if ($callback === null) {
+                    return [];
+                }
+
+                return [$column->getField() => $callback];
+            })
+            ->all();
+
+        $data = collect($paginated->items())->map(function ($item) use ($dateColumns, $booleanColumns, $displayUsingColumns, $formatColumns) {
             $arr = $item->toArray();
 
             if (method_exists($item, 'getTranslatableAttributes')) {
@@ -270,6 +282,14 @@ class DataTable
             foreach ($displayUsingColumns as $field => $callback) {
                 try {
                     $arr[$field] = $callback($item);
+                } catch (\Throwable) {
+                    // Keep the raw value when callback mapping fails.
+                }
+            }
+
+            foreach ($formatColumns as $field => $callback) {
+                try {
+                    $arr[$field] = $callback($item->{$field} ?? null, $item);
                 } catch (\Throwable) {
                     // Keep the raw value when callback mapping fails.
                 }

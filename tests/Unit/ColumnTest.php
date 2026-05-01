@@ -12,6 +12,22 @@ it('supports displayUsing callbacks', function () {
     expect($displayUsing((object) ['company_code' => 'HQ']))->toBe('HQ');
 });
 
+it('supports format callbacks receiving value and model row', function () {
+    $column = Column::make('item_category_id')
+        ->format(fn ($value, $row) => $row->category?->code ?? '—');
+
+    $format = $column->getFormat();
+
+    $row = (object) [
+        'item_category_id' => 7,
+        'category' => (object) ['code' => 'CAT-A'],
+    ];
+
+    expect($format)->not->toBeNull();
+    expect($format(7, $row))->toBe('CAT-A');
+    expect($format(null, (object) ['item_category_id' => null, 'category' => null]))->toBe('—');
+});
+
 it('supports boolean display type with default labels', function () {
     $column = Column::make('is_paid')->boolean();
 
