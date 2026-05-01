@@ -113,6 +113,55 @@ it('serializes prefillUrl when prefillFrom is set', function () {
     expect($array)->toHaveKey('prefillUrl', '/darejer/sales/sales-invoices/prefill-from-order');
 });
 
+it('serializes a single label field as a string', function () {
+    $array = Combobox::make('item_category_id')
+        ->options(['1' => 'CAT-A'])
+        ->toArray();
+
+    expect($array)
+        ->toHaveKey('labelField', 'name')
+        ->not->toHaveKey('labelFields')
+        ->not->toHaveKey('searchFields')
+        ->not->toHaveKey('labelSeparator');
+});
+
+it('serializes labelFields and defaults searchFields when label is an array', function () {
+    // Reflection is used to bypass model() route resolution — model()
+    // looks up `<resource>.create` route which doesn't exist in tests.
+    $combobox = Combobox::make('item_category_id');
+    $reflection = new ReflectionClass($combobox);
+    $reflection->getProperty('labelField')->setValue($combobox, ['code', 'name']);
+
+    $array = $combobox->toArray();
+
+    expect($array)
+        ->toHaveKey('labelField', 'code')           // first field for legacy fallback
+        ->toHaveKey('labelFields', ['code', 'name'])
+        ->toHaveKey('labelSeparator', ' — ')
+        ->toHaveKey('searchFields', ['code', 'name']);
+});
+
+it('lets searchFields be overridden independently of labelFields', function () {
+    $combobox = Combobox::make('contact_id');
+    $reflection = new ReflectionClass($combobox);
+    $reflection->getProperty('labelField')->setValue($combobox, ['code', 'name']);
+    $combobox->searchFields(['code', 'name', 'email', 'phone']);
+
+    $array = $combobox->toArray();
+
+    expect($array)
+        ->toHaveKey('labelFields', ['code', 'name'])
+        ->toHaveKey('searchFields', ['code', 'name', 'email', 'phone']);
+});
+
+it('honors a custom labelSeparator', function () {
+    $combobox = Combobox::make('item_category_id')->labelSeparator(' / ');
+    $reflection = new ReflectionClass($combobox);
+    $reflection->getProperty('labelField')->setValue($combobox, ['code', 'name']);
+
+    expect($combobox->toArray())->toHaveKey('labelSeparator', ' / ');
+});
+
 it('serializes a plain Display component', function () {
     $array = Display::make('voucher_no')->label('No.')->toArray();
 

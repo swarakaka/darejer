@@ -52,14 +52,59 @@ class DataQuery
     protected function applySearch(): static
     {
         $search = $this->request->get('search', '');
-        $labelField = $this->request->get('label', 'name');
 
-        if ($search !== '' && $search !== null) {
-            // Only allow a-z/_ column names to avoid SQL injection via label.
-            if (preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*$/', $labelField)) {
-                $this->query->where($labelField, 'like', "%{$search}%");
-            }
+        if ($search === '' || $search === null) {
+            return $this;
         }
+
+        // Resolve which columns to search across. Priority:
+        //   1. ?search_fields[]= explicit list
+        //   2. ?label_fields[]=  the multi-field label list
+        //   3. ?label=           single-field fallback (legacy default)
+        $candidates = $this->request->get('search_fields')
+            ?? $this->request->get('label_fields')
+            ?? [$this->request->get('label', 'name')];
+
+        if (! is_array($candidates)) {
+            $candidates = [$candidates];
+        }
+
+        // Sanitize: only [a-zA-Z_][a-zA-Z0-9_]* column names.
+        $fields = array_values(array_filter(
+            $candidates,
+            fn ($f) => is_string($f) && preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*$/', $f),
+        ));
+
+        if (! $fields) {
+            return $this;
+        }
+
+        $translatable = method_exists($this->modelClass, 'getTranslatableAttributes')
+            ? (new $this->modelClass)->getTranslatableAttributes()
+            : [];
+
+        $locale = app()->getLocale();
+        $fallback = config('darejer.default_language', 'en');
+        $needle = "%{$search}%";
+
+        $this->query->where(function ($q) use ($fields, $translatable, $locale, $fallback, $needle) {
+            foreach ($fields as $field) {
+                if (in_array($field, $translatable, true)) {
+                    // Spatie translatable stores `{ "en": "...", "ar": "..." }`.
+                    // Use Eloquent's `column->key` JSON path so the SQL is
+                    // generated correctly per driver (MySQL JSON_EXTRACT,
+                    // SQLite json_extract, Postgres ->>). Search both the
+                    // active locale and the configured fallback so seed
+                    // data in English remains findable from other locales.
+                    $q->orWhere($field.'->'.$locale, 'like', $needle);
+                    if ($fallback !== $locale) {
+                        $q->orWhere($field.'->'.$fallback, 'like', $needle);
+                    }
+                } else {
+                    $q->orWhere($field, 'like', $needle);
+                }
+            }
+        });
 
         return $this;
     }
