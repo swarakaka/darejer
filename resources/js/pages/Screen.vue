@@ -368,7 +368,7 @@ function sectionIndex(section: ScreenSection): number {
                                     class="flex items-center justify-between gap-3 px-5 py-3 select-none transition-colors"
                                     :class="[
                                         !collapsed[section.title]
-                                            ? 'border-b border-paper-200 bg-gradient-to-b from-paper-75 to-white'
+                                            ? 'border-b border-paper-200 bg-gradient-to-b from-paper-75 to-card'
                                             : 'bg-card',
                                         section.alwaysExpanded ? '' : 'cursor-pointer hover:bg-paper-75',
                                     ]"
@@ -417,7 +417,7 @@ function sectionIndex(section: ScreenSection): number {
                                 <header
                                     class="flex items-center justify-between gap-3 px-5 py-3 cursor-pointer select-none transition-colors"
                                     :class="!collapsed['General']
-                                              ? 'border-b border-paper-200 bg-linear-to-b from-paper-75 to-white'
+                                              ? 'border-b border-paper-200 bg-linear-to-b from-paper-75 to-card'
                                               : 'hover:bg-paper-75'"
                                     role="banner"
                                     @click="toggleSection('General')"
@@ -463,7 +463,7 @@ function sectionIndex(section: ScreenSection): number {
                 class="p-0 flex flex-col w-[calc(100vw-2rem)] max-h-[calc(100dvh-2rem)] overflow-hidden rounded-md shadow-[0_24px_64px_-12px_rgba(0,0,0,0.25)]"
                 :class="dialogSizeClass[dialogSize ?? 'md'] ?? 'sm:max-w-lg'"
             >
-                <DialogHeader class="relative shrink-0 px-5 py-4 border-b border-paper-200 bg-gradient-to-b from-paper-75 to-white">
+                <DialogHeader class="relative shrink-0 px-5 py-4 border-b border-paper-200 bg-gradient-to-b from-paper-75 to-card">
                     <span class="absolute inset-x-0 top-0 h-0.5 bg-gradient-to-r from-brand-500 via-brand-400 to-transparent" />
                     <DialogTitle class="text-[15px] font-semibold text-ink-900 tracking-tight">{{ title }}</DialogTitle>
                 </DialogHeader>

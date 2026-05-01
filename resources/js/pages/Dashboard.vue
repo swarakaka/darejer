@@ -134,7 +134,7 @@ const chartIcon = (type: 'line' | 'bar' | 'doughnut') => {
                 >
                     <header
                         class="flex items-center justify-between gap-3 px-5 h-11
-                               border-b border-paper-200 bg-gradient-to-b from-paper-75 to-white"
+                               border-b border-paper-200 bg-gradient-to-b from-paper-75 to-card"
                     >
                         <div class="flex items-center gap-2.5 min-w-0">
                             <span
@@ -193,7 +193,7 @@ const chartIcon = (type: 'line' | 'bar' | 'doughnut') => {
                            shadow-[0_1px_0_rgba(0,0,0,0.02)]
                            hover:border-paper-300 hover:shadow-[0_4px_14px_-4px_rgba(0,0,0,0.08)] transition-all duration-150"
                 >
-                    <header class="flex items-center justify-between px-5 h-11 border-b border-paper-200 bg-gradient-to-b from-paper-75 to-white">
+                    <header class="flex items-center justify-between px-5 h-11 border-b border-paper-200 bg-gradient-to-b from-paper-75 to-card">
                         <div class="flex items-center gap-2.5 min-w-0">
                             <span
                                 class="inline-flex items-center justify-center w-6 h-6 rounded-sm

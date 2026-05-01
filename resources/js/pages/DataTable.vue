@@ -631,7 +631,7 @@ function clearFilter(field: string) {
         </div>
 
         <!-- Table toolbar -->
-        <div class="flex items-center gap-3 px-3 py-2.5 bg-gradient-to-b from-paper-75 to-white border-b border-paper-200">
+        <div class="flex items-center gap-3 px-3 py-2.5 bg-gradient-to-b from-paper-75 to-card border-b border-paper-200">
           <div class="relative max-w-xs flex-1">
             <Search class="absolute start-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-ink-400 pointer-events-none" />
             <input
@@ -846,7 +846,7 @@ function clearFilter(field: string) {
         <!-- Pagination -->
         <div
             v-if="tableData.total > tableData.per_page"
-            class="flex items-center justify-between px-4 py-3 bg-gradient-to-b from-white to-paper-75 border-t border-paper-200"
+            class="flex items-center justify-between px-4 py-3 bg-gradient-to-b from-card to-paper-75 border-t border-paper-200"
         >
           <span class="text-[11.5px] text-ink-500 tabular-nums">
             {{ __('Showing') }}
@@ -895,7 +895,7 @@ function clearFilter(field: string) {
   <!-- Confirm dialog -->
   <Dialog :open="confirmOpen" @update:open="confirmOpen = $event">
     <DialogContent class="max-w-sm p-0 overflow-hidden">
-      <DialogHeader class="px-5 py-4 border-b border-paper-200 bg-gradient-to-b from-paper-75 to-white">
+      <DialogHeader class="px-5 py-4 border-b border-paper-200 bg-gradient-to-b from-paper-75 to-card">
         <DialogTitle class="text-base font-semibold text-ink-900 tracking-tight">{{ __('Confirm') }}</DialogTitle>
       </DialogHeader>
       <div class="px-5 py-5">
