@@ -42,7 +42,7 @@ When `darejer.languages = ['en', 'ar', 'de']`, the field's value in the form pay
 {
   "name": {
     "en": "Hello",
-    "ar": "مرحبا",
+    "ckb": "سڵاو",
     "de": "Hallo"
   }
 }
