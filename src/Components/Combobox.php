@@ -12,7 +12,13 @@ class Combobox extends BaseComponent
 
     protected string $keyField = 'id';
 
-    protected string $labelField = 'name';
+    /** @var string|array<int, string> */
+    protected string|array $labelField = 'name';
+
+    protected string $labelSeparator = ' — ';
+
+    /** @var array<int, string>|null */
+    protected ?array $searchFields = null;
 
     protected ?Closure $labelClosure = null;
 
@@ -43,12 +49,19 @@ class Combobox extends BaseComponent
     /**
      * Bind to an Eloquent model — Darejer auto-generates the dataUrl.
      *
+     * Pass a string for a single label field (`'name'`), or an array to
+     * compose the label from multiple fields (`['code', 'name']` →
+     * "ABC — Widget"). When an array is given, search defaults to
+     * matching across those same fields unless `->searchFields()`
+     * overrides it.
+     *
      * @param  class-string<Model>  $modelClass
+     * @param  string|array<int, string>|Closure  $label
      */
     public function model(
         string $modelClass,
         string $key = 'id',
-        string|Closure $label = 'name',
+        string|array|Closure $label = 'name',
         ?Closure $query = null
     ): static {
         $this->modelClass = $modelClass;
@@ -217,6 +230,32 @@ class Combobox extends BaseComponent
     }
 
     /**
+     * Override the fields searched by the combobox input. By default,
+     * search runs against the label field(s). Use this when you want to
+     * search across more (or different) columns than the ones displayed
+     * — e.g. display `name`, but also search by `email` and `phone`.
+     *
+     * @param  array<int, string>  $fields
+     */
+    public function searchFields(array $fields): static
+    {
+        $this->searchFields = array_values(array_filter($fields, 'is_string'));
+
+        return $this;
+    }
+
+    /**
+     * Separator inserted between label fields when `model()` is given an
+     * array of label columns. Defaults to ` — `.
+     */
+    public function labelSeparator(string $separator): static
+    {
+        $this->labelSeparator = $separator;
+
+        return $this;
+    }
+
+    /**
      * On selection, fetch a JSON record from `$url?id=<chosen-id>` and merge
      * the response into the surrounding form's fields. Lets create screens
      * prefill related fields (e.g. line items from a Sales Order) in place,
@@ -240,6 +279,9 @@ class Combobox extends BaseComponent
 
     protected function componentProps(): array
     {
+        $labelIsArray = is_array($this->labelField);
+        $labelFields = $labelIsArray ? array_values($this->labelField) : null;
+
         return [
             'dataUrl' => $this->dataUrl,
             'staticOptions' => $this->staticOptions,
@@ -252,7 +294,10 @@ class Combobox extends BaseComponent
             'disabled' => $this->disabled ?: null,
             'placeholder' => $this->placeholder,
             'keyField' => $this->keyField,
-            'labelField' => $this->labelField,
+            'labelField' => $labelIsArray ? ($labelFields[0] ?? 'name') : $this->labelField,
+            'labelFields' => $labelFields,
+            'labelSeparator' => $labelIsArray ? $this->labelSeparator : null,
+            'searchFields' => $this->searchFields ?? $labelFields,
             'prefillUrl' => $this->prefillUrl,
         ];
     }

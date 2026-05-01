@@ -39,7 +39,26 @@ class DataController extends Controller
         $keyField = $request->get('key', 'id');
         $labelField = $request->get('label', 'name');
 
-        $transformer = new DataTransformer($modelClass, $keyField, $labelField, $isCombobox);
+        $labelFields = $request->get('label_fields');
+        if (is_array($labelFields)) {
+            $labelFields = array_values(array_filter(
+                $labelFields,
+                fn ($f) => is_string($f) && preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*$/', $f),
+            )) ?: null;
+        } else {
+            $labelFields = null;
+        }
+
+        $labelSeparator = (string) $request->get('label_separator', ' — ');
+
+        $transformer = new DataTransformer(
+            $modelClass,
+            $keyField,
+            $labelField,
+            $isCombobox,
+            $labelFields,
+            $labelSeparator,
+        );
 
         $query = $modelClass::query();
         $query = (new DataQuery($query, $request, $modelClass))->apply();

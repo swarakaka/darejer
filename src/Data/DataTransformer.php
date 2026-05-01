@@ -18,18 +18,30 @@ class DataTransformer
 
     protected string $labelField;
 
+    /** @var array<int, string>|null */
+    protected ?array $labelFields;
+
+    protected string $labelSeparator;
+
     protected bool $isCombobox;
 
+    /**
+     * @param  array<int, string>|null  $labelFields
+     */
     public function __construct(
         string $modelClass,
         string $keyField = 'id',
         string $labelField = 'name',
         bool $isCombobox = false,
+        ?array $labelFields = null,
+        string $labelSeparator = ' — ',
     ) {
         $this->modelClass = $modelClass;
         $this->keyField = $keyField;
         $this->labelField = $labelField;
         $this->isCombobox = $isCombobox;
+        $this->labelFields = $labelFields ? array_values($labelFields) : null;
+        $this->labelSeparator = $labelSeparator;
     }
 
     public function transform(Model $item): array
@@ -51,11 +63,36 @@ class DataTransformer
         if ($this->isCombobox) {
             return [
                 'value' => (string) ($arr[$this->keyField] ?? ''),
-                'label' => (string) ($arr[$this->labelField] ?? ''),
+                'label' => $this->composeLabel($arr),
             ];
         }
 
         return $arr;
+    }
+
+    /**
+     * Build the combobox label. When `labelFields` is set, join the
+     * non-empty values with the configured separator (e.g. "ABC — Widget").
+     * Falls back to the single `labelField` otherwise.
+     *
+     * @param  array<string, mixed>  $arr
+     */
+    protected function composeLabel(array $arr): string
+    {
+        if ($this->labelFields) {
+            $parts = [];
+            foreach ($this->labelFields as $field) {
+                $value = $arr[$field] ?? null;
+                if ($value === null || $value === '') {
+                    continue;
+                }
+                $parts[] = (string) $value;
+            }
+
+            return implode($this->labelSeparator, $parts);
+        }
+
+        return (string) ($arr[$this->labelField] ?? '');
     }
 
     public function transformCollection(iterable $items): array
