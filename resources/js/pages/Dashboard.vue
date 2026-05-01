@@ -91,10 +91,6 @@ const chartIcon = (type: 'line' | 'bar' | 'doughnut') => {
                             <h1 class="text-[28px] leading-[1.05] tracking-[-0.02em] text-ink-900 font-semibold">
                                 {{ title }}
                             </h1>
-                            <span class="hidden md:inline-flex items-center gap-1 px-1.5 py-0.5 rounded-sm bg-success-50 ring-1 ring-inset ring-success-100 text-[9px] font-bold uppercase tracking-[0.14em] text-success-700">
-                                <span class="w-1 h-1 rounded-full bg-success-500 animate-pulse" />
-                                {{ __('Live') }}
-                            </span>
                         </div>
                     </div>
                 </div>
