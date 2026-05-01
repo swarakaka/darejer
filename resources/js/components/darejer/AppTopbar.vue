@@ -43,10 +43,10 @@ const { unreadCount, hasUnread } = useAlerts()
 const notificationsOpen = ref(false)
 
 function switchLanguage(locale: string) {
-    router.get(
-        window.location.pathname,
-        { lang: locale },
-        { preserveState: false, preserveScroll: false }
+    router.post(
+        route('darejer.locale.update').toString(),
+        { locale },
+        { preserveScroll: true, preserveState: false }
     )
 }
 

@@ -4,7 +4,21 @@ use Illuminate\Support\Facades\Route;
 use Darejer\Http\Controllers\AlertsController;
 use Darejer\Http\Controllers\DashboardController;
 use Darejer\Http\Controllers\DataController;
+use Darejer\Http\Controllers\LocaleController;
 use Darejer\Http\Controllers\SearchController;
+
+// ── Locale switching ────────────────────────────────────────────────────────
+//
+// Lives outside the auth group so guests on login / forgot-password screens
+// can switch language too. POST + back() preserves the caller's URL and its
+// query string — the topbar switcher relies on that to keep filter / paging
+// state intact across a locale change.
+Route::prefix(config('darejer.route_prefix', 'darejer'))
+    ->middleware(['web'])
+    ->name('darejer.')
+    ->group(function () {
+        Route::post('/locale', [LocaleController::class, 'update'])->name('locale.update');
+    });
 
 // ── Authenticated routes ────────────────────────────────────────────────────
 //
