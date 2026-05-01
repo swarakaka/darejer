@@ -111,6 +111,16 @@ onMounted(() => fetchOptions(true))
 
 watch(search, () => fetchOptions(true))
 
+watch(open, (isOpen) => {
+    if (isOpen) {
+        fetchOptions(true)
+    } else {
+        page.value    = 1
+        hasMore.value = false
+        options.value = []
+    }
+})
+
 function isSelected(value: string): boolean {
     return selected.value.includes(value)
 }
