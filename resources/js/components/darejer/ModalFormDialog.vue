@@ -89,13 +89,25 @@ function submit() {
     if (!url) return
 
     processing.value = true
+    errors.value = {}
+
     const options = {
         preserveScroll: true,
-        onSuccess: () => {
-            emit('update:open', false)
-        },
+        // 422 validation responses route here. Surface errors to the form
+        // and keep the dialog open so the user can correct and retry.
         onError: (e: Record<string, string>) => {
             errors.value = e
+        },
+        // 200/302 responses route here. Inertia routes `back()->withErrors`
+        // through onSuccess (the redirect itself succeeded, even though
+        // it carried errors) — so check page.props.errors before closing.
+        onSuccess: (page: { props?: { errors?: Record<string, string> } }) => {
+            const pageErrors = page?.props?.errors ?? {}
+            if (Object.keys(pageErrors).length > 0) {
+                errors.value = pageErrors
+                return
+            }
+            emit('update:open', false)
         },
         onFinish: () => {
             processing.value = false
