@@ -22,11 +22,20 @@ trait HasActions
 
     /**
      * Serialize all actions, stripping any that return null (hidden/unauthorized).
+     * Injects the parent record so closure-based `visible()` checks receive it.
      */
     protected function serializeActions(): array
     {
+        $record = method_exists($this, 'getRecord') ? $this->getRecord() : null;
+
         return collect($this->actions)
-            ->map(fn (Actionable|Componentable $a) => $a->toArray())
+            ->map(function (Actionable|Componentable $a) use ($record) {
+                if (method_exists($a, 'withVisibilityRecord')) {
+                    $a->withVisibilityRecord($record);
+                }
+
+                return $a->toArray();
+            })
             ->filter()
             ->values()
             ->all();

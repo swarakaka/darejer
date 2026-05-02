@@ -22,12 +22,19 @@ trait HasComponents
     /**
      * Serialize all components, stripping any that return null (hidden/unauthorized)
      * and unwrapping PermissionGuard wrappers into the flat list.
+     *
+     * Injects the parent record so closure-based `visible()` checks receive it.
      */
     protected function serializeComponents(): array
     {
         $result = [];
+        $record = method_exists($this, 'getRecord') ? $this->getRecord() : null;
 
         foreach ($this->components as $component) {
+            if (method_exists($component, 'withVisibilityRecord')) {
+                $component->withVisibilityRecord($record);
+            }
+
             $arr = $component->toArray();
 
             if ($arr === null) {

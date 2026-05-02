@@ -3,11 +3,14 @@
 namespace Darejer\Components;
 
 use Closure;
+use Darejer\Concerns\HasVisibility;
 use Darejer\Screen\Contracts\Componentable;
 use Illuminate\Support\Facades\Gate;
 
 abstract class BaseComponent implements Componentable
 {
+    use HasVisibility;
+
     protected string $name;
 
     protected string $label = '';
@@ -204,6 +207,10 @@ abstract class BaseComponent implements Componentable
 
     protected function isVisible(): bool
     {
+        if (! $this->passesVisibility()) {
+            return false;
+        }
+
         if ($this->canSeeCheck === null) {
             return true;
         }

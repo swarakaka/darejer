@@ -3,11 +3,14 @@
 namespace Darejer\Actions;
 
 use Closure;
+use Darejer\Concerns\HasVisibility;
 use Darejer\Screen\Contracts\Actionable;
 use Illuminate\Support\Facades\Gate;
 
 abstract class BaseAction implements Actionable
 {
+    use HasVisibility;
+
     protected string $label = '';
 
     protected ?string $url = null;
@@ -161,6 +164,10 @@ abstract class BaseAction implements Actionable
 
     protected function isVisible(): bool
     {
+        if (! $this->passesVisibility()) {
+            return false;
+        }
+
         if ($this->canSeeCheck === null) {
             return true;
         }
