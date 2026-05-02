@@ -99,6 +99,12 @@ export interface DarejerAction {
     fullWidth?:  boolean
     external?:   boolean
     modalSize?:  string
+    form?:       {                   // ModalToggle with inline form
+        title:      string
+        components: DarejerComponent[]
+        actions:    DarejerAction[]
+        record:     Record<string, unknown>
+    }
     items?:      DarejerAction[]     // Dropdown
     batchUrl?:   string              // BulkAction
     batchParam?: string              // BulkAction

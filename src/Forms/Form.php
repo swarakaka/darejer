@@ -325,6 +325,29 @@ class Form
      */
     public function renderAsScreen(): Response
     {
+        return $this->buildScreen()->render();
+    }
+
+    /**
+     * Render the form as a modal dialog. Pair with `ModalToggleAction` on
+     * the calling page: the action navigates here with `?_dialog=1`, the
+     * Screen renders as a dialog, the form's Save action posts to the
+     * configured target, and any darejer component (TextInput, Combobox,
+     * DatePicker, Textarea, Select, …) is supported as an input.
+     *
+     * @param  string  $size  xs | sm | md | lg | xl | full
+     */
+    public function renderAsDialog(string $size = 'md'): Response
+    {
+        return $this->buildScreen()->dialog($size)->render();
+    }
+
+    /**
+     * Compose the Screen used by both `renderAsScreen` and `renderAsDialog`
+     * — keeps the page-vs-dialog choice to a single flag.
+     */
+    protected function buildScreen(): Screen
+    {
         $screen = Screen::make($this->title)
             ->components($this->components)
             ->actions($this->buildActions());
@@ -348,6 +371,6 @@ class Form
             $screen->fullWidth();
         }
 
-        return $screen->render();
+        return $screen;
     }
 }

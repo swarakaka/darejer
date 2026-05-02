@@ -22,6 +22,7 @@ import {
     Save, X, Trash2, ChevronDown, ExternalLink,
     Plus, Pencil, Eye, MoreHorizontal, Zap, Download, AlertTriangle,
 } from 'lucide-vue-next'
+import ModalFormDialog     from '@/components/darejer/ModalFormDialog.vue'
 import { evaluateDependOn } from '@/composables/useDependOn'
 import useTranslation       from '@/composables/useTranslation'
 import type { DarejerAction } from '@/types/darejer'
@@ -54,6 +55,9 @@ const visibleActions = computed(() =>
 const confirmOpen   = ref(false)
 const confirmAction = ref<DarejerAction | null>(null)
 
+const modalFormOpen   = ref(false)
+const modalFormAction = ref<DarejerAction | null>(null)
+
 function requestConfirm(action: DarejerAction) {
     confirmAction.value = action
     confirmOpen.value   = true
@@ -63,6 +67,11 @@ function executeConfirmed() {
     if (confirmAction.value) executeAction(confirmAction.value, true)
     confirmOpen.value   = false
     confirmAction.value = null
+}
+
+function openModalForm(action: DarejerAction) {
+    modalFormAction.value = action
+    modalFormOpen.value   = true
 }
 
 const iconMap: Record<string, unknown> = {
@@ -91,6 +100,14 @@ function resolveVariant(action: DarejerAction): ButtonVariant {
 function executeAction(action: DarejerAction, skipConfirm = false) {
     if (!skipConfirm && action.confirm) {
         requestConfirm(action)
+        return
+    }
+
+    // ModalToggle with an inline form: open a local Dialog hosting the form.
+    // Submit posts to the form's Save action URL via Inertia and closes on
+    // success — no navigation, no GET round-trip.
+    if (action.type === 'ModalToggle' && action.form) {
+        openModalForm(action)
         return
     }
 
@@ -292,6 +309,15 @@ const placementClass = computed(() => {
                 </DialogFooter>
             </DialogContent>
         </Dialog>
+
+        <!-- Inline-form dialog (ModalToggleAction with ->form(...) attached) -->
+        <ModalFormDialog
+            v-if="modalFormAction?.form"
+            :open="modalFormOpen"
+            :form="(modalFormAction.form as { title: string; components: never[]; actions: never[]; record: Record<string, unknown> })"
+            :modal-size="(modalFormAction.modalSize as string | undefined)"
+            @update:open="modalFormOpen = $event"
+        />
 
     </TooltipProvider>
 </template>
