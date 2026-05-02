@@ -92,6 +92,11 @@ function submit() {
     errors.value = {}
 
     const options = {
+        // Drop any preserved state so the redirect's GET truly replaces
+        // the host page's props with fresh data — otherwise Inertia v3
+        // can keep the prior page's state and the user sees stale values
+        // until a manual browser refresh.
+        preserveState: false,
         preserveScroll: true,
         // 422 validation responses route here. Surface errors to the form
         // and keep the dialog open so the user can correct and retry.
