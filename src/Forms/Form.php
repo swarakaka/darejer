@@ -289,6 +289,9 @@ class Form
     {
         $components = [];
         foreach ($this->components as $component) {
+            if (method_exists($component, 'withVisibilityRecord')) {
+                $component->withVisibilityRecord($this->record);
+            }
             $serialized = $component->toArray();
             if ($serialized !== null) {
                 $components[] = $serialized;
@@ -297,6 +300,9 @@ class Form
 
         $actions = [];
         foreach ($this->buildActions() as $action) {
+            if (method_exists($action, 'withVisibilityRecord')) {
+                $action->withVisibilityRecord($this->record);
+            }
             $serialized = $action->toArray();
             if ($serialized !== null) {
                 $actions[] = $serialized;
