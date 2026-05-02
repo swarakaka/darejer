@@ -91,22 +91,26 @@ function submit() {
     processing.value = true
     errors.value = {}
 
-    const options = {
-        // Drop any preserved state so the redirect's GET truly replaces
-        // the host page's props with fresh data — otherwise Inertia v3
-        // can keep the prior page's state and the user sees stale values
-        // until a manual browser refresh.
-        preserveState: false,
+    // Match the existing POST-button flow used by `executeAction` for
+    // ButtonActions — `router.visit({ method, data })` rather than
+    // `router.post(url, data)`. Inertia v3's `router.post` helper can
+    // short-circuit the follow-up GET when the server redirects to the
+    // current URL, which leaves the host page rendering stale data until
+    // a manual browser refresh. `router.visit` always navigates the
+    // redirect target, so the host page picks up fresh props.
+    router.visit(url, {
+        method,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        data: formData.value as any,
         preserveScroll: true,
-        // 422 validation responses route here. Surface errors to the form
-        // and keep the dialog open so the user can correct and retry.
+        preserveState: false,
         onError: (e: Record<string, string>) => {
             errors.value = e
         },
-        // 200/302 responses route here. Inertia routes `back()->withErrors`
-        // through onSuccess (the redirect itself succeeded, even though
-        // it carried errors) — so check page.props.errors before closing.
         onSuccess: (page: { props?: { errors?: Record<string, string> } }) => {
+            // Inertia routes `back()->withErrors` through onSuccess (the
+            // redirect itself succeeded, even though it carried errors) —
+            // check page.props.errors before closing.
             const pageErrors = page?.props?.errors ?? {}
             if (Object.keys(pageErrors).length > 0) {
                 errors.value = pageErrors
@@ -117,10 +121,7 @@ function submit() {
         onFinish: () => {
             processing.value = false
         },
-    }
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    router[method](url, formData.value as any, options)
+    })
 }
 
 function cancel() {
