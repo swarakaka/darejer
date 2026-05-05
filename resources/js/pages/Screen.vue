@@ -310,7 +310,7 @@ function sectionIndex(section: ScreenSection): number {
                     <div v-else class="space-y-4">
                         <template v-if="hasTabs">
                             <Tabs :default-value="defaultTabValue" :persist-key="tabsPersistKey" class="w-full">
-                                <TabsList class="h-auto w-full justify-start gap-0 rounded-md bg-card p-1 mb-4 overflow-x-auto border border-paper-200 shadow-[0_1px_0_rgba(0,0,0,0.02)]">
+                                <TabsList class="h-auto w-full justify-start gap-0 rounded-md bg-card p-1 overflow-x-auto border border-paper-200 shadow-[0_1px_0_rgba(0,0,0,0.02)]">
                                     <TabsTrigger
                                         v-for="tab in visibleTabs"
                                         :key="tab.title"
