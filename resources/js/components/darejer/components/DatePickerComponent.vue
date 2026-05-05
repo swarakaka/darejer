@@ -12,11 +12,11 @@ import useTranslation       from '@/composables/useTranslation'
 import type { DarejerComponent } from '@/types/darejer'
 import {
     CalendarDate,
-    DateFormatter,
     getLocalTimeZone,
     parseDate,
     type DateValue,
 } from '@internationalized/date'
+import { formatPhpDate } from '@/lib/phpDate'
 
 const { __ } = useTranslation()
 
@@ -66,11 +66,11 @@ watch(
     },
 )
 
-const df = new DateFormatter('en-US', { dateStyle: 'medium' })
+const format = computed(() => (props.component.format as string | undefined) ?? 'Y-m-d')
 
 const displayValue = computed(() =>
     selected.value
-        ? df.format(selected.value.toDate(getLocalTimeZone()))
+        ? formatPhpDate(selected.value.toDate(getLocalTimeZone()), format.value)
         : null
 )
 
