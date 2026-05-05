@@ -244,7 +244,7 @@ function sectionIndex(section: ScreenSection): number {
                             background-size: 20px 20px;
                         "
                     />
-                    <div class="absolute inset-y-0 inset-e-0 w-2/3 bg-linear-to-s from-brand-50/60 via-white/0 to-transparent pointer-events-none" />
+                    <div class="absolute inset-y-0 inset-e-0 w-2/3 bg-linear-to-start from-brand-50/60 via-white/0 to-transparent pointer-events-none" />
 
                     <div class="relative flex flex-col gap-4 px-6 pt-5 pb-5">
                         <div class="flex flex-col min-w-0">
@@ -328,7 +328,7 @@ function sectionIndex(section: ScreenSection): number {
                                     class="mt-0"
                                 >
                                     <section class="relative bg-card border border-paper-200 rounded-md overflow-hidden p-5 shadow-[0_1px_0_rgba(0,0,0,0.02)]">
-                                        <span class="absolute inset-x-0 top-0 h-0.5 bg-gradient-to-r from-brand-500 via-brand-400 to-transparent" />
+                                        <span class="absolute inset-x-0 top-0 h-0.5 bg-gradient-to-e from-brand-500 via-brand-400 to-transparent" />
                                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-5 gap-y-5 w-full">
                                             <DarejerComponent
                                                 v-for="component in componentsForTab(tab)"
@@ -361,14 +361,14 @@ function sectionIndex(section: ScreenSection): number {
                                 <!-- Accent rail when expanded -->
                                 <span
                                     v-if="!collapsed[section.title]"
-                                    class="absolute inset-y-0 start-0 w-0.5 bg-gradient-to-b from-brand-500 via-brand-400 to-brand-500/30"
+                                    class="absolute inset-y-0 inset-s-0 w-0.5 bg-linear-to-b from-brand-500 via-brand-400 to-brand-500/30"
                                 />
 
                                 <header
                                     class="flex items-center justify-between gap-3 px-5 py-3 select-none transition-colors"
                                     :class="[
                                         !collapsed[section.title]
-                                            ? 'border-b border-paper-200 bg-gradient-to-b from-paper-75 to-card'
+                                            ? 'border-b border-paper-200 bg-linear-to-b from-paper-75 to-card'
                                             : 'bg-card',
                                         section.alwaysExpanded ? '' : 'cursor-pointer hover:bg-paper-75',
                                     ]"
@@ -412,7 +412,7 @@ function sectionIndex(section: ScreenSection): number {
                             <section class="relative bg-card border border-paper-200 rounded-md overflow-hidden shadow-[0_1px_0_rgba(0,0,0,0.02)]">
                                 <span
                                     v-if="!collapsed['General']"
-                                    class="absolute inset-y-0 start-0 w-0.5 bg-gradient-to-b from-brand-500 via-brand-400 to-brand-500/30"
+                                    class="absolute inset-y-0 inset-s-0 w-0.5 bg-linear-to-b from-brand-500 via-brand-400 to-brand-500/30"
                                 />
                                 <header
                                     class="flex items-center justify-between gap-3 px-5 py-3 cursor-pointer select-none transition-colors"
@@ -463,8 +463,8 @@ function sectionIndex(section: ScreenSection): number {
                 class="p-0 flex flex-col w-[calc(100vw-2rem)] max-h-[calc(100dvh-2rem)] overflow-hidden rounded-md shadow-[0_24px_64px_-12px_rgba(0,0,0,0.25)]"
                 :class="dialogSizeClass[dialogSize ?? 'md'] ?? 'sm:max-w-lg'"
             >
-                <DialogHeader class="relative shrink-0 px-5 py-4 border-b border-paper-200 bg-gradient-to-b from-paper-75 to-card">
-                    <span class="absolute inset-x-0 top-0 h-0.5 bg-gradient-to-r from-brand-500 via-brand-400 to-transparent" />
+                <DialogHeader class="relative shrink-0 px-5 py-4 border-b border-paper-200 bg-linear-to-b from-paper-75 to-card">
+                    <span class="absolute inset-x-0 top-0 h-0.5 bg-linear-to-e from-brand-500 via-brand-400 to-transparent" />
                     <DialogTitle class="text-[15px] font-semibold text-ink-900 tracking-tight">{{ title }}</DialogTitle>
                 </DialogHeader>
 

@@ -395,7 +395,7 @@ function clearFilter(field: string) {
               background-size: 20px 20px;
           "
       />
-      <div class="absolute inset-y-0 inset-e-0 w-2/3 bg-gradient-to-s from-brand-50/60 via-white/0 to-transparent pointer-events-none" />
+      <div class="absolute inset-y-0 inset-e-0 w-2/3 bg-gradient-to-start from-brand-50/60 via-white/0 to-transparent pointer-events-none" />
 
       <div class="relative flex items-start justify-between gap-6 px-6 pt-5 pb-5">
         <div class="flex items-start gap-3 min-w-0">
@@ -486,7 +486,7 @@ function clearFilter(field: string) {
           class="relative flex flex-wrap items-end gap-3 p-4 mb-4 bg-card border border-paper-200 rounded-md
                  shadow-[0_1px_0_rgba(0,0,0,0.02)]"
       >
-        <span class="absolute inset-x-0 top-0 h-0.5 bg-gradient-to-r from-brand-500 via-brand-300 to-transparent rounded-t-md" />
+        <span class="absolute inset-x-0 top-0 h-0.5 bg-gradient-to-e from-brand-500 via-brand-300 to-transparent rounded-t-md" />
         <div
             v-for="filter in filters"
             :key="filter.field"
@@ -606,9 +606,9 @@ function clearFilter(field: string) {
         <!-- Bulk-action strip -->
         <div
             v-if="hasBulkActions && hasSelection"
-            class="relative flex items-center gap-3 px-4 py-2.5 bg-gradient-to-r from-brand-50 to-brand-50/60 border-b border-brand-100"
+            class="relative flex items-center gap-3 px-4 py-2.5 bg-gradient-to-e from-brand-50 to-brand-50/60 border-b border-brand-100"
         >
-          <span class="absolute inset-y-0 start-0 w-0.5 bg-brand-500" />
+          <span class="absolute inset-y-0 inset-s-0 w-0.5 bg-brand-500" />
           <CheckCircle2 class="w-4 h-4 text-brand-600" />
           <span class="text-[12px] font-bold text-brand-800 tabular-nums">
             {{ __(':count selected', { count: selected.size }) }}

@@ -6,7 +6,11 @@
     "scripts": {
         "dev": "vite",
         "build": "vue-tsc --noEmit && vite build",
-        "type-check": "vue-tsc --noEmit"
+        "type-check": "vue-tsc --noEmit",
+        "lint": "eslint .",
+        "lint:fix": "eslint . --fix",
+        "format": "prettier --write \"resources/**/*.{js,ts,vue,css}\"",
+        "format:check": "prettier --check \"resources/**/*.{js,ts,vue,css}\""
     },
     "dependencies": {
         "@fullcalendar/core": "^6.1.20",
@@ -53,8 +57,18 @@
         "ziggy-js": "^2.6.2"
     },
     "devDependencies": {
+        "@eslint/js": "^9.18.0",
         "@types/node": "^25.6.0",
+        "eslint": "^9.18.0",
+        "eslint-config-prettier": "^9.1.0",
+        "eslint-plugin-better-tailwindcss": "^3.4.0",
+        "eslint-plugin-vue": "^10.0.0",
+        "globals": "^15.14.0",
+        "prettier": "^3.4.2",
+        "prettier-plugin-tailwindcss": "^0.6.10",
         "typescript": "^6.0.3",
+        "typescript-eslint": "^8.20.0",
+        "vue-eslint-parser": "^10.1.1",
         "vue-tsc": "^3.2.7"
     }
 }

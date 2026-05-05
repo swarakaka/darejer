@@ -149,8 +149,8 @@ const dialogSizeClass: Record<string, string> = {
             class="p-0 flex flex-col w-[calc(100vw-2rem)] max-h-[calc(100dvh-2rem)] overflow-hidden rounded-md shadow-[0_24px_64px_-12px_rgba(0,0,0,0.25)]"
             :class="dialogSizeClass[modalSize ?? 'md'] ?? 'sm:max-w-lg'"
         >
-            <DialogHeader class="relative shrink-0 px-5 py-4 border-b border-paper-200 bg-gradient-to-b from-paper-75 to-card">
-                <span class="absolute inset-x-0 top-0 h-0.5 bg-gradient-to-r from-brand-500 via-brand-400 to-transparent" />
+            <DialogHeader class="relative shrink-0 px-5 py-4 border-b border-paper-200 bg-linear-to-b from-paper-75 to-card">
+                <span class="absolute inset-x-0 top-0 h-0.5 bg-gradient-to-e from-brand-500 via-brand-400 to-transparent" />
                 <DialogTitle class="text-[15px] font-semibold text-ink-900 tracking-tight">
                     {{ __(form.title) }}
                 </DialogTitle>
