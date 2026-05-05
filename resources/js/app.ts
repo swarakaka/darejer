@@ -12,20 +12,20 @@ import '../css/app.css'
 import '@/composables/useTheme'
 
 createInertiaApp({
-    title: (title) => `${title} - Darejer`,
+  title: (title) => `${title} - Darejer`,
 
-    resolve: (name) =>
-        resolvePageComponent(
-            `./pages/${name}.vue`,
-            import.meta.glob<DefineComponent>('./pages/**/*.vue'),
-        ),
+  resolve: (name) =>
+    resolvePageComponent(
+      `./pages/${name}.vue`,
+      import.meta.glob<DefineComponent>('./pages/**/*.vue'),
+    ),
 
-    progress: {
-        color: 'var(--color-brand-500)',
-        showSpinner: false,
-    },
+  progress: {
+    color: 'var(--color-brand-500)',
+    showSpinner: false,
+  },
 
-    withApp(app) {
-        app.use(ZiggyVue)
-    },
+  withApp(app) {
+    app.use(ZiggyVue)
+  },
 })

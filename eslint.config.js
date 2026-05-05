@@ -49,6 +49,17 @@ export default typescriptEslint.config(
       sourceType: 'module',
       globals: { ...globals.browser, ...globals.node },
     },
+    rules: {
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        {
+          argsIgnorePattern: '^_',
+          varsIgnorePattern: '^_',
+          caughtErrorsIgnorePattern: '^_',
+          destructuredArrayIgnorePattern: '^_',
+        },
+      ],
+    },
   },
 
   // Vue SFC rules — Vue parser delegates <script lang="ts"> to TS parser
@@ -72,6 +83,18 @@ export default typescriptEslint.config(
     rules: {
       'vue/multi-word-component-names': 'off',
       'vue/no-v-html': 'off',
+      // TypeScript already enforces optional vs required props, so this duplicate
+      // check is noise — especially for shadcn-vue passthrough `class` props.
+      'vue/require-default-prop': 'off',
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        {
+          argsIgnorePattern: '^_',
+          varsIgnorePattern: '^_',
+          caughtErrorsIgnorePattern: '^_',
+          destructuredArrayIgnorePattern: '^_',
+        },
+      ],
     },
   },
 
@@ -84,6 +107,24 @@ export default typescriptEslint.config(
     settings: tailwindSettings,
     rules: {
       ...betterTailwindcss.configs.recommended.rules,
+      'better-tailwindcss/no-unregistered-classes': [
+        'error',
+        {
+          ignore: [
+            // Darejer scoped CSS classes (defined in app.css)
+            '^darejer-rte',
+            // State modifier classes used alongside Tailwind
+            '^is-(active|disabled|over-limit)$',
+            // Custom drag-handle hooks for vue-draggable-plus
+            '^(repeater-)?drag-handle$',
+            // Third-party library classes (dhtmlx-gantt, vue-sonner, vue-flow)
+            '^gantt[_-]',
+            '^toaster$',
+            '^vue-flow',
+          ],
+          detectComponentClasses: true,
+        },
+      ],
       'better-tailwindcss/no-restricted-classes': ['warn', { restrict: physicalSpacingClasses }],
     },
   },

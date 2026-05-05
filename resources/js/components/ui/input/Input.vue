@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type { HTMLAttributes } from "vue"
-import { cn } from "@/lib/utils"
+import type { HTMLAttributes } from 'vue'
+import { cn } from '@/lib/utils'
 
 // Supports BOTH binding styles with zero indirection:
 //
@@ -19,22 +19,27 @@ defineOptions({ inheritAttrs: true })
 
 const props = defineProps<{
   modelValue?: string | number | null
-  class?: HTMLAttributes["class"]
+  class?: HTMLAttributes['class']
 }>()
 
 const emit = defineEmits<{
-  (e: "update:modelValue", value: string): void
+  (e: 'update:modelValue', value: string): void
 }>()
 
 function onInternalInput(e: Event) {
-  emit("update:modelValue", (e.target as HTMLInputElement).value)
+  emit('update:modelValue', (e.target as HTMLInputElement).value)
 }
 </script>
 
 <template>
   <input
     :value="modelValue ?? undefined"
-    :class="cn('flex h-8 w-full rounded-[2px] border border-(--input-border) bg-input px-2.5 text-[13px] text-ink-900 placeholder:text-ink-400 transition-colors duration-100 hover:border-ink-700 focus:border-brand-500 focus:outline-none focus:ring-0 focus:shadow-[inset_0_0_0_1px_var(--color-brand-500)] disabled:cursor-not-allowed disabled:opacity-50 disabled:bg-muted', props.class)"
+    :class="
+      cn(
+        `flex h-8 w-full rounded-[2px] border border-(--input-border) bg-input px-2.5 text-[13px] text-ink-900 transition-colors duration-100 placeholder:text-ink-400 hover:border-ink-700 focus:border-brand-500 focus:shadow-[inset_0_0_0_1px_var(--color-brand-500)] focus:ring-0 focus:outline-none disabled:cursor-not-allowed disabled:bg-muted disabled:opacity-50`,
+        props.class,
+      )
+    "
     @input="onInternalInput"
-  >
+  />
 </template>

@@ -1,19 +1,14 @@
 <script setup lang="ts">
-import type { SelectItemProps } from "reka-ui"
-import type { HTMLAttributes } from "vue"
-import { reactiveOmit } from "@vueuse/core"
-import { Check } from "lucide-vue-next"
-import {
-  SelectItem,
-  SelectItemIndicator,
-  SelectItemText,
-  useForwardProps,
-} from "reka-ui"
-import { cn } from "@/lib/utils"
+import type { SelectItemProps } from 'reka-ui'
+import type { HTMLAttributes } from 'vue'
+import { reactiveOmit } from '@vueuse/core'
+import { Check } from 'lucide-vue-next'
+import { SelectItem, SelectItemIndicator, SelectItemText, useForwardProps } from 'reka-ui'
+import { cn } from '@/lib/utils'
 
-const props = defineProps<SelectItemProps & { class?: HTMLAttributes["class"] }>()
+const props = defineProps<SelectItemProps & { class?: HTMLAttributes['class'] }>()
 
-const delegatedProps = reactiveOmit(props, "class")
+const delegatedProps = reactiveOmit(props, 'class')
 
 const forwardedProps = useForwardProps(delegatedProps)
 </script>
@@ -23,7 +18,7 @@ const forwardedProps = useForwardProps(delegatedProps)
     v-bind="forwardedProps"
     :class="
       cn(
-        'relative flex w-full cursor-pointer select-none items-center h-8 ps-8 pe-2.5 text-[13px] text-ink-800 outline-none transition-colors duration-75 hover:bg-paper-100 focus:bg-paper-100 data-[highlighted]:bg-paper-100 data-[highlighted]:text-ink-900 data-[state=checked]:text-brand-700 data-[state=checked]:font-semibold data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
+        `relative flex h-8 w-full cursor-pointer items-center ps-8 pe-2.5 text-[13px] text-ink-800 transition-colors duration-75 outline-none select-none hover:bg-paper-100 focus:bg-paper-100 data-[disabled]:pointer-events-none data-[disabled]:opacity-50 data-[highlighted]:bg-paper-100 data-[highlighted]:text-ink-900 data-[state=checked]:font-semibold data-[state=checked]:text-brand-700`,
         props.class,
       )
     "

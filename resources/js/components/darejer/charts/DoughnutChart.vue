@@ -5,11 +5,11 @@ import { brand, baseOptions } from './chartSetup'
 import useTranslation from '@/composables/useTranslation'
 
 interface Props {
-    labels:  string[]
-    values:  number[]
-    colors?: string[]
-    height?: number
-    cutout?: string
+  labels: string[]
+  values: number[]
+  colors?: string[]
+  height?: number
+  cutout?: string
 }
 
 const props = withDefaults(defineProps<Props>(), { height: 260, cutout: '60%' })
@@ -17,23 +17,25 @@ const props = withDefaults(defineProps<Props>(), { height: 260, cutout: '60%' })
 const { resolveTranslatable } = useTranslation()
 
 const data = computed(() => ({
-    labels: props.labels.map(label => resolveTranslatable(label)),
-    datasets: [{
-        data: props.values,
-        backgroundColor: props.colors ?? brand.palette,
-        borderColor: '#fff',
-        borderWidth: 2,
-    }],
+  labels: props.labels.map((label) => resolveTranslatable(label)),
+  datasets: [
+    {
+      data: props.values,
+      backgroundColor: props.colors ?? brand.palette,
+      borderColor: '#fff',
+      borderWidth: 2,
+    },
+  ],
 }))
 
 const opts = computed(() => ({
-    ...baseOptions,
-    cutout: props.cutout,
+  ...baseOptions,
+  cutout: props.cutout,
 }))
 </script>
 
 <template>
-    <div :style="{ height: height + 'px' }">
-        <Doughnut :data="data" :options="opts" />
-    </div>
+  <div :style="{ height: height + 'px' }">
+    <Doughnut :data="data" :options="opts" />
+  </div>
 </template>

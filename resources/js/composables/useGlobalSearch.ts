@@ -10,70 +10,76 @@ import { useHttp } from '@inertiajs/vue3'
  */
 
 export interface SearchItem {
-    id:       number | string
-    label:    string
-    subtitle: string | null
-    url:      string | null
+  id: number | string
+  label: string
+  subtitle: string | null
+  url: string | null
 }
 
 export interface SearchGroup {
-    slug:  string
-    type:  string
-    items: SearchItem[]
+  slug: string
+  type: string
+  items: SearchItem[]
 }
 
 interface SearchResponse {
-    query:  string
-    groups: SearchGroup[]
-    total:  number
+  query: string
+  groups: SearchGroup[]
+  total: number
 }
 
-const groups  = ref<SearchGroup[]>([])
-const total   = ref(0)
+const groups = ref<SearchGroup[]>([])
+const total = ref(0)
 const loading = ref(false)
-const lastQ   = ref('')
-let   debounceId: ReturnType<typeof setTimeout> | null = null
-let   inflight: number = 0
+const lastQ = ref('')
+let debounceId: ReturnType<typeof setTimeout> | null = null
+let inflight: number = 0
 
 export function useGlobalSearch() {
-    const http = useHttp<Record<string, never>, SearchResponse & Record<string, unknown>>()
+  const http = useHttp<Record<string, never>, SearchResponse & Record<string, unknown>>()
 
-    const hasResults = computed(() => total.value > 0)
+  const hasResults = computed(() => total.value > 0)
 
-    function reset(): void {
-        groups.value = []
-        total.value  = 0
-        lastQ.value  = ''
-        loading.value = false
+  function reset(): void {
+    groups.value = []
+    total.value = 0
+    lastQ.value = ''
+    loading.value = false
+  }
+
+  function search(q: string, debounceMs = 200): void {
+    const term = q.trim()
+
+    if (debounceId) clearTimeout(debounceId)
+
+    if (term === '') {
+      reset()
+      return
     }
 
-    function search(q: string, debounceMs = 200): void {
-        const term = q.trim()
+    loading.value = true
 
-        if (debounceId) clearTimeout(debounceId)
+    debounceId = setTimeout(() => {
+      const ticket = ++inflight
 
-        if (term === '') {
-            reset()
-            return
-        }
+      http
+        .get(`${route('darejer.search').toString()}?q=${encodeURIComponent(term)}`, {
+          onSuccess: (data) => {
+            if (ticket !== inflight) return
+            groups.value = (data?.groups as SearchGroup[]) ?? []
+            total.value = (data?.total as number) ?? 0
+            lastQ.value = term
+          },
+        })
+        .then(
+          () => undefined,
+          () => undefined,
+        )
+        .finally(() => {
+          if (ticket === inflight) loading.value = false
+        })
+    }, debounceMs)
+  }
 
-        loading.value = true
-
-        debounceId = setTimeout(() => {
-            const ticket = ++inflight
-
-            http.get(`${route('darejer.search').toString()}?q=${encodeURIComponent(term)}`, {
-                onSuccess: (data) => {
-                    if (ticket !== inflight) return
-                    groups.value = (data?.groups as SearchGroup[]) ?? []
-                    total.value  = (data?.total  as number)        ?? 0
-                    lastQ.value  = term
-                },
-            }).then(() => undefined, () => undefined).finally(() => {
-                if (ticket === inflight) loading.value = false
-            })
-        }, debounceMs)
-    }
-
-    return { groups, total, loading, lastQ, hasResults, search, reset }
+  return { groups, total, loading, lastQ, hasResults, search, reset }
 }

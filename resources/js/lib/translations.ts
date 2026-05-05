@@ -5,17 +5,17 @@
 const modules = import.meta.glob<Record<string, string>>('@lang/*.json', {
   eager: true,
   import: 'default',
-});
+})
 
-const locales: Record<string, Record<string, string>> = {};
+const locales: Record<string, Record<string, string>> = {}
 
 for (const path in modules) {
-  const match = path.match(/\/([^/]+)\.json$/);
+  const match = path.match(/\/([^/]+)\.json$/)
   if (match) {
-    locales[match[1]] = modules[path];
+    locales[match[1]] = modules[path]
   }
 }
 
 export function getTranslations(locale: string): Record<string, string> {
-  return locales[locale] ?? {};
+  return locales[locale] ?? {}
 }

@@ -1,7 +1,8 @@
-@import "tailwindcss";
-@import "@vue-flow/core/dist/style.css";
-@import "@vue-flow/core/dist/theme-default.css";
-@import "vue-sonner/style.css";
+@import 'tailwindcss';
+@import 'tw-animate-css';
+@import '@vue-flow/core/dist/style.css';
+@import '@vue-flow/core/dist/theme-default.css';
+@import 'vue-sonner/style.css';
 
 /*
  * ═══════════════════════════════════════════════════════════════
@@ -18,149 +19,152 @@
  */
 
 @theme {
+  /* ── Brand: Azure Blue (Microsoft "Communication Blue" family) ── */
+  --color-brand-50: #eff6fc;
+  --color-brand-100: #deecf9;
+  --color-brand-200: #c7e0f4;
+  --color-brand-300: #71afe5;
+  --color-brand-400: #2b88d8;
+  --color-brand-500: #0078d4;
+  --color-brand-600: #106ebe;
+  --color-brand-700: #005a9e;
+  --color-brand-800: #004578;
+  --color-brand-900: #002050;
+  --color-brand-950: #001531;
 
-    /* ── Brand: Azure Blue (Microsoft "Communication Blue" family) ── */
-    --color-brand-50:  #eff6fc;
-    --color-brand-100: #deecf9;
-    --color-brand-200: #c7e0f4;
-    --color-brand-300: #71afe5;
-    --color-brand-400: #2b88d8;
-    --color-brand-500: #0078d4;
-    --color-brand-600: #106ebe;
-    --color-brand-700: #005a9e;
-    --color-brand-800: #004578;
-    --color-brand-900: #002050;
-    --color-brand-950: #001531;
+  /* ── Paper — Fluent neutral whites/light grays ──────────────── */
+  --color-paper-50: #ffffff;
+  --color-paper-75: #faf9f8;
+  --color-paper-100: #f3f2f1;
+  --color-paper-150: #edebe9;
+  --color-paper-200: #e1dfdd;
+  --color-paper-300: #c8c6c4;
+  --color-paper-400: #a19f9d;
 
-    /* ── Paper — Fluent neutral whites/light grays ──────────────── */
-    --color-paper-50:  #ffffff;
-    --color-paper-75:  #faf9f8;
-    --color-paper-100: #f3f2f1;
-    --color-paper-150: #edebe9;
-    --color-paper-200: #e1dfdd;
-    --color-paper-300: #c8c6c4;
-    --color-paper-400: #a19f9d;
+  /* ── Ink — Fluent neutral darks ─────────────────────────────── */
+  --color-ink-50: #faf9f8;
+  --color-ink-100: #f3f2f1;
+  --color-ink-200: #d2d0ce;
+  --color-ink-300: #a19f9d;
+  --color-ink-400: #8a8886;
+  --color-ink-500: #605e5c;
+  --color-ink-600: #3b3a39;
+  --color-ink-700: #323130;
+  --color-ink-800: #252423;
+  --color-ink-900: #201f1e;
+  --color-ink-950: #1b1a19;
 
-    /* ── Ink — Fluent neutral darks ─────────────────────────────── */
-    --color-ink-50:  #faf9f8;
-    --color-ink-100: #f3f2f1;
-    --color-ink-200: #d2d0ce;
-    --color-ink-300: #a19f9d;
-    --color-ink-400: #8a8886;
-    --color-ink-500: #605e5c;
-    --color-ink-600: #3b3a39;
-    --color-ink-700: #323130;
-    --color-ink-800: #252423;
-    --color-ink-900: #201f1e;
-    --color-ink-950: #1b1a19;
+  /* ── Legacy slate/gray tokens aliased to paper/ink ───────────── */
+  --color-slate-50: var(--color-ink-50);
+  --color-slate-75: var(--color-paper-75);
+  --color-slate-100: var(--color-ink-100);
+  --color-slate-150: var(--color-paper-150);
+  --color-slate-200: var(--color-ink-200);
+  --color-slate-300: var(--color-ink-300);
+  --color-slate-400: var(--color-ink-400);
+  --color-slate-500: var(--color-ink-500);
+  --color-slate-600: var(--color-ink-600);
+  --color-slate-700: var(--color-ink-700);
+  --color-slate-800: var(--color-ink-800);
+  --color-slate-900: var(--color-ink-900);
+  --color-slate-950: var(--color-ink-950);
 
-    /* ── Legacy slate/gray tokens aliased to paper/ink ───────────── */
-    --color-slate-50:  var(--color-ink-50);
-    --color-slate-75:  var(--color-paper-75);
-    --color-slate-100: var(--color-ink-100);
-    --color-slate-150: var(--color-paper-150);
-    --color-slate-200: var(--color-ink-200);
-    --color-slate-300: var(--color-ink-300);
-    --color-slate-400: var(--color-ink-400);
-    --color-slate-500: var(--color-ink-500);
-    --color-slate-600: var(--color-ink-600);
-    --color-slate-700: var(--color-ink-700);
-    --color-slate-800: var(--color-ink-800);
-    --color-slate-900: var(--color-ink-900);
-    --color-slate-950: var(--color-ink-950);
+  --color-gray-50: var(--color-paper-50);
+  --color-gray-75: var(--color-paper-75);
+  --color-gray-100: var(--color-paper-100);
+  --color-gray-150: var(--color-paper-150);
+  --color-gray-200: var(--color-paper-200);
+  --color-gray-300: var(--color-ink-300);
+  --color-gray-400: var(--color-ink-400);
+  --color-gray-500: var(--color-ink-500);
+  --color-gray-600: var(--color-ink-600);
+  --color-gray-700: var(--color-ink-700);
+  --color-gray-800: var(--color-ink-800);
+  --color-gray-900: var(--color-ink-900);
+  --color-gray-950: var(--color-ink-950);
 
-    --color-gray-50:  var(--color-paper-50);
-    --color-gray-75:  var(--color-paper-75);
-    --color-gray-100: var(--color-paper-100);
-    --color-gray-150: var(--color-paper-150);
-    --color-gray-200: var(--color-paper-200);
-    --color-gray-300: var(--color-ink-300);
-    --color-gray-400: var(--color-ink-400);
-    --color-gray-500: var(--color-ink-500);
-    --color-gray-600: var(--color-ink-600);
-    --color-gray-700: var(--color-ink-700);
-    --color-gray-800: var(--color-ink-800);
-    --color-gray-900: var(--color-ink-900);
-    --color-gray-950: var(--color-ink-950);
+  /* ── Semantic — Fluent semantic colors ───────────────────────── */
+  --color-success-50: #dff6dd;
+  --color-success-100: #bcebb6;
+  --color-success-500: #107c10;
+  --color-success-600: #0b5a08;
+  --color-success-700: #094b07;
 
-    /* ── Semantic — Fluent semantic colors ───────────────────────── */
-    --color-success-50:  #dff6dd;
-    --color-success-100: #bcebb6;
-    --color-success-500: #107c10;
-    --color-success-600: #0b5a08;
-    --color-success-700: #094b07;
+  --color-warning-50: #fff4ce;
+  --color-warning-100: #ffe8a4;
+  --color-warning-500: #ca5010;
+  --color-warning-600: #8a3b07;
+  --color-warning-700: #5d2a08;
 
-    --color-warning-50:  #fff4ce;
-    --color-warning-100: #ffe8a4;
-    --color-warning-500: #ca5010;
-    --color-warning-600: #8a3b07;
-    --color-warning-700: #5d2a08;
+  --color-danger-50: #fde7e9;
+  --color-danger-100: #f6c9cd;
+  --color-danger-200: #eda9ad;
+  --color-danger-300: #e08891;
+  --color-danger-500: #d13438;
+  --color-danger-600: #a4262c;
+  --color-danger-700: #751d22;
 
-    --color-danger-50:  #fde7e9;
-    --color-danger-100: #f6c9cd;
-    --color-danger-500: #d13438;
-    --color-danger-600: #a4262c;
-    --color-danger-700: #751d22;
+  --color-info-50: var(--color-brand-50);
+  --color-info-500: var(--color-brand-500);
+  --color-info-600: var(--color-brand-600);
 
-    --color-info-50:    var(--color-brand-50);
-    --color-info-500:   var(--color-brand-500);
-    --color-info-600:   var(--color-brand-600);
+  /* ── Typography — Segoe UI stack (Azure portal default) ─────── */
+  --font-sans:
+    'Segoe UI', 'Segoe UI Web (West European)', -apple-system, BlinkMacSystemFont, 'Helvetica Neue',
+    Arial, sans-serif;
+  --font-serif: 'Segoe UI', Georgia, serif;
+  --font-mono: 'Cascadia Code', 'Cascadia Mono', Consolas, 'Courier New', monospace;
+  --font-darejer: 'IBM Plex Sans Arabic', 'Segoe UI', system-ui, sans-serif;
 
-    /* ── Typography — Segoe UI stack (Azure portal default) ─────── */
-    --font-sans:    'Segoe UI', 'Segoe UI Web (West European)', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
-    --font-serif:   'Segoe UI', Georgia, serif;
-    --font-mono:    'Cascadia Code', 'Cascadia Mono', Consolas, 'Courier New', monospace;
-    --font-darejer: 'IBM Plex Sans Arabic', 'Segoe UI', system-ui, sans-serif;
+  /* ── Type scale ──────────────────────────────────────────────── */
+  --text-2xs: 0.625rem;
+  --text-xs: 0.75rem;
+  --text-sm: 0.8125rem;
+  --text-base: 0.875rem;
+  --text-md: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.375rem;
+  --text-2xl: 1.75rem;
+  --text-3xl: 2.25rem;
 
-    /* ── Type scale ──────────────────────────────────────────────── */
-    --text-2xs:  0.625rem;
-    --text-xs:   0.75rem;
-    --text-sm:   0.8125rem;
-    --text-base: 0.875rem;
-    --text-md:   1rem;
-    --text-lg:   1.125rem;
-    --text-xl:   1.375rem;
-    --text-2xl:  1.75rem;
-    --text-3xl:  2.25rem;
+  /* ── Radius — tight Fluent corners ───────────────────────────── */
+  --radius-none: 0;
+  --radius-xs: 0;
+  --radius-sm: 0.125rem;
+  --radius-md: 0.125rem;
+  --radius-lg: 0.25rem;
+  --radius-full: 9999px;
 
-    /* ── Radius — tight Fluent corners ───────────────────────────── */
-    --radius-none: 0;
-    --radius-xs:   0;
-    --radius-sm:   0.125rem;
-    --radius-md:   0.125rem;
-    --radius-lg:   0.25rem;
-    --radius-full: 9999px;
-
-    /* ── Layout ──────────────────────────────────────────────────── */
-    --sidebar-width:          3rem;
-    --sidebar-expanded-width: 14rem;
-    --flyout-width:           17rem;
-    --topbar-height:          2.75rem;
-    --action-pane-height:     2.5rem;
-    --content-padding:        1.5rem;
+  /* ── Layout ──────────────────────────────────────────────────── */
+  --sidebar-width: 3rem;
+  --sidebar-expanded-width: 14rem;
+  --flyout-width: 17rem;
+  --topbar-height: 2.75rem;
+  --action-pane-height: 2.5rem;
+  --content-padding: 1.5rem;
 }
 
 /* Bridge shadcn semantic tokens so `bg-background` etc. resolve */
 @theme inline {
-    --color-background:            var(--background);
-    --color-foreground:            var(--foreground);
-    --color-card:                  var(--card);
-    --color-card-foreground:       var(--card-foreground);
-    --color-popover:               var(--popover);
-    --color-popover-foreground:    var(--popover-foreground);
-    --color-primary:               var(--primary);
-    --color-primary-foreground:    var(--primary-foreground);
-    --color-secondary:             var(--secondary);
-    --color-secondary-foreground:  var(--secondary-foreground);
-    --color-muted:                 var(--muted);
-    --color-muted-foreground:      var(--muted-foreground);
-    --color-accent:                var(--accent);
-    --color-accent-foreground:     var(--accent-foreground);
-    --color-destructive:           var(--destructive);
-    --color-destructive-foreground:var(--destructive-foreground);
-    --color-border:                var(--border);
-    --color-input:                 var(--input);
-    --color-ring:                  var(--ring);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
 }
 
 /*
@@ -169,53 +173,53 @@
  *  white blades, blue accent.
  */
 :root {
-    --background:           var(--color-paper-100);
-    --foreground:           var(--color-ink-900);
+  --background: var(--color-paper-100);
+  --foreground: var(--color-ink-900);
 
-    --card:                 #ffffff;
-    --card-foreground:      var(--color-ink-900);
-    --card-border:          var(--color-paper-200);
+  --card: #ffffff;
+  --card-foreground: var(--color-ink-900);
+  --card-border: var(--color-paper-200);
 
-    --popover:              #ffffff;
-    --popover-foreground:   var(--color-ink-900);
+  --popover: #ffffff;
+  --popover-foreground: var(--color-ink-900);
 
-    --primary:              var(--color-brand-500);
-    --primary-foreground:   #ffffff;
+  --primary: var(--color-brand-500);
+  --primary-foreground: #ffffff;
 
-    --secondary:            var(--color-paper-100);
-    --secondary-foreground: var(--color-ink-700);
-    --muted:                var(--color-paper-100);
-    --muted-foreground:     var(--color-ink-500);
-    --accent:               var(--color-paper-150);
-    --accent-foreground:    var(--color-ink-800);
+  --secondary: var(--color-paper-100);
+  --secondary-foreground: var(--color-ink-700);
+  --muted: var(--color-paper-100);
+  --muted-foreground: var(--color-ink-500);
+  --accent: var(--color-paper-150);
+  --accent-foreground: var(--color-ink-800);
 
-    --destructive:          var(--color-danger-500);
-    --destructive-foreground:#ffffff;
+  --destructive: var(--color-danger-500);
+  --destructive-foreground: #ffffff;
 
-    --border:               var(--color-paper-200);
-    --input:                #ffffff;
-    --input-border:         var(--color-paper-300);
-    --input-border-focus:   var(--color-brand-500);
-    --ring:                 var(--color-brand-500);
-    --radius:               var(--radius-md);
+  --border: var(--color-paper-200);
+  --input: #ffffff;
+  --input-border: var(--color-paper-300);
+  --input-border-focus: var(--color-brand-500);
+  --ring: var(--color-brand-500);
+  --radius: var(--radius-md);
 
-    /* Chrome — current Azure portal: Azure-blue header, white left rail. */
-    --sidebar-bg:             var(--color-brand-950);
-    --sidebar-border:         var(--color-brand-900);
-    --sidebar-item-bg-active: color-mix(in srgb, var(--color-brand-500) 22%, transparent);
-    --sidebar-foreground:     var(--color-paper-50);
-    --sidebar-foreground-muted: var(--color-paper-300);
+  /* Chrome — current Azure portal: Azure-blue header, white left rail. */
+  --sidebar-bg: var(--color-brand-950);
+  --sidebar-border: var(--color-brand-900);
+  --sidebar-item-bg-active: color-mix(in srgb, var(--color-brand-500) 22%, transparent);
+  --sidebar-foreground: var(--color-paper-50);
+  --sidebar-foreground-muted: var(--color-paper-300);
 
-    --topbar-bg:              #0078d4;
-    --topbar-border:          #006cbe;
-    --topbar-foreground:      #ffffff;
+  --topbar-bg: #0078d4;
+  --topbar-border: #006cbe;
+  --topbar-foreground: #ffffff;
 
-    /* Azure portal hairline shadow used on blades/cards */
-    --shadow-blade: 0 1.6px 3.6px rgba(0, 0, 0, 0.13), 0 0.3px 0.9px rgba(0, 0, 0, 0.10);
+  /* Azure portal hairline shadow used on blades/cards */
+  --shadow-blade: 0 1.6px 3.6px rgba(0, 0, 0, 0.13), 0 0.3px 0.9px rgba(0, 0, 0, 0.1);
 }
 
 .dark {
-    /*
+  /*
      * Invert the paper/ink scales so every utility built on these tokens
      * (bg-paper-50, text-ink-900, border-paper-200, etc.) flips automatically.
      * paper-* = surface scale (page → elevated). ink-* = content scale
@@ -223,102 +227,150 @@
      * Tuned for Azure-portal-style dark theme: deep near-black surfaces
      * with bright near-white text for maximum readability.
      */
-    --color-paper-50:  #1b1a19;
-    --color-paper-75:  #252423;
-    --color-paper-100: #2d2c2b;
-    --color-paper-150: #323130;
-    --color-paper-200: #3b3a39;
-    --color-paper-300: #4a4948;
-    --color-paper-400: #605e5c;
+  --color-paper-50: #1b1a19;
+  --color-paper-75: #252423;
+  --color-paper-100: #2d2c2b;
+  --color-paper-150: #323130;
+  --color-paper-200: #3b3a39;
+  --color-paper-300: #4a4948;
+  --color-paper-400: #605e5c;
 
-    --color-ink-50:  #2d2c2b;
-    --color-ink-100: #3b3a39;
-    --color-ink-200: #605e5c;
-    --color-ink-300: #8a8886;
-    --color-ink-400: #a19f9d;
-    --color-ink-500: #c8c6c4;
-    --color-ink-600: #d2d0ce;
-    --color-ink-700: #e1dfdd;
-    --color-ink-800: #edebe9;
-    --color-ink-900: #f3f2f1;
-    --color-ink-950: #ffffff;
+  --color-ink-50: #2d2c2b;
+  --color-ink-100: #3b3a39;
+  --color-ink-200: #605e5c;
+  --color-ink-300: #8a8886;
+  --color-ink-400: #a19f9d;
+  --color-ink-500: #c8c6c4;
+  --color-ink-600: #d2d0ce;
+  --color-ink-700: #e1dfdd;
+  --color-ink-800: #edebe9;
+  --color-ink-900: #f3f2f1;
+  --color-ink-950: #ffffff;
 
-    --background:           var(--color-paper-50);
-    --foreground:           var(--color-ink-900);
-    --card:                 var(--color-paper-75);
-    --card-foreground:      var(--color-ink-900);
-    --card-border:          var(--color-paper-200);
-    --popover:              var(--color-paper-100);
-    --popover-foreground:   var(--color-ink-900);
-    --primary:              var(--color-brand-400);
-    --primary-foreground:   #ffffff;
-    --secondary:            var(--color-paper-150);
-    --secondary-foreground: var(--color-ink-800);
-    --muted:                var(--color-paper-150);
-    --muted-foreground:     var(--color-ink-400);
-    --accent:               var(--color-paper-200);
-    --accent-foreground:    var(--color-ink-900);
-    --destructive:          var(--color-danger-500);
-    --destructive-foreground:#ffffff;
-    --border:               var(--color-paper-200);
-    --input:                var(--color-paper-75);
-    --input-border:         var(--color-paper-300);
+  --background: var(--color-paper-50);
+  --foreground: var(--color-ink-900);
+  --card: var(--color-paper-75);
+  --card-foreground: var(--color-ink-900);
+  --card-border: var(--color-paper-200);
+  --popover: var(--color-paper-100);
+  --popover-foreground: var(--color-ink-900);
+  --primary: var(--color-brand-400);
+  --primary-foreground: #ffffff;
+  --secondary: var(--color-paper-150);
+  --secondary-foreground: var(--color-ink-800);
+  --muted: var(--color-paper-150);
+  --muted-foreground: var(--color-ink-400);
+  --accent: var(--color-paper-200);
+  --accent-foreground: var(--color-ink-900);
+  --destructive: var(--color-danger-500);
+  --destructive-foreground: #ffffff;
+  --border: var(--color-paper-200);
+  --input: var(--color-paper-75);
+  --input-border: var(--color-paper-300);
 
-    /* Chrome — Azure portal dark mode: deep near-black topbar/sidebar with
+  /* Chrome — Azure portal dark mode: deep near-black topbar/sidebar with
        Azure-blue brand accents. The bright blue topbar would be jarring
        against a dark page, so it tones down to match. */
-    --sidebar-bg:             var(--color-paper-100);
-    --sidebar-border:         #1f232b;
-    --sidebar-item-bg-active: color-mix(in srgb, var(--color-brand-500) 28%, transparent);
-    --sidebar-foreground:     #f3f2f1;
-    --sidebar-foreground-muted: #a19f9d;
+  --sidebar-bg: var(--color-paper-100);
+  --sidebar-border: #1f232b;
+  --sidebar-item-bg-active: color-mix(in srgb, var(--color-brand-500) 28%, transparent);
+  --sidebar-foreground: #f3f2f1;
+  --sidebar-foreground-muted: #a19f9d;
 
-    --topbar-bg:              var(--color-paper-100);
-    --topbar-border:          #1f232b;
-    --topbar-foreground:      #f3f2f1;
+  --topbar-bg: var(--color-paper-100);
+  --topbar-border: #1f232b;
+  --topbar-foreground: #f3f2f1;
+}
+
+/*
+ * ─── Logical-direction gradient utilities ───────────────────────────────────
+ *  Tailwind v4 ships physical gradient directions only (`bg-linear-to-r`/`-l`).
+ *  These mirror them as logical-direction (start/end, bottom-start/end) so the
+ *  gradient flows along the inline axis and flips automatically under
+ *  `dir="rtl"`. Pair these with `from-*` / `via-*` / `to-*` exactly like the
+ *  built-in gradient utilities.
+ */
+@utility bg-linear-to-s {
+  background-image: linear-gradient(to left in oklab, var(--tw-gradient-stops));
+}
+@utility bg-linear-to-e {
+  background-image: linear-gradient(to right in oklab, var(--tw-gradient-stops));
+}
+@utility bg-linear-to-bs {
+  background-image: linear-gradient(to bottom left in oklab, var(--tw-gradient-stops));
+}
+@utility bg-linear-to-be {
+  background-image: linear-gradient(to bottom right in oklab, var(--tw-gradient-stops));
+}
+@utility bg-linear-to-ts {
+  background-image: linear-gradient(to top left in oklab, var(--tw-gradient-stops));
+}
+@utility bg-linear-to-te {
+  background-image: linear-gradient(to top right in oklab, var(--tw-gradient-stops));
+}
+
+html[dir='rtl'] .bg-linear-to-s {
+  background-image: linear-gradient(to right in oklab, var(--tw-gradient-stops));
+}
+html[dir='rtl'] .bg-linear-to-e {
+  background-image: linear-gradient(to left in oklab, var(--tw-gradient-stops));
+}
+html[dir='rtl'] .bg-linear-to-bs {
+  background-image: linear-gradient(to bottom right in oklab, var(--tw-gradient-stops));
+}
+html[dir='rtl'] .bg-linear-to-be {
+  background-image: linear-gradient(to bottom left in oklab, var(--tw-gradient-stops));
+}
+html[dir='rtl'] .bg-linear-to-ts {
+  background-image: linear-gradient(to top right in oklab, var(--tw-gradient-stops));
+}
+html[dir='rtl'] .bg-linear-to-te {
+  background-image: linear-gradient(to top left in oklab, var(--tw-gradient-stops));
 }
 
 /*
  * ─── Base reset ─────────────────────────────────────────────────────────────
  */
-*, *::before, *::after {
-    @apply box-border;
+*,
+*::before,
+*::after {
+  @apply box-border;
 }
 
 html {
-    font-size: 16px;
-    -webkit-text-size-adjust: 100%;
+  font-size: 16px;
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
-    @apply bg-background text-foreground text-base antialiased leading-[1.45];
-    font-feature-settings: 'cv11', 'ss01', 'ss03';
+  @apply bg-background text-base leading-[1.45] text-foreground antialiased;
+  font-feature-settings: 'cv11', 'ss01', 'ss03';
 }
 
-html[dir="rtl"] body {
-    font-family: var(--font-darejer);
+html[dir='rtl'] body {
+  font-family: var(--font-darejer);
 }
 
 ::selection {
-    @apply bg-brand-200 text-brand-900;
+  @apply bg-brand-200 text-brand-900;
 }
 
 ::-webkit-scrollbar {
-    @apply w-2.5 h-2.5;
+  @apply h-2.5 w-2.5;
 }
 
 ::-webkit-scrollbar-track {
-    @apply bg-transparent;
+  @apply bg-transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-    @apply bg-paper-300 rounded-none border-2 border-transparent;
-    background-clip: padding-box;
+  @apply rounded-none border-2 border-transparent bg-paper-300;
+  background-clip: padding-box;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    @apply bg-ink-400 border-2 border-transparent;
-    background-clip: padding-box;
+  @apply border-2 border-transparent bg-ink-400;
+  background-clip: padding-box;
 }
 
 /*
@@ -328,109 +380,109 @@ html[dir="rtl"] body {
  */
 
 .darejer-rte {
-    @apply border border-(--input-border) rounded-md overflow-hidden bg-input transition-colors duration-120;
+  @apply overflow-hidden rounded-md border border-(--input-border) bg-input transition-colors duration-120;
 }
 
 .darejer-rte:focus-within {
-    @apply border-(--input-border-focus) ring-1 ring-(--input-border-focus);
+  @apply border-(--input-border-focus) ring-1 ring-(--input-border-focus);
 }
 
 .darejer-rte.is-disabled {
-    @apply opacity-60 pointer-events-none;
+  @apply pointer-events-none opacity-60;
 }
 
 .darejer-rte-toolbar {
-    @apply flex flex-wrap items-center gap-0.5 px-2 py-[0.3rem] bg-paper-75 border-b border-paper-200;
+  @apply flex flex-wrap items-center gap-0.5 border-b border-paper-200 bg-paper-75 px-2 py-[0.3rem];
 }
 
 .darejer-rte-btn {
-    @apply flex items-center justify-center w-8 h-8 border-0 bg-transparent rounded-sm text-ink-500 cursor-pointer p-0 text-xs shrink-0 transition-colors duration-100;
+  @apply flex h-8 w-8 shrink-0 cursor-pointer items-center justify-center rounded-sm border-0 bg-transparent p-0 text-xs text-ink-500 transition-colors duration-100;
 }
 
 .darejer-rte-btn:hover {
-    @apply bg-paper-150 text-ink-800;
+  @apply bg-paper-150 text-ink-800;
 }
 
 .darejer-rte-btn.is-active {
-    @apply bg-brand-50 text-brand-600;
+  @apply bg-brand-50 text-brand-600;
 }
 
 .darejer-rte-divider {
-    @apply w-px h-5.5 bg-paper-200 mx-1;
+  @apply mx-1 h-5.5 w-px bg-paper-200;
 }
 
 .darejer-rte-content {
-    @apply px-3 py-2.5 overflow-y-auto;
+  @apply overflow-y-auto px-3 py-2.5;
 }
 
 .darejer-rte-content:focus {
-    @apply outline-none;
+  @apply outline-none;
 }
 
 .darejer-rte-content .tiptap {
-    @apply outline-none text-base text-foreground leading-normal;
+  @apply text-base leading-normal text-foreground outline-none;
 }
 
 .darejer-rte-content .tiptap p {
-    @apply mb-2;
+  @apply mb-2;
 }
 
 .darejer-rte-content .tiptap p:last-child {
-    @apply mb-0;
+  @apply mb-0;
 }
 
 .darejer-rte-content .tiptap h1 {
-    @apply text-xl font-semibold mt-3 mb-1.5 tracking-[-0.01em];
+  @apply mt-3 mb-1.5 text-xl font-semibold tracking-[-0.01em];
 }
 
 .darejer-rte-content .tiptap h2 {
-    @apply text-lg font-semibold mt-2.5 mb-[0.3rem] tracking-[-0.005em];
+  @apply mt-2.5 mb-[0.3rem] text-lg font-semibold tracking-[-0.005em];
 }
 
 .darejer-rte-content .tiptap h3 {
-    @apply text-md font-semibold mt-2 mb-1;
+  @apply mt-2 mb-1 text-md font-semibold;
 }
 
 .darejer-rte-content .tiptap ul,
 .darejer-rte-content .tiptap ol {
-    @apply ps-5 my-1.5;
+  @apply my-1.5 ps-5;
 }
 
 .darejer-rte-content .tiptap li {
-    @apply my-0.5;
+  @apply my-0.5;
 }
 
 .darejer-rte-content .tiptap blockquote {
-    @apply border-s-[3px] border-brand-500 ps-3 my-2 text-ink-500 italic;
+  @apply my-2 border-s-[3px] border-brand-500 ps-3 text-ink-500 italic;
 }
 
 .darejer-rte-content .tiptap code {
-    @apply bg-paper-100 border border-paper-200 rounded-xs px-[0.3rem] py-[0.1rem] text-sm;
+  @apply rounded-xs border border-paper-200 bg-paper-100 px-[0.3rem] py-[0.1rem] text-sm;
 }
 
 .darejer-rte-content .tiptap pre {
-    @apply bg-paper-100 border border-paper-200 rounded-md px-3.5 py-2.5 overflow-x-auto my-2;
+  @apply my-2 overflow-x-auto rounded-md border border-paper-200 bg-paper-100 px-3.5 py-2.5;
 }
 
 .darejer-rte-content .tiptap pre code {
-    @apply bg-transparent border-0 p-0;
+  @apply border-0 bg-transparent p-0;
 }
 
 .darejer-rte-content .tiptap a {
-    @apply text-brand-600 underline cursor-pointer;
+  @apply cursor-pointer text-brand-600 underline;
 }
 
 .darejer-rte-content .tiptap .is-editor-empty::before {
-    content: attr(data-placeholder);
-    @apply text-ink-400 pointer-events-none float-left h-0;
+  content: attr(data-placeholder);
+  @apply pointer-events-none float-left h-0 text-ink-400;
 }
 
 .darejer-rte-footer {
-    @apply flex justify-end px-2.5 py-1 bg-paper-75 border-t border-paper-200 text-2xs text-ink-400 tabular-nums tracking-[0.04em];
+  @apply flex justify-end border-t border-paper-200 bg-paper-75 px-2.5 py-1 text-2xs tracking-[0.04em] text-ink-400 tabular-nums;
 }
 
 .darejer-rte-footer.is-over-limit {
-    @apply text-danger-600;
+  @apply text-danger-600;
 }
 
 /*
@@ -438,60 +490,60 @@ html[dir="rtl"] body {
  */
 
 .vue-flow__node {
-    @apply text-sm!;
+  @apply text-sm!;
 }
 
 .vue-flow__node-default,
 .vue-flow__node-input,
 .vue-flow__node-output {
-    @apply rounded-md! border! border-paper-300! bg-paper-50! py-2! px-3.5! text-sm! text-ink-800! shadow-(--shadow-blade)!;
+  @apply rounded-md! border! border-paper-300! bg-paper-50! px-3.5! py-2! text-sm! text-ink-800! shadow-(--shadow-blade)!;
 }
 
 .vue-flow__node-input {
-    @apply border-brand-500! bg-brand-50! text-brand-800!;
+  @apply border-brand-500! bg-brand-50! text-brand-800!;
 }
 
 .vue-flow__node-output {
-    @apply border-paper-400! bg-paper-100!;
+  @apply border-paper-400! bg-paper-100!;
 }
 
 .vue-flow__node.selected .vue-flow__node-default,
 .vue-flow__node.selected > div {
-    @apply border-brand-500! outline-2! outline-solid! outline-brand-200!;
+  @apply border-brand-500! outline-2! outline-brand-200! outline-solid!;
 }
 
 .vue-flow__edge-path {
-    stroke: var(--color-ink-400) !important;
-    stroke-width: 1.5 !important;
+  stroke: var(--color-ink-400) !important;
+  stroke-width: 1.5 !important;
 }
 
 .vue-flow__edge.selected .vue-flow__edge-path {
-    stroke: var(--color-brand-500) !important;
+  stroke: var(--color-brand-500) !important;
 }
 
 .vue-flow__edge-label {
-    @apply text-[0.6875rem]!;
-    fill: var(--color-ink-600) !important;
+  @apply text-[0.6875rem]!;
+  fill: var(--color-ink-600) !important;
 }
 
 .vue-flow__controls {
-    @apply border! border-paper-200! rounded-md! overflow-hidden! shadow-(--shadow-blade)!;
+  @apply overflow-hidden! rounded-md! border! border-paper-200! shadow-(--shadow-blade)!;
 }
 
 .vue-flow__controls-button {
-    @apply border-0! border-b! border-paper-200! bg-paper-50! text-ink-500! w-7! h-7! p-0!;
+  @apply h-7! w-7! border-0! border-b! border-paper-200! bg-paper-50! p-0! text-ink-500!;
 }
 
 .vue-flow__controls-button:hover {
-    @apply bg-paper-100! text-brand-600!;
+  @apply bg-paper-100! text-brand-600!;
 }
 
 .vue-flow__minimap {
-    @apply border! border-paper-200! rounded-md!;
+  @apply rounded-md! border! border-paper-200!;
 }
 
 .vue-flow__background {
-    @apply bg-paper-75!;
+  @apply bg-paper-75!;
 }
 
 /*
@@ -499,76 +551,77 @@ html[dir="rtl"] body {
  */
 
 .fc {
-    @apply text-sm!;
+  @apply text-sm!;
 }
 
 .fc-toolbar-title {
-    @apply text-[0.9375rem]! font-semibold! text-ink-800!;
+  @apply text-[0.9375rem]! font-semibold! text-ink-800!;
 }
 
 .fc-button {
-    @apply bg-paper-50! border! border-paper-300! text-ink-700! text-xs! font-semibold! py-1! px-2.5! rounded-sm! h-8! shadow-none! transition-colors! duration-100!;
+  @apply h-8! rounded-sm! border! border-paper-300! bg-paper-50! px-2.5! py-1! text-xs! font-semibold! text-ink-700! shadow-none! transition-colors! duration-100!;
 }
 
 .fc-button:hover {
-    @apply bg-paper-100! border-paper-400! text-ink-900!;
+  @apply border-paper-400! bg-paper-100! text-ink-900!;
 }
 
 .fc-button-primary:not(:disabled).fc-button-active,
 .fc-button-primary:not(:disabled):active {
-    @apply bg-brand-500! border-brand-500! text-white!;
+  @apply border-brand-500! bg-brand-500! text-white!;
 }
 
 .fc-button-group .fc-button {
-    @apply rounded-none!;
+  @apply rounded-none!;
 }
 
 .fc-button-group .fc-button:first-child {
-    @apply rounded-s-sm!;
+  @apply rounded-s-sm!;
 }
 
 .fc-button-group .fc-button:last-child {
-    @apply rounded-e-sm!;
+  @apply rounded-e-sm!;
 }
 
 .fc-col-header-cell-cushion {
-    @apply text-[0.6875rem]! font-semibold! uppercase! tracking-[0.04em]! text-ink-500! no-underline!;
+  @apply text-[0.6875rem]! font-semibold! tracking-[0.04em]! text-ink-500! uppercase! no-underline!;
 }
 
 .fc-daygrid-day-number {
-    @apply text-xs! text-ink-600! no-underline!;
+  @apply text-xs! text-ink-600! no-underline!;
 }
 
 .fc-day-today {
-    @apply bg-brand-50!;
+  @apply bg-brand-50!;
 }
 
 .fc-day-today .fc-daygrid-day-number {
-    @apply text-brand-700! font-semibold!;
+  @apply font-semibold! text-brand-700!;
 }
 
 .fc-event {
-    @apply rounded-sm! border-0! text-[0.6875rem]! font-medium! py-px! px-1! cursor-pointer!;
+  @apply cursor-pointer! rounded-sm! border-0! px-1! py-px! text-[0.6875rem]! font-medium!;
 }
 
 .fc-event-title {
-    @apply font-medium!;
+  @apply font-medium!;
 }
 
 .fc-list-event-title a {
-    @apply text-sm! no-underline! text-ink-800!;
+  @apply text-sm! text-ink-800! no-underline!;
 }
 
 .fc-list-event:hover td {
-    @apply bg-paper-100!;
+  @apply bg-paper-100!;
 }
 
-.fc th, .fc td {
-    @apply border-paper-200!;
+.fc th,
+.fc td {
+  @apply border-paper-200!;
 }
 
 .fc-scrollgrid {
-    @apply border-paper-200!;
+  @apply border-paper-200!;
 }
 
 /*
@@ -576,44 +629,44 @@ html[dir="rtl"] body {
  */
 
 .gantt_container {
-    @apply text-sm! border! border-paper-200! rounded-md! overflow-hidden!;
+  @apply overflow-hidden! rounded-md! border! border-paper-200! text-sm!;
 }
 
 .gantt_grid_head_cell,
 .gantt_scale_cell {
-    @apply text-[0.6875rem]! font-semibold! uppercase! tracking-[0.04em]! text-ink-500! bg-paper-75! border-paper-200!;
+  @apply border-paper-200! bg-paper-75! text-[0.6875rem]! font-semibold! tracking-[0.04em]! text-ink-500! uppercase!;
 }
 
 .gantt_row {
-    @apply border-paper-150!;
+  @apply border-paper-150!;
 }
 
 .gantt_row:hover,
 .gantt_row.odd:hover {
-    @apply bg-brand-50!;
+  @apply bg-brand-50!;
 }
 
 .gantt_row.odd {
-    @apply bg-paper-75!;
+  @apply bg-paper-75!;
 }
 
 .gantt_task_line {
-    @apply rounded-sm! border-0! bg-brand-500!;
+  @apply rounded-sm! border-0! bg-brand-500!;
 }
 
 .gantt_task_line .gantt_task_content {
-    @apply text-[0.6875rem]! font-medium!;
+  @apply text-[0.6875rem]! font-medium!;
 }
 
 .gantt_task_progress {
-    @apply rounded-s-sm! opacity-[0.35]!;
+  @apply rounded-s-sm! opacity-[0.35]!;
 }
 
 .gantt_link_arrow,
 .gantt_line_wrapper div {
-    @apply bg-ink-400!;
+  @apply bg-ink-400!;
 }
 
 .gantt_grid_data .gantt_cell {
-    @apply text-sm! text-ink-700! border-paper-150!;
+  @apply border-paper-150! text-sm! text-ink-700!;
 }

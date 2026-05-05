@@ -9,168 +9,167 @@ import type { DarejerComponent } from '@/types/darejer'
 const { __ } = useTranslation()
 
 const props = defineProps<{
-    component: DarejerComponent
-    record:    Record<string, unknown>
-    errors:    Record<string, string>
-    formData?: Record<string, unknown>
+  component: DarejerComponent
+  record: Record<string, unknown>
+  errors: Record<string, string>
+  formData?: Record<string, unknown>
 }>()
 
 const emit = defineEmits<{ (e: 'update', name: string, value: unknown): void }>()
 
 const canvasEl = ref<HTMLCanvasElement | null>(null)
-let   pad: SignaturePad | null = null
+let pad: SignaturePad | null = null
 
-const height    = computed(() => (props.component.height   as number) ?? 160)
-const penColor  = computed(() => (props.component.penColor as string) ?? '#000000')
-const bgColor   = computed(() => (props.component.bgColor  as string) ?? '#ffffff')
+const height = computed(() => (props.component.height as number) ?? 160)
+const penColor = computed(() => (props.component.penColor as string) ?? '#000000')
+const bgColor = computed(() => (props.component.bgColor as string) ?? '#ffffff')
 const showGuide = computed(() => props.component.showGuide !== false)
 
-const rawValue = (props.formData ?? props.record)[props.component.name]
-    ?? props.component.default ?? null
+const rawValue =
+  (props.formData ?? props.record)[props.component.name] ?? props.component.default ?? null
 
 const hasSignature = ref(!!rawValue)
 
 function resizeCanvas() {
-    if (!canvasEl.value || !pad) return
-    const ratio  = Math.max(window.devicePixelRatio || 1, 1)
-    const canvas = canvasEl.value
-    const data   = pad.toData()
-    canvas.width  = canvas.offsetWidth  * ratio
-    canvas.height = canvas.offsetHeight * ratio
-    const ctx = canvas.getContext('2d')
-    if (ctx) {
-        ctx.scale(ratio, ratio)
-        ctx.fillStyle = bgColor.value
-        ctx.fillRect(0, 0, canvas.width, canvas.height)
-    }
-    pad.clear()
-    pad.fromData(data)
+  if (!canvasEl.value || !pad) return
+  const ratio = Math.max(window.devicePixelRatio || 1, 1)
+  const canvas = canvasEl.value
+  const data = pad.toData()
+  canvas.width = canvas.offsetWidth * ratio
+  canvas.height = canvas.offsetHeight * ratio
+  const ctx = canvas.getContext('2d')
+  if (ctx) {
+    ctx.scale(ratio, ratio)
+    ctx.fillStyle = bgColor.value
+    ctx.fillRect(0, 0, canvas.width, canvas.height)
+  }
+  pad.clear()
+  pad.fromData(data)
 }
 
 onMounted(() => {
-    if (!canvasEl.value) return
+  if (!canvasEl.value) return
 
-    pad = new SignaturePad(canvasEl.value, {
-        penColor:        penColor.value,
-        backgroundColor: bgColor.value,
-    })
+  pad = new SignaturePad(canvasEl.value, {
+    penColor: penColor.value,
+    backgroundColor: bgColor.value,
+  })
 
-    if (rawValue && typeof rawValue === 'string' && rawValue.startsWith('data:')) {
-        pad.fromDataURL(rawValue)
-        hasSignature.value = true
-    }
+  if (rawValue && typeof rawValue === 'string' && rawValue.startsWith('data:')) {
+    pad.fromDataURL(rawValue)
+    hasSignature.value = true
+  }
 
-    if (props.component.disabled) {
-        pad.off()
-    }
+  if (props.component.disabled) {
+    pad.off()
+  }
 
-    pad.addEventListener('endStroke', () => {
-        hasSignature.value = !pad!.isEmpty()
-        emit('update', props.component.name, pad!.isEmpty() ? null : pad!.toDataURL('image/png'))
-    })
+  pad.addEventListener('endStroke', () => {
+    hasSignature.value = !pad!.isEmpty()
+    emit('update', props.component.name, pad!.isEmpty() ? null : pad!.toDataURL('image/png'))
+  })
 
-    resizeCanvas()
-    window.addEventListener('resize', resizeCanvas)
+  resizeCanvas()
+  window.addEventListener('resize', resizeCanvas)
 })
 
 onBeforeUnmount(() => {
-    window.removeEventListener('resize', resizeCanvas)
-    pad?.off()
+  window.removeEventListener('resize', resizeCanvas)
+  pad?.off()
 })
 
 function clear() {
-    if (!pad || props.component.disabled) return
-    pad.clear()
-    const canvas = canvasEl.value
-    if (canvas) {
-        const ctx = canvas.getContext('2d')
-        if (ctx) {
-            ctx.fillStyle = bgColor.value
-            ctx.fillRect(0, 0, canvas.width, canvas.height)
-        }
+  if (!pad || props.component.disabled) return
+  pad.clear()
+  const canvas = canvasEl.value
+  if (canvas) {
+    const ctx = canvas.getContext('2d')
+    if (ctx) {
+      ctx.fillStyle = bgColor.value
+      ctx.fillRect(0, 0, canvas.width, canvas.height)
     }
-    hasSignature.value = false
-    emit('update', props.component.name, null)
+  }
+  hasSignature.value = false
+  emit('update', props.component.name, null)
 }
 
 function download() {
-    if (!pad || pad.isEmpty()) return
-    const link = document.createElement('a')
-    link.download = `${props.component.name}-signature.png`
-    link.href = pad.toDataURL('image/png')
-    link.click()
+  if (!pad || pad.isEmpty()) return
+  const link = document.createElement('a')
+  link.download = `${props.component.name}-signature.png`
+  link.href = pad.toDataURL('image/png')
+  link.click()
 }
 </script>
 
 <template>
-    <FieldWrapper
-        :component="component"
-        :record="record"
-        :errors="errors"
-        :form-data="formData"
-        class="col-span-full"
-    >
-        <template #default="{ hasError }">
-            <div
-                class="border rounded-md overflow-hidden"
-                :class="hasError ? 'border-danger-600' : 'border-paper-300'"
+  <FieldWrapper
+    :component="component"
+    :record="record"
+    :errors="errors"
+    :form-data="formData"
+    class="col-span-full"
+  >
+    <template #default="{ hasError }">
+      <div
+        class="overflow-hidden rounded-md border"
+        :class="hasError ? 'border-danger-600' : 'border-paper-300'"
+      >
+        <!-- Canvas -->
+        <div class="relative bg-card" :style="{ height: height + 'px' }">
+          <canvas
+            ref="canvasEl"
+            class="block h-full w-full"
+            :class="(component.disabled as boolean) ? `cursor-not-allowed` : `cursor-crosshair`"
+          />
+
+          <!-- "Sign here" guide line -->
+          <div
+            v-if="showGuide && !hasSignature"
+            class="pointer-events-none absolute start-6 end-6 bottom-8"
+          >
+            <div class="border-b border-dashed border-paper-300" />
+            <p class="mt-1 text-xs tracking-wider text-ink-300 uppercase">{{ __('Sign here') }}</p>
+          </div>
+
+          <!-- Empty state hint -->
+          <div
+            v-if="!hasSignature && !showGuide"
+            class="pointer-events-none absolute inset-0 flex items-center justify-center"
+          >
+            <p class="text-sm text-ink-300">{{ __('Draw your signature') }}</p>
+          </div>
+        </div>
+
+        <!-- Footer controls -->
+        <div
+          class="flex items-center justify-between border-t border-paper-200 bg-paper-75 px-3 py-1.5"
+        >
+          <p class="text-xs text-ink-400">
+            {{ hasSignature ? __('Signature captured') : __('No signature yet') }}
+          </p>
+          <div class="flex items-center gap-1">
+            <button
+              v-if="hasSignature"
+              type="button"
+              class="flex h-6 items-center gap-1 rounded-sm px-2 text-xs text-ink-500 transition-colors hover:bg-paper-100 hover:text-brand-600"
+              @click="download"
             >
-                <!-- Canvas -->
-                <div class="relative bg-card" :style="{ height: height + 'px' }">
-
-                    <canvas
-                        ref="canvasEl"
-                        class="w-full h-full block"
-                        :class="(component.disabled as boolean) ? 'cursor-not-allowed' : 'cursor-crosshair'"
-                    />
-
-                    <!-- "Sign here" guide line -->
-                    <div
-                        v-if="showGuide && !hasSignature"
-                        class="absolute bottom-8 start-6 end-6 pointer-events-none"
-                    >
-                        <div class="border-b border-dashed border-paper-300" />
-                        <p class="text-xs text-ink-300 mt-1 tracking-wider uppercase">{{ __('Sign here') }}</p>
-                    </div>
-
-                    <!-- Empty state hint -->
-                    <div
-                        v-if="!hasSignature && !showGuide"
-                        class="absolute inset-0 flex items-center justify-center pointer-events-none"
-                    >
-                        <p class="text-sm text-ink-300">{{ __('Draw your signature') }}</p>
-                    </div>
-                </div>
-
-                <!-- Footer controls -->
-                <div class="flex items-center justify-between px-3 py-1.5 bg-paper-75 border-t border-paper-200">
-                    <p class="text-xs text-ink-400">
-                        {{ hasSignature ? __('Signature captured') : __('No signature yet') }}
-                    </p>
-                    <div class="flex items-center gap-1">
-                        <button
-                            v-if="hasSignature"
-                            type="button"
-                            class="flex items-center gap-1 h-6 px-2 text-xs text-ink-500
-                                   hover:text-brand-600 hover:bg-paper-100 rounded-sm transition-colors"
-                            @click="download"
-                        >
-                            <Download class="w-3 h-3" />
-                            {{ __('Save') }}
-                        </button>
-                        <button
-                            v-if="!(component.disabled as boolean)"
-                            type="button"
-                            class="flex items-center gap-1 h-6 px-2 text-xs text-ink-500
-                                   hover:text-danger-600 hover:bg-paper-100 rounded-sm transition-colors"
-                            @click="clear"
-                        >
-                            <Eraser class="w-3 h-3" />
-                            {{ __('Clear') }}
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </template>
-    </FieldWrapper>
+              <Download class="h-3 w-3" />
+              {{ __('Save') }}
+            </button>
+            <button
+              v-if="!(component.disabled as boolean)"
+              type="button"
+              class="flex h-6 items-center gap-1 rounded-sm px-2 text-xs text-ink-500 transition-colors hover:bg-paper-100 hover:text-danger-600"
+              @click="clear"
+            >
+              <Eraser class="h-3 w-3" />
+              {{ __('Clear') }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </template>
+  </FieldWrapper>
 </template>
