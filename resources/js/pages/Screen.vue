@@ -244,6 +244,16 @@ const dialogSizeClass: Record<string, string> = {
         </header>
         <!-- Action Pane — under breadcrumbs and title -->
         <div class="flex flex-wrap items-center justify-end gap-1.5 px-6 pt-3">
+           <span
+               v-if="isDirty && !processing"
+               class="inline-flex items-center gap-1.5 rounded-full bg-warning-50 px-2 py-0.5 text-2xs font-bold tracking-[0.14em] text-warning-700 uppercase shadow-[0_1px_0_rgba(0,0,0,0.02)] ring-1 ring-warning-100 ring-inset"
+           >
+            <span class="relative flex h-1.5 w-1.5">
+              <span class="absolute inset-0 animate-ping rounded-full bg-warning-500 opacity-75" />
+              <span class="relative h-1.5 w-1.5 rounded-full bg-warning-500" />
+            </span>
+            {{ __('Unsaved changes') }}
+          </span>
           <DarejerActions
             :actions="actions"
             placement="header"
@@ -253,23 +263,7 @@ const dialogSizeClass: Record<string, string> = {
             :on-save="submit"
             :on-cancel="cancel"
           />
-          <span
-            v-if="isDirty && !processing"
-            class="inline-flex items-center gap-1.5 rounded-full bg-warning-50 px-2 py-0.5 text-2xs font-bold tracking-[0.14em] text-warning-700 uppercase shadow-[0_1px_0_rgba(0,0,0,0.02)] ring-1 ring-warning-100 ring-inset"
-          >
-            <span class="relative flex h-1.5 w-1.5">
-              <span class="absolute inset-0 animate-ping rounded-full bg-warning-500 opacity-75" />
-              <span class="relative h-1.5 w-1.5 rounded-full bg-warning-500" />
-            </span>
-            {{ __('Unsaved changes') }}
-          </span>
-          <span
-            v-else-if="processing"
-            class="inline-flex items-center gap-1.5 rounded-full bg-brand-50 px-2 py-0.5 text-2xs font-bold tracking-[0.14em] text-brand-700 uppercase ring-1 ring-brand-100 ring-inset"
-          >
-            <Circle class="h-2.5 w-2.5 animate-spin" />
-            {{ __('Saving') }}
-          </span>
+
         </div>
         <!-- Body content -->
         <div :class="['flex-1', fullWidth ? 'flex min-h-0 flex-col' : `px-6 pt-5 pb-6`]">
