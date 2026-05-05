@@ -254,38 +254,38 @@ function sectionIndex(section: ScreenSection): number {
                             </h1>
                         </div>
 
-                        <!-- Action Pane — under breadcrumbs and title -->
-                        <div class="flex items-center justify-end gap-1.5 flex-wrap">
-                            <DarejerActions
-                                :actions="actions"
-                                placement="header"
-                                :form-data="formData"
-                                :processing="processing"
-                                :is-dirty="isDirty"
-                                :on-save="submit"
-                                :on-cancel="cancel"
-                            />
-                            <span
-                                v-if="isDirty && !processing"
-                                class="ms-auto inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-warning-50 ring-1 ring-inset ring-warning-100 text-[10px] font-bold uppercase tracking-[0.14em] text-warning-700 shadow-[0_1px_0_rgba(0,0,0,0.02)]"
-                            >
+
+                    </div>
+                </header>
+              <!-- Action Pane — under breadcrumbs and title -->
+              <div class="flex items-center justify-end gap-1.5 flex-wrap">
+                <DarejerActions
+                    :actions="actions"
+                    placement="header"
+                    :form-data="formData"
+                    :processing="processing"
+                    :is-dirty="isDirty"
+                    :on-save="submit"
+                    :on-cancel="cancel"
+                />
+                <span
+                    v-if="isDirty && !processing"
+                    class="ms-auto inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-warning-50 ring-1 ring-inset ring-warning-100 text-[10px] font-bold uppercase tracking-[0.14em] text-warning-700 shadow-[0_1px_0_rgba(0,0,0,0.02)]"
+                >
                                 <span class="relative flex w-1.5 h-1.5">
                                     <span class="absolute inset-0 rounded-full bg-warning-500 animate-ping opacity-75" />
                                     <span class="relative w-1.5 h-1.5 rounded-full bg-warning-500" />
                                 </span>
                                 {{ __('Unsaved changes') }}
                             </span>
-                            <span
-                                v-else-if="processing"
-                                class="ms-auto inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-brand-50 ring-1 ring-inset ring-brand-100 text-[10px] font-bold uppercase tracking-[0.14em] text-brand-700"
-                            >
+                <span
+                    v-else-if="processing"
+                    class="ms-auto inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-brand-50 ring-1 ring-inset ring-brand-100 text-[10px] font-bold uppercase tracking-[0.14em] text-brand-700"
+                >
                                 <Circle class="w-2.5 h-2.5 animate-spin" />
                                 {{ __('Saving') }}
                             </span>
-                        </div>
-                    </div>
-                </header>
-
+              </div>
                 <!-- Body content -->
                 <div :class="['flex-1', fullWidth ? 'flex flex-col min-h-0' : 'px-6 pt-5 pb-6']">
 
