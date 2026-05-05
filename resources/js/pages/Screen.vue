@@ -258,7 +258,7 @@ function sectionIndex(section: ScreenSection): number {
                     </div>
                 </header>
               <!-- Action Pane — under breadcrumbs and title -->
-              <div class="flex items-center justify-end gap-1.5 flex-wrap">
+              <div class="flex items-center justify-end gap-1.5 flex-wrap px-6 pt-3">
                 <DarejerActions
                     :actions="actions"
                     placement="header"
