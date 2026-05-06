@@ -184,6 +184,19 @@ class Column
     }
 
     /**
+     * Render the column value as a localized number with `$decimals` fraction
+     * digits and a thousands separator. Use for non-currency numerics like
+     * counts, ratios, or quantities. Formatted server-side at render time.
+     */
+    public function number(int $decimals = 0): static
+    {
+        $this->displayType = 'number';
+        $this->decimals = $decimals;
+
+        return $this;
+    }
+
+    /**
      * Render the column value as money — a localized number with `$decimals`
      * fraction digits, optionally suffixed with a currency code resolved from
      * `$currencyField` (a dot-notated path on the row, e.g. `currency.code`).

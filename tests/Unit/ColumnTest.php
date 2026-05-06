@@ -44,6 +44,20 @@ it('supports boolean display type with custom labels', function () {
     expect($column->getBooleanFalseLabel())->toBe('Inactive');
 });
 
+it('supports number display type with default decimals', function () {
+    $column = Column::make('qty')->number();
+
+    expect($column->getDisplayType())->toBe('number');
+    expect($column->getDecimals())->toBe(0);
+});
+
+it('supports number display type with custom decimals', function () {
+    $column = Column::make('rate')->number(3);
+
+    expect($column->getDisplayType())->toBe('number');
+    expect($column->getDecimals())->toBe(3);
+});
+
 it('supports money display type with default decimals', function () {
     $column = Column::make('amount')->money();
 

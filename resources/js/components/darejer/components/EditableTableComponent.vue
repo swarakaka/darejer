@@ -27,7 +27,7 @@ interface TableCol {
   disabled?: boolean
   placeholder?: string
   options?: { value: string; label: string }[]
-  money?: number
+  decimals?: number
   // combobox-only:
   dataUrl?: string
   keyField?: string
@@ -179,9 +179,9 @@ const gridTemplate = computed(() =>
 
 function formatCellValue(value: unknown, col: TableCol): string {
   if (value === null || value === undefined || value === '') return ''
-  if (col.type === 'number' && typeof col.money === 'number') {
+  if (col.type === 'number' && typeof col.decimals === 'number') {
     const n = Number(value)
-    if (Number.isFinite(n)) return n.toFixed(col.money)
+    if (Number.isFinite(n)) return n.toFixed(col.decimals)
   }
   return String(value)
 }

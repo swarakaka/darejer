@@ -246,6 +246,11 @@ class DataTable
             ]])
             ->all();
 
+        $numberColumns = collect($this->columns)
+            ->filter(fn (Column $c) => $c->getDisplayType() === 'number')
+            ->mapWithKeys(fn (Column $c) => [$c->getField() => $c->getDecimals()])
+            ->all();
+
         $moneyColumns = collect($this->columns)
             ->filter(fn (Column $c) => $c->getDisplayType() === 'money')
             ->mapWithKeys(fn (Column $c) => [$c->getField() => [
@@ -279,7 +284,7 @@ class DataTable
             ->all();
 
         $numeric = $this->numeric;
-        $data = collect($paginated->items())->values()->map(function ($item, $index) use ($dateColumns, $booleanColumns, $moneyColumns, $displayUsingColumns, $formatColumns, $numeric, $startIndex) {
+        $data = collect($paginated->items())->values()->map(function ($item, $index) use ($dateColumns, $booleanColumns, $numberColumns, $moneyColumns, $displayUsingColumns, $formatColumns, $numeric, $startIndex) {
             $arr = $item->toArray();
 
             if ($numeric) {
@@ -314,6 +319,17 @@ class DataTable
                 $arr[$field] = filter_var($arr[$field], FILTER_VALIDATE_BOOLEAN)
                     ? $labels['true']
                     : $labels['false'];
+            }
+
+            foreach ($numberColumns as $field => $decimals) {
+                if (! array_key_exists($field, $arr)) {
+                    continue;
+                }
+                $value = $arr[$field];
+                if ($value === null || $value === '' || ! is_numeric($value)) {
+                    continue;
+                }
+                $arr[$field] = number_format((float) $value, $decimals, '.', ',');
             }
 
             foreach ($moneyColumns as $field => $config) {

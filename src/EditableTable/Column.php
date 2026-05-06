@@ -31,7 +31,7 @@ class Column
     /** @var array<int,array{value:string,label:string}>|null */
     protected ?array $options = null;
 
-    protected ?int $money = null;
+    protected ?int $decimals = null;
 
     // ── combobox-only ────────────────────────────────────────────────────────
     protected ?string $dataUrl = null;
@@ -102,21 +102,30 @@ class Column
         return $this;
     }
 
-    public function number(): static
+    /**
+     * Render a numeric input. Pass `$decimals` to fix display precision —
+     * e.g. `number(3)` renders 1.5 as `1.500`. Omitting it keeps the raw
+     * value as-is, which is the right default for free-form quantities.
+     */
+    public function number(?int $decimals = null): static
     {
         $this->type = 'number';
+        if ($decimals !== null) {
+            $this->decimals = $decimals;
+        }
 
         return $this;
     }
 
     /**
-     * Format a `number` column as money with a fixed number of decimal places.
-     * Display-only — the underlying model value keeps full precision. Use on
+     * Render a money input — a numeric input formatted to `$decimals` places.
+     * Display-only: the underlying model value keeps full precision. Use on
      * amount columns whose DB type stores more decimals than you want shown.
      */
     public function money(int $decimals = 2): static
     {
-        $this->money = $decimals;
+        $this->type = 'number';
+        $this->decimals = $decimals;
 
         return $this;
     }
@@ -237,7 +246,7 @@ class Column
             'disabled' => $this->disabled ?: null,
             'placeholder' => $this->placeholder,
             'options' => $this->options,
-            'money' => $this->money,
+            'decimals' => $this->decimals,
         ];
 
         if ($this->type === 'combobox') {
