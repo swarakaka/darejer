@@ -325,22 +325,22 @@ class DataTable
                 if (! array_key_exists($field, $arr)) {
                     continue;
                 }
-                $value = $arr[$field];
-                if ($value === null || $value === '' || ! is_numeric($value)) {
+                $value = self::coerceNumeric($arr[$field]);
+                if ($value === null) {
                     continue;
                 }
-                $arr[$field] = number_format((float) $value, $decimals, '.', ',');
+                $arr[$field] = number_format($value, $decimals, '.', ',');
             }
 
             foreach ($moneyColumns as $field => $config) {
                 if (! array_key_exists($field, $arr)) {
                     continue;
                 }
-                $value = $arr[$field];
-                if ($value === null || $value === '' || ! is_numeric($value)) {
+                $value = self::coerceNumeric($arr[$field]);
+                if ($value === null) {
                     continue;
                 }
-                $formatted = number_format((float) $value, $config['decimals'], '.', ',');
+                $formatted = number_format($value, $config['decimals'], '.', ',');
                 if ($config['currencyField']) {
                     $code = data_get($item, $config['currencyField']);
                     if ($code !== null && $code !== '') {
@@ -494,6 +494,28 @@ class DataTable
         $query->orderBy($sort, $order);
 
         return $query;
+    }
+
+    /**
+     * Coerce a serialized cell value to a float for `number_format`.
+     *
+     * Eloquent's `toArray()` leaves custom cast values (e.g. `Brick\Math\BigDecimal`)
+     * as objects in the array; `is_numeric()` rejects objects, so we must
+     * stringify them first. Returns null for non-numeric/empty values.
+     */
+    protected static function coerceNumeric(mixed $value): ?float
+    {
+        if ($value === null || $value === '') {
+            return null;
+        }
+        if (is_object($value) && method_exists($value, '__toString')) {
+            $value = (string) $value;
+        }
+        if (! is_numeric($value)) {
+            return null;
+        }
+
+        return (float) $value;
     }
 
     protected function applyDateRange(Builder $query, string $field, mixed $value): void
