@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
+import { router, usePage } from '@inertiajs/vue3'
 import AppLayout from '@/layouts/AppLayout.vue'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
-import { ChevronDown, Circle } from 'lucide-vue-next'
+import { ChevronDown, Circle, Play } from 'lucide-vue-next'
 import DarejerComponent from '@/components/darejer/DarejerComponent.vue'
 import DarejerActions from '@/components/darejer/DarejerActions.vue'
 import AppBreadcrumbs from '@/components/darejer/AppBreadcrumbs.vue'
+import ReportResults from '@/components/darejer/ReportResults.vue'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useDarejerForm } from '@/composables/useDarejerForm'
 import { evaluateDependOn } from '@/composables/useDependOn'
@@ -85,6 +87,39 @@ const mergedErrors = computed<Record<string, string>>(() => ({
   ...(props.errors ?? {}),
   ...formErrors.value,
 }))
+
+// ── Report mode ───────────────────────────────────────────────────────────
+// Reports use the same Screen with `->with(['rows' => ..., 'totals' => ...])`.
+// When `rows` is present on the page props the controller is rendering a
+// report, so we surface an Apply button (filters → URL) and a results table.
+const page = usePage<Record<string, unknown>>()
+
+const reportRows = computed<Record<string, unknown>[] | null>(() => {
+  const r = page.props.rows
+  return Array.isArray(r) ? (r as Record<string, unknown>[]) : null
+})
+
+const reportTotals = computed<Record<string, unknown> | null>(() => {
+  const t = page.props.totals
+  return t && typeof t === 'object' ? (t as Record<string, unknown>) : null
+})
+
+const isReport = computed(() => reportRows.value !== null)
+
+function applyFilters() {
+  const params: Record<string, unknown> = {}
+  for (const [key, value] of Object.entries(formData)) {
+    if (value === null || value === undefined || value === '') {
+      continue
+    }
+    params[key] = value
+  }
+  router.get(window.location.pathname, params as Record<string, string | number>, {
+    preserveState: true,
+    preserveScroll: true,
+    replace: true,
+  })
+}
 
 // ── Cascading reset ───────────────────────────────────────────────────────
 // Precompute the set of fields that control some dependent component or
@@ -260,7 +295,7 @@ const dialogSizeClass: Record<string, string> = {
         <!-- Action Pane — under breadcrumbs and title -->
         <div class="flex flex-wrap items-center justify-end gap-1.5 px-6 pt-3">
            <span
-               v-if="isDirty && !processing"
+               v-if="isDirty && !processing && !isReport"
                class="inline-flex items-center gap-1.5 rounded-full bg-warning-50 px-2 py-0.5 text-2xs font-bold tracking-[0.14em] text-warning-700 uppercase shadow-[0_1px_0_rgba(0,0,0,0.02)] ring-1 ring-warning-100 ring-inset"
            >
             <span class="relative flex h-1.5 w-1.5">
@@ -269,6 +304,15 @@ const dialogSizeClass: Record<string, string> = {
             </span>
             {{ __('Unsaved changes') }}
           </span>
+          <button
+            v-if="isReport"
+            type="button"
+            class="inline-flex h-8 items-center gap-1.5 rounded-md border border-transparent bg-brand-600 px-3 text-sm font-medium text-white shadow-sm transition-colors hover:bg-brand-700"
+            @click="applyFilters"
+          >
+            <Play class="h-3.5 w-3.5" />
+            {{ __('Apply') }}
+          </button>
           <DarejerActions
             :actions="actions"
             placement="header"
@@ -451,6 +495,13 @@ const dialogSizeClass: Record<string, string> = {
                 </div>
               </section>
             </template>
+
+            <!-- Report results — shown when controller passed `rows` -->
+            <ReportResults
+              v-if="isReport && reportRows"
+              :rows="reportRows"
+              :totals="reportTotals"
+            />
           </div>
         </div>
       </div>
