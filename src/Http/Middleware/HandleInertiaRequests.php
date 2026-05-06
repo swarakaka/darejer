@@ -65,6 +65,7 @@ class HandleInertiaRequests extends Middleware
                 'direction' => Locales::direction($current),
                 'is_rtl' => Locales::isRtl($current),
                 'directions' => $directions,
+                'translations' => $this->hostTranslations($current),
             ],
             'auth' => fn () => [
                 'user' => auth()->check() ? $this->shareUser(auth()->user()) : null,
@@ -72,6 +73,27 @@ class HandleInertiaRequests extends Middleware
             'navigation' => fn () => NavigationManager::toArray(),
             'breadcrumbs' => fn () => [],
         ]);
+    }
+
+    /**
+     * Load the host app's `lang/<locale>.json` so the frontend `__()` helper
+     * can resolve labels that PHP `__()` already finds server-side. Without
+     * this, dynamic strings built in JS (e.g. table column headers derived
+     * from snake_case row keys) miss the host's translation file entirely.
+     *
+     * @return array<string,string>
+     */
+    protected function hostTranslations(string $locale): array
+    {
+        $path = lang_path("{$locale}.json");
+
+        if (! is_file($path)) {
+            return [];
+        }
+
+        $decoded = json_decode((string) file_get_contents($path), true);
+
+        return is_array($decoded) ? $decoded : [];
     }
 
     protected function applyLocale(Request $request): void

@@ -9,6 +9,7 @@ interface DarejerShare {
   direction: string
   is_rtl: boolean
   directions: Record<string, string>
+  translations?: Record<string, string>
 }
 
 interface SharedProps extends Record<string, unknown> {
@@ -19,10 +20,15 @@ const warnedKeys = new Set<string>()
 
 const useTranslation = () => {
   const __ = (key: string, replace: Record<string, string | number | null> = {}) => {
-    const locale = computed(() => usePage<SharedProps>().props.darejer?.locale ?? 'en')
+    const share = computed(() => usePage<SharedProps>().props.darejer)
+    const locale = computed(() => share.value?.locale ?? 'en')
     const translations = getTranslations(locale.value)
+    const hostTranslations = share.value?.translations ?? null
 
-    const raw = translations?.[key] ?? null
+    const raw =
+      (hostTranslations && hostTranslations[key] !== undefined ? hostTranslations[key] : null) ??
+      translations?.[key] ??
+      null
 
     let translation = raw && raw !== '__MISSING__' ? raw : key
 
