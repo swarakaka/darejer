@@ -30,9 +30,13 @@ class Column
 
     protected ?string $badgeLabels = null;
 
-    protected ?string $displayType = null;   // 'date' | 'datetime' | 'boolean' | 'plain' | …
+    protected ?string $displayType = null;   // 'date' | 'datetime' | 'boolean' | 'money' | 'plain' | …
 
     protected ?string $dateFormat = null;   // PHP date() format string
+
+    protected int $decimals = 2;
+
+    protected ?string $currencyField = null;
 
     protected ?string $booleanTrueLabel = null;
 
@@ -180,6 +184,23 @@ class Column
     }
 
     /**
+     * Render the column value as money — a localized number with `$decimals`
+     * fraction digits, optionally suffixed with a currency code resolved from
+     * `$currencyField` (a dot-notated path on the row, e.g. `currency.code`).
+     *
+     * Formatted server-side at render time so the JSON sent to the frontend
+     * already contains the display string — pairs naturally with `alignRight()`.
+     */
+    public function money(int $decimals = 2, ?string $currencyField = null): static
+    {
+        $this->displayType = 'money';
+        $this->decimals = $decimals;
+        $this->currencyField = $currencyField;
+
+        return $this;
+    }
+
+    /**
      * Render the column value as a boolean. The raw value is coerced to bool
      * server-side and replaced with the corresponding label so the frontend
      * receives a ready-to-display string.
@@ -217,6 +238,16 @@ class Column
     public function getDateFormat(): ?string
     {
         return $this->dateFormat;
+    }
+
+    public function getDecimals(): int
+    {
+        return $this->decimals;
+    }
+
+    public function getCurrencyField(): ?string
+    {
+        return $this->currencyField;
     }
 
     public function getBooleanTrueLabel(): ?string

@@ -31,19 +31,22 @@ type FormFieldValue = string | number | boolean | File | File[] | null
  * per-keystroke cost at O(1) reactivity triggers instead of O(nested).
  */
 export function useDarejerForm(options: DarejerFormOptions) {
-  function buildInitialData(): Record<string, unknown> {
+  function buildInitialData(
+    record: Record<string, unknown> = options.record,
+    components: DarejerComponent[] = options.components,
+  ): Record<string, unknown> {
     const data: Record<string, unknown> = {}
 
-    for (const component of options.components) {
+    for (const component of components) {
       const name = component.name
-      const value = options.record[name] ?? component.default ?? null
+      const value = record[name] ?? component.default ?? null
       data[name] = value
     }
 
     return data
   }
 
-  const initial = buildInitialData()
+  let initial = buildInitialData()
 
   // useForm is used only for submission — NOT for tracking per-keystroke
   // state. Writing into it on every keystroke would burn its own dirty-
@@ -122,6 +125,35 @@ export function useDarejerForm(options: DarejerFormOptions) {
     isDirty.value = false
   }
 
+  /**
+   * Re-bind the form to a freshly-arrived record (e.g. after a soft Inertia
+   * redirect from create → show — same Screen.vue instance, new props).
+   * Without this, formData would still hold the pre-submit values and shadow
+   * the new record until a hard refresh.
+   */
+  function syncRecord(
+    record: Record<string, unknown>,
+    components: DarejerComponent[] = options.components,
+  ) {
+    const next = buildInitialData(record, components)
+
+    for (const key of Object.keys(formData)) delete formData[key]
+    Object.assign(formData, next)
+
+    // Replace `initial` so updateField's dirty-check compares against the
+    // new record, not the pre-navigation snapshot.
+    initial = next
+
+    // Inertia's useForm tracks its own defaults; update them and reset so
+    // form.isDirty / form.reset() align with the new record.
+    ;(form as unknown as { defaults: (data: Record<string, unknown>) => void }).defaults(
+      next as Record<string, FormFieldValue>,
+    )
+    form.reset()
+
+    isDirty.value = false
+  }
+
   function cancel(cancelUrl?: string) {
     reset()
 
@@ -144,6 +176,7 @@ export function useDarejerForm(options: DarejerFormOptions) {
     updateField,
     submit,
     reset,
+    syncRecord,
     cancel,
   }
 }

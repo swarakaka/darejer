@@ -246,6 +246,14 @@ class DataTable
             ]])
             ->all();
 
+        $moneyColumns = collect($this->columns)
+            ->filter(fn (Column $c) => $c->getDisplayType() === 'money')
+            ->mapWithKeys(fn (Column $c) => [$c->getField() => [
+                'decimals' => $c->getDecimals(),
+                'currencyField' => $c->getCurrencyField(),
+            ]])
+            ->all();
+
         $displayUsingColumns = collect($this->columns)
             ->mapWithKeys(function (Column $column): array {
                 $callback = $column->getDisplayUsing();
@@ -271,7 +279,7 @@ class DataTable
             ->all();
 
         $numeric = $this->numeric;
-        $data = collect($paginated->items())->values()->map(function ($item, $index) use ($dateColumns, $booleanColumns, $displayUsingColumns, $formatColumns, $numeric, $startIndex) {
+        $data = collect($paginated->items())->values()->map(function ($item, $index) use ($dateColumns, $booleanColumns, $moneyColumns, $displayUsingColumns, $formatColumns, $numeric, $startIndex) {
             $arr = $item->toArray();
 
             if ($numeric) {
@@ -306,6 +314,24 @@ class DataTable
                 $arr[$field] = filter_var($arr[$field], FILTER_VALIDATE_BOOLEAN)
                     ? $labels['true']
                     : $labels['false'];
+            }
+
+            foreach ($moneyColumns as $field => $config) {
+                if (! array_key_exists($field, $arr)) {
+                    continue;
+                }
+                $value = $arr[$field];
+                if ($value === null || $value === '' || ! is_numeric($value)) {
+                    continue;
+                }
+                $formatted = number_format((float) $value, $config['decimals'], '.', ',');
+                if ($config['currencyField']) {
+                    $code = data_get($item, $config['currencyField']);
+                    if ($code !== null && $code !== '') {
+                        $formatted .= ' '.$code;
+                    }
+                }
+                $arr[$field] = $formatted;
             }
 
             foreach ($displayUsingColumns as $field => $callback) {

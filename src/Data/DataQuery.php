@@ -65,12 +65,15 @@ class DataQuery
     }
 
     /**
-     * Models can define `public function scopeDarejerQuery(Builder $q)` to
-     * apply a default scope (tenancy, soft-delete filters, etc.).
+     * Models can define a `darejerQuery` scope to apply a default filter
+     * (tenancy, soft-delete, "only actionable rows", etc.). Both the legacy
+     * `scopeDarejerQuery` magic-method convention and the modern
+     * `#[Scope]`-attributed method form are supported — `hasNamedScope`
+     * resolves either.
      */
     protected function applyDarejerScope(): static
     {
-        if (method_exists($this->modelClass, 'scopeDarejerQuery')) {
+        if ((new $this->modelClass)->hasNamedScope('darejerQuery')) {
             $this->query->darejerQuery();
         }
 

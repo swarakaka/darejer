@@ -43,3 +43,19 @@ it('supports boolean display type with custom labels', function () {
     expect($column->getBooleanTrueLabel())->toBe('Active');
     expect($column->getBooleanFalseLabel())->toBe('Inactive');
 });
+
+it('supports money display type with default decimals', function () {
+    $column = Column::make('amount')->money();
+
+    expect($column->getDisplayType())->toBe('money');
+    expect($column->getDecimals())->toBe(2);
+    expect($column->getCurrencyField())->toBeNull();
+});
+
+it('supports money display type with decimals and currency field', function () {
+    $column = Column::make('amount')->money(4, 'currency.code');
+
+    expect($column->getDisplayType())->toBe('money');
+    expect($column->getDecimals())->toBe(4);
+    expect($column->getCurrencyField())->toBe('currency.code');
+});

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import AppLayout from '@/layouts/AppLayout.vue'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { ChevronDown, Circle } from 'lucide-vue-next'
@@ -52,6 +52,7 @@ const {
   isDirty,
   updateField,
   submit,
+  syncRecord,
   cancel,
 } = useDarejerForm({
   url: (saveAction.value?.url as string) ?? '',
@@ -64,6 +65,20 @@ const {
   record: (props.record ?? {}) as Record<string, unknown>,
   dialog: isDialog.value,
 })
+
+// Soft Inertia redirects between create → show (same Screen component) reuse
+// this component instance — setup() doesn't re-run, so formData would stay
+// bound to the pre-submit values. Re-sync whenever the record prop changes
+// so the freshly-arrived record renders without a manual refresh.
+watch(
+  () => props.record,
+  (record) => {
+    syncRecord(
+      (record ?? {}) as Record<string, unknown>,
+      props.components ?? [],
+    )
+  },
+)
 
 // Merge server-sent errors (Inertia shared props) with useForm's own errors.
 const mergedErrors = computed<Record<string, string>>(() => ({
