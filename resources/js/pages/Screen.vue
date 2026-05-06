@@ -3,11 +3,17 @@ import { ref, computed, watch } from 'vue'
 import { router, usePage } from '@inertiajs/vue3'
 import AppLayout from '@/layouts/AppLayout.vue'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
-import { ChevronDown, Circle, Play } from 'lucide-vue-next'
+import { ChevronDown, Circle, Play, FileSpreadsheet, FileText } from 'lucide-vue-next'
 import DarejerComponent from '@/components/darejer/DarejerComponent.vue'
 import DarejerActions from '@/components/darejer/DarejerActions.vue'
 import AppBreadcrumbs from '@/components/darejer/AppBreadcrumbs.vue'
 import ReportResults from '@/components/darejer/ReportResults.vue'
+import {
+  buildCsv,
+  deriveColumns,
+  downloadFile,
+  slugify,
+} from '@/lib/reportTable'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useDarejerForm } from '@/composables/useDarejerForm'
 import { evaluateDependOn } from '@/composables/useDependOn'
@@ -119,6 +125,34 @@ function applyFilters() {
     preserveScroll: true,
     replace: true,
   })
+}
+
+const canExport = computed(
+  () => isReport.value && reportRows.value !== null && reportRows.value.length > 0,
+)
+
+function exportFilenameStem(): string {
+  const today = new Date().toISOString().slice(0, 10)
+  return `${slugify(props.title)}-${today}`
+}
+
+function exportCsv() {
+  if (!canExport.value || !reportRows.value) {
+    return
+  }
+  const columns = deriveColumns(reportRows.value)
+  const csv = buildCsv(reportRows.value, columns, reportTotals.value)
+  downloadFile(`${exportFilenameStem()}.csv`, 'text/csv', csv)
+}
+
+function exportPdf() {
+  if (!canExport.value) {
+    return
+  }
+  // Browser-native print → user can save as PDF. The print stylesheet hides
+  // the app chrome, action pane, and filter card so only the title + table
+  // remain — see `print:hidden` utilities below and on AppLayout.
+  window.print()
 }
 
 // ── Cascading reset ───────────────────────────────────────────────────────
@@ -263,9 +297,14 @@ const dialogSizeClass: Record<string, string> = {
 <template>
   <!-- ── Full-page mode ──────────────────────────────────────────── -->
   <template v-if="!isDialog">
-    <div class="flex h-full flex-col overflow-hidden bg-paper-100">
+    <div class="flex h-full flex-col overflow-hidden bg-paper-100 print:block print:h-auto print:overflow-visible print:bg-white">
       <!-- Scrolling content -->
-      <div :class="['flex-1 overflow-y-auto', fullWidth ? 'flex flex-col' : '']">
+      <div
+        :class="[
+          'flex-1 overflow-y-auto print:overflow-visible',
+          fullWidth ? 'flex flex-col' : '',
+        ]"
+      >
         <!-- Page title — hero with subtle gradient -->
         <header class="relative shrink-0 overflow-hidden border-b border-paper-200 bg-card">
           <div
@@ -285,7 +324,7 @@ const dialogSizeClass: Record<string, string> = {
 
           <div class="relative flex flex-col gap-4 px-6 pt-5 pb-5">
             <div class="flex min-w-0 flex-col">
-              <AppBreadcrumbs class="mb-2" />
+              <AppBreadcrumbs class="mb-2 print:hidden" />
               <h1 class="text-[28px] leading-[1.05] font-semibold tracking-[-0.02em] text-ink-900">
                 {{ title }}
               </h1>
@@ -293,7 +332,7 @@ const dialogSizeClass: Record<string, string> = {
           </div>
         </header>
         <!-- Action Pane — under breadcrumbs and title -->
-        <div class="flex flex-wrap items-center justify-end gap-1.5 px-6 pt-3">
+        <div class="flex flex-wrap items-center justify-end gap-1.5 px-6 pt-3 print:hidden">
            <span
                v-if="isDirty && !processing && !isReport"
                class="inline-flex items-center gap-1.5 rounded-full bg-warning-50 px-2 py-0.5 text-2xs font-bold tracking-[0.14em] text-warning-700 uppercase shadow-[0_1px_0_rgba(0,0,0,0.02)] ring-1 ring-warning-100 ring-inset"
@@ -312,6 +351,24 @@ const dialogSizeClass: Record<string, string> = {
           >
             <Play class="h-3.5 w-3.5" />
             {{ __('Apply') }}
+          </button>
+          <button
+            v-if="canExport"
+            type="button"
+            class="inline-flex h-8 items-center gap-1.5 rounded-md border border-paper-300 bg-card px-3 text-sm font-medium text-ink-700 shadow-xs transition-colors hover:border-paper-400 hover:bg-paper-100"
+            @click="exportCsv"
+          >
+            <FileSpreadsheet class="h-3.5 w-3.5" />
+            {{ __('Export CSV') }}
+          </button>
+          <button
+            v-if="canExport"
+            type="button"
+            class="inline-flex h-8 items-center gap-1.5 rounded-md border border-paper-300 bg-card px-3 text-sm font-medium text-ink-700 shadow-xs transition-colors hover:border-paper-400 hover:bg-paper-100"
+            @click="exportPdf"
+          >
+            <FileText class="h-3.5 w-3.5" />
+            {{ __('Export PDF') }}
           </button>
           <DarejerActions
             :actions="actions"
@@ -454,6 +511,7 @@ const dialogSizeClass: Record<string, string> = {
             <template v-if="!hasTabs && !hasSections">
               <section
                 class="relative overflow-hidden rounded-md border border-paper-200 bg-card shadow-[0_1px_0_rgba(0,0,0,0.02)]"
+                :class="isReport ? 'print:hidden' : ''"
               >
                 <span
                   v-if="!collapsed['General']"

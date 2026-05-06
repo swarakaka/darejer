@@ -30,6 +30,8 @@ return [
     'Results' => 'ئەنجامەکان',
     'rows' => 'ڕیز',
     'No data — adjust filters and click Apply.' => 'هیچ داتایەک نییە — پاڵاوتنەکان ڕێک بخە و کلیک لە "جێبەجێکردن" بکە.',
+    'Export CSV' => 'هەناردەکردن بە CSV',
+    'Export PDF' => 'هەناردەکردن بە PDF',
     'Saving' => 'پاشەکەوتکردن...',
     'Sending' => 'ناردن...',
     'Confirming' => 'پشتڕاستکردنەوە...',

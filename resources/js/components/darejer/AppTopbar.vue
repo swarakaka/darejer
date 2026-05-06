@@ -66,7 +66,7 @@ function logout() {
 
 <template>
   <header
-    class="flex h-(--topbar-height) shrink-0 items-center gap-0 border-b border-(--topbar-border) bg-(--topbar-bg) text-(--topbar-foreground)"
+    class="flex h-(--topbar-height) shrink-0 items-center gap-0 border-b border-(--topbar-border) bg-(--topbar-bg) text-(--topbar-foreground) print:hidden"
   >
     <!-- Hamburger — collapses/expands the sidebar (or opens the drawer on mobile) -->
     <button

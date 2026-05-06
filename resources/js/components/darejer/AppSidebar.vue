@@ -227,7 +227,7 @@ function badgeClass(color?: string): string {
 </script>
 
 <template>
-  <div class="md:relative md:flex md:shrink-0">
+  <div class="md:relative md:flex md:shrink-0 print:hidden">
     <!-- Mobile backdrop -->
     <transition
       enter-active-class="transition-opacity duration-200 ease-out"
