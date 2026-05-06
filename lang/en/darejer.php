@@ -32,6 +32,8 @@ return [
     'No data — adjust filters and click Apply.' => 'No data — adjust filters and click Apply.',
     'Export CSV' => 'Export CSV',
     'Export PDF' => 'Export PDF',
+    'Total' => 'Total',
+    'Subtotal' => 'Subtotal',
     'Saving' => 'Saving…',
     'Sending' => 'Sending…',
     'Confirming' => 'Confirming…',

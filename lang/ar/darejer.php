@@ -32,6 +32,8 @@ return [
     'No data — adjust filters and click Apply.' => 'لا توجد بيانات — اضبط عوامل التصفية ثم اضغط على "تطبيق".',
     'Export CSV' => 'تصدير CSV',
     'Export PDF' => 'تصدير PDF',
+    'Total' => 'الإجمالي',
+    'Subtotal' => 'المجموع الفرعي',
     'Saving' => 'جارٍ الحفظ...',
     'Sending' => 'جارٍ الإرسال...',
     'Confirming' => 'جارٍ التأكيد...',

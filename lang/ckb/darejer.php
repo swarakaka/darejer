@@ -32,6 +32,8 @@ return [
     'No data — adjust filters and click Apply.' => 'هیچ داتایەک نییە — پاڵاوتنەکان ڕێک بخە و کلیک لە "جێبەجێکردن" بکە.',
     'Export CSV' => 'هەناردەکردن بە CSV',
     'Export PDF' => 'هەناردەکردن بە PDF',
+    'Total' => 'کۆی گشتی',
+    'Subtotal' => 'کۆی بەشێک',
     'Saving' => 'پاشەکەوتکردن...',
     'Sending' => 'ناردن...',
     'Confirming' => 'پشتڕاستکردنەوە...',
