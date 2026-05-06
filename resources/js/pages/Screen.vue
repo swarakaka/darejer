@@ -349,7 +349,7 @@ const dialogSizeClass: Record<string, string> = {
             class="inline-flex h-8 items-center gap-1.5 rounded-md border border-transparent bg-brand-600 px-3 text-sm font-medium text-white shadow-sm transition-colors hover:bg-brand-700"
             @click="applyFilters"
           >
-            <Play class="h-3.5 w-3.5" />
+            <Play class="h-3.5 w-3.5 rtl:rotate-180" />
             {{ __('Apply') }}
           </button>
           <button
