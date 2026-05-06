@@ -14,6 +14,7 @@ import {
   ArrowRight,
 } from 'lucide-vue-next'
 import useTranslation from '@/composables/useTranslation'
+import { Link } from '@inertiajs/vue3'
 
 defineOptions({ layout: AppLayout })
 
@@ -211,7 +212,7 @@ const chartIcon = (type: 'line' | 'bar' | 'doughnut') => {
                 {{ panel.rows.length }}
               </span>
             </div>
-            <a
+            <Link
               v-if="panel.href"
               :href="panel.href"
               class="group/link inline-flex items-center gap-1 text-[11px] font-semibold text-brand-700 transition-colors hover:text-brand-800"
@@ -220,7 +221,7 @@ const chartIcon = (type: 'line' | 'bar' | 'doughnut') => {
               <ArrowRight
                 class="h-3 w-3 transition-transform group-hover/link:translate-x-0.5 rtl:rotate-180 rtl:group-hover/link:-translate-x-0.5"
               />
-            </a>
+            </Link>
           </header>
 
           <div v-if="panel.rows.length" class="overflow-x-auto">
