@@ -306,7 +306,7 @@ function badgeLabel(col: TreeCol, value: unknown): string {
                     @click="toggleExpand(row[keyField])"
                   >
                     <ChevronDown v-if="expanded.has(row[keyField])" class="h-3.5 w-3.5" />
-                    <ChevronRight v-else class="h-3.5 w-3.5" />
+                    <ChevronRight v-else class="h-3.5 w-3.5 rtl:rotate-180" />
                   </button>
                   <span v-else class="w-4 shrink-0" />
                   <span class="truncate">{{ row[col.field] ?? '—' }}</span>
