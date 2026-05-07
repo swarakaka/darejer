@@ -237,7 +237,7 @@ function badgeLabel(col: TreeCol, value: unknown): string {
     :record="record"
     :errors="errors"
     :form-data="formData"
-    class="col-span-full"
+    class="px-6 py-5"
   >
     <template #default>
       <div class="overflow-x-auto rounded-md border border-paper-200 bg-card">
