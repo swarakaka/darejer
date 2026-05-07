@@ -386,13 +386,6 @@ function clearFilter(field: string) {
 
 <template>
   <div class="flex h-full flex-col overflow-hidden bg-paper-100">
-    <!-- Action Pane -->
-    <div
-      class="flex h-(--action-pane-height) shrink-0 items-center gap-1.5 overflow-x-auto border-b border-paper-200 bg-card px-6"
-    >
-      <DarejerActions :actions="headerActions" placement="header" />
-    </div>
-
     <!-- Page header — refined hero with subtle gradient -->
     <header class="relative shrink-0 overflow-hidden border-b border-paper-200 bg-card">
       <div
@@ -460,6 +453,11 @@ function clearFilter(field: string) {
         </div>
       </div>
     </header>
+
+    <!-- Action Pane — under breadcrumbs and title -->
+    <div class="flex flex-wrap items-center justify-end gap-1.5 px-6 pt-3 print:hidden">
+      <DarejerActions :actions="headerActions" placement="header" />
+    </div>
 
     <!-- Content -->
     <div class="flex-1 overflow-y-auto px-6 pt-5 pb-6">
