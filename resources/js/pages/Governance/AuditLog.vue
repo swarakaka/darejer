@@ -191,7 +191,7 @@ watch(
     </header>
 
     <!-- Content -->
-    <div class="flex-1 overflow-y-auto px-6 pt-5 pb-6">
+    <div class="flex-1 overflow-y-auto px-6 py-6">
       <!-- Filter bar -->
       <div
         v-if="showFilters"

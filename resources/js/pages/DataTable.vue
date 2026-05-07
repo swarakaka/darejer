@@ -455,12 +455,12 @@ function clearFilter(field: string) {
     </header>
 
     <!-- Action Pane — under breadcrumbs and title -->
-    <div class="flex flex-wrap items-center justify-end gap-1.5 px-6 pt-3 print:hidden">
+    <div class="flex flex-wrap items-center justify-end gap-1.5 px-6 pt-6 print:hidden">
       <DarejerActions :actions="headerActions" placement="header" />
     </div>
 
     <!-- Content -->
-    <div class="flex-1 overflow-y-auto px-6 pt-5 pb-6">
+    <div class="flex-1 overflow-y-auto ps-6 pe-3 pt-5 pb-6">
       <!-- Active filter chips -->
       <div v-if="activeFilterEntries.length" class="mb-3 flex flex-wrap items-center gap-2">
         <span class="text-[10.5px] font-bold tracking-[0.12em] text-ink-500 uppercase">

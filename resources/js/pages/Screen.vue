@@ -332,7 +332,7 @@ const dialogSizeClass: Record<string, string> = {
           </div>
         </header>
         <!-- Action Pane — under breadcrumbs and title -->
-        <div class="flex flex-wrap items-center justify-end gap-1.5 px-6 pt-3 print:hidden">
+        <div class="flex flex-wrap items-center justify-end gap-1.5 px-6 pt-6 print:hidden">
            <span
                v-if="isDirty && !processing && !isReport"
                class="inline-flex items-center gap-1.5 rounded-full bg-warning-50 px-2 py-0.5 text-2xs font-bold tracking-[0.14em] text-warning-700 uppercase shadow-[0_1px_0_rgba(0,0,0,0.02)] ring-1 ring-warning-100 ring-inset"
