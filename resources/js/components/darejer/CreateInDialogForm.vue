@@ -62,9 +62,19 @@ function updateField(name: string, value: unknown) {
   isDirty.value = true
 }
 
-type InertiaPageJson = {
+// Quick-create endpoints answer with Darejer's JSON envelope
+// (`$this->jsonRedirect()` / `$this->jsonSuccess()`). Older endpoints may
+// still return Inertia page JSON during the migration; both shapes are
+// accepted here.
+type SaveResponse = {
+  // New JSON envelope:
+  success?: boolean
+  message?: string
+  redirect?: string
+  data?: { id?: string | number } | Record<string, unknown> | null
+  // Legacy Inertia page JSON:
   url?: string
-  flash?: unknown
+  flash?: { created_id?: string | number } | unknown
   props?: Record<string, unknown>
 }
 
@@ -78,14 +88,25 @@ function submit() {
   if (!url) return
 
   http[method](url, {
-    onSuccess: (response: InertiaPageJson) => {
+    onSuccess: (response: SaveResponse) => {
       isDirty.value = false
-      // Inertia v3 emits flash data at the top-level page key, not
-      // under props. The host (e.g. ComboboxComponent) reads
-      // `payload.flash.created_id` to auto-select the new record.
+
+      // Translate the new JSON envelope into the legacy `{url, flash}` shape
+      // ComboboxComponent already understands:
+      //   • `flash.created_id`  → auto-selects the new record
+      //   • `extractIdFromUrl(url)` → fallback when no flash
+      // If the controller still returns Inertia page JSON, those fields
+      // pass through unchanged.
+      const data =
+        response?.data && typeof response.data === 'object' ? response.data : null
+      const createdId = (data as { id?: string | number } | null)?.id
+      const flash =
+        response?.flash ??
+        (createdId != null ? { created_id: createdId } : null)
+
       emit('created', {
-        url: response?.url ?? null,
-        flash: response?.flash ?? null,
+        url: response?.redirect ?? response?.url ?? null,
+        flash,
       })
     },
   })
