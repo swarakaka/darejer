@@ -20,6 +20,8 @@ class TextInput extends BaseComponent
 
     protected bool $autofocus = false;
 
+    protected bool $revealable = false;
+
     public function placeholder(string $placeholder): static
     {
         $this->placeholder = $placeholder;
@@ -101,6 +103,13 @@ class TextInput extends BaseComponent
         return $this;
     }
 
+    public function revealable(bool $revealable = true): static
+    {
+        $this->revealable = $revealable;
+
+        return $this;
+    }
+
     protected function componentType(): string
     {
         return 'TextInput';
@@ -117,6 +126,7 @@ class TextInput extends BaseComponent
             'prefix' => $this->prefix,
             'suffix' => $this->suffix,
             'autofocus' => $this->autofocus ?: null,
+            'revealable' => $this->revealable ?: null,
         ];
     }
 }
