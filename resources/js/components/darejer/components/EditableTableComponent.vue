@@ -129,6 +129,11 @@ function applyComputed(row: TableRow): void {
 
 function isRowBlank(row: TableRow): boolean {
   for (const col of columns.value) {
+    // Compute columns are derived from other fields, so their value
+    // should not determine whether a row is blank — otherwise the
+    // trailing placeholder row gets a non-empty computed value (e.g.
+    // amount = qty * rate = 0) and the table thinks it's filled.
+    if (col.compute) continue
     const v = row[col.field]
     const d = defaultRow.value[col.field] ?? ''
     if (v !== d && v !== '' && v !== null && v !== undefined) return false
