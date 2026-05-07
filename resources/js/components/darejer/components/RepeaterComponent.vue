@@ -129,65 +129,68 @@ const atMin = computed(() => (minItems.value ? items.value.length <= minItems.va
   >
     <template #default>
       <div class="flex flex-col gap-2">
-        <!-- Items -->
+        <!-- Items — vue-draggable-plus uses a default slot with v-for,
+             not a `#item` slot. Using `#item` here renders nothing, which
+             is what made the Add button appear to do nothing. -->
         <VueDraggable
           v-model="items"
           :disabled="!isSortable"
-          item-key="_id"
           handle=".repeater-drag-handle"
           ghost-class="opacity-40"
           class="flex flex-col gap-2"
           @end="emitValue"
         >
-          <template #item="{ element: item, index }">
-            <div :key="item._id" class="overflow-hidden rounded-md border border-paper-200 bg-card">
-              <!-- Item header -->
-              <div
-                class="flex cursor-pointer items-center gap-2 border-b border-paper-200 bg-paper-75 px-3 py-2 select-none"
-                @click="toggleCollapse(item._id)"
+          <div
+            v-for="(item, index) in items"
+            :key="item._id"
+            class="overflow-hidden rounded-md border border-paper-200 bg-card"
+          >
+            <!-- Item header -->
+            <div
+              class="flex cursor-pointer items-center gap-2 border-b border-paper-200 bg-paper-75 px-3 py-2 select-none"
+              @click="toggleCollapse(item._id)"
+            >
+              <GripVertical
+                v-if="isSortable"
+                class="repeater-drag-handle h-3.5 w-3.5 shrink-0 cursor-grab text-ink-300 hover:text-ink-500"
+                @click.stop
+              />
+
+              <ChevronDown
+                v-if="!collapsed.has(item._id)"
+                class="h-3.5 w-3.5 shrink-0 text-ink-400"
+              />
+              <ChevronRight v-else class="h-3.5 w-3.5 shrink-0 text-ink-400" />
+
+              <span class="flex-1 text-sm font-medium text-ink-700">
+                {{ headerLabel(item, index) }}
+              </span>
+
+              <button
+                v-if="isDeletable && !atMin"
+                type="button"
+                class="flex h-6 w-6 shrink-0 items-center justify-center rounded-sm text-ink-300 transition-colors hover:bg-danger-50 hover:text-danger-600"
+                @click.stop="removeItem(item._id)"
               >
-                <GripVertical
-                  v-if="isSortable"
-                  class="repeater-drag-handle h-3.5 w-3.5 shrink-0 cursor-grab text-ink-300 hover:text-ink-500"
-                  @click.stop
+                <Trash2 class="h-3.5 w-3.5" />
+              </button>
+            </div>
+
+            <!-- Item body -->
+            <div v-if="!collapsed.has(item._id)" class="bg-card p-4">
+              <div class="grid w-full grid-cols-2 gap-x-5 gap-y-3.5">
+                <DarejerComponent
+                  v-for="subComp in schema"
+                  :key="subComp.name"
+                  :component="subComp"
+                  :record="itemFormData(item)"
+                  :errors="itemErrors(index)"
+                  :form-data="itemFormData(item)"
+                  @update="(name, value) => onSubUpdate(item._id, name, value)"
                 />
-
-                <ChevronDown
-                  v-if="!collapsed.has(item._id)"
-                  class="h-3.5 w-3.5 shrink-0 text-ink-400"
-                />
-                <ChevronRight v-else class="h-3.5 w-3.5 shrink-0 text-ink-400" />
-
-                <span class="flex-1 text-sm font-medium text-ink-700">
-                  {{ headerLabel(item, index) }}
-                </span>
-
-                <button
-                  v-if="isDeletable && !atMin"
-                  type="button"
-                  class="flex h-6 w-6 shrink-0 items-center justify-center rounded-sm text-ink-300 transition-colors hover:bg-danger-50 hover:text-danger-600"
-                  @click.stop="removeItem(item._id)"
-                >
-                  <Trash2 class="h-3.5 w-3.5" />
-                </button>
-              </div>
-
-              <!-- Item body -->
-              <div v-if="!collapsed.has(item._id)" class="bg-card p-4">
-                <div class="grid w-full grid-cols-2 gap-x-5 gap-y-3.5">
-                  <DarejerComponent
-                    v-for="subComp in schema"
-                    :key="subComp.name"
-                    :component="subComp"
-                    :record="itemFormData(item)"
-                    :errors="itemErrors(index)"
-                    :form-data="itemFormData(item)"
-                    @update="(name, value) => onSubUpdate(item._id, name, value)"
-                  />
-                </div>
               </div>
             </div>
-          </template>
+          </div>
         </VueDraggable>
 
         <!-- Empty state -->
