@@ -26,11 +26,13 @@ interface Tender {
   reference: string | null
 }
 
+type LocalizedName = Record<string, string> | string
+
 const props = defineProps<{
   open: boolean
   grandTotal: number
   currency: { code: string; symbol: string | null }
-  bankAccounts: Array<{ id: number; code: string; name: string }>
+  bankAccounts: Array<{ id: number; code: string; name: LocalizedName }>
   processing: boolean
 }>()
 
@@ -40,6 +42,12 @@ const emit = defineEmits<{
 }>()
 
 const { __ } = useTranslation()
+
+const localized = (n: LocalizedName | null | undefined) => {
+  if (!n) return ''
+  if (typeof n === 'string') return n
+  return Object.values(n).find((v) => v) ?? ''
+}
 
 const tenders = ref<Tender[]>([])
 
@@ -137,7 +145,7 @@ const canConfirm = computed(
               </SelectTrigger>
               <SelectContent>
                 <SelectItem v-for="b in bankAccounts" :key="b.id" :value="String(b.id)">
-                  {{ b.name }}
+                  {{ localized(b.name) }}
                 </SelectItem>
               </SelectContent>
             </Select>

@@ -14,12 +14,14 @@ import useTranslation from '@/composables/useTranslation'
 import { toast } from 'vue-sonner'
 import { Calculator } from 'lucide-vue-next'
 
+type LocalizedName = Record<string, string> | string
+
 const props = defineProps<{
   bootstrap: {
-    cashboxes: Array<{ id: number; code: string; name: string; currency_id: number }>
-    warehouses: Array<{ id: number; code: string; name: string }>
+    cashboxes: Array<{ id: number; code: string; name: LocalizedName; currency_id: number }>
+    warehouses: Array<{ id: number; code: string; name: LocalizedName }>
     currencies: Array<{ id: number; code: string; symbol: string | null }>
-    walk_in_customer: { id: number; code: string; name: Record<string, string> | string } | null
+    walk_in_customer: { id: number; code: string; name: LocalizedName } | null
     default_currency_id: number | null
   }
   openUrl: string
@@ -28,6 +30,14 @@ const props = defineProps<{
 const { __ } = useTranslation()
 const success = (msg: string) => toast.success(msg)
 const error = (msg: string) => toast.error(msg)
+
+// Translatable columns arrive as JSON bags ({ en: '…', ar: '…' }). Pick the
+// first non-empty value when the host page hasn't expanded the user's locale.
+const localized = (n: LocalizedName | null | undefined) => {
+  if (!n) return ''
+  if (typeof n === 'string') return n
+  return Object.values(n).find((v) => v) ?? ''
+}
 
 const cashbox_id = ref<string>('')
 const warehouse_id = ref<string>('')
@@ -92,7 +102,7 @@ function submit() {
               <SelectValue :placeholder="__('Pick cashbox')" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem v-for="c in bootstrap.cashboxes" :key="c.id" :value="String(c.id)">{{ c.name }}</SelectItem>
+              <SelectItem v-for="c in bootstrap.cashboxes" :key="c.id" :value="String(c.id)">{{ localized(c.name) }}</SelectItem>
             </SelectContent>
           </Select>
         </label>
@@ -104,7 +114,7 @@ function submit() {
               <SelectValue :placeholder="__('Default per item')" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem v-for="w in bootstrap.warehouses" :key="w.id" :value="String(w.id)">{{ w.name }}</SelectItem>
+              <SelectItem v-for="w in bootstrap.warehouses" :key="w.id" :value="String(w.id)">{{ localized(w.name) }}</SelectItem>
             </SelectContent>
           </Select>
         </label>
