@@ -99,7 +99,8 @@ export function useDataUrl<T = Record<string, unknown>>(
 
     const merged = { ...defaults, ...overrides }
     const params = buildParams(merged)
-    const url = `${dataUrl}?${params}`
+    const separator = dataUrl.includes('?') ? '&' : '?'
+    const url = `${dataUrl}${separator}${params}`
 
     return http
       .get(url, {
