@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useForm } from '@inertiajs/vue3'
 import AuthLayout from '@/layouts/AuthLayout.vue'
-import { Input } from '@/components/ui/input'
+import { InputPassword } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { ArrowRight, AlertCircle, ShieldCheck } from 'lucide-vue-next'
 import useTranslation from '@/composables/useTranslation'
@@ -49,10 +49,9 @@ function submit() {
         <Label for="password" class="text-xs font-semibold text-ink-700">{{
           __('Password')
         }}</Label>
-        <Input
+        <InputPassword
           id="password"
           v-model="form.password"
-          type="password"
           autocomplete="current-password"
           placeholder="••••••••"
           class="h-10"

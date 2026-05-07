@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Link, useForm } from '@inertiajs/vue3'
 import AuthLayout from '@/layouts/AuthLayout.vue'
-import { Input } from '@/components/ui/input'
+import { Input, InputPassword } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Checkbox } from '@/components/ui/checkbox'
 import { ArrowRight, AlertCircle } from 'lucide-vue-next'
@@ -73,10 +73,9 @@ function submit() {
             {{ __('Forgot password?') }}
           </Link>
         </div>
-        <Input
+        <InputPassword
           id="password"
           v-model="form.password"
-          type="password"
           autocomplete="current-password"
           placeholder="••••••••"
           class="h-10"

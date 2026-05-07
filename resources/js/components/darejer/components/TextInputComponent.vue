@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import { Input } from '@/components/ui/input'
+import { Input, InputPassword } from '@/components/ui/input'
 import FieldWrapper from '@/components/darejer/FieldWrapper.vue'
-import { Eye, EyeOff } from 'lucide-vue-next'
 import type { DarejerComponent } from '@/types/darejer'
 
 const props = defineProps<{
@@ -27,10 +26,6 @@ function onInput(e: Event) {
 const isRevealable = computed(
   () => props.component.inputType === 'password' && !!props.component.revealable,
 )
-const revealed = ref(false)
-const effectiveType = computed(() =>
-  isRevealable.value && revealed.value ? 'text' : ((props.component.inputType as string) ?? 'text'),
-)
 
 const hasPrefix = computed(() => !!props.component.prefix)
 const hasSuffix = computed(() => !!props.component.suffix && !isRevealable.value)
@@ -48,10 +43,11 @@ const hasSuffix = computed(() => !!props.component.suffix && !isRevealable.value
           {{ component.prefix }}
         </span>
 
-        <Input
+        <component
+          :is="isRevealable ? InputPassword : Input"
           :id="component.name"
           :name="component.name"
-          :type="effectiveType"
+          :type="!isRevealable ? ((component.inputType as string) ?? 'text') : undefined"
           :placeholder="(component.placeholder as string) ?? ''"
           :value="value as string"
           :readonly="component.readonly as boolean"
@@ -63,7 +59,6 @@ const hasSuffix = computed(() => !!props.component.suffix && !isRevealable.value
             hasError ? 'border-danger-600' : '',
             hasPrefix ? 'ps-20' : '',
             hasSuffix ? 'pe-20' : '',
-            isRevealable ? 'pe-9' : '',
           ]"
           @input="onInput"
         />
@@ -75,20 +70,6 @@ const hasSuffix = computed(() => !!props.component.suffix && !isRevealable.value
         >
           {{ component.suffix }}
         </span>
-
-        <!-- Reveal toggle -->
-        <button
-          v-if="isRevealable"
-          type="button"
-          tabindex="-1"
-          :aria-label="revealed ? 'Hide password' : 'Show password'"
-          :aria-pressed="revealed"
-          class="absolute inset-y-0 inset-e-0 z-10 flex items-center justify-center px-2 text-ink-500 transition-colors hover:text-ink-700 focus:text-ink-700 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
-          :disabled="(component.disabled as boolean) || (component.readonly as boolean)"
-          @click="revealed = !revealed"
-        >
-          <component :is="revealed ? EyeOff : Eye" class="size-4" />
-        </button>
       </div>
     </template>
   </FieldWrapper>
