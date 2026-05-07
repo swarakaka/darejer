@@ -2,11 +2,16 @@
 
 use Darejer\Components\Combobox;
 use Darejer\Components\Display;
+use Darejer\Components\Money;
 use Darejer\Components\SelectComponent;
 use Darejer\Components\TextInput;
 use Darejer\Components\TreeGrid;
 use Darejer\Tests\Fixtures\BadgeFixtureStatus;
+use Darejer\Tests\TmpCurrency;
+use Darejer\Tests\TmpCurrency2;
 use Darejer\TreeGrid\TreeColumn;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Route;
 
 it('serializes a TextInput component', function () {
     $component = TextInput::make('email')
@@ -214,6 +219,106 @@ it('serializes a Display boolean with default labels', function () {
         ->toHaveKey('displayType', 'boolean')
         ->toHaveKey('booleanTrueLabel', 'Yes')
         ->toHaveKey('booleanFalseLabel', 'No');
+});
+
+it('serializes a Money component with default decimals and allowNegative', function () {
+    $array = Money::make('amount')->label('Amount')->toArray();
+
+    expect($array)
+        ->toHaveKey('type', 'Money')
+        ->toHaveKey('name', 'amount')
+        ->toHaveKey('label', 'Amount')
+        ->toHaveKey('decimals', 2)
+        ->toHaveKey('allowNegative', true);
+});
+
+it('serializes a Money component with explicit decimals, currency and bounds', function () {
+    $array = Money::make('grand_total')
+        ->decimals(3)
+        ->currency('USD')
+        ->min(0)
+        ->max(1_000_000)
+        ->step(0.01)
+        ->allowNegative(false)
+        ->toArray();
+
+    expect($array)
+        ->toHaveKey('decimals', 3)
+        ->toHaveKey('currency', 'USD')
+        ->toHaveKey('min', 0)
+        ->toHaveKey('max', 1_000_000)
+        ->toHaveKey('step', 0.01)
+        ->toHaveKey('allowNegative', false);
+});
+
+it('serializes a Money component with currencyField for record-resolved currency', function () {
+    $array = Money::make('amount')
+        ->currencyField('currency.code')
+        ->toArray();
+
+    expect($array)
+        ->toHaveKey('currencyField', 'currency.code')
+        ->not->toHaveKey('currencyDataUrl');
+});
+
+it('omits currency picker props when currencyPicker is not configured', function () {
+    $array = Money::make('amount')->toArray();
+
+    expect($array)
+        ->not->toHaveKey('currencyDataUrl')
+        ->not->toHaveKey('currencyValueField')
+        ->not->toHaveKey('currencyKeyField')
+        ->not->toHaveKey('currencyLabelField')
+        ->not->toHaveKey('currencyDecimalsField')
+        ->not->toHaveKey('currencySymbolField');
+});
+
+it('serializes Money currency picker props when configured against a model', function () {
+    Route::get('/darejer/data/{model}', fn () => null)
+        ->name('darejer.data.index');
+
+    $modelClass = new class extends Model {};
+    $modelAlias = class_alias($modelClass::class, 'Darejer\\Tests\\TmpCurrency');
+
+    $array = Money::make('amount')
+        ->decimals(2)
+        ->currencyPicker(TmpCurrency::class)
+        ->toArray();
+
+    expect($array)
+        ->toHaveKey('currencyDataUrl')
+        ->toHaveKey('currencyValueField', 'currency_id')
+        ->toHaveKey('currencyKeyField', 'id')
+        ->toHaveKey('currencyLabelField', 'code')
+        ->toHaveKey('currencyDecimalsField', 'minor_units');
+
+    expect($array['currencyDataUrl'])->toContain('/darejer/data/');
+});
+
+it('lets currencyPicker override valueField, labelField and decimalsField', function () {
+    Route::get('/darejer/data/{model}', fn () => null)
+        ->name('darejer.data.index');
+
+    $modelClass = new class extends Model {};
+    if (! class_exists('Darejer\\Tests\\TmpCurrency2')) {
+        class_alias($modelClass::class, 'Darejer\\Tests\\TmpCurrency2');
+    }
+
+    $array = Money::make('amount')
+        ->currencyPicker(
+            TmpCurrency2::class,
+            valueField: 'fx_currency_id',
+            labelField: 'iso_code',
+            decimalsField: 'fraction_digits',
+            symbolField: 'sign',
+        )
+        ->toArray();
+
+    expect($array)
+        ->toHaveKey('currencyValueField', 'fx_currency_id')
+        ->toHaveKey('currencyLabelField', 'iso_code')
+        ->toHaveKey('currencyDecimalsField', 'fraction_digits')
+        ->toHaveKey('currencySymbolField', 'sign');
 });
 
 it('serializes a TreeGrid as fullWidth by default so it is not boxed into the 2-col Screen grid', function () {

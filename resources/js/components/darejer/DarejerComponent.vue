@@ -4,6 +4,7 @@ import type { DarejerComponent as DarejerComponentType } from '@/types/darejer'
 import useTranslation from '@/composables/useTranslation'
 
 import TextInputComponent from '@/components/darejer/components/TextInputComponent.vue'
+import MoneyComponent from '@/components/darejer/components/MoneyComponent.vue'
 import TextareaComponent from '@/components/darejer/components/TextareaComponent.vue'
 import ToggleComponent from '@/components/darejer/components/ToggleComponent.vue'
 import CheckboxComponent from '@/components/darejer/components/CheckboxComponent.vue'
@@ -53,6 +54,7 @@ const { __ } = useTranslation()
 
 const componentMap: Record<string, unknown> = {
   TextInput: TextInputComponent,
+  Money: MoneyComponent,
   Textarea: TextareaComponent,
   Toggle: ToggleComponent,
   Checkbox: CheckboxComponent,
