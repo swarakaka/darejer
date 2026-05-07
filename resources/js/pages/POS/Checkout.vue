@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
 import { router, useHttp } from '@inertiajs/vue3'
-import AppLayout from '@/layouts/AppLayout.vue'
+import { Link } from '@inertiajs/vue3'
+import PosLayout from '@/layouts/PosLayout.vue'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import AppBreadcrumbs from '@/components/darejer/AppBreadcrumbs.vue'
 import PosCart from '@/components/darejer/pos/PosCart.vue'
 import PosItemSearch from '@/components/darejer/pos/PosItemSearch.vue'
 import PosPaymentDialog from '@/components/darejer/pos/PosPaymentDialog.vue'
@@ -12,9 +12,9 @@ import PosSessionOpenForm from '@/components/darejer/pos/PosSessionOpenForm.vue'
 import PosCustomerPicker from '@/components/darejer/pos/PosCustomerPicker.vue'
 import useTranslation from '@/composables/useTranslation'
 import { toast } from 'vue-sonner'
-import { Calculator, LogOut, Receipt, X } from 'lucide-vue-next'
+import { Calculator, LayoutDashboard, ListChecks, LogOut, Receipt, X } from 'lucide-vue-next'
 
-defineOptions({ layout: AppLayout })
+defineOptions({ layout: PosLayout })
 
 const { __ } = useTranslation()
 const success = (msg: string) => toast.success(msg)
@@ -220,14 +220,28 @@ function submitClose() {
 <template>
   <div class="flex h-full flex-col">
     <div class="flex items-center justify-between border-b border-ink-200 bg-white px-4 py-2">
-      <div class="flex items-center gap-3">
+      <div class="flex items-center gap-2">
         <Calculator class="size-5 text-brand-600" />
-        <AppBreadcrumbs />
+        <span class="text-[14px] font-semibold text-ink-900">{{ __('Point of Sale') }}</span>
+        <span v-if="session" class="ms-2 rounded-sm bg-success-50 px-2 py-0.5 text-[12px] text-success-700">
+          {{ session.voucher_no }}
+        </span>
+        <span v-if="session" class="text-[12px] text-ink-500">
+          · {{ __('Cashbox') }}: {{ typeof session.cashbox.name === 'object' ? Object.values(session.cashbox.name)[0] : session.cashbox.name }}
+        </span>
       </div>
-      <div v-if="session" class="flex items-center gap-3 text-[13px] text-ink-700">
-        <span class="rounded-sm bg-success-50 px-2 py-0.5 text-success-700">{{ __('Session') }} {{ session.voucher_no }}</span>
-        <span>{{ __('Cashbox') }}: {{ typeof session.cashbox.name === 'object' ? Object.values(session.cashbox.name)[0] : session.cashbox.name }}</span>
-        <Button variant="outline" size="sm" @click="closeOpen = true">
+      <div class="flex items-center gap-2">
+        <Link :href="urls.sessions_index">
+          <Button variant="outline" size="sm">
+            <ListChecks class="size-3.5" /> {{ __('POS Sessions') }}
+          </Button>
+        </Link>
+        <Link href="/darejer">
+          <Button variant="outline" size="sm">
+            <LayoutDashboard class="size-3.5" /> {{ __('Dashboard') }}
+          </Button>
+        </Link>
+        <Button v-if="session" variant="outline" size="sm" @click="closeOpen = true">
           <LogOut class="size-3.5" /> {{ __('Close session') }}
         </Button>
       </div>
