@@ -7,6 +7,8 @@ use Darejer\TreeGrid\TreeColumn;
 
 class TreeGrid extends BaseComponent
 {
+    protected bool $fullWidth = true;
+
     /** @var TreeColumn[] */
     protected array $treeColumns = [];
 

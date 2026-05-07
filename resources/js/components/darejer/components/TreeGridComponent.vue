@@ -199,7 +199,7 @@ const treeCol = computed(() => columns.value.find((c) => c.isTree) ?? columns.va
     class="col-span-full"
   >
     <template #default>
-      <div class="overflow-hidden rounded-md border border-paper-200 bg-card">
+      <div class="overflow-x-auto rounded-md border border-paper-200 bg-card">
         <!-- Loading -->
         <div v-if="http.processing" class="flex items-center justify-center py-10 text-ink-400">
           <Loader2 class="h-5 w-5 animate-spin" />
@@ -217,7 +217,7 @@ const treeCol = computed(() => columns.value.find((c) => c.isTree) ?? columns.va
         <!-- Table -->
         <table v-else class="w-full border-collapse">
           <thead>
-            <tr class="border-b border-paper-200 bg-paper-75">
+            <tr class="sticky top-0 z-10 border-b border-paper-200 bg-paper-75">
               <th
                 v-for="col in columns"
                 :key="col.field"

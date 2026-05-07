@@ -4,6 +4,7 @@ use Darejer\Components\Combobox;
 use Darejer\Components\Display;
 use Darejer\Components\SelectComponent;
 use Darejer\Components\TextInput;
+use Darejer\Components\TreeGrid;
 use Darejer\Tests\Fixtures\BadgeFixtureStatus;
 
 it('serializes a TextInput component', function () {
@@ -212,4 +213,12 @@ it('serializes a Display boolean with default labels', function () {
         ->toHaveKey('displayType', 'boolean')
         ->toHaveKey('booleanTrueLabel', 'Yes')
         ->toHaveKey('booleanFalseLabel', 'No');
+});
+
+it('serializes a TreeGrid as fullWidth by default so it is not boxed into the 2-col Screen grid', function () {
+    $array = TreeGrid::make('coa_tree')->toArray();
+
+    expect($array)
+        ->toHaveKey('type', 'TreeGrid')
+        ->toHaveKey('fullWidth', true);
 });
