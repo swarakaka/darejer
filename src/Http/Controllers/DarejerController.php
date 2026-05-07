@@ -188,6 +188,32 @@ abstract class DarejerController extends BaseController
     }
 
     /**
+     * JSON envelope for "save then navigate" flows. The frontend submits
+     * via `useHttp`, awaits this JSON, then calls `router.visit(redirect)`.
+     * Used instead of `Inertia::location()` (which returns 409) or a server
+     * redirect (which would consume the Inertia visit and trigger
+     * Screen.vue's stale-formData reuse).
+     */
+    protected function jsonRedirect(
+        string $url,
+        string $message = 'OK',
+        mixed $data = null,
+        int $status = 200,
+    ): JsonResponse {
+        $payload = [
+            'success' => true,
+            'message' => $message,
+            'redirect' => $url,
+        ];
+
+        if ($data !== null) {
+            $payload['data'] = $this->normalizeData($data);
+        }
+
+        return response()->json($payload, $status);
+    }
+
+    /**
      * JSON validation error envelope — mirrors Laravel's 422 response so
      * Inertia's error bag picks up field-level messages automatically.
      */

@@ -1,5 +1,5 @@
 import { shallowReactive, shallowRef, computed } from 'vue'
-import { useForm, router } from '@inertiajs/vue3'
+import { useHttp, router } from '@inertiajs/vue3'
 import type { DarejerComponent } from '@/types/darejer'
 
 export interface DarejerFormOptions {
@@ -7,28 +7,56 @@ export interface DarejerFormOptions {
   method: 'post' | 'put' | 'patch' | 'delete'
   components: DarejerComponent[]
   record: Record<string, unknown>
-  onSuccess?: (response?: unknown) => void
+  onSuccess?: (response?: DarejerJsonResponse) => void
   onError?: (errors: Record<string, string>) => void
   dialog?: boolean
 }
 
-// Inertia's useForm constrains field values. We feed anything through using
-// `unknown` at the call-site via casts — the shape is validated server-side.
-type FormFieldValue = string | number | boolean | File | File[] | null
+/**
+ * Standard envelope returned by `DarejerController::json*()` helpers.
+ * `redirect` is set by `jsonRedirect()` on save-then-navigate flows.
+ */
+export interface DarejerJsonResponse {
+  success?: boolean
+  message?: string
+  redirect?: string
+  data?: unknown
+  flash?: unknown
+  url?: string
+}
+
+// useHttp's runtime shape — index-signature mutable, plus the standard
+// useForm-style controls. Casting once here keeps call-sites typed.
+type UseHttpInstance = Record<string, unknown> & {
+  errors: Record<string, string>
+  processing: boolean
+  post(url: string, opts?: object): Promise<unknown>
+  put(url: string, opts?: object): Promise<unknown>
+  patch(url: string, opts?: object): Promise<unknown>
+  delete(url: string, opts?: object): Promise<unknown>
+}
 
 /**
  * Darejer form composable.
  *
- * Collects every component's value, handles translatable fields and file
- * uploads, submits via Inertia v3 `useForm`, and propagates validation
- * errors back to each component's FieldWrapper. File fields automatically
- * trigger `forceFormData: true` so submissions become multipart.
+ * Submits via Inertia v3 `useHttp` and expects the controller to return
+ * Darejer's JSON envelope (`$this->jsonRedirect()` / `$this->jsonSuccess()`).
+ * On success, if `redirect` is set, performs a soft `router.visit()` so the
+ * destination Screen mounts fresh — Screen.vue's `syncRecord` watcher then
+ * re-binds the form to the freshly-arrived record.
  *
- * Reactivity note: `formData` is `shallowReactive` (not deep). Nested
- * translatable bags / repeater rows are stored as plain objects — we never
- * mutate them through `formData`, the leaf components own their own
- * deep-reactive state and emit whole replacement snapshots. This keeps
- * per-keystroke cost at O(1) reactivity triggers instead of O(nested).
+ * Why `useHttp` instead of `useForm`: `useForm` expects an Inertia page
+ * response and follows server redirects internally. Pairing it with a JSON
+ * envelope worked, but server-side hard navigation via `Inertia::location()`
+ * surfaced as a noisy 409 in DevTools. Driving the submit with `useHttp`
+ * lets the controller answer with plain JSON and the client decide how to
+ * navigate — no protocol-level 409, validation errors still flow through
+ * `errors` (422), and file uploads still auto-convert to FormData.
+ *
+ * Reactivity note: `formData` is `shallowReactive`. Nested translatable
+ * bags / repeater rows are stored as plain objects — leaf components own
+ * their own deep state and emit whole replacement snapshots. Per-keystroke
+ * cost stays at O(1) reactivity triggers.
  */
 export function useDarejerForm(options: DarejerFormOptions) {
   function buildInitialData(
@@ -48,22 +76,22 @@ export function useDarejerForm(options: DarejerFormOptions) {
 
   let initial = buildInitialData()
 
-  // useForm is used only for submission — NOT for tracking per-keystroke
-  // state. Writing into it on every keystroke would burn its own dirty-
-  // diffing logic for no benefit.
-  const form = useForm(initial as Record<string, FormFieldValue>)
+  // useHttp owns the wire-level state: field bag, processing flag, error
+  // map. We mutate fields by direct assignment (`http[name] = value`).
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const http = useHttp(initial as any) as unknown as UseHttpInstance
 
-  // Shallow-reactive so `formData[name] = value` triggers per-key updates
-  // but values themselves are plain and not proxied. Children diff-track
-  // only the specific key(s) they depend on.
+  // Shallow-reactive mirror that <Screen> hands to children. Keeping a
+  // separate layer means children only re-render when their specific key
+  // changes, regardless of what useHttp's internal proxy does.
   const formData = shallowReactive<Record<string, unknown>>({ ...initial })
 
-  // Dirty state as a single boolean ref — flips to true on the first real
-  // mutation. Avoids re-iterating every field's keys per keystroke.
+  // One boolean ref instead of re-iterating field keys per keystroke.
   const isDirty = shallowRef(false)
 
   function updateField(name: string, value: unknown) {
-    formData[name] = value as FormFieldValue
+    formData[name] = value
+    http[name] = value
 
     if (!isDirty.value && value !== initial[name]) {
       isDirty.value = true
@@ -71,65 +99,57 @@ export function useDarejerForm(options: DarejerFormOptions) {
   }
 
   const errors = computed(
-    (): Record<string, string> => ({ ...form.errors }) as Record<string, string>,
+    (): Record<string, string> => ({ ...(http.errors ?? {}) }),
   )
 
-  function hasAnyFile(value: unknown): boolean {
-    if (value instanceof File) return true
-    if (Array.isArray(value)) return value.some(hasAnyFile)
-    return false
-  }
+  const processing = computed(() => http.processing)
 
   function submit() {
-    // Sync reactive formData back into useForm before dispatching.
+    // Sync formData → http before dispatch (covers any direct formData
+    // mutations that bypassed updateField).
     for (const [key, value] of Object.entries(formData)) {
-      ;(form as unknown as Record<string, unknown>)[key] = value
+      http[key] = value
     }
 
-    const hasFiles = Object.values(formData).some(hasAnyFile)
-
-    const submitOptions = {
+    http[options.method](options.url, {
       preserveScroll: true,
-      forceFormData: hasFiles,
-      onSuccess: (page?: { url?: string; flash?: unknown; props?: Record<string, unknown> }) => {
+      onSuccess: (response: DarejerJsonResponse) => {
         isDirty.value = false
+
         if (options.dialog && typeof window !== 'undefined') {
-          // Broadcast so the parent screen (e.g. a Combobox that opened
-          // this dialog) can react — typically by refreshing its data
-          // and auto-selecting the newly created record. Inertia v3
-          // emits flash at the top-level page key, not under props.
+          // Broadcast for parent screens (e.g. a Combobox that opened
+          // this dialog) — typically refreshes its data and auto-selects
+          // the newly-created record.
           window.dispatchEvent(
             new CustomEvent('darejer:dialog-saved', {
               detail: {
-                url: page?.url ?? null,
-                flash: page?.flash ?? null,
+                url: response?.redirect ?? response?.url ?? null,
+                flash: response?.flash ?? null,
               },
             }),
           )
           window.history.back()
+          options.onSuccess?.(response)
+          return
         }
-        options.onSuccess?.(page)
+
+        if (response?.redirect) {
+          router.visit(response.redirect)
+        }
+
+        options.onSuccess?.(response)
       },
       onError: (errs: Record<string, string>) => {
         options.onError?.(errs)
       },
-    }
-
-    form.submit(options.method, options.url, submitOptions)
-  }
-
-  function reset() {
-    for (const key of Object.keys(formData)) delete formData[key]
-    Object.assign(formData, buildInitialData())
-    form.reset()
-    isDirty.value = false
+    })
   }
 
   /**
    * Re-bind the form to a freshly-arrived record (e.g. after a soft Inertia
    * redirect from create → show — same Screen.vue instance, new props).
-   * Without this, formData would still hold the pre-submit values and shadow
-   * the new record until a hard refresh.
+   * Without this, formData would still hold the pre-submit values and
+   * shadow the new record until a hard refresh.
    */
   function syncRecord(
     record: Record<string, unknown>,
@@ -140,23 +160,18 @@ export function useDarejerForm(options: DarejerFormOptions) {
     for (const key of Object.keys(formData)) delete formData[key]
     Object.assign(formData, next)
 
-    // Replace `initial` so updateField's dirty-check compares against the
-    // new record, not the pre-navigation snapshot.
+    // Reassign every key on the http bag too. useHttp doesn't expose a
+    // `defaults()` like useForm, so we set the values directly — that's
+    // enough because useHttp clears its own errors on successful submit.
+    for (const [k, v] of Object.entries(next)) {
+      http[k] = v
+    }
+
     initial = next
-
-    // Inertia's useForm tracks its own defaults; update them and reset so
-    // form.isDirty / form.reset() align with the new record.
-    ;(form as unknown as { defaults: (data: Record<string, unknown>) => void }).defaults(
-      next as Record<string, FormFieldValue>,
-    )
-    form.reset()
-
     isDirty.value = false
   }
 
   function cancel(cancelUrl?: string) {
-    reset()
-
     if (options.dialog && typeof window !== 'undefined') {
       window.history.back()
       return
@@ -168,14 +183,12 @@ export function useDarejerForm(options: DarejerFormOptions) {
   }
 
   return {
-    form,
     formData,
     errors,
-    processing: computed(() => form.processing),
+    processing,
     isDirty,
     updateField,
     submit,
-    reset,
     syncRecord,
     cancel,
   }
