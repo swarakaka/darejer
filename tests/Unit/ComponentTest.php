@@ -6,6 +6,7 @@ use Darejer\Components\SelectComponent;
 use Darejer\Components\TextInput;
 use Darejer\Components\TreeGrid;
 use Darejer\Tests\Fixtures\BadgeFixtureStatus;
+use Darejer\TreeGrid\TreeColumn;
 
 it('serializes a TextInput component', function () {
     $component = TextInput::make('email')
@@ -221,4 +222,24 @@ it('serializes a TreeGrid as fullWidth by default so it is not boxed into the 2-
     expect($array)
         ->toHaveKey('type', 'TreeGrid')
         ->toHaveKey('fullWidth', true);
+});
+
+it('serializes a TreeColumn badge with a color map array', function () {
+    $array = TreeColumn::make('status')
+        ->badge(['posted' => 'success', 'draft' => 'neutral'])
+        ->toArray();
+
+    expect($array)
+        ->toHaveKey('badge', json_encode(['posted' => 'success', 'draft' => 'neutral']))
+        ->not->toHaveKey('badgeLabels');
+});
+
+it('serializes a TreeColumn badge with translated labels from an enum class', function () {
+    $array = TreeColumn::make('status')
+        ->badge(BadgeFixtureStatus::class)
+        ->toArray();
+
+    expect($array)
+        ->toHaveKey('badge', json_encode(['posted' => 'success', 'draft' => 'neutral']))
+        ->toHaveKey('badgeLabels', json_encode(['posted' => 'Posted', 'draft' => 'Draft']));
 });

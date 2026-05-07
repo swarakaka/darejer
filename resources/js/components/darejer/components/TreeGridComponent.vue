@@ -47,6 +47,8 @@ interface TreeCol {
   width?: string
   align?: string
   isTree?: boolean
+  badge?: string
+  badgeLabels?: string
 }
 
 interface RowAct {
@@ -188,6 +190,45 @@ const iconMap: Record<string, unknown> = { Pencil, Eye, Trash2, MoreHorizontal }
 const resolveIcon = (name?: string) => (name ? (iconMap[name] ?? null) : null)
 
 const treeCol = computed(() => columns.value.find((c) => c.isTree) ?? columns.value[0])
+
+function badgeKey(value: unknown): string {
+  if (value === true) return '1'
+  if (value === false) return '0'
+  return value == null ? '' : String(value)
+}
+
+function badgeClass(col: TreeCol, value: unknown): string {
+  if (!col.badge) return ''
+  let map: Record<string, string> = {}
+  try {
+    map = JSON.parse(col.badge)
+  } catch {
+    map = {}
+  }
+  const variant = map[badgeKey(value)] ?? 'neutral'
+  const classes: Record<string, string> = {
+    success: 'bg-success-50 text-success-700 ring-success-100',
+    warning: 'bg-warning-50 text-warning-700 ring-warning-100',
+    danger: 'bg-danger-50 text-danger-700 ring-danger-100',
+    destructive: 'bg-danger-50 text-danger-700 ring-danger-100',
+    info: 'bg-brand-50 text-brand-700 ring-brand-100',
+    muted: 'bg-paper-100 text-ink-500 ring-paper-200',
+    neutral: 'bg-paper-100 text-ink-600 ring-paper-200',
+  }
+  return classes[variant] ?? classes.neutral
+}
+
+function badgeLabel(col: TreeCol, value: unknown): string {
+  const key = badgeKey(value)
+  if (!col.badgeLabels) return key
+  let labels: Record<string, string> = {}
+  try {
+    labels = JSON.parse(col.badgeLabels)
+  } catch {
+    labels = {}
+  }
+  return labels[key] ?? key
+}
 </script>
 
 <template>
@@ -270,6 +311,14 @@ const treeCol = computed(() => columns.value.find((c) => c.isTree) ?? columns.va
                   <span v-else class="w-4 shrink-0" />
                   <span class="truncate">{{ row[col.field] ?? '—' }}</span>
                 </div>
+
+                <span
+                  v-else-if="col.badge"
+                  class="inline-flex items-center rounded-sm px-1.5 py-0.5 text-[10px] font-bold tracking-[0.04em] uppercase ring-1 ring-inset"
+                  :class="badgeClass(col, row[col.field])"
+                >
+                  {{ badgeLabel(col, row[col.field]) }}
+                </span>
 
                 <span v-else class="block max-w-xs truncate">
                   {{ row[col.field] ?? '—' }}
