@@ -28,6 +28,7 @@ interface TableCol {
   placeholder?: string
   options?: { value: string; label: string }[]
   decimals?: number
+  compute?: string
   // combobox-only:
   dataUrl?: string
   keyField?: string
@@ -57,15 +58,21 @@ const externalValue = computed(
 )
 
 function buildBlankRow(): TableRow {
-  return {
+  const row = {
     ...Object.fromEntries(columns.value.map((c) => [c.field, defaultRow.value[c.field] ?? ''])),
     _id: nextId++,
   } as TableRow
+  applyComputed(row)
+  return row
 }
 
 function buildRowsFrom(value: unknown): TableRow[] {
   const arr = Array.isArray(value) ? value : []
-  const seeded = arr.map((row: Record<string, unknown>) => ({ ...row, _id: nextId++ }))
+  const seeded = arr.map((row: Record<string, unknown>) => {
+    const seededRow = { ...row, _id: nextId++ } as TableRow
+    applyComputed(seededRow)
+    return seededRow
+  })
 
   // Airtable-style UX: always keep one empty row at the bottom so the
   // table is immediately editable. The trailing row is stripped from
@@ -74,6 +81,50 @@ function buildRowsFrom(value: unknown): TableRow[] {
     seeded.push(buildBlankRow())
   }
   return seeded
+}
+
+interface CompiledCompute {
+  field: string
+  deps: string[]
+  fn: (...args: number[]) => unknown
+}
+
+const computedColumns = computed((): CompiledCompute[] => {
+  const fieldSet = new Set(columns.value.map((c) => c.field))
+  return columns.value.flatMap((col) => {
+    if (!col.compute) return []
+    const tokens = col.compute.match(/\b[a-zA-Z_][a-zA-Z0-9_]*\b/g) ?? []
+    const deps = Array.from(new Set(tokens.filter((t) => fieldSet.has(t))))
+    try {
+      const fn = new Function(...deps, `"use strict"; return (${col.compute});`) as (
+        ...args: number[]
+      ) => unknown
+      return [{ field: col.field, deps, fn }]
+    } catch (e) {
+      console.error(
+        `[EditableTable] failed to compile compute expression for "${col.field}": ${col.compute}`,
+        e,
+      )
+      return []
+    }
+  })
+})
+
+function applyComputed(row: TableRow): void {
+  for (const c of computedColumns.value) {
+    let result: unknown = ''
+    try {
+      const args = c.deps.map((d) => {
+        const n = Number(row[d])
+        return Number.isFinite(n) ? n : 0
+      })
+      result = c.fn(...args)
+    } catch {
+      result = ''
+    }
+    row[c.field] =
+      typeof result === 'number' && Number.isFinite(result) ? result : (result ?? '')
+  }
 }
 
 function isRowBlank(row: TableRow): boolean {
@@ -131,24 +182,28 @@ function deleteRow(id: number) {
 
 function onCellInput(row: TableRow, field: string, e: Event) {
   row[field] = (e.target as HTMLInputElement).value
+  applyComputed(row)
   ensureTrailingBlankRow()
   emitValue()
 }
 
 function onCellChange(row: TableRow, field: string, e: Event) {
   row[field] = (e.target as HTMLInputElement | HTMLSelectElement).value
+  applyComputed(row)
   ensureTrailingBlankRow()
   emitValue()
 }
 
 function onCheckChange(row: TableRow, field: string, e: Event) {
   row[field] = (e.target as HTMLInputElement).checked
+  applyComputed(row)
   ensureTrailingBlankRow()
   emitValue()
 }
 
 function onComboboxUpdate(row: TableRow, field: string, value: unknown) {
   row[field] = value
+  applyComputed(row)
   ensureTrailingBlankRow()
   emitValue()
 }
@@ -163,6 +218,7 @@ function onComboboxSelect(row: TableRow, col: TableCol, record: Record<string, u
       }
     }
   }
+  applyComputed(row)
   ensureTrailingBlankRow()
   emitValue()
 }

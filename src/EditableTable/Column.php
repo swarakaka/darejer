@@ -54,6 +54,8 @@ class Column
     /** @var array<string,string> */
     protected array $fillFrom = [];
 
+    protected ?string $compute = null;
+
     protected function __construct(string $field)
     {
         $this->field = $field;
@@ -231,6 +233,21 @@ class Column
         return $this;
     }
 
+    /**
+     * Mark this column as derived from sibling row fields. The `$expression`
+     * is a JavaScript expression that may reference other column field names —
+     * e.g. `'qty * rate'` or `'qty * rate * (1 - discount_pct / 100)'`. The
+     * cell becomes read-only and re-evaluates whenever a referenced sibling
+     * field changes.
+     */
+    public function compute(string $expression): static
+    {
+        $this->compute = $expression;
+        $this->disabled = true;
+
+        return $this;
+    }
+
     public function getField(): string
     {
         return $this->field;
@@ -247,6 +264,7 @@ class Column
             'placeholder' => $this->placeholder,
             'options' => $this->options,
             'decimals' => $this->decimals,
+            'compute' => $this->compute,
         ];
 
         if ($this->type === 'combobox') {
