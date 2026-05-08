@@ -57,14 +57,14 @@ const keys = [
 </script>
 
 <template>
-  <div class="grid grid-cols-3 gap-2">
+  <div class="grid grid-cols-3 gap-2.5">
     <template v-for="row in keys" :key="row[0]">
       <Button
         v-for="k in row"
         :key="k"
         type="button"
         variant="outline"
-        class="h-12 text-[18px] font-semibold tabular-nums"
+        class="h-16 text-[22px] font-semibold tabular-nums"
         @click="press(k)"
       >
         {{ k }}
@@ -74,7 +74,7 @@ const keys = [
     <Button
       type="button"
       variant="outline"
-      class="h-12 text-[18px] font-semibold tabular-nums"
+      class="h-16 text-[22px] font-semibold tabular-nums"
       :disabled="(props.decimals ?? 2) === 0"
       @click="press('.')"
     >
@@ -83,7 +83,7 @@ const keys = [
     <Button
       type="button"
       variant="outline"
-      class="h-12 text-[18px] font-semibold tabular-nums"
+      class="h-16 text-[22px] font-semibold tabular-nums"
       @click="press('0')"
     >
       0
@@ -91,17 +91,17 @@ const keys = [
     <Button
       type="button"
       variant="outline"
-      class="h-12"
+      class="h-16"
       @click="press('back')"
     >
-      <Delete class="size-5" />
+      <Delete class="size-6" />
     </Button>
 
     <Button
       v-if="showClear"
       type="button"
       variant="ghost"
-      class="col-span-3 h-10 text-[14px]"
+      class="col-span-3 h-11 text-[14px]"
       @click="press('C')"
     >
       C

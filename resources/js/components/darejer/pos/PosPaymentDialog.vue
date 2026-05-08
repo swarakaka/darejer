@@ -106,14 +106,14 @@ const activeAmount = computed({
 
 <template>
   <Dialog :open="open" @update:open="(v) => emit('update:open', v)">
-    <DialogContent class="max-w-3xl">
+    <DialogContent class="max-w-5xl sm:max-w-5xl lg:max-w-6xl">
       <DialogHeader>
-        <DialogTitle class="text-[18px]">
+        <DialogTitle class="text-[20px]">
           {{ __('Payment') }} · {{ currency.code }} {{ grandTotal.toFixed(2) }}
         </DialogTitle>
       </DialogHeader>
 
-      <div class="grid gap-4 md:grid-cols-2">
+      <div class="grid gap-6 md:grid-cols-[1.3fr_1fr]">
         <!-- Tenders list -->
         <div class="space-y-3">
           <div
@@ -124,9 +124,9 @@ const activeAmount = computed({
             @click="activeIdx = idx"
           >
             <div class="flex items-center gap-2">
-              <component :is="tenderIcon(t.tender)" class="size-5 text-brand-600" />
+              <component :is="tenderIcon(t.tender)" class="size-5 shrink-0 text-brand-600" />
               <Select :model-value="t.tender" @update:model-value="(v) => (t.tender = v as Tender['tender'])">
-                <SelectTrigger class="h-11 w-44 text-[14px]">
+                <SelectTrigger class="h-12 w-40 shrink-0 text-[14px]">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -141,10 +141,10 @@ const activeAmount = computed({
                 inputmode="decimal"
                 step="0.01"
                 min="0"
-                class="h-11 flex-1 text-end text-[16px] font-semibold tabular-nums"
+                class="h-12 min-w-0 flex-1 text-end text-[18px] font-semibold tabular-nums"
                 @focus="activeIdx = idx"
               />
-              <Button variant="ghost" size="icon" :disabled="tenders.length <= 1" @click.stop="removeTender(idx)">
+              <Button variant="ghost" size="icon" class="shrink-0" :disabled="tenders.length <= 1" @click.stop="removeTender(idx)">
                 <Trash2 class="size-4 text-danger-500" />
               </Button>
             </div>
@@ -177,7 +177,7 @@ const activeAmount = computed({
                 type="button"
                 variant="secondary"
                 size="sm"
-                class="h-9 px-3 text-[13px] tabular-nums"
+                class="h-10 px-3 text-[13px] tabular-nums"
                 @click.stop="quickFill(Number(amount), idx)"
               >
                 {{ Number(amount).toFixed(2) }}
