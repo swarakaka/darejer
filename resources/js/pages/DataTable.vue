@@ -753,9 +753,6 @@ function clearFilter(field: string) {
                       <span class="text-[14px] font-semibold tracking-tight text-ink-800">
                         {{ emptyMessage ?? __('No records found.') }}
                       </span>
-                      <span class="max-w-sm text-[12px] text-ink-500">
-                        {{ __('Adjust your filters or search to see results.') }}
-                      </span>
                     </div>
                   </div>
                 </td>
