@@ -330,7 +330,12 @@ function badgeLabel(col: TreeCol, value: unknown): string {
                   <template v-if="rowActions.length === 1">
                     <button
                       type="button"
-                      class="flex h-7 w-7 items-center justify-center rounded-sm text-ink-400 transition-colors hover:bg-paper-100 hover:text-ink-700"
+                      class="flex h-7 w-7 items-center justify-center rounded-sm transition-colors"
+                      :class="
+                        rowActions[0].variant === 'destructive'
+                          ? `text-danger-600 hover:bg-danger-50 hover:text-danger-700`
+                          : `text-ink-400 hover:bg-paper-100 hover:text-ink-700`
+                      "
                       :title="rowActions[0].label"
                       @click="handleAction(rowActions[0], row)"
                     >

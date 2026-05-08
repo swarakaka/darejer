@@ -863,7 +863,7 @@ function clearFilter(field: string) {
                               class="flex h-8 w-8 items-center justify-center rounded-md transition-colors"
                               :class="
                                 action.variant === 'destructive'
-                                  ? `text-ink-400 hover:bg-danger-50 hover:text-danger-700`
+                                  ? `text-danger-600 hover:bg-danger-50 hover:text-danger-700`
                                   : `text-ink-400 hover:bg-brand-50 hover:text-brand-700`
                               "
                               :aria-label="__(action.label)"
