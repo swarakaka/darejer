@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { Button } from '@/components/ui/button'
 import { Delete } from 'lucide-vue-next'
 
 /**
@@ -54,57 +53,55 @@ const keys = [
   ['4', '5', '6'],
   ['1', '2', '3'],
 ]
+
+const decimalDisabled = (props.decimals ?? 2) === 0
 </script>
 
 <template>
-  <div class="grid grid-cols-3 gap-2.5">
+  <div class="grid grid-cols-3 gap-2">
     <template v-for="row in keys" :key="row[0]">
-      <Button
+      <button
         v-for="k in row"
         :key="k"
         type="button"
-        variant="outline"
-        class="h-16 text-[22px] font-semibold tabular-nums"
+        class="h-16 rounded-sm border border-ink-200 bg-white text-[22px] font-semibold tabular-nums text-ink-900 transition-[background-color,border-color,transform] hover:border-brand-400 hover:bg-brand-50 active:translate-y-px active:bg-brand-100 focus-visible:outline-1 focus-visible:outline-offset-1 focus-visible:outline-brand-500"
         @click="press(k)"
       >
         {{ k }}
-      </Button>
+      </button>
     </template>
 
-    <Button
+    <button
       type="button"
-      variant="outline"
-      class="h-16 text-[22px] font-semibold tabular-nums"
-      :disabled="(props.decimals ?? 2) === 0"
+      class="h-16 rounded-sm border border-ink-200 bg-white text-[22px] font-semibold tabular-nums text-ink-900 transition-[background-color,border-color,transform] hover:border-brand-400 hover:bg-brand-50 active:translate-y-px active:bg-brand-100 focus-visible:outline-1 focus-visible:outline-offset-1 focus-visible:outline-brand-500 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:border-ink-200 disabled:hover:bg-white"
+      :disabled="decimalDisabled"
       @click="press('.')"
     >
       .
-    </Button>
-    <Button
+    </button>
+    <button
       type="button"
-      variant="outline"
-      class="h-16 text-[22px] font-semibold tabular-nums"
+      class="h-16 rounded-sm border border-ink-200 bg-white text-[22px] font-semibold tabular-nums text-ink-900 transition-[background-color,border-color,transform] hover:border-brand-400 hover:bg-brand-50 active:translate-y-px active:bg-brand-100 focus-visible:outline-1 focus-visible:outline-offset-1 focus-visible:outline-brand-500"
       @click="press('0')"
     >
       0
-    </Button>
-    <Button
+    </button>
+    <button
       type="button"
-      variant="outline"
-      class="h-16"
+      class="flex h-16 items-center justify-center rounded-sm border border-ink-200 bg-paper-100 text-ink-700 transition-[background-color,border-color,transform] hover:border-ink-400 hover:bg-paper-150 hover:text-ink-900 active:translate-y-px active:bg-paper-200 focus-visible:outline-1 focus-visible:outline-offset-1 focus-visible:outline-brand-500"
+      :aria-label="'Backspace'"
       @click="press('back')"
     >
       <Delete class="size-6" />
-    </Button>
+    </button>
 
-    <Button
+    <button
       v-if="showClear"
       type="button"
-      variant="ghost"
-      class="col-span-3 h-11 text-[14px]"
+      class="col-span-3 h-11 rounded-sm border border-transparent bg-transparent text-[13px] font-semibold uppercase tracking-[0.06em] text-danger-600 transition-colors hover:bg-danger-50 hover:text-danger-700 active:bg-danger-100 focus-visible:outline-1 focus-visible:outline-offset-1 focus-visible:outline-brand-500"
       @click="press('C')"
     >
       C
-    </Button>
+    </button>
   </div>
 </template>
