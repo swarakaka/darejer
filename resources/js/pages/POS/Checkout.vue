@@ -154,10 +154,14 @@ function addToCart(item: PosItem) {
     existing.qty = String(parseFloat(existing.qty) + 1)
     return
   }
+  // Normalize the seeded rate to the currency's minor_units. Items are stored
+  // with full DB precision (e.g. "1200000.00"); for IQD we want "1200000" so
+  // the input doesn't carry a fractional part that would never apply.
+  const seeded = item.selling_price ? Number(item.selling_price) : 0
   cart.value.push({
     item,
     qty: '1',
-    rate: item.selling_price ?? '0',
+    rate: Number.isFinite(seeded) ? seeded.toFixed(currencyDecimals.value) : (0).toFixed(currencyDecimals.value),
     discount_pct: '0',
   })
 }

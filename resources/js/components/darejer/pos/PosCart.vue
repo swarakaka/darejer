@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Minus, Plus, Trash2 } from 'lucide-vue-next'
@@ -42,7 +42,6 @@ function lineTotal(line: CartLine): number {
 }
 
 const decimals = computed(() => props.currency.minor_units ?? 2)
-const rateStep = computed(() => (decimals.value > 0 ? '0.' + '0'.repeat(decimals.value - 1) + '1' : '1'))
 const moneyFormatter = computed(
   () =>
     new Intl.NumberFormat(undefined, {
@@ -52,6 +51,61 @@ const moneyFormatter = computed(
 )
 function fmt(n: number): string {
   return moneyFormatter.value.format(n)
+}
+
+// Locale-aware separators for the rate input. We need them so we can
+// (a) display the rate grouped (1,200,000) when not focused, and
+// (b) parse the user's typed value back to a canonical dot-decimal string
+//     no matter whether their locale uses ',' or '.' as the decimal mark.
+const sepParts = computed(() =>
+  new Intl.NumberFormat(undefined, {
+    minimumFractionDigits: decimals.value,
+    maximumFractionDigits: decimals.value,
+  }).formatToParts(12345.6),
+)
+const groupSep = computed(() => sepParts.value.find((p) => p.type === 'group')?.value ?? ',')
+const decimalSep = computed(() => sepParts.value.find((p) => p.type === 'decimal')?.value ?? '.')
+
+const rateFocusedIdx = ref<number | null>(null)
+
+function rateDisplay(line: CartLine, idx: number): string {
+  const n = Number(line.rate)
+  if (rateFocusedIdx.value === idx) {
+    // While editing, drop grouping but keep the locale decimal mark so the
+    // user keeps seeing what they're typing (e.g. ',' on de-DE).
+    if (!Number.isFinite(n)) return line.rate
+    return String(line.rate).replace('.', decimalSep.value)
+  }
+  if (!Number.isFinite(n)) return line.rate
+  return moneyFormatter.value.format(n)
+}
+
+function parseRate(raw: string): string {
+  // Strip group chars and normalize the decimal mark to '.'. Anything else
+  // that isn't a digit or sign is dropped, so a stray space or letter from
+  // a paste doesn't poison the canonical value.
+  const groupRe = new RegExp('\\' + groupSep.value, 'g')
+  const cleaned = raw
+    .replace(groupRe, '')
+    .replace(decimalSep.value, '.')
+    .replace(/[^0-9.\-]/g, '')
+  return cleaned
+}
+
+function onRateInput(idx: number, raw: string) {
+  update(idx, 'rate', parseRate(raw))
+}
+
+function onRateFocus(idx: number) {
+  rateFocusedIdx.value = idx
+}
+
+function onRateBlur(idx: number) {
+  rateFocusedIdx.value = null
+  const n = parseFloat(props.cart[idx]?.rate ?? '')
+  if (Number.isFinite(n)) {
+    update(idx, 'rate', n.toFixed(decimals.value))
+  }
 }
 
 function update(index: number, field: keyof Pick<CartLine, 'qty' | 'rate' | 'discount_pct'>, value: string) {
@@ -142,14 +196,14 @@ const empty = computed(() => props.cart.length === 0)
             <!-- Rate -->
             <div class="col-span-6 sm:col-span-4">
               <Input
-                :model-value="line.rate"
-                type="number"
+                :model-value="rateDisplay(line, idx)"
+                type="text"
                 inputmode="decimal"
-                :step="rateStep"
-                min="0"
                 class="h-11 text-end text-[15px] tabular-nums"
                 :placeholder="__('Price')"
-                @update:model-value="(v) => update(idx, 'rate', String(v))"
+                @focus="onRateFocus(idx)"
+                @blur="onRateBlur(idx)"
+                @update:model-value="(v) => onRateInput(idx, String(v))"
               />
             </div>
 
