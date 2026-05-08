@@ -16,7 +16,7 @@ import { Calculator, LayoutDashboard, ListChecks, LogOut, Receipt, X } from 'luc
 
 defineOptions({ layout: PosLayout })
 
-const { __ } = useTranslation()
+const { __, resolveTranslatable: localized } = useTranslation()
 const success = (msg: string) => toast.success(msg)
 const error = (msg: string) => toast.error(msg)
 
@@ -219,30 +219,33 @@ function submitClose() {
 
 <template>
   <div class="flex h-full flex-col">
-    <div class="flex items-center justify-between border-b border-ink-200 bg-white px-4 py-2">
-      <div class="flex items-center gap-2">
-        <Calculator class="size-5 text-brand-600" />
-        <span class="text-[14px] font-semibold text-ink-900">{{ __('Point of Sale') }}</span>
-        <span v-if="session" class="ms-2 rounded-sm bg-success-50 px-2 py-0.5 text-[12px] text-success-700">
+    <div class="flex flex-wrap items-center justify-between gap-2 border-b border-ink-200 bg-white px-3 py-2 sm:px-4">
+      <div class="flex min-w-0 items-center gap-2">
+        <Calculator class="size-6 text-brand-600" />
+        <span class="text-[15px] font-semibold text-ink-900">{{ __('Point of Sale') }}</span>
+        <span v-if="session" class="ms-1 rounded-sm bg-success-50 px-2 py-1 text-[12px] font-medium text-success-700">
           {{ session.voucher_no }}
         </span>
-        <span v-if="session" class="text-[12px] text-ink-500">
-          · {{ __('Cashbox') }}: {{ typeof session.cashbox.name === 'object' ? Object.values(session.cashbox.name)[0] : session.cashbox.name }}
+        <span v-if="session" class="hidden truncate text-[13px] text-ink-500 sm:inline">
+          · {{ __('Cashbox') }}: {{ localized(session.cashbox.name) }}
         </span>
       </div>
       <div class="flex items-center gap-2">
         <Link :href="urls.sessions_index">
-          <Button variant="outline" size="sm">
-            <ListChecks class="size-3.5" /> {{ __('POS Sessions') }}
+          <Button variant="outline" class="h-10 px-3 text-[14px]">
+            <ListChecks class="size-4" />
+            <span class="hidden sm:inline">{{ __('POS Sessions') }}</span>
           </Button>
         </Link>
         <Link href="/darejer">
-          <Button variant="outline" size="sm">
-            <LayoutDashboard class="size-3.5" /> {{ __('Dashboard') }}
+          <Button variant="outline" class="h-10 px-3 text-[14px]">
+            <LayoutDashboard class="size-4" />
+            <span class="hidden sm:inline">{{ __('Dashboard') }}</span>
           </Button>
         </Link>
-        <Button v-if="session" variant="outline" size="sm" @click="closeOpen = true">
-          <LogOut class="size-3.5" /> {{ __('Close session') }}
+        <Button v-if="session" variant="outline" class="h-10 px-3 text-[14px]" @click="closeOpen = true">
+          <LogOut class="size-4" />
+          <span class="hidden sm:inline">{{ __('Close session') }}</span>
         </Button>
       </div>
     </div>
@@ -253,44 +256,44 @@ function submitClose() {
       :open-url="urls.open_session"
     />
 
-    <div v-else class="grid min-h-0 flex-1 grid-cols-12 gap-3 overflow-hidden bg-paper-100 p-3">
-      <!-- Cart panel (left) -->
-      <div class="col-span-12 flex flex-col gap-3 lg:col-span-5">
+    <div v-else class="grid min-h-0 flex-1 grid-cols-1 gap-3 overflow-hidden bg-paper-100 p-3 md:grid-cols-12">
+      <!-- Cart panel (left on tablet+, top on phones) -->
+      <div class="flex min-h-0 flex-col gap-3 md:col-span-5 lg:col-span-5 xl:col-span-4">
         <div class="flex items-center justify-between rounded-sm border border-ink-200 bg-white p-3">
-          <div>
+          <button
+            type="button"
+            class="min-w-0 text-start"
+            @click="customerOpen = true"
+          >
             <div class="text-[11px] uppercase tracking-wider text-ink-500">{{ __('Customer') }}</div>
-            <button
-              type="button"
-              class="text-[14px] font-semibold text-ink-900 hover:text-brand-600"
-              @click="customerOpen = true"
-            >
-              {{ customer ? (typeof customer.name === 'object' ? Object.values(customer.name)[0] : customer.name) : __('Choose customer') }}
-            </button>
-          </div>
-          <Button variant="ghost" size="sm" :disabled="!cart.length" @click="clearCart">
-            <X class="size-3.5" /> {{ __('Clear') }}
+            <div class="truncate text-[15px] font-semibold text-ink-900 hover:text-brand-600">
+              {{ customer ? localized(customer.name) : __('Choose customer') }}
+            </div>
+          </button>
+          <Button variant="ghost" class="h-10 px-3 text-[13px]" :disabled="!cart.length" @click="clearCart">
+            <X class="size-4" /> {{ __('Clear') }}
           </Button>
         </div>
 
         <PosCart
           v-model:cart="cart"
           :currency="session.currency"
-          class="flex-1 overflow-hidden"
+          class="flex-1 min-h-0 overflow-hidden"
         />
 
         <div class="rounded-sm border border-ink-200 bg-white p-4">
           <div class="mb-3 flex items-center justify-between text-[14px] text-ink-700">
             <span>{{ __('Subtotal (pre-tax)') }}</span>
-            <span class="font-semibold">{{ session.currency.code }} {{ subtotal.toFixed(2) }}</span>
+            <span class="font-semibold tabular-nums">{{ session.currency.code }} {{ subtotal.toFixed(2) }}</span>
           </div>
-          <Button class="h-12 w-full text-[15px]" :disabled="!cart.length" @click="openPayment">
-            <Receipt class="size-4" /> {{ __('Pay') }} · {{ session.currency.code }} {{ grandTotal.toFixed(2) }}
+          <Button class="h-14 w-full text-[16px] font-bold" :disabled="!cart.length" @click="openPayment">
+            <Receipt class="size-5" /> {{ __('Pay') }} · {{ session.currency.code }} {{ grandTotal.toFixed(2) }}
           </Button>
         </div>
       </div>
 
-      <!-- Item search panel (right) -->
-      <div class="col-span-12 min-h-0 lg:col-span-7">
+      <!-- Item search panel (right on tablet+, bottom on phones) -->
+      <div class="min-h-0 md:col-span-7 lg:col-span-7 xl:col-span-8">
         <PosItemSearch :search-url="urls.item_search" @select="addToCart" />
       </div>
     </div>
@@ -312,19 +315,25 @@ function submitClose() {
     />
 
     <!-- Close-session dialog (inline so we don't need yet another file) -->
-    <div v-if="closeOpen" class="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-      <div class="w-[420px] rounded-sm bg-white p-5 shadow-lg">
-        <div class="mb-4 text-[15px] font-semibold">{{ __('Close POS Session') }}</div>
-        <div v-if="session" class="mb-3 space-y-1 text-[13px] text-ink-700">
-          <div class="flex justify-between"><span>{{ __('Opening cash') }}</span><span>{{ session.opening_cash }}</span></div>
-          <div class="flex justify-between"><span>{{ __('Sales (count)') }}</span><span>{{ session.invoice_count }}</span></div>
-          <div class="flex justify-between"><span>{{ __('Total sales') }}</span><span>{{ session.total_sales }}</span></div>
+    <div v-if="closeOpen" class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+      <div class="w-full max-w-md rounded-sm bg-white p-5 shadow-lg sm:p-6">
+        <div class="mb-4 text-[16px] font-semibold">{{ __('Close POS Session') }}</div>
+        <div v-if="session" class="mb-4 space-y-1.5 rounded-sm bg-paper-50 p-3 text-[14px] text-ink-700">
+          <div class="flex justify-between"><span>{{ __('Opening cash') }}</span><span class="tabular-nums">{{ session.opening_cash }}</span></div>
+          <div class="flex justify-between"><span>{{ __('Sales (count)') }}</span><span class="tabular-nums">{{ session.invoice_count }}</span></div>
+          <div class="flex justify-between"><span>{{ __('Total sales') }}</span><span class="tabular-nums">{{ session.total_sales }}</span></div>
         </div>
-        <label class="mb-1 block text-[12px] font-medium text-ink-700">{{ __('Counted cash') }}</label>
-        <Input v-model="closeCash" type="number" step="0.01" />
-        <div class="mt-4 flex justify-end gap-2">
-          <Button variant="outline" size="sm" @click="closeOpen = false">{{ __('Cancel') }}</Button>
-          <Button size="sm" :disabled="closeHttp.processing" @click="submitClose">
+        <label class="mb-1.5 block text-[13px] font-medium text-ink-700">{{ __('Counted cash') }}</label>
+        <Input
+          v-model="closeCash"
+          type="number"
+          inputmode="decimal"
+          step="0.01"
+          class="h-12 text-end text-[16px] tabular-nums"
+        />
+        <div class="mt-5 flex justify-end gap-2">
+          <Button variant="outline" class="h-11 px-5 text-[14px]" @click="closeOpen = false">{{ __('Cancel') }}</Button>
+          <Button class="h-11 px-5 text-[14px]" :disabled="closeHttp.processing" @click="submitClose">
             {{ closeHttp.processing ? __('Closing…') : __('Confirm close') }}
           </Button>
         </div>

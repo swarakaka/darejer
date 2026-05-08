@@ -62,34 +62,53 @@ const useTranslation = () => {
     return __(resolved, replace)
   }
 
+  /**
+   * Resolve a translatable value against the active locale.
+   *
+   * Accepts the three forms a HasTranslations attribute can arrive in:
+   *   1. A pre-parsed dict: `{ en: 'X', ar: 'س' }` (Inertia serializes
+   *      Eloquent `HasTranslations` casts this way).
+   *   2. A JSON string: `'{"en":"X","ar":"س"}'` (raw DB column, untranslated
+   *      ColumnFormatters, etc.).
+   *   3. A plain string: returned as-is.
+   *
+   * Fallback order: requested locale → default language → first non-empty
+   * value → empty string.
+   */
   const resolveTranslatable = (value: unknown): string => {
     if (value === null || value === undefined) {
       return ''
     }
+
+    const pickFromDict = (dict: Record<string, unknown>): string | null => {
+      const page = usePage<SharedProps>()
+      const currentLocale = page.props.darejer?.locale ?? 'en'
+      const defaultLang = page.props.darejer?.default_language ?? 'en'
+
+      const at = (k: string) => (typeof dict[k] === 'string' ? (dict[k] as string) : '')
+      if (at(currentLocale) !== '') return at(currentLocale)
+      if (at(defaultLang) !== '') return at(defaultLang)
+      const firstFilled = Object.values(dict).find((v) => typeof v === 'string' && v !== '')
+      return typeof firstFilled === 'string' ? firstFilled : null
+    }
+
+    // Pre-parsed dict (most common path: HasTranslations through Inertia).
+    if (typeof value === 'object' && !Array.isArray(value)) {
+      return pickFromDict(value as Record<string, unknown>) ?? ''
+    }
+
     if (typeof value !== 'string') {
       return String(value)
     }
 
+    // JSON-encoded dict (raw DB column or API response that didn't decode).
     const trimmed = value.trim()
     if (trimmed.startsWith('{') && trimmed.endsWith('}')) {
       try {
         const parsed = JSON.parse(trimmed)
         if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
-          const page = usePage<SharedProps>()
-          const currentLocale = page.props.darejer?.locale ?? 'en'
-          const defaultLang = page.props.darejer?.default_language ?? 'en'
-          const dict = parsed as Record<string, string>
-
-          if (typeof dict[currentLocale] === 'string' && dict[currentLocale] !== '') {
-            return dict[currentLocale]
-          }
-          if (typeof dict[defaultLang] === 'string' && dict[defaultLang] !== '') {
-            return dict[defaultLang]
-          }
-          const firstFilled = Object.values(dict).find((v) => typeof v === 'string' && v !== '')
-          if (typeof firstFilled === 'string') {
-            return firstFilled
-          }
+          const picked = pickFromDict(parsed as Record<string, unknown>)
+          if (picked !== null) return picked
         }
       } catch {
         // Not valid JSON — fall through and return the original string.

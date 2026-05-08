@@ -16,6 +16,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import PosNumpad from '@/components/darejer/pos/PosNumpad.vue'
 import { Plus, Trash2, Banknote, CreditCard, Building2 } from 'lucide-vue-next'
 import useTranslation from '@/composables/useTranslation'
 
@@ -41,21 +42,17 @@ const emit = defineEmits<{
   confirm: [tenders: Tender[]]
 }>()
 
-const { __ } = useTranslation()
-
-const localized = (n: LocalizedName | null | undefined) => {
-  if (!n) return ''
-  if (typeof n === 'string') return n
-  return Object.values(n).find((v) => v) ?? ''
-}
+const { __, resolveTranslatable: localized } = useTranslation()
 
 const tenders = ref<Tender[]>([])
+const activeIdx = ref(0)
 
 watch(
   () => props.open,
   (open) => {
     if (open) {
       tenders.value = [{ tender: 'cash', amount: props.grandTotal.toFixed(2), bank_account_id: null, reference: null }]
+      activeIdx.value = 0
     }
   },
 )
@@ -71,10 +68,12 @@ function addTender() {
     bank_account_id: null,
     reference: null,
   })
+  activeIdx.value = tenders.value.length - 1
 }
 
 function removeTender(idx: number) {
   tenders.value.splice(idx, 1)
+  if (activeIdx.value >= tenders.value.length) activeIdx.value = tenders.value.length - 1
 }
 
 function quickFill(amount: number, idx: number) {
@@ -96,108 +95,129 @@ function confirm() {
 const canConfirm = computed(
   () => Math.abs(totalPaid.value - props.grandTotal) < 0.01 || totalPaid.value > props.grandTotal,
 )
+
+const activeAmount = computed({
+  get: () => tenders.value[activeIdx.value]?.amount ?? '',
+  set: (v: string) => {
+    if (tenders.value[activeIdx.value]) tenders.value[activeIdx.value].amount = v
+  },
+})
 </script>
 
 <template>
   <Dialog :open="open" @update:open="(v) => emit('update:open', v)">
-    <DialogContent class="max-w-lg">
+    <DialogContent class="max-w-3xl">
       <DialogHeader>
-        <DialogTitle>{{ __('Payment') }} · {{ currency.code }} {{ grandTotal.toFixed(2) }}</DialogTitle>
+        <DialogTitle class="text-[18px]">
+          {{ __('Payment') }} · {{ currency.code }} {{ grandTotal.toFixed(2) }}
+        </DialogTitle>
       </DialogHeader>
 
-      <div class="space-y-3">
-        <div
-          v-for="(t, idx) in tenders"
-          :key="idx"
-          class="rounded-sm border border-ink-200 bg-paper-50 p-3"
-        >
-          <div class="flex items-center gap-2">
-            <component :is="tenderIcon(t.tender)" class="size-4 text-brand-600" />
-            <Select :model-value="t.tender" @update:model-value="(v) => (t.tender = v as Tender['tender'])">
-              <SelectTrigger class="h-8 w-40 text-[13px]">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="cash">{{ __('Cash') }}</SelectItem>
-                <SelectItem value="card">{{ __('Card') }}</SelectItem>
-                <SelectItem value="bank_transfer">{{ __('Bank Transfer') }}</SelectItem>
-              </SelectContent>
-            </Select>
-            <Input
-              v-model="t.amount"
-              type="number"
-              step="0.01"
-              min="0"
-              class="h-8 flex-1 text-end"
-            />
-            <Button variant="ghost" size="icon-sm" :disabled="tenders.length <= 1" @click="removeTender(idx)">
-              <Trash2 class="size-3.5 text-danger-500" />
-            </Button>
+      <div class="grid gap-4 md:grid-cols-2">
+        <!-- Tenders list -->
+        <div class="space-y-3">
+          <div
+            v-for="(t, idx) in tenders"
+            :key="idx"
+            class="rounded-sm border bg-paper-50 p-3 transition"
+            :class="activeIdx === idx ? 'border-brand-500 ring-2 ring-brand-200' : 'border-ink-200'"
+            @click="activeIdx = idx"
+          >
+            <div class="flex items-center gap-2">
+              <component :is="tenderIcon(t.tender)" class="size-5 text-brand-600" />
+              <Select :model-value="t.tender" @update:model-value="(v) => (t.tender = v as Tender['tender'])">
+                <SelectTrigger class="h-11 w-44 text-[14px]">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="cash">{{ __('Cash') }}</SelectItem>
+                  <SelectItem value="card">{{ __('Card') }}</SelectItem>
+                  <SelectItem value="bank_transfer">{{ __('Bank Transfer') }}</SelectItem>
+                </SelectContent>
+              </Select>
+              <Input
+                v-model="t.amount"
+                type="number"
+                inputmode="decimal"
+                step="0.01"
+                min="0"
+                class="h-11 flex-1 text-end text-[16px] font-semibold tabular-nums"
+                @focus="activeIdx = idx"
+              />
+              <Button variant="ghost" size="icon" :disabled="tenders.length <= 1" @click.stop="removeTender(idx)">
+                <Trash2 class="size-4 text-danger-500" />
+              </Button>
+            </div>
+
+            <div v-if="t.tender !== 'cash'" class="mt-2 grid grid-cols-2 gap-2">
+              <Select
+                :model-value="t.bank_account_id ? String(t.bank_account_id) : ''"
+                @update:model-value="(v) => (t.bank_account_id = v ? Number(v) : null)"
+              >
+                <SelectTrigger class="h-11 text-[14px]">
+                  <SelectValue :placeholder="__('Bank account')" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem v-for="b in bankAccounts" :key="b.id" :value="String(b.id)">
+                    {{ localized(b.name) }}
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+              <Input
+                v-model="t.reference"
+                :placeholder="__('Reference / last 4')"
+                class="h-11 text-[14px]"
+              />
+            </div>
+
+            <div v-if="t.tender === 'cash'" class="mt-2 flex flex-wrap gap-1.5">
+              <Button
+                v-for="amount in [5, 10, 20, 50, 100, grandTotal]"
+                :key="amount"
+                type="button"
+                variant="secondary"
+                size="sm"
+                class="h-9 px-3 text-[13px] tabular-nums"
+                @click.stop="quickFill(Number(amount), idx)"
+              >
+                {{ Number(amount).toFixed(2) }}
+              </Button>
+            </div>
           </div>
 
-          <div v-if="t.tender !== 'cash'" class="mt-2 grid grid-cols-2 gap-2">
-            <Select
-              :model-value="t.bank_account_id ? String(t.bank_account_id) : ''"
-              @update:model-value="(v) => (t.bank_account_id = v ? Number(v) : null)"
-            >
-              <SelectTrigger class="h-8 text-[13px]">
-                <SelectValue :placeholder="__('Bank account')" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem v-for="b in bankAccounts" :key="b.id" :value="String(b.id)">
-                  {{ localized(b.name) }}
-                </SelectItem>
-              </SelectContent>
-            </Select>
-            <Input
-              v-model="t.reference"
-              :placeholder="__('Reference / last 4')"
-              class="h-8 text-[13px]"
-            />
-          </div>
+          <Button variant="outline" class="h-11 w-full text-[14px]" @click="addTender">
+            <Plus class="size-4" /> {{ __('Add tender') }}
+          </Button>
 
-          <div v-if="t.tender === 'cash'" class="mt-2 flex flex-wrap gap-1">
-            <Button
-              v-for="amount in [5, 10, 20, 50, 100, grandTotal]"
-              :key="amount"
-              type="button"
-              variant="secondary"
-              size="sm"
-              class="h-7 px-2 text-[12px]"
-              @click="quickFill(Number(amount), idx)"
-            >
-              {{ Number(amount).toFixed(2) }}
-            </Button>
+          <div class="rounded-sm border border-ink-200 bg-white p-3 text-[14px]">
+            <div class="flex justify-between">
+              <span class="text-ink-600">{{ __('Total due') }}</span>
+              <span class="font-semibold tabular-nums">{{ currency.code }} {{ grandTotal.toFixed(2) }}</span>
+            </div>
+            <div class="mt-1 flex justify-between">
+              <span class="text-ink-600">{{ __('Tendered') }}</span>
+              <span class="font-semibold tabular-nums">{{ currency.code }} {{ totalPaid.toFixed(2) }}</span>
+            </div>
+            <div v-if="remaining > 0" class="mt-1 flex justify-between text-danger-700">
+              <span>{{ __('Remaining') }}</span>
+              <span class="font-semibold tabular-nums">{{ currency.code }} {{ remaining.toFixed(2) }}</span>
+            </div>
+            <div v-if="change > 0" class="mt-1 flex justify-between text-success-700">
+              <span>{{ __('Change') }}</span>
+              <span class="font-semibold tabular-nums">{{ currency.code }} {{ change.toFixed(2) }}</span>
+            </div>
           </div>
         </div>
 
-        <Button variant="outline" size="sm" class="w-full" @click="addTender">
-          <Plus class="size-3.5" /> {{ __('Add tender') }}
-        </Button>
-
-        <div class="rounded-sm border border-ink-200 bg-white p-3 text-[13px]">
-          <div class="flex justify-between">
-            <span class="text-ink-600">{{ __('Total due') }}</span>
-            <span class="font-semibold">{{ currency.code }} {{ grandTotal.toFixed(2) }}</span>
-          </div>
-          <div class="mt-1 flex justify-between">
-            <span class="text-ink-600">{{ __('Tendered') }}</span>
-            <span class="font-semibold">{{ currency.code }} {{ totalPaid.toFixed(2) }}</span>
-          </div>
-          <div v-if="remaining > 0" class="mt-1 flex justify-between text-danger-700">
-            <span>{{ __('Remaining') }}</span>
-            <span class="font-semibold">{{ currency.code }} {{ remaining.toFixed(2) }}</span>
-          </div>
-          <div v-if="change > 0" class="mt-1 flex justify-between text-success-700">
-            <span>{{ __('Change') }}</span>
-            <span class="font-semibold">{{ currency.code }} {{ change.toFixed(2) }}</span>
-          </div>
+        <!-- Numpad -->
+        <div>
+          <PosNumpad v-model="activeAmount" :decimals="2" show-clear />
         </div>
       </div>
 
       <DialogFooter>
-        <Button variant="outline" size="sm" @click="emit('update:open', false)">{{ __('Cancel') }}</Button>
-        <Button :disabled="!canConfirm || processing" @click="confirm">
+        <Button variant="outline" class="h-11 px-6 text-[14px]" @click="emit('update:open', false)">{{ __('Cancel') }}</Button>
+        <Button class="h-11 px-6 text-[15px]" :disabled="!canConfirm || processing" @click="confirm">
           {{ processing ? __('Processing…') : __('Confirm') }}
         </Button>
       </DialogFooter>

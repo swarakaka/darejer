@@ -27,17 +27,12 @@ const props = defineProps<{
   openUrl: string
 }>()
 
-const { __ } = useTranslation()
+// resolveTranslatable handles JSON bags ({ en: '…', ar: '…' }) coming from
+// HasTranslations attributes — picks the active locale, falls back to the
+// app default, then to the first non-empty value.
+const { __, resolveTranslatable: localized } = useTranslation()
 const success = (msg: string) => toast.success(msg)
 const error = (msg: string) => toast.error(msg)
-
-// Translatable columns arrive as JSON bags ({ en: '…', ar: '…' }). Pick the
-// first non-empty value when the host page hasn't expanded the user's locale.
-const localized = (n: LocalizedName | null | undefined) => {
-  if (!n) return ''
-  if (typeof n === 'string') return n
-  return Object.values(n).find((v) => v) ?? ''
-}
 
 const cashbox_id = ref<string>('')
 const warehouse_id = ref<string>('')
@@ -84,60 +79,67 @@ function submit() {
 </script>
 
 <template>
-  <div class="flex flex-1 items-center justify-center bg-paper-100 p-8">
-    <div class="w-[420px] rounded-sm border border-ink-200 bg-white p-6 shadow-sm">
+  <div class="flex flex-1 items-center justify-center overflow-y-auto bg-paper-100 p-4">
+    <div class="w-full max-w-md rounded-sm border border-ink-200 bg-white p-5 shadow-sm sm:p-6">
       <div class="mb-5 flex items-center gap-3">
-        <Calculator class="size-6 text-brand-600" />
+        <Calculator class="size-7 text-brand-600" />
         <div>
-          <div class="text-[15px] font-semibold">{{ __('Open POS Session') }}</div>
-          <div class="text-[12px] text-ink-500">{{ __('Pick your drawer and starting cash to begin selling.') }}</div>
+          <div class="text-[16px] font-semibold">{{ __('Open POS Session') }}</div>
+          <div class="text-[13px] text-ink-500">{{ __('Pick your drawer and starting cash to begin selling.') }}</div>
         </div>
       </div>
 
-      <div class="space-y-3">
+      <div class="space-y-4">
         <label class="block">
-          <span class="mb-1 block text-[12px] font-medium text-ink-700">{{ __('Cashbox') }}</span>
+          <span class="mb-1.5 block text-[13px] font-medium text-ink-700">{{ __('Cashbox') }}</span>
           <Select v-model="cashbox_id">
-            <SelectTrigger class="h-9 text-[13px]">
+            <SelectTrigger class="h-12 text-[15px]">
               <SelectValue :placeholder="__('Pick cashbox')" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem v-for="c in bootstrap.cashboxes" :key="c.id" :value="String(c.id)">{{ localized(c.name) }}</SelectItem>
+              <SelectItem v-for="c in bootstrap.cashboxes" :key="c.id" :value="String(c.id)" class="text-[15px]">{{ localized(c.name) }}</SelectItem>
             </SelectContent>
           </Select>
         </label>
 
         <label class="block">
-          <span class="mb-1 block text-[12px] font-medium text-ink-700">{{ __('Warehouse') }}</span>
+          <span class="mb-1.5 block text-[13px] font-medium text-ink-700">{{ __('Warehouse') }}</span>
           <Select v-model="warehouse_id">
-            <SelectTrigger class="h-9 text-[13px]">
+            <SelectTrigger class="h-12 text-[15px]">
               <SelectValue :placeholder="__('Default per item')" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem v-for="w in bootstrap.warehouses" :key="w.id" :value="String(w.id)">{{ localized(w.name) }}</SelectItem>
+              <SelectItem v-for="w in bootstrap.warehouses" :key="w.id" :value="String(w.id)" class="text-[15px]">{{ localized(w.name) }}</SelectItem>
             </SelectContent>
           </Select>
         </label>
 
         <label class="block">
-          <span class="mb-1 block text-[12px] font-medium text-ink-700">{{ __('Currency') }}</span>
+          <span class="mb-1.5 block text-[13px] font-medium text-ink-700">{{ __('Currency') }}</span>
           <Select v-model="currency_id">
-            <SelectTrigger class="h-9 text-[13px]">
+            <SelectTrigger class="h-12 text-[15px]">
               <SelectValue :placeholder="__('Pick currency')" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem v-for="c in bootstrap.currencies" :key="c.id" :value="String(c.id)">{{ c.code }}</SelectItem>
+              <SelectItem v-for="c in bootstrap.currencies" :key="c.id" :value="String(c.id)" class="text-[15px]">{{ c.code }}</SelectItem>
             </SelectContent>
           </Select>
         </label>
 
         <label class="block">
-          <span class="mb-1 block text-[12px] font-medium text-ink-700">{{ __('Opening cash') }}</span>
-          <Input v-model="opening_cash" type="number" step="0.01" min="0" class="h-9 text-end" />
+          <span class="mb-1.5 block text-[13px] font-medium text-ink-700">{{ __('Opening cash') }}</span>
+          <Input
+            v-model="opening_cash"
+            type="number"
+            inputmode="decimal"
+            step="0.01"
+            min="0"
+            class="h-12 text-end text-[16px] tabular-nums"
+          />
         </label>
       </div>
 
-      <Button class="mt-5 h-10 w-full" :disabled="http.processing" @click="submit">
+      <Button class="mt-6 h-12 w-full text-[15px]" :disabled="http.processing" @click="submit">
         {{ http.processing ? __('Opening…') : __('Open session') }}
       </Button>
     </div>

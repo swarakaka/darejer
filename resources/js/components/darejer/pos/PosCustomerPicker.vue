@@ -19,7 +19,7 @@ interface Customer {
 const props = defineProps<{ open: boolean; searchUrl: string }>()
 const emit = defineEmits<{ 'update:open': [v: boolean]; select: [c: Customer] }>()
 
-const { __ } = useTranslation()
+const { __, resolveTranslatable: localized } = useTranslation()
 
 const term = ref('')
 const customers = ref<Customer[]>([])
@@ -28,8 +28,6 @@ const http = useHttp({ q: '' } as any) as unknown as Record<string, unknown> & {
   get(url: string, opts?: object): Promise<unknown>
 }
 
-const localized = (name: Record<string, string> | string) =>
-  typeof name === 'object' ? Object.values(name)[0] : name
 
 let lastTerm = ''
 async function load() {
@@ -69,22 +67,22 @@ watch(term, () => {
       <Input
         v-model="term"
         :placeholder="__('Search by code or name…')"
-        class="h-9"
+        class="h-12 text-[15px]"
         autofocus
       />
 
-      <div class="max-h-72 overflow-y-auto">
+      <div class="max-h-[60vh] overflow-y-auto">
         <button
           v-for="c in customers"
           :key="c.id"
           type="button"
-          class="block w-full rounded-sm px-3 py-2 text-start text-[13px] hover:bg-paper-100"
+          class="block w-full rounded-sm px-3 py-3 text-start hover:bg-paper-100 active:bg-paper-150"
           @click="emit('select', c)"
         >
-          <div class="font-medium">{{ localized(c.name) }}</div>
-          <div class="text-[11px] text-ink-500">{{ c.code }}</div>
+          <div class="text-[15px] font-medium">{{ localized(c.name) }}</div>
+          <div class="text-[12px] text-ink-500">{{ c.code }}</div>
         </button>
-        <div v-if="!customers.length" class="p-6 text-center text-[13px] text-ink-500">
+        <div v-if="!customers.length" class="p-8 text-center text-[14px] text-ink-500">
           {{ __('No matching customers.') }}
         </div>
       </div>

@@ -2,7 +2,7 @@
 import { computed } from 'vue'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-import { Trash2 } from 'lucide-vue-next'
+import { Minus, Plus, Trash2 } from 'lucide-vue-next'
 import useTranslation from '@/composables/useTranslation'
 
 interface PosItem {
@@ -32,10 +32,7 @@ const emit = defineEmits<{
   'update:cart': [value: CartLine[]]
 }>()
 
-const { __ } = useTranslation()
-
-const localized = (name: Record<string, string> | string) =>
-  typeof name === 'object' ? Object.values(name)[0] : name
+const { __, resolveTranslatable: localized } = useTranslation()
 
 function lineTotal(line: CartLine): number {
   const qty = parseFloat(line.qty) || 0
@@ -50,6 +47,12 @@ function update(index: number, field: keyof Pick<CartLine, 'qty' | 'rate' | 'dis
   emit('update:cart', next)
 }
 
+function adjustQty(index: number, delta: number) {
+  const current = parseFloat(props.cart[index].qty) || 0
+  const next = Math.max(0, current + delta)
+  update(index, 'qty', String(next))
+}
+
 function remove(index: number) {
   const next = [...props.cart]
   next.splice(index, 1)
@@ -60,82 +63,100 @@ const empty = computed(() => props.cart.length === 0)
 </script>
 
 <template>
-  <div class="rounded-sm border border-ink-200 bg-white">
-    <div class="border-b border-ink-200 px-3 py-2 text-[12px] font-semibold uppercase tracking-wider text-ink-600">
+  <div class="flex flex-col rounded-sm border border-ink-200 bg-white">
+    <div class="border-b border-ink-200 px-4 py-3 text-[12px] font-semibold uppercase tracking-wider text-ink-600">
       {{ __('Cart') }} · {{ cart.length }}
     </div>
 
-    <div class="max-h-[calc(100vh-22rem)] overflow-y-auto">
+    <div class="flex-1 overflow-y-auto">
       <div
         v-if="empty"
-        class="p-8 text-center text-[13px] text-ink-500"
+        class="p-10 text-center text-[14px] text-ink-500"
       >
         {{ __('Scan a barcode or tap an item to start a sale.') }}
       </div>
 
-      <table v-else class="w-full text-[13px]">
-        <thead class="sticky top-0 bg-paper-100 text-[11px] uppercase tracking-wider text-ink-500">
-          <tr>
-            <th class="px-3 py-2 text-start">{{ __('Item') }}</th>
-            <th class="px-2 py-2 text-end" style="width: 5rem">{{ __('Qty') }}</th>
-            <th class="px-2 py-2 text-end" style="width: 6rem">{{ __('Price') }}</th>
-            <th class="px-2 py-2 text-end" style="width: 4rem">{{ __('Disc%') }}</th>
-            <th class="px-2 py-2 text-end" style="width: 6rem">{{ __('Total') }}</th>
-            <th class="px-1 py-2" style="width: 2rem"></th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr
-            v-for="(line, idx) in cart"
-            :key="`${line.item.id}-${idx}`"
-            class="border-t border-ink-100 hover:bg-paper-50"
-          >
-            <td class="px-3 py-2">
-              <div class="font-medium text-ink-900">{{ localized(line.item.name) }}</div>
-              <div class="text-[11px] text-ink-500">{{ line.item.code }}</div>
-            </td>
-            <td class="px-1 py-1">
+      <ul v-else class="divide-y divide-ink-100">
+        <li
+          v-for="(line, idx) in cart"
+          :key="`${line.item.id}-${idx}`"
+          class="px-3 py-3"
+        >
+          <div class="mb-2 flex items-start justify-between gap-2">
+            <div class="min-w-0 flex-1">
+              <div class="truncate text-[15px] font-semibold text-ink-900">{{ localized(line.item.name) }}</div>
+              <div class="text-[12px] text-ink-500">{{ line.item.code }}</div>
+            </div>
+            <div class="text-end">
+              <div class="text-[15px] font-bold tabular-nums text-ink-900">{{ lineTotal(line).toFixed(2) }}</div>
+              <div class="text-[11px] text-ink-500">{{ currency.code }}</div>
+            </div>
+            <Button variant="ghost" size="icon" class="-mt-1" @click="remove(idx)">
+              <Trash2 class="size-4 text-danger-500" />
+            </Button>
+          </div>
+
+          <div class="grid grid-cols-12 gap-2">
+            <!-- Qty stepper -->
+            <div class="col-span-6 flex items-stretch overflow-hidden rounded-sm border border-ink-200 sm:col-span-5">
+              <button
+                type="button"
+                class="flex h-11 w-11 items-center justify-center bg-paper-100 text-ink-700 hover:bg-paper-150 active:bg-paper-200"
+                @click="adjustQty(idx, -1)"
+                :aria-label="__('Decrease')"
+              >
+                <Minus class="size-4" />
+              </button>
               <Input
                 :model-value="line.qty"
                 type="number"
+                inputmode="decimal"
                 step="0.001"
                 min="0"
-                class="h-7 text-end"
+                class="h-11 flex-1 rounded-none border-0 text-center text-[15px] font-semibold tabular-nums shadow-none focus-visible:ring-0"
                 @update:model-value="(v) => update(idx, 'qty', String(v))"
               />
-            </td>
-            <td class="px-1 py-1">
+              <button
+                type="button"
+                class="flex h-11 w-11 items-center justify-center bg-paper-100 text-ink-700 hover:bg-paper-150 active:bg-paper-200"
+                @click="adjustQty(idx, 1)"
+                :aria-label="__('Increase')"
+              >
+                <Plus class="size-4" />
+              </button>
+            </div>
+
+            <!-- Rate -->
+            <div class="col-span-6 sm:col-span-4">
               <Input
                 :model-value="line.rate"
                 type="number"
+                inputmode="decimal"
                 step="0.01"
                 min="0"
-                class="h-7 text-end"
+                class="h-11 text-end text-[15px] tabular-nums"
+                :placeholder="__('Price')"
                 @update:model-value="(v) => update(idx, 'rate', String(v))"
               />
-            </td>
-            <td class="px-1 py-1">
+            </div>
+
+            <!-- Discount % -->
+            <div class="col-span-12 sm:col-span-3">
               <Input
                 :model-value="line.discount_pct"
                 type="number"
-                step="0.1"
+                inputmode="decimal"
+                step="0.5"
                 min="0"
                 max="100"
-                class="h-7 text-end"
+                class="h-11 text-end text-[15px] tabular-nums"
+                :placeholder="__('Disc%')"
                 @update:model-value="(v) => update(idx, 'discount_pct', String(v))"
               />
-            </td>
-            <td class="px-2 py-2 text-end font-semibold">
-              {{ lineTotal(line).toFixed(2) }}
-            </td>
-            <td class="px-1 py-2">
-              <Button variant="ghost" size="icon-sm" @click="remove(idx)">
-                <Trash2 class="size-3.5 text-danger-500" />
-              </Button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+            </div>
+          </div>
+        </li>
+      </ul>
     </div>
   </div>
 </template>

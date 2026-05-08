@@ -31,12 +31,7 @@ interface Invoice {
 }
 
 const props = defineProps<{ invoice: Invoice }>()
-const { __ } = useTranslation()
-
-const localized = (n: Record<string, string> | string | null | undefined) => {
-  if (!n) return ''
-  return typeof n === 'object' ? Object.values(n)[0] : n
-}
+const { __, resolveTranslatable: localized } = useTranslation()
 
 onMounted(() => {
   // Auto-trigger the browser print dialog so cashiers can print straight to a
