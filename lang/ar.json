@@ -268,5 +268,12 @@
     "just now": "الآن",
     ":n min ago": "منذ :n دقيقة",
     ":n h ago": "منذ :n ساعة",
-    ":n d ago": "منذ :n يوم"
+    ":n d ago": "منذ :n يوم",
+    "Payment Methods": "طرق الدفع",
+    "Keypad": "لوحة الأرقام",
+    "Confirm Payment": "تأكيد الدفع",
+    "Settle the open balance to finalise this sale.": "سوِّ الرصيد المتبقي لإتمام هذه المبيعة.",
+    "Outstanding amount must be settled to confirm.": "يجب تسوية المبلغ المتبقي للتأكيد.",
+    "Overpayment will be returned as change.": "سيُعاد المبلغ الزائد كباقي.",
+    "Balance settled — ready to confirm.": "تمّت التسوية — جاهز للتأكيد."
 }

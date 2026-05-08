@@ -1,5 +1,8 @@
 <script setup lang="ts">
 import { Delete } from 'lucide-vue-next'
+import useTranslation from '@/composables/useTranslation'
+
+const { __ } = useTranslation()
 
 /**
  * On-screen numeric keypad for touchscreens. Edits a string value (kept as
@@ -101,7 +104,7 @@ const decimalDisabled = (props.decimals ?? 2) === 0
       class="col-span-3 h-11 rounded-sm border border-transparent bg-transparent text-[13px] font-semibold uppercase tracking-[0.06em] text-danger-600 transition-colors hover:bg-danger-50 hover:text-danger-700 active:bg-danger-100 focus-visible:outline-1 focus-visible:outline-offset-1 focus-visible:outline-brand-500"
       @click="press('C')"
     >
-      C
+      {{ __('Clear') }}
     </button>
   </div>
 </template>

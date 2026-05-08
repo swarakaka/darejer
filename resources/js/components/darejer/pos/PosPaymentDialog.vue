@@ -161,7 +161,7 @@ const quickAmounts = computed(() => {
           </div>
           <div class="text-end">
             <div class="text-[11px] font-semibold uppercase tracking-[0.08em] text-ink-500">
-              {{ __('Total Due') }}
+              {{ __('Total due') }}
             </div>
             <div class="leading-tight tabular-nums text-ink-900">
               <span class="text-[26px] font-bold">{{ fmt(grandTotal) }}</span>
@@ -175,13 +175,8 @@ const quickAmounts = computed(() => {
       <div class="grid gap-6 px-6 py-5 md:grid-cols-[1.3fr_1fr]">
         <!-- Tenders list -->
         <div class="flex min-w-0 flex-col gap-3">
-          <div class="flex items-center justify-between">
-            <div class="text-[11px] font-semibold uppercase tracking-[0.08em] text-ink-500">
-              {{ __('Payment Methods') }}
-            </div>
-            <div class="text-[11px] tabular-nums text-ink-500">
-              {{ tenders.length }} {{ tenders.length === 1 ? __('tender') : __('tenders') }}
-            </div>
+          <div class="text-[11px] font-semibold uppercase tracking-[0.08em] text-ink-500">
+            {{ __('Payment Methods') }}
           </div>
 
           <div
@@ -329,13 +324,8 @@ const quickAmounts = computed(() => {
 
         <!-- Numpad -->
         <div class="flex flex-col gap-3">
-          <div class="flex items-center justify-between">
-            <div class="text-[11px] font-semibold uppercase tracking-[0.08em] text-ink-500">
-              {{ __('Keypad') }}
-            </div>
-            <div class="text-[11px] text-ink-500">
-              {{ __('Editing tender') }} #{{ activeIdx + 1 }}
-            </div>
+          <div class="text-[11px] font-semibold uppercase tracking-[0.08em] text-ink-500">
+            {{ __('Keypad') }}
           </div>
           <div class="rounded-sm border border-ink-200 bg-paper-75 p-3">
             <PosNumpad v-model="activeAmount" :decimals="decimals" show-clear />

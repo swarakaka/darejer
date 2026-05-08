@@ -341,4 +341,13 @@ return [
     ':n min ago' => ':n min ago',
     ':n h ago' => ':n h ago',
     ':n d ago' => ':n d ago',
+
+    // POS payment dialog
+    'Payment Methods' => 'Payment Methods',
+    'Keypad' => 'Keypad',
+    'Confirm Payment' => 'Confirm Payment',
+    'Settle the open balance to finalise this sale.' => 'Settle the open balance to finalise this sale.',
+    'Outstanding amount must be settled to confirm.' => 'Outstanding amount must be settled to confirm.',
+    'Overpayment will be returned as change.' => 'Overpayment will be returned as change.',
+    'Balance settled — ready to confirm.' => 'Balance settled — ready to confirm.',
 ];

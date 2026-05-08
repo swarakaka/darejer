@@ -268,5 +268,12 @@
     "just now": "ئێستا",
     ":n min ago": ":n خولەک پێش ئێستا",
     ":n h ago": ":n کاتژمێر پێش ئێستا",
-    ":n d ago": ":n ڕۆژ پێش ئێستا"
+    ":n d ago": ":n ڕۆژ پێش ئێستا",
+    "Payment Methods": "شێوازەکانی پارەدان",
+    "Keypad": "تابلۆی ژمارە",
+    "Confirm Payment": "دڵنیاکردنەوەی پارەدان",
+    "Settle the open balance to finalise this sale.": "بۆ تەواوکردنی فرۆشتنەکە، بڕی ماوە بدۆڕێنەوە.",
+    "Outstanding amount must be settled to confirm.": "پێویستە بڕی ماوە بدۆڕێتەوە بۆ دڵنیاکردنەوە.",
+    "Overpayment will be returned as change.": "بڕی زیادە وەک پاشماوە دەگەڕێتەوە.",
+    "Balance settled — ready to confirm.": "باڵانس دۆڕاوەتەوە — ئامادە بۆ دڵنیاکردنەوە."
 }
