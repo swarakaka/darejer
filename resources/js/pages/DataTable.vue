@@ -76,6 +76,22 @@ interface FilterDef {
   placeholder?: string
 }
 
+type DateRange = { from?: string; to?: string }
+type FilterValue = string | DateRange
+
+function isDateRange(v: unknown): v is DateRange {
+  return typeof v === 'object' && v !== null && !Array.isArray(v)
+}
+
+function defaultFilterValue(filter: FilterDef): FilterValue {
+  return filter.type === 'daterange' ? { from: '', to: '' } : ''
+}
+
+function isFilterActive(v: FilterValue): boolean {
+  if (typeof v === 'string') return v !== ''
+  return Boolean(v.from) || Boolean(v.to)
+}
+
 interface GridRowAction {
   label: string
   icon?: string
@@ -109,14 +125,25 @@ const props = defineProps<{
   defaultSort: string
   defaultOrder: string
   tableData: TableData
-  activeFilters: Record<string, string>
+  activeFilters: Record<string, string | DateRange>
   sort: string
   order: string
 }>()
 
 const sortField = ref(props.sort || props.defaultSort)
 const sortOrder = ref<'asc' | 'desc'>((props.order || props.defaultOrder) as 'asc' | 'desc')
-const filterValues = ref<Record<string, string>>({ ...props.activeFilters })
+const filterValues = ref<Record<string, FilterValue>>(
+  Object.fromEntries(
+    props.filters.map((f) => {
+      const incoming = (props.activeFilters as Record<string, unknown>)[f.field]
+      if (f.type === 'daterange') {
+        const v = isDateRange(incoming) ? incoming : {}
+        return [f.field, { from: String(v.from ?? ''), to: String(v.to ?? '') }]
+      }
+      return [f.field, typeof incoming === 'string' ? incoming : '']
+    }),
+  ),
+)
 const globalSearch = ref('')
 const selected = ref<Set<unknown>>(new Set())
 const showFilters = ref(props.filters.length > 0)
@@ -150,15 +177,27 @@ const someSelected = computed(
 )
 
 const activeFilterCount = computed(
-  () => Object.values(filterValues.value).filter((v) => v !== '').length,
+  () => Object.values(filterValues.value).filter(isFilterActive).length,
 )
 
 function navigate(extra: Record<string, unknown> = {}) {
+  const filterParams: Record<string, unknown> = {}
+  for (const [field, v] of Object.entries(filterValues.value)) {
+    if (typeof v === 'string') {
+      if (v !== '') filterParams[field] = v
+    } else {
+      const obj: Record<string, string> = {}
+      if (v.from) obj.from = v.from
+      if (v.to) obj.to = v.to
+      if (Object.keys(obj).length) filterParams[field] = obj
+    }
+  }
+
   const params: Record<string, unknown> = {
     sort: sortField.value,
     order: sortOrder.value,
     search: globalSearch.value || undefined,
-    ...filterValues.value,
+    ...filterParams,
     ...extra,
   }
   Object.keys(params).forEach((k) => {
@@ -196,7 +235,9 @@ function onFilterChange() {
 }
 
 function resetFilters() {
-  filterValues.value = Object.fromEntries(props.filters.map((f) => [f.field, '']))
+  filterValues.value = Object.fromEntries(
+    props.filters.map((f) => [f.field, defaultFilterValue(f)]),
+  )
   navigate({ page: 1 })
 }
 
@@ -208,7 +249,13 @@ const ALL_SENTINEL = '__all__'
 
 function selectModelValue(field: string): string {
   const v = filterValues.value[field]
-  return v === '' || v == null ? ALL_SENTINEL : v
+  if (typeof v !== 'string' || v === '' || v == null) return ALL_SENTINEL
+  return v
+}
+
+function stringValue(field: string): string {
+  const v = filterValues.value[field]
+  return typeof v === 'string' ? v : ''
 }
 
 function onSelectChange(field: string, val: unknown) {
@@ -219,6 +266,46 @@ function onSelectChange(field: string, val: unknown) {
 function onTextInput(field: string, e: Event) {
   filterValues.value[field] = (e.target as HTMLInputElement).value
   onFilterChange()
+}
+
+function getRangeFrom(field: string): string {
+  const v = filterValues.value[field]
+  return isDateRange(v) ? (v.from ?? '') : ''
+}
+
+function getRangeTo(field: string): string {
+  const v = filterValues.value[field]
+  return isDateRange(v) ? (v.to ?? '') : ''
+}
+
+function setRangeFrom(field: string, value: string) {
+  const v = filterValues.value[field]
+  filterValues.value[field] = {
+    from: value,
+    to: isDateRange(v) ? (v.to ?? '') : '',
+  }
+  onFilterChange()
+}
+
+function setRangeTo(field: string, value: string) {
+  const v = filterValues.value[field]
+  filterValues.value[field] = {
+    from: isDateRange(v) ? (v.from ?? '') : '',
+    to: value,
+  }
+  onFilterChange()
+}
+
+function onRangeFromSelect(field: string, date: unknown) {
+  const d = Array.isArray(date) ? date[0] : (date as CalendarDate | undefined)
+  setRangeFrom(field, d ? d.toString() : '')
+  if (d) datePopoverOpen.value[`${field}:from`] = false
+}
+
+function onRangeToSelect(field: string, date: unknown) {
+  const d = Array.isArray(date) ? date[0] : (date as CalendarDate | undefined)
+  setRangeTo(field, d ? d.toString() : '')
+  if (d) datePopoverOpen.value[`${field}:to`] = false
 }
 
 const dateFormatter = new DateFormatter('en-US', { dateStyle: 'medium' })
@@ -366,20 +453,29 @@ const resolveIcon = (name?: string) => (name ? (iconMap[name] ?? null) : null)
 
 const activeFilterEntries = computed(() =>
   Object.entries(filterValues.value)
-    .filter(([, v]) => v !== '' && v != null)
+    .filter(([, v]) => isFilterActive(v))
     .map(([field, value]) => {
       const def = props.filters.find((f) => f.field === field)
       const label = def?.label ?? field
-      let display = String(value)
-      if (def?.type === 'select') {
-        display = def.options?.find((o) => o.value === value)?.label ?? display
+      let display: string
+      if (def?.type === 'daterange' && isDateRange(value)) {
+        const from = formatDate(value.from ?? '') ?? '…'
+        const to = formatDate(value.to ?? '') ?? '…'
+        display = `${from} → ${to}`
+      } else if (def?.type === 'select' && typeof value === 'string') {
+        display = def.options?.find((o) => o.value === value)?.label ?? value
+      } else if (def?.type === 'date' && typeof value === 'string') {
+        display = formatDate(value) ?? value
+      } else {
+        display = typeof value === 'string' ? value : ''
       }
       return { field, label, display }
     }),
 )
 
 function clearFilter(field: string) {
-  filterValues.value[field] = ''
+  const def = props.filters.find((f) => f.field === field)
+  filterValues.value[field] = def ? defaultFilterValue(def) : ''
   navigate({ page: 1 })
 }
 </script>
@@ -518,7 +614,7 @@ function clearFilter(field: string) {
             :id="`filter-${filter.field}`"
             type="text"
             :placeholder="filter.placeholder ?? ''"
-            :value="filterValues[filter.field]"
+            :value="stringValue(filter.field)"
             @input="(e: Event) => onTextInput(filter.field, e)"
           />
 
@@ -565,16 +661,16 @@ function clearFilter(field: string) {
                 class="flex h-9 w-full items-center justify-between rounded-md border bg-card px-3 text-start text-[13px] text-ink-900 transition-colors duration-100 hover:border-ink-700 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/15 focus:outline-none"
                 :class="[datePopoverOpen[filter.field] ? 'border-brand-500' : `border-paper-300`]"
               >
-                <span :class="filterValues[filter.field] ? 'text-ink-900' : `text-ink-400`">
+                <span :class="stringValue(filter.field) ? 'text-ink-900' : `text-ink-400`">
                   {{
-                    formatDate(filterValues[filter.field]) ??
+                    formatDate(stringValue(filter.field)) ??
                     filter.placeholder ??
                     __('Pick a date…')
                   }}
                 </span>
                 <div class="flex items-center gap-1">
                   <button
-                    v-if="filterValues[filter.field]"
+                    v-if="stringValue(filter.field)"
                     type="button"
                     class="text-ink-300 transition-colors hover:text-ink-500"
                     @click.stop="clearFilter(filter.field)"
@@ -587,13 +683,97 @@ function clearFilter(field: string) {
             </PopoverTrigger>
             <PopoverContent class="w-auto p-0" align="start">
               <Calendar
-                :model-value="parseToCalendarDate(filterValues[filter.field]) as any"
+                :model-value="parseToCalendarDate(stringValue(filter.field)) as any"
                 initial-focus
                 class="border-none"
                 @update:model-value="(d: unknown) => onDateSelect(filter.field, d)"
               />
             </PopoverContent>
           </Popover>
+
+          <div v-else-if="filter.type === 'daterange'" class="flex items-center gap-1.5">
+            <Popover
+              :open="datePopoverOpen[`${filter.field}:from`] ?? false"
+              @update:open="datePopoverOpen[`${filter.field}:from`] = $event"
+            >
+              <PopoverTrigger as-child>
+                <button
+                  :id="`filter-${filter.field}-from`"
+                  type="button"
+                  class="flex h-9 min-w-[8.5rem] items-center justify-between rounded-md border bg-card px-3 text-start text-[13px] text-ink-900 transition-colors duration-100 hover:border-ink-700 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/15 focus:outline-none"
+                  :class="[
+                    datePopoverOpen[`${filter.field}:from`]
+                      ? 'border-brand-500'
+                      : 'border-paper-300',
+                  ]"
+                >
+                  <span :class="getRangeFrom(filter.field) ? 'text-ink-900' : 'text-ink-400'">
+                    {{ formatDate(getRangeFrom(filter.field)) ?? __('From…') }}
+                  </span>
+                  <div class="flex items-center gap-1">
+                    <button
+                      v-if="getRangeFrom(filter.field)"
+                      type="button"
+                      class="text-ink-300 transition-colors hover:text-ink-500"
+                      @click.stop="setRangeFrom(filter.field, '')"
+                    >
+                      <X class="h-3 w-3" />
+                    </button>
+                    <CalendarIcon class="h-3.5 w-3.5 text-ink-400" />
+                  </div>
+                </button>
+              </PopoverTrigger>
+              <PopoverContent class="w-auto p-0" align="start">
+                <Calendar
+                  :model-value="parseToCalendarDate(getRangeFrom(filter.field)) as any"
+                  initial-focus
+                  class="border-none"
+                  @update:model-value="(d: unknown) => onRangeFromSelect(filter.field, d)"
+                />
+              </PopoverContent>
+            </Popover>
+
+            <span class="text-[12px] text-ink-400">→</span>
+
+            <Popover
+              :open="datePopoverOpen[`${filter.field}:to`] ?? false"
+              @update:open="datePopoverOpen[`${filter.field}:to`] = $event"
+            >
+              <PopoverTrigger as-child>
+                <button
+                  :id="`filter-${filter.field}-to`"
+                  type="button"
+                  class="flex h-9 min-w-[8.5rem] items-center justify-between rounded-md border bg-card px-3 text-start text-[13px] text-ink-900 transition-colors duration-100 hover:border-ink-700 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/15 focus:outline-none"
+                  :class="[
+                    datePopoverOpen[`${filter.field}:to`] ? 'border-brand-500' : 'border-paper-300',
+                  ]"
+                >
+                  <span :class="getRangeTo(filter.field) ? 'text-ink-900' : 'text-ink-400'">
+                    {{ formatDate(getRangeTo(filter.field)) ?? __('To…') }}
+                  </span>
+                  <div class="flex items-center gap-1">
+                    <button
+                      v-if="getRangeTo(filter.field)"
+                      type="button"
+                      class="text-ink-300 transition-colors hover:text-ink-500"
+                      @click.stop="setRangeTo(filter.field, '')"
+                    >
+                      <X class="h-3 w-3" />
+                    </button>
+                    <CalendarIcon class="h-3.5 w-3.5 text-ink-400" />
+                  </div>
+                </button>
+              </PopoverTrigger>
+              <PopoverContent class="w-auto p-0" align="start">
+                <Calendar
+                  :model-value="parseToCalendarDate(getRangeTo(filter.field)) as any"
+                  initial-focus
+                  class="border-none"
+                  @update:model-value="(d: unknown) => onRangeToSelect(filter.field, d)"
+                />
+              </PopoverContent>
+            </Popover>
+          </div>
         </div>
 
         <button

@@ -3,12 +3,26 @@
 declare(strict_types=1);
 
 use Darejer\DataGrid\Column;
+use Darejer\DataGrid\Filter;
 use Darejer\DataTable\DataTable;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Schema;
 
 class DataTableTestModel extends Model
 {
     //
+}
+
+class DataTableDateRangeModel extends Model
+{
+    protected $table = 'data_table_date_range';
+
+    protected $guarded = [];
+
+    public $timestamps = false;
 }
 
 function callBuildRenderColumns(DataTable $table): array
@@ -18,6 +32,15 @@ function callBuildRenderColumns(DataTable $table): array
     $method->setAccessible(true);
 
     return $method->invoke($table);
+}
+
+function callBuildQuery(DataTable $table, Request $request): Builder
+{
+    $reflection = new ReflectionClass($table);
+    $method = $reflection->getMethod('buildQuery');
+    $method->setAccessible(true);
+
+    return $method->invoke($table, $request);
 }
 
 it('hides the id column by default but keeps it in the column list', function () {
@@ -66,4 +89,68 @@ it('numeric() returns the same DataTable instance for chaining', function () {
 
     expect($table->numeric())->toBe($table);
     expect($table->numeric(false))->toBe($table);
+});
+
+describe('Filter::dateRange', function () {
+    beforeEach(function (): void {
+        Schema::create('data_table_date_range', function (Blueprint $table): void {
+            $table->id();
+            $table->date('statement_date');
+        });
+
+        DataTableDateRangeModel::query()->create(['statement_date' => '2026-01-15']);
+        DataTableDateRangeModel::query()->create(['statement_date' => '2026-03-10']);
+        DataTableDateRangeModel::query()->create(['statement_date' => '2026-06-20']);
+        DataTableDateRangeModel::query()->create(['statement_date' => '2026-09-05']);
+    });
+
+    it('emits a "daterange" filter type', function () {
+        expect(Filter::dateRange('statement_date')->toArray())
+            ->toMatchArray(['field' => 'statement_date', 'type' => 'daterange']);
+    });
+
+    it('filters rows when both from and to are supplied', function () {
+        $table = DataTable::make(DataTableDateRangeModel::class)
+            ->columns([Column::make('statement_date')])
+            ->filters([Filter::dateRange('statement_date')]);
+
+        $request = Request::create('/', 'GET', [
+            'statement_date' => ['from' => '2026-03-01', 'to' => '2026-06-30'],
+        ]);
+
+        $dates = callBuildQuery($table, $request)->pluck('statement_date')
+            ->map(fn ($d) => (string) $d)->all();
+
+        expect($dates)->toBe(['2026-03-10', '2026-06-20']);
+    });
+
+    it('filters using only the "from" bound when "to" is empty', function () {
+        $table = DataTable::make(DataTableDateRangeModel::class)
+            ->columns([Column::make('statement_date')])
+            ->filters([Filter::dateRange('statement_date')]);
+
+        $request = Request::create('/', 'GET', [
+            'statement_date' => ['from' => '2026-06-01'],
+        ]);
+
+        $dates = callBuildQuery($table, $request)->pluck('statement_date')
+            ->map(fn ($d) => (string) $d)->all();
+
+        expect($dates)->toBe(['2026-06-20', '2026-09-05']);
+    });
+
+    it('filters using only the "to" bound when "from" is empty', function () {
+        $table = DataTable::make(DataTableDateRangeModel::class)
+            ->columns([Column::make('statement_date')])
+            ->filters([Filter::dateRange('statement_date')]);
+
+        $request = Request::create('/', 'GET', [
+            'statement_date' => ['to' => '2026-03-31'],
+        ]);
+
+        $dates = callBuildQuery($table, $request)->pluck('statement_date')
+            ->map(fn ($d) => (string) $d)->all();
+
+        expect($dates)->toBe(['2026-01-15', '2026-03-10']);
+    });
 });
