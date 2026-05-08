@@ -137,8 +137,15 @@ const subtotal = computed(() =>
 const grandTotal = computed(() => subtotal.value)
 
 const currencyDecimals = computed(() => props.session?.currency.minor_units ?? 2)
+const moneyFormatter = computed(
+  () =>
+    new Intl.NumberFormat(undefined, {
+      minimumFractionDigits: currencyDecimals.value,
+      maximumFractionDigits: currencyDecimals.value,
+    }),
+)
 function fmtMoney(n: number): string {
-  return n.toFixed(currencyDecimals.value)
+  return moneyFormatter.value.format(n)
 }
 
 function addToCart(item: PosItem) {

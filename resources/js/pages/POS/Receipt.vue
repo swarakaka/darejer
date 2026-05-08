@@ -34,8 +34,16 @@ const props = defineProps<{ invoice: Invoice }>()
 const { __, resolveTranslatable: localized } = useTranslation()
 
 const decimals = computed(() => props.invoice.currency?.minor_units ?? 2)
+const moneyFormatter = computed(
+  () =>
+    new Intl.NumberFormat(undefined, {
+      minimumFractionDigits: decimals.value,
+      maximumFractionDigits: decimals.value,
+    }),
+)
 function fmt(value: string | number): string {
-  return Number(value).toFixed(decimals.value)
+  const n = Number(value)
+  return Number.isFinite(n) ? moneyFormatter.value.format(n) : String(value)
 }
 
 onMounted(() => {

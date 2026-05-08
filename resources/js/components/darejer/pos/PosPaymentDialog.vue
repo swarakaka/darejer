@@ -54,7 +54,20 @@ const amountStep = computed(() => (decimals.value > 0 ? '0.' + '0'.repeat(decima
 // currencies (IQD) compare exactly while 2-decimal ones still allow a 0.01 slop.
 const settlementEpsilon = computed(() => (decimals.value > 0 ? Math.pow(10, -decimals.value) : 0.5))
 
+const moneyFormatter = computed(
+  () =>
+    new Intl.NumberFormat(undefined, {
+      minimumFractionDigits: decimals.value,
+      maximumFractionDigits: decimals.value,
+    }),
+)
+// Display formatting (locale-aware, with thousands separator) — distinct from
+// the wire format used to seed `t.amount`, which stays toFixed-based so the
+// number input doesn't choke on grouping characters.
 function fmt(n: number): string {
+  return moneyFormatter.value.format(n)
+}
+function rawFixed(n: number): string {
   return n.toFixed(decimals.value)
 }
 
@@ -62,7 +75,7 @@ watch(
   () => props.open,
   (open) => {
     if (open) {
-      tenders.value = [{ tender: 'cash', amount: fmt(props.grandTotal), bank_account_id: null, reference: null }]
+      tenders.value = [{ tender: 'cash', amount: rawFixed(props.grandTotal), bank_account_id: null, reference: null }]
       activeIdx.value = 0
     }
   },
@@ -75,7 +88,7 @@ const change = computed(() => Math.max(0, totalPaid.value - props.grandTotal))
 function addTender() {
   tenders.value.push({
     tender: 'cash',
-    amount: remaining.value > 0 ? fmt(remaining.value) : zeroAmount.value,
+    amount: remaining.value > 0 ? rawFixed(remaining.value) : zeroAmount.value,
     bank_account_id: null,
     reference: null,
   })
@@ -88,7 +101,7 @@ function removeTender(idx: number) {
 }
 
 function quickFill(amount: number, idx: number) {
-  tenders.value[idx].amount = fmt(amount)
+  tenders.value[idx].amount = rawFixed(amount)
 }
 
 function tenderIcon(t: Tender['tender']) {
@@ -96,9 +109,10 @@ function tenderIcon(t: Tender['tender']) {
 }
 
 function confirm() {
-  // Filter out zero-amount tenders before sending.
+  // Filter out zero-amount tenders before sending. Wire format stays
+  // dot-decimal so the backend parses cleanly regardless of locale.
   const cleaned = tenders.value
-    .map((t) => ({ ...t, amount: fmt(parseFloat(t.amount) || 0) }))
+    .map((t) => ({ ...t, amount: rawFixed(parseFloat(t.amount) || 0) }))
     .filter((t) => parseFloat(t.amount) > 0)
   emit('confirm', cleaned)
 }

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, watch, nextTick } from 'vue'
+import { computed, ref, onMounted, watch, nextTick } from 'vue'
 import { useHttp } from '@inertiajs/vue3'
 import { Input } from '@/components/ui/input'
 import useTranslation from '@/composables/useTranslation'
@@ -24,7 +24,18 @@ const props = defineProps<{
 }>()
 const emit = defineEmits<{ select: [item: PosItem] }>()
 
-const decimals = (): number => props.currency?.minor_units ?? 2
+const decimals = computed(() => props.currency?.minor_units ?? 2)
+const moneyFormatter = computed(
+  () =>
+    new Intl.NumberFormat(undefined, {
+      minimumFractionDigits: decimals.value,
+      maximumFractionDigits: decimals.value,
+    }),
+)
+function fmtPrice(value: string | number): string {
+  const n = Number(value)
+  return Number.isFinite(n) ? moneyFormatter.value.format(n) : String(value)
+}
 
 const { __, resolveTranslatable: localized } = useTranslation()
 
@@ -138,7 +149,7 @@ onMounted(() => {
             <div class="line-clamp-2 text-[14px] font-semibold leading-tight text-ink-900">{{ localized(item.name) }}</div>
             <div class="mt-1 text-[12px] text-ink-500">{{ item.code }}</div>
           </div>
-          <div class="mt-2 text-[16px] font-bold tabular-nums text-brand-700">{{ Number(item.selling_price).toFixed(decimals()) }}</div>
+          <div class="mt-2 text-[16px] font-bold tabular-nums text-brand-700">{{ fmtPrice(item.selling_price) }}</div>
         </div>
       </button>
       <div

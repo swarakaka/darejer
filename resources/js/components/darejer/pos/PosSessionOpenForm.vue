@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { router, useHttp } from '@inertiajs/vue3'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -20,7 +20,7 @@ const props = defineProps<{
   bootstrap: {
     cashboxes: Array<{ id: number; code: string; name: LocalizedName; currency_id: number }>
     warehouses: Array<{ id: number; code: string; name: LocalizedName }>
-    currencies: Array<{ id: number; code: string; symbol: string | null }>
+    currencies: Array<{ id: number; code: string; symbol: string | null; minor_units: number }>
     walk_in_customer: { id: number; code: string; name: LocalizedName } | null
     default_currency_id: number | null
   }
@@ -37,7 +37,28 @@ const error = (msg: string) => toast.error(msg)
 const cashbox_id = ref<string>('')
 const warehouse_id = ref<string>('')
 const currency_id = ref<string>(props.bootstrap.default_currency_id ? String(props.bootstrap.default_currency_id) : '')
-const opening_cash = ref('0.00')
+
+const selectedCurrency = computed(
+  () => props.bootstrap.currencies.find((c) => String(c.id) === currency_id.value) ?? null,
+)
+const decimals = computed(() => selectedCurrency.value?.minor_units ?? 2)
+const cashStep = computed(() => (decimals.value > 0 ? '0.' + '0'.repeat(decimals.value - 1) + '1' : '1'))
+
+const opening_cash = ref<string>((0).toFixed(decimals.value))
+
+// Reformat the opening cash whenever the cashier picks a different currency —
+// so switching to IQD drops the trailing zeros and switching to USD restores
+// `0.00`. We only normalize values that the user hasn't customized away from
+// zero, to avoid silently mangling a typed amount on currency change.
+watch(decimals, (next, prev) => {
+  const current = parseFloat(opening_cash.value)
+  if (!Number.isFinite(current) || current === 0) {
+    opening_cash.value = (0).toFixed(next)
+    return
+  }
+  if (prev === undefined) return
+  opening_cash.value = current.toFixed(next)
+})
 const customer_account_id = ref<string>(props.bootstrap.walk_in_customer ? String(props.bootstrap.walk_in_customer.id) : '')
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -132,7 +153,7 @@ function submit() {
             v-model="opening_cash"
             type="number"
             inputmode="decimal"
-            step="0.01"
+            :step="cashStep"
             min="0"
             class="h-12 text-end text-[16px] tabular-nums"
           />
