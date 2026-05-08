@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue'
 import { router, useHttp } from '@inertiajs/vue3'
 import { Link } from '@inertiajs/vue3'
 import PosLayout from '@/layouts/PosLayout.vue'
@@ -12,7 +12,7 @@ import PosSessionOpenForm from '@/components/darejer/pos/PosSessionOpenForm.vue'
 import PosCustomerPicker from '@/components/darejer/pos/PosCustomerPicker.vue'
 import useTranslation from '@/composables/useTranslation'
 import { toast } from 'vue-sonner'
-import { Calculator, LayoutDashboard, ListChecks, LogOut, Receipt, X } from 'lucide-vue-next'
+import { Calculator, LayoutDashboard, ListChecks, LogOut, Receipt, RotateCcw, User, X } from 'lucide-vue-next'
 
 defineOptions({ layout: PosLayout })
 
@@ -80,6 +80,7 @@ const props = defineProps<{
     close_session_template: string
     item_search: string
     customer_search: string
+    customer_quick_add: string
     checkout: string
     receipt_template: string
     sessions_index: string
@@ -91,12 +92,32 @@ const customer = ref<Customer | null>(props.session?.customer_account ?? props.b
 const paymentOpen = ref(false)
 const customerOpen = ref(false)
 
+const isWalkIn = computed(
+  () => !!customer.value && !!props.bootstrap.walk_in_customer && customer.value.id === props.bootstrap.walk_in_customer.id,
+)
+
+function resetCustomer() {
+  customer.value = props.bootstrap.walk_in_customer ?? null
+}
+
 watch(
   () => props.session?.customer_account,
   (c) => {
     if (c) customer.value = c
   },
 )
+
+// F2 opens the picker, Esc on the page (when no dialog is open) resets to
+// the walk-in customer — supermarket-cashier muscle-memory.
+function onKeydown(e: KeyboardEvent) {
+  if (!props.session) return
+  if (e.key === 'F2') {
+    e.preventDefault()
+    customerOpen.value = true
+  }
+}
+onMounted(() => window.addEventListener('keydown', onKeydown))
+onBeforeUnmount(() => window.removeEventListener('keydown', onKeydown))
 
 function lineTotal(line: CartLine): number {
   const qty = parseFloat(line.qty) || 0
@@ -262,17 +283,39 @@ function submitClose() {
         <div class="flex items-center justify-between rounded-sm border border-ink-200 bg-white p-3">
           <button
             type="button"
-            class="min-w-0 text-start"
+            class="flex min-w-0 items-center gap-2 text-start"
             @click="customerOpen = true"
           >
-            <div class="text-[11px] uppercase tracking-wider text-ink-500">{{ __('Customer') }}</div>
-            <div class="truncate text-[15px] font-semibold text-ink-900 hover:text-brand-600">
-              {{ customer ? localized(customer.name) : __('Choose customer') }}
-            </div>
+            <span
+              class="flex size-9 shrink-0 items-center justify-center rounded-full"
+              :class="isWalkIn ? 'bg-paper-150 text-ink-600' : 'bg-brand-50 text-brand-700'"
+            >
+              <User class="size-4" />
+            </span>
+            <span class="min-w-0">
+              <span class="block text-[11px] uppercase tracking-wider text-ink-500">
+                {{ __('Customer') }}
+                <span class="ms-1 rounded-sm bg-paper-100 px-1 py-0.5 font-mono text-[10px] tracking-normal text-ink-500">F2</span>
+              </span>
+              <span class="block truncate text-[15px] font-semibold text-ink-900 hover:text-brand-600">
+                {{ customer ? localized(customer.name) : __('Choose customer') }}
+              </span>
+            </span>
           </button>
-          <Button variant="ghost" class="h-10 px-3 text-[13px]" :disabled="!cart.length" @click="clearCart">
-            <X class="size-4" /> {{ __('Clear') }}
-          </Button>
+          <div class="flex items-center gap-1">
+            <Button
+              v-if="customer && !isWalkIn && bootstrap.walk_in_customer"
+              variant="ghost"
+              class="h-10 px-2 text-[13px]"
+              :title="__('Reset to :name', { name: localized(bootstrap.walk_in_customer.name) })"
+              @click="resetCustomer"
+            >
+              <RotateCcw class="size-4" />
+            </Button>
+            <Button variant="ghost" class="h-10 px-3 text-[13px]" :disabled="!cart.length" @click="clearCart">
+              <X class="size-4" /> {{ __('Clear') }}
+            </Button>
+          </div>
         </div>
 
         <PosCart
@@ -311,7 +354,9 @@ function submitClose() {
     <PosCustomerPicker
       v-model:open="customerOpen"
       :search-url="urls.customer_search"
-      @select="(c) => { customer = c; customerOpen = false }"
+      :walk-in-customer="bootstrap.walk_in_customer"
+      :quick-add-url="urls.customer_quick_add"
+      @select="(c) => { customer = c }"
     />
 
     <!-- Close-session dialog (inline so we don't need yet another file) -->
