@@ -152,6 +152,31 @@ it('restricts the result set to the given ids[] filter', function (): void {
         ->and($labels)->not->toContain('Beta');
 });
 
+it('matches search case-insensitively across plain and translatable fields', function (): void {
+    DataControllerCategory::query()->create([
+        'code' => 'CAT-PROD',
+        'name' => ['en' => 'Products', 'ar' => 'المنتجات'],
+    ]);
+    DataControllerCategory::query()->create([
+        'code' => 'CAT-SVC',
+        'name' => ['en' => 'Services'],
+    ]);
+
+    $needles = ['products', 'PRODUCTS', 'PrOdUcTs', 'cat-prod', 'CAT-PROD'];
+
+    foreach ($needles as $needle) {
+        $request = comboboxRequest([
+            'label_fields' => ['code', 'name'],
+            'search' => $needle,
+        ]);
+
+        $payload = (new DataController)->index($request, 'itemcategory')->getData(true);
+
+        expect($payload['data'])->toHaveCount(1, "search [{$needle}] should match CAT-PROD")
+            ->and($payload['data'][0]['label'])->toContain('CAT-PROD');
+    }
+});
+
 it('honors search_fields override when broader than the displayed fields', function (): void {
     DataControllerCategory::query()->create([
         'code' => 'CAT-PROD',

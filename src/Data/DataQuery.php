@@ -127,12 +127,15 @@ class DataQuery
                     // SQLite json_extract, Postgres ->>). Search both the
                     // active locale and the configured fallback so seed
                     // data in English remains findable from other locales.
-                    $q->orWhere($field.'->'.$locale, 'like', $needle);
+                    // `orWhereLike` (Laravel 11+) is case-insensitive across
+                    // every supported driver — `LIKE` alone respects the
+                    // column's collation, which can be binary/case-sensitive.
+                    $q->orWhereLike($field.'->'.$locale, $needle);
                     if ($fallback !== $locale) {
-                        $q->orWhere($field.'->'.$fallback, 'like', $needle);
+                        $q->orWhereLike($field.'->'.$fallback, $needle);
                     }
                 } else {
-                    $q->orWhere($field, 'like', $needle);
+                    $q->orWhereLike($field, $needle);
                 }
             }
         });
