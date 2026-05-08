@@ -380,9 +380,9 @@ function submitClose() {
       <div class="w-full max-w-md rounded-sm bg-white p-5 shadow-lg sm:p-6">
         <div class="mb-4 text-[16px] font-semibold">{{ __('Close POS Session') }}</div>
         <div v-if="session" class="mb-4 space-y-1.5 rounded-sm bg-paper-50 p-3 text-[14px] text-ink-700">
-          <div class="flex justify-between"><span>{{ __('Opening cash') }}</span><span class="tabular-nums">{{ session.opening_cash }}</span></div>
+          <div class="flex justify-between"><span>{{ __('Opening cash') }}</span><span class="tabular-nums">{{ fmtMoney(Number(session.opening_cash)) }}</span></div>
           <div class="flex justify-between"><span>{{ __('Sales (count)') }}</span><span class="tabular-nums">{{ session.invoice_count }}</span></div>
-          <div class="flex justify-between"><span>{{ __('Total sales') }}</span><span class="tabular-nums">{{ session.total_sales }}</span></div>
+          <div class="flex justify-between"><span>{{ __('Total sales') }}</span><span class="tabular-nums">{{ fmtMoney(Number(session.total_sales)) }}</span></div>
         </div>
         <label class="mb-1.5 block text-[13px] font-medium text-ink-700">{{ __('Counted cash') }}</label>
         <Input

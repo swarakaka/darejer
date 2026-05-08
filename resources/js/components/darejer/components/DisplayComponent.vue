@@ -24,8 +24,11 @@ const source = computed(() => props.formData ?? props.record)
 // first non-empty); non-translatable values pass straight through so that
 // numbers, booleans, dates etc. keep their native type for downstream
 // formatters (date/number/money/badge).
+//
+// `name` may be a dot path (`warehouse.name`, `cashier.username`) so eager-
+// loaded relations can be displayed without flattening on the controller.
 const rawValue = computed<unknown>(() => {
-  const v = source.value[props.component.name]
+  const v = resolvePath(source.value, props.component.name)
   return props.component.translatable ? resolveTranslatable(v) : v
 })
 
@@ -41,12 +44,43 @@ const emptyText = computed<string>(() => (props.component.emptyText as string | 
 
 // ── Date / DateTime ──────────────────────────────────────────────────────────
 // Server-side toArray() serializes dates as ISO strings ('2026-04-25' or
-// '2026-04-25T00:00:00.000000Z'). Use Intl.DateTimeFormat in the user's locale
-// for display so the format follows the active language.
+// '2026-04-25T00:00:00.000000Z'). When PHP supplies a `dateFormat` (via
+// Display::date('Y-m-d') / Display::dateTime('Y/m/d H:i')), honor it verbatim
+// using PHP-style tokens so the rendered format is consistent across locales.
+// Falls back to a locale-aware Intl format when no `dateFormat` is provided.
+const pad2 = (n: number) => String(n).padStart(2, '0')
+
+function formatPhpDate(date: Date, format: string): string {
+  const hours24 = date.getHours()
+  const hours12 = hours24 % 12 || 12
+  const tokens: Record<string, string> = {
+    Y: String(date.getFullYear()),
+    y: String(date.getFullYear()).slice(-2),
+    m: pad2(date.getMonth() + 1),
+    n: String(date.getMonth() + 1),
+    d: pad2(date.getDate()),
+    j: String(date.getDate()),
+    H: pad2(hours24),
+    G: String(hours24),
+    h: pad2(hours12),
+    g: String(hours12),
+    i: pad2(date.getMinutes()),
+    s: pad2(date.getSeconds()),
+    a: hours24 < 12 ? 'am' : 'pm',
+    A: hours24 < 12 ? 'AM' : 'PM',
+  }
+  return format.replace(/Y|y|m|n|d|j|H|G|h|g|i|s|a|A/g, (t) => tokens[t] ?? t)
+}
+
+const dateFormat = computed<string | null>(
+  () => (props.component.dateFormat as string | undefined) ?? null,
+)
+
 const dateFormatted = computed(() => {
   if (isEmpty.value) return ''
   const d = new Date(String(rawValue.value))
   if (Number.isNaN(d.getTime())) return String(rawValue.value)
+  if (dateFormat.value) return formatPhpDate(d, dateFormat.value)
   return new Intl.DateTimeFormat(undefined, {
     year: 'numeric',
     month: '2-digit',
@@ -58,6 +92,7 @@ const dateTimeFormatted = computed(() => {
   if (isEmpty.value) return ''
   const d = new Date(String(rawValue.value))
   if (Number.isNaN(d.getTime())) return String(rawValue.value)
+  if (dateFormat.value) return formatPhpDate(d, dateFormat.value)
   return new Intl.DateTimeFormat(undefined, {
     year: 'numeric',
     month: '2-digit',
