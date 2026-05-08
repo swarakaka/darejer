@@ -101,24 +101,23 @@ const isVisible = computed(() =>
 </script>
 
 <template>
-  <div
-    v-if="resolvedComponent && isVisible"
-    :class="{ 'col-span-full': component.fullWidth }"
-  >
-    <component
-      :is="resolvedComponent"
-      :component="component"
-      :record="record"
-      :errors="errors"
-      :form-data="formData"
-      @update="(name: string, value: unknown) => emit('update', name, value)"
-      @prefill="(fields: Record<string, unknown>) => emit('prefill', fields)"
-    />
-  </div>
-  <div
-    v-else
-    class="rounded border border-warning-500 bg-warning-50 px-2.5 py-1.5 text-xs text-warning-600"
-  >
-    {{ __('Unknown component type:') }} <strong>{{ component.type }}</strong>
-  </div>
+  <template v-if="isVisible">
+    <div v-if="resolvedComponent" :class="{ 'col-span-full': component.fullWidth }">
+      <component
+        :is="resolvedComponent"
+        :component="component"
+        :record="record"
+        :errors="errors"
+        :form-data="formData"
+        @update="(name: string, value: unknown) => emit('update', name, value)"
+        @prefill="(fields: Record<string, unknown>) => emit('prefill', fields)"
+      />
+    </div>
+    <div
+      v-else
+      class="rounded border border-warning-500 bg-warning-50 px-2.5 py-1.5 text-xs text-warning-600"
+    >
+      {{ __('Unknown component type:') }} <strong>{{ component.type }}</strong>
+    </div>
+  </template>
 </template>
