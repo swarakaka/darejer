@@ -60,7 +60,7 @@ interface Session {
   cashbox: { id: number; code: string; name: Record<string, string> | string }
   warehouse: { id: number; code: string; name: Record<string, string> | string } | null
   customer_account: Customer | null
-  currency: { id: number; code: string; symbol: string | null }
+  currency: { id: number; code: string; symbol: string | null; minor_units: number }
 }
 
 const props = defineProps<{
@@ -70,7 +70,7 @@ const props = defineProps<{
   bootstrap: {
     cashboxes: Array<{ id: number; code: string; name: string; currency_id: number }>
     warehouses: Array<{ id: number; code: string; name: string }>
-    currencies: Array<{ id: number; code: string; symbol: string | null }>
+    currencies: Array<{ id: number; code: string; symbol: string | null; minor_units: number }>
     bank_accounts: Array<{ id: number; code: string; name: string }>
     walk_in_customer: Customer | null
     default_currency_id: number | null
@@ -135,6 +135,11 @@ const subtotal = computed(() =>
 // per item; the payment dialog shows the authoritative grand total returned
 // from the checkout endpoint.
 const grandTotal = computed(() => subtotal.value)
+
+const currencyDecimals = computed(() => props.session?.currency.minor_units ?? 2)
+function fmtMoney(n: number): string {
+  return n.toFixed(currencyDecimals.value)
+}
 
 function addToCart(item: PosItem) {
   const existing = cart.value.find((l) => l.item.id === item.id)
@@ -327,17 +332,17 @@ function submitClose() {
         <div class="rounded-sm border border-ink-200 bg-white p-4">
           <div class="mb-3 flex items-center justify-between text-[14px] text-ink-700">
             <span>{{ __('Subtotal (pre-tax)') }}</span>
-            <span class="font-semibold tabular-nums">{{ session.currency.code }} {{ subtotal.toFixed(2) }}</span>
+            <span class="font-semibold tabular-nums">{{ session.currency.code }} {{ fmtMoney(subtotal) }}</span>
           </div>
           <Button class="h-14 w-full text-[16px] font-bold" :disabled="!cart.length" @click="openPayment">
-            <Receipt class="size-5" /> {{ __('Pay') }} · {{ session.currency.code }} {{ grandTotal.toFixed(2) }}
+            <Receipt class="size-5" /> {{ __('Pay') }} · {{ session.currency.code }} {{ fmtMoney(grandTotal) }}
           </Button>
         </div>
       </div>
 
       <!-- Item search panel (right on tablet+, bottom on phones) -->
       <div class="min-h-0 md:col-span-7 lg:col-span-7 xl:col-span-8">
-        <PosItemSearch :search-url="urls.item_search" @select="addToCart" />
+        <PosItemSearch :search-url="urls.item_search" :currency="session.currency" @select="addToCart" />
       </div>
     </div>
 

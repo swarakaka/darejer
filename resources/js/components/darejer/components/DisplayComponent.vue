@@ -67,8 +67,32 @@ const dateTimeFormatted = computed(() => {
   }).format(d)
 })
 
+function resolvePath(obj: Record<string, unknown>, path: string): unknown {
+  return path
+    .split('.')
+    .reduce<unknown>(
+      (acc, key) =>
+        acc && typeof acc === 'object' ? (acc as Record<string, unknown>)[key] : undefined,
+      obj,
+    )
+}
+
 // ── Number / Money ───────────────────────────────────────────────────────────
-const decimals = computed<number>(() => (props.component.decimals as number | undefined) ?? 0)
+// Money columns may declare `decimalsField` (a record path like
+// `currency.minor_units`) so a single Display config formats IQD as 0dp and
+// USD as 2dp without per-controller math. Fall back to the static `decimals`.
+const decimals = computed<number>(() => {
+  const path = props.component.decimalsField as string | undefined
+  if (path) {
+    const v = resolvePath(source.value, path)
+    if (typeof v === 'number') return v
+    if (typeof v === 'string' && v !== '') {
+      const n = Number(v)
+      if (Number.isFinite(n)) return n
+    }
+  }
+  return (props.component.decimals as number | undefined) ?? 0
+})
 
 const numberFormatted = computed(() => {
   if (isEmpty.value) return ''
@@ -79,16 +103,6 @@ const numberFormatted = computed(() => {
     maximumFractionDigits: decimals.value,
   }).format(n)
 })
-
-function resolvePath(obj: Record<string, unknown>, path: string): unknown {
-  return path
-    .split('.')
-    .reduce<unknown>(
-      (acc, key) =>
-        acc && typeof acc === 'object' ? (acc as Record<string, unknown>)[key] : undefined,
-      obj,
-    )
-}
 
 const moneyCurrencyCode = computed<string | null>(() => {
   const field = props.component.currencyField as string | undefined

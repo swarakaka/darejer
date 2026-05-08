@@ -18,8 +18,13 @@ interface PosItem {
   item_type: string
 }
 
-const props = defineProps<{ searchUrl: string }>()
+const props = defineProps<{
+  searchUrl: string
+  currency?: { code: string; symbol: string | null; minor_units: number } | null
+}>()
 const emit = defineEmits<{ select: [item: PosItem] }>()
+
+const decimals = (): number => props.currency?.minor_units ?? 2
 
 const { __, resolveTranslatable: localized } = useTranslation()
 
@@ -133,7 +138,7 @@ onMounted(() => {
             <div class="line-clamp-2 text-[14px] font-semibold leading-tight text-ink-900">{{ localized(item.name) }}</div>
             <div class="mt-1 text-[12px] text-ink-500">{{ item.code }}</div>
           </div>
-          <div class="mt-2 text-[16px] font-bold tabular-nums text-brand-700">{{ Number(item.selling_price).toFixed(2) }}</div>
+          <div class="mt-2 text-[16px] font-bold tabular-nums text-brand-700">{{ Number(item.selling_price).toFixed(decimals()) }}</div>
         </div>
       </button>
       <div

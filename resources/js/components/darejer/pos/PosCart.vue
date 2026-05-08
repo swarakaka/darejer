@@ -25,7 +25,7 @@ interface CartLine {
 
 const props = defineProps<{
   cart: CartLine[]
-  currency: { code: string; symbol: string | null }
+  currency: { code: string; symbol: string | null; minor_units: number }
 }>()
 
 const emit = defineEmits<{
@@ -40,6 +40,9 @@ function lineTotal(line: CartLine): number {
   const disc = parseFloat(line.discount_pct) || 0
   return qty * rate * (1 - disc / 100)
 }
+
+const decimals = computed(() => props.currency.minor_units ?? 2)
+const rateStep = computed(() => (decimals.value > 0 ? '0.' + '0'.repeat(decimals.value - 1) + '1' : '1'))
 
 function update(index: number, field: keyof Pick<CartLine, 'qty' | 'rate' | 'discount_pct'>, value: string) {
   const next = [...props.cart]
@@ -88,7 +91,7 @@ const empty = computed(() => props.cart.length === 0)
               <div class="text-[12px] text-ink-500">{{ line.item.code }}</div>
             </div>
             <div class="text-end">
-              <div class="text-[15px] font-bold tabular-nums text-ink-900">{{ lineTotal(line).toFixed(2) }}</div>
+              <div class="text-[15px] font-bold tabular-nums text-ink-900">{{ lineTotal(line).toFixed(decimals) }}</div>
               <div class="text-[11px] text-ink-500">{{ currency.code }}</div>
             </div>
             <Button variant="ghost" size="icon" class="-mt-1" @click="remove(idx)">
@@ -132,7 +135,7 @@ const empty = computed(() => props.cart.length === 0)
                 :model-value="line.rate"
                 type="number"
                 inputmode="decimal"
-                step="0.01"
+                :step="rateStep"
                 min="0"
                 class="h-11 text-end text-[15px] tabular-nums"
                 :placeholder="__('Price')"

@@ -38,6 +38,8 @@ class Column
 
     protected ?string $currencyField = null;
 
+    protected ?string $decimalsField = null;
+
     protected ?string $booleanTrueLabel = null;
 
     protected ?string $booleanFalseLabel = null;
@@ -201,14 +203,20 @@ class Column
      * fraction digits, optionally suffixed with a currency code resolved from
      * `$currencyField` (a dot-notated path on the row, e.g. `currency.code`).
      *
+     * Pass `$decimalsField` (a dot-notated path like `currency.minor_units`)
+     * to resolve the fraction-digit count per row from the record itself —
+     * lets a list mix IQD (0dp) and USD (2dp) without separate columns.
+     * Falls back to `$decimals` when the path is missing or non-numeric.
+     *
      * Formatted server-side at render time so the JSON sent to the frontend
      * already contains the display string — pairs naturally with `alignRight()`.
      */
-    public function money(int $decimals = 2, ?string $currencyField = null): static
+    public function money(int $decimals = 2, ?string $currencyField = null, ?string $decimalsField = null): static
     {
         $this->displayType = 'money';
         $this->decimals = $decimals;
         $this->currencyField = $currencyField;
+        $this->decimalsField = $decimalsField;
 
         return $this;
     }
@@ -261,6 +269,11 @@ class Column
     public function getCurrencyField(): ?string
     {
         return $this->currencyField;
+    }
+
+    public function getDecimalsField(): ?string
+    {
+        return $this->decimalsField;
     }
 
     public function getBooleanTrueLabel(): ?string

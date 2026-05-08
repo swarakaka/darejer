@@ -32,7 +32,7 @@ type LocalizedName = Record<string, string> | string
 const props = defineProps<{
   open: boolean
   grandTotal: number
-  currency: { code: string; symbol: string | null }
+  currency: { code: string; symbol: string | null; minor_units: number }
   bankAccounts: Array<{ id: number; code: string; name: LocalizedName }>
   processing: boolean
 }>()
@@ -47,11 +47,22 @@ const { __, resolveTranslatable: localized } = useTranslation()
 const tenders = ref<Tender[]>([])
 const activeIdx = ref(0)
 
+const decimals = computed(() => props.currency.minor_units ?? 2)
+const zeroAmount = computed(() => (0).toFixed(decimals.value))
+const amountStep = computed(() => (decimals.value > 0 ? '0.' + '0'.repeat(decimals.value - 1) + '1' : '1'))
+// Settlement tolerance shrinks with the smallest representable unit so 0-decimal
+// currencies (IQD) compare exactly while 2-decimal ones still allow a 0.01 slop.
+const settlementEpsilon = computed(() => (decimals.value > 0 ? Math.pow(10, -decimals.value) : 0.5))
+
+function fmt(n: number): string {
+  return n.toFixed(decimals.value)
+}
+
 watch(
   () => props.open,
   (open) => {
     if (open) {
-      tenders.value = [{ tender: 'cash', amount: props.grandTotal.toFixed(2), bank_account_id: null, reference: null }]
+      tenders.value = [{ tender: 'cash', amount: fmt(props.grandTotal), bank_account_id: null, reference: null }]
       activeIdx.value = 0
     }
   },
@@ -64,7 +75,7 @@ const change = computed(() => Math.max(0, totalPaid.value - props.grandTotal))
 function addTender() {
   tenders.value.push({
     tender: 'cash',
-    amount: remaining.value > 0 ? remaining.value.toFixed(2) : '0.00',
+    amount: remaining.value > 0 ? fmt(remaining.value) : zeroAmount.value,
     bank_account_id: null,
     reference: null,
   })
@@ -77,7 +88,7 @@ function removeTender(idx: number) {
 }
 
 function quickFill(amount: number, idx: number) {
-  tenders.value[idx].amount = amount.toFixed(2)
+  tenders.value[idx].amount = fmt(amount)
 }
 
 function tenderIcon(t: Tender['tender']) {
@@ -87,13 +98,13 @@ function tenderIcon(t: Tender['tender']) {
 function confirm() {
   // Filter out zero-amount tenders before sending.
   const cleaned = tenders.value
-    .map((t) => ({ ...t, amount: (parseFloat(t.amount) || 0).toFixed(2) }))
+    .map((t) => ({ ...t, amount: fmt(parseFloat(t.amount) || 0) }))
     .filter((t) => parseFloat(t.amount) > 0)
   emit('confirm', cleaned)
 }
 
 const canConfirm = computed(
-  () => Math.abs(totalPaid.value - props.grandTotal) < 0.01 || totalPaid.value > props.grandTotal,
+  () => Math.abs(totalPaid.value - props.grandTotal) < settlementEpsilon.value || totalPaid.value > props.grandTotal,
 )
 
 const activeAmount = computed({
@@ -109,7 +120,7 @@ const activeAmount = computed({
     <DialogContent class="max-w-5xl sm:max-w-5xl lg:max-w-6xl">
       <DialogHeader>
         <DialogTitle class="text-[20px]">
-          {{ __('Payment') }} · {{ currency.code }} {{ grandTotal.toFixed(2) }}
+          {{ __('Payment') }} · {{ currency.code }} {{ fmt(grandTotal) }}
         </DialogTitle>
       </DialogHeader>
 
@@ -139,7 +150,7 @@ const activeAmount = computed({
                 v-model="t.amount"
                 type="number"
                 inputmode="decimal"
-                step="0.01"
+                :step="amountStep"
                 min="0"
                 class="h-12 min-w-0 flex-1 text-end text-[18px] font-semibold tabular-nums"
                 @focus="activeIdx = idx"
@@ -180,7 +191,7 @@ const activeAmount = computed({
                 class="h-10 px-3 text-[13px] tabular-nums"
                 @click.stop="quickFill(Number(amount), idx)"
               >
-                {{ Number(amount).toFixed(2) }}
+                {{ fmt(Number(amount)) }}
               </Button>
             </div>
           </div>
@@ -192,26 +203,26 @@ const activeAmount = computed({
           <div class="rounded-sm border border-ink-200 bg-white p-3 text-[14px]">
             <div class="flex justify-between">
               <span class="text-ink-600">{{ __('Total due') }}</span>
-              <span class="font-semibold tabular-nums">{{ currency.code }} {{ grandTotal.toFixed(2) }}</span>
+              <span class="font-semibold tabular-nums">{{ currency.code }} {{ fmt(grandTotal) }}</span>
             </div>
             <div class="mt-1 flex justify-between">
               <span class="text-ink-600">{{ __('Tendered') }}</span>
-              <span class="font-semibold tabular-nums">{{ currency.code }} {{ totalPaid.toFixed(2) }}</span>
+              <span class="font-semibold tabular-nums">{{ currency.code }} {{ fmt(totalPaid) }}</span>
             </div>
             <div v-if="remaining > 0" class="mt-1 flex justify-between text-danger-700">
               <span>{{ __('Remaining') }}</span>
-              <span class="font-semibold tabular-nums">{{ currency.code }} {{ remaining.toFixed(2) }}</span>
+              <span class="font-semibold tabular-nums">{{ currency.code }} {{ fmt(remaining) }}</span>
             </div>
             <div v-if="change > 0" class="mt-1 flex justify-between text-success-700">
               <span>{{ __('Change') }}</span>
-              <span class="font-semibold tabular-nums">{{ currency.code }} {{ change.toFixed(2) }}</span>
+              <span class="font-semibold tabular-nums">{{ currency.code }} {{ fmt(change) }}</span>
             </div>
           </div>
         </div>
 
         <!-- Numpad -->
         <div>
-          <PosNumpad v-model="activeAmount" :decimals="2" show-clear />
+          <PosNumpad v-model="activeAmount" :decimals="decimals" show-clear />
         </div>
       </div>
 

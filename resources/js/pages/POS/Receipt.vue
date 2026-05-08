@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted } from 'vue'
+import { computed, onMounted } from 'vue'
 import useTranslation from '@/composables/useTranslation'
 
 interface InvoiceLine {
@@ -22,7 +22,7 @@ interface Invoice {
   total_discount: string
   paid_amount: string
   customer_account: { code: string; name: Record<string, string> | string } | null
-  currency: { code: string; symbol: string | null } | null
+  currency: { code: string; symbol: string | null; minor_units: number } | null
   company: { code: string; name: Record<string, string> | string } | null
   branch: { code: string; name: Record<string, string> | string } | null
   salesperson: { name: string } | null
@@ -32,6 +32,11 @@ interface Invoice {
 
 const props = defineProps<{ invoice: Invoice }>()
 const { __, resolveTranslatable: localized } = useTranslation()
+
+const decimals = computed(() => props.invoice.currency?.minor_units ?? 2)
+function fmt(value: string | number): string {
+  return Number(value).toFixed(decimals.value)
+}
 
 onMounted(() => {
   // Auto-trigger the browser print dialog so cashiers can print straight to a
@@ -74,8 +79,8 @@ onMounted(() => {
             <div class="text-[10px]">{{ line.item?.code }}</div>
           </td>
           <td class="text-end">{{ Number(line.qty).toFixed(2) }}</td>
-          <td class="text-end">{{ Number(line.rate).toFixed(2) }}</td>
-          <td class="text-end">{{ Number(line.amount).toFixed(2) }}</td>
+          <td class="text-end">{{ fmt(line.rate) }}</td>
+          <td class="text-end">{{ fmt(line.amount) }}</td>
         </tr>
       </tbody>
     </table>
@@ -83,14 +88,14 @@ onMounted(() => {
     <div class="my-2 border-b border-dashed border-black"></div>
 
     <div class="space-y-0.5">
-      <div class="flex justify-between"><span>{{ __('Subtotal') }}</span><span>{{ Number(invoice.total_amount).toFixed(2) }}</span></div>
-      <div v-if="Number(invoice.total_discount) > 0" class="flex justify-between"><span>{{ __('Discount') }}</span><span>-{{ Number(invoice.total_discount).toFixed(2) }}</span></div>
-      <div v-if="Number(invoice.total_tax) > 0" class="flex justify-between"><span>{{ __('Tax') }}</span><span>{{ Number(invoice.total_tax).toFixed(2) }}</span></div>
+      <div class="flex justify-between"><span>{{ __('Subtotal') }}</span><span>{{ fmt(invoice.total_amount) }}</span></div>
+      <div v-if="Number(invoice.total_discount) > 0" class="flex justify-between"><span>{{ __('Discount') }}</span><span>-{{ fmt(invoice.total_discount) }}</span></div>
+      <div v-if="Number(invoice.total_tax) > 0" class="flex justify-between"><span>{{ __('Tax') }}</span><span>{{ fmt(invoice.total_tax) }}</span></div>
       <div class="mt-1 flex justify-between border-t border-black pt-1 text-[13px] font-bold">
         <span>{{ __('TOTAL') }}</span>
-        <span>{{ invoice.currency?.code }} {{ Number(invoice.grand_total).toFixed(2) }}</span>
+        <span>{{ invoice.currency?.code }} {{ fmt(invoice.grand_total) }}</span>
       </div>
-      <div class="flex justify-between"><span>{{ __('Paid') }}</span><span>{{ Number(invoice.paid_amount).toFixed(2) }}</span></div>
+      <div class="flex justify-between"><span>{{ __('Paid') }}</span><span>{{ fmt(invoice.paid_amount) }}</span></div>
     </div>
 
     <div class="my-3 border-b border-dashed border-black"></div>

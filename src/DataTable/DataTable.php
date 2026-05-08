@@ -256,6 +256,7 @@ class DataTable
             ->mapWithKeys(fn (Column $c) => [$c->getField() => [
                 'decimals' => $c->getDecimals(),
                 'currencyField' => $c->getCurrencyField(),
+                'decimalsField' => $c->getDecimalsField(),
             ]])
             ->all();
 
@@ -340,7 +341,14 @@ class DataTable
                 if ($value === null) {
                     continue;
                 }
-                $formatted = number_format($value, $config['decimals'], '.', ',');
+                $decimals = $config['decimals'];
+                if ($config['decimalsField']) {
+                    $resolved = data_get($item, $config['decimalsField']);
+                    if (is_numeric($resolved)) {
+                        $decimals = (int) $resolved;
+                    }
+                }
+                $formatted = number_format($value, $decimals, '.', ',');
                 if ($config['currencyField']) {
                     $code = data_get($item, $config['currencyField']);
                     if ($code !== null && $code !== '') {

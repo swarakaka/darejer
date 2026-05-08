@@ -29,6 +29,8 @@ class Display extends BaseComponent
 
     protected ?string $currencyField = null;
 
+    protected ?string $decimalsField = null;
+
     protected ?string $booleanTrueLabel = null;
 
     protected ?string $booleanFalseLabel = null;
@@ -95,12 +97,18 @@ class Display extends BaseComponent
      * Render as money — localized number with `$decimals` fraction digits.
      * Pass `$currencyField` (a record key like `currency_code`) to suffix the
      * resolved currency code at the end.
+     *
+     * Pass `$decimalsField` to let the frontend pick the fraction-digit count
+     * from a record path per render — e.g. `currency.minor_units` so IQD
+     * (0 dp) and USD (2 dp) format correctly without controller-side math.
+     * Falls back to `$decimals` when the path is missing or non-numeric.
      */
-    public function money(int $decimals = 2, ?string $currencyField = null): static
+    public function money(int $decimals = 2, ?string $currencyField = null, ?string $decimalsField = null): static
     {
         $this->displayType = 'money';
         $this->decimals = $decimals;
         $this->currencyField = $currencyField;
+        $this->decimalsField = $decimalsField;
 
         return $this;
     }
@@ -164,6 +172,7 @@ class Display extends BaseComponent
             'dateFormat' => $this->dateFormat,
             'decimals' => $this->decimals ?: null,
             'currencyField' => $this->currencyField,
+            'decimalsField' => $this->decimalsField,
             'booleanTrueLabel' => $this->booleanTrueLabel,
             'booleanFalseLabel' => $this->booleanFalseLabel,
             'prefix' => $this->prefix,
