@@ -232,18 +232,18 @@ function submitClose() {
       </div>
       <div class="flex items-center gap-2">
         <Link :href="urls.sessions_index">
-          <Button variant="outline" class="h-10 px-3 text-[14px]">
+          <Button variant="outline" class="h-10 border-paper-300 px-3 text-[14px]">
             <ListChecks class="size-4" />
             <span class="hidden sm:inline">{{ __('POS Sessions') }}</span>
           </Button>
         </Link>
         <Link href="/darejer">
-          <Button variant="outline" class="h-10 px-3 text-[14px]">
+          <Button variant="outline" class="h-10 border-paper-300 px-3 text-[14px]">
             <LayoutDashboard class="size-4" />
             <span class="hidden sm:inline">{{ __('Dashboard') }}</span>
           </Button>
         </Link>
-        <Button v-if="session" variant="outline" class="h-10 px-3 text-[14px]" @click="closeOpen = true">
+        <Button v-if="session" variant="outline" class="h-10 border-paper-300 px-3 text-[14px]" @click="closeOpen = true">
           <LogOut class="size-4" />
           <span class="hidden sm:inline">{{ __('Close session') }}</span>
         </Button>
