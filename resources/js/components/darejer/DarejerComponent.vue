@@ -2,6 +2,7 @@
 import { computed } from 'vue'
 import type { DarejerComponent as DarejerComponentType } from '@/types/darejer'
 import useTranslation from '@/composables/useTranslation'
+import { evaluateDependOn } from '@/composables/useDependOn'
 
 import TextInputComponent from '@/components/darejer/components/TextInputComponent.vue'
 import MoneyComponent from '@/components/darejer/components/MoneyComponent.vue'
@@ -90,10 +91,20 @@ const componentMap: Record<string, unknown> = {
 }
 
 const resolvedComponent = computed(() => componentMap[props.component.type] ?? null)
+
+// Evaluate dependOn at the wrapper level so a hidden field collapses the
+// grid cell entirely. Without this, the inner FieldWrapper's v-if removes
+// the field but the outer grid cell remains, leaving an empty gap.
+const isVisible = computed(() =>
+  evaluateDependOn(props.component.dependOn, props.formData ?? props.record),
+)
 </script>
 
 <template>
-  <div v-if="resolvedComponent" :class="{ 'col-span-full': component.fullWidth }">
+  <div
+    v-if="resolvedComponent && isVisible"
+    :class="{ 'col-span-full': component.fullWidth }"
+  >
     <component
       :is="resolvedComponent"
       :component="component"
