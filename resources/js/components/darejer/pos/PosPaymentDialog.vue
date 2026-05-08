@@ -131,7 +131,12 @@ const activeAmount = computed({
 
 <template>
   <Dialog :open="open" @update:open="(v) => emit('update:open', v)">
-    <DialogContent class="max-w-5xl sm:max-w-5xl lg:max-w-6xl">
+    <DialogContent
+      class="max-w-5xl sm:max-w-5xl lg:max-w-6xl [&>button.absolute]:size-11 [&>button.absolute>svg]:size-7"
+      @pointer-down-outside="(e) => e.preventDefault()"
+      @interact-outside="(e) => e.preventDefault()"
+      @escape-key-down="(e) => e.preventDefault()"
+    >
       <DialogHeader>
         <DialogTitle class="text-[20px]">
           {{ __('Payment') }} · {{ currency.code }} {{ fmt(grandTotal) }}
