@@ -25,7 +25,10 @@ const { __, resolveTranslatable: localized } = useTranslation()
 
 const term = ref('')
 const items = ref<PosItem[]>([])
-const searchInput = ref<HTMLInputElement | null>(null)
+// `<Input>` is a Vue component, so the template ref points at the component
+// instance, not the DOM node. `$el` resolves to the underlying <input>.
+const searchInput = ref<{ $el?: HTMLInputElement } | null>(null)
+const focusSearch = () => searchInput.value?.$el?.focus()
 // useHttp serializes its bag as the request body / query string —
 // `q` is set on the bag before each .get() call.
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -63,7 +66,7 @@ function onScannerEnter() {
     if (items.value.length === 1) {
       emit('select', items.value[0])
       term.value = ''
-      nextTick(() => searchInput.value?.focus())
+      nextTick(() => focusSearch())
     }
   })
 }
@@ -78,7 +81,7 @@ function imageSrc(path: string | null): string | null {
 
 onMounted(() => {
   load()
-  searchInput.value?.focus()
+  focusSearch()
 })
 </script>
 
