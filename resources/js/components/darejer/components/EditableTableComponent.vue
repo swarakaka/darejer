@@ -241,11 +241,30 @@ const gridTemplate = computed(() =>
 
 function formatCellValue(value: unknown, col: TableCol): string {
   if (value === null || value === undefined || value === '') return ''
+  if (col.type === 'money') {
+    const n = Number(value)
+    if (Number.isFinite(n)) {
+      const decimals = typeof col.decimals === 'number' ? col.decimals : 2
+      return n.toLocaleString(undefined, {
+        minimumFractionDigits: decimals,
+        maximumFractionDigits: decimals,
+      })
+    }
+  }
   if (col.type === 'number' && typeof col.decimals === 'number') {
     const n = Number(value)
     if (Number.isFinite(n)) return n.toFixed(col.decimals)
   }
   return String(value)
+}
+
+function onMoneyInput(row: TableRow, field: string, e: Event) {
+  const raw = (e.target as HTMLInputElement).value
+  const cleaned = raw.replace(/,/g, '')
+  row[field] = cleaned === '' ? '' : cleaned
+  applyComputed(row)
+  ensureTrailingBlankRow()
+  emitValue()
 }
 </script>
 
@@ -313,6 +332,16 @@ function formatCellValue(value: unknown, col: TableCol): string {
                 :disabled="isDisabled || col.disabled"
                 class="h-full w-full border-none bg-transparent px-2.5 text-sm transition-colors duration-100 outline-none focus:bg-brand-50 focus:ring-0 disabled:cursor-not-allowed disabled:opacity-50"
                 @input="onCellInput(row, col.field, $event)"
+              />
+
+              <input
+                v-else-if="col.type === 'money'"
+                type="text"
+                inputmode="decimal"
+                :value="formatCellValue(row[col.field], col)"
+                :disabled="isDisabled || col.disabled"
+                class="h-full w-full border-none bg-transparent px-2.5 text-right text-sm transition-colors duration-100 outline-none focus:bg-brand-50 focus:ring-0 disabled:cursor-not-allowed disabled:opacity-50"
+                @input="onMoneyInput(row, col.field, $event)"
               />
 
               <EditableTableDateCell

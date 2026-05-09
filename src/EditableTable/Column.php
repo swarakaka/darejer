@@ -129,7 +129,7 @@ class Column
      */
     public function money(int $decimals = 2): static
     {
-        $this->type = 'number';
+        $this->type = 'money';
         $this->decimals = $decimals;
 
         return $this;
