@@ -355,7 +355,7 @@ function onBlur() {
           :readonly="component.readonly as boolean"
           :disabled="component.disabled as boolean"
           :autofocus="component.autofocus as boolean"
-          class="w-full text-end tabular-nums"
+          class="w-full text-start tabular-nums"
           :class="[
             hasError ? 'border-danger-600' : '',
             hasPrefix ? 'ps-20' : '',
