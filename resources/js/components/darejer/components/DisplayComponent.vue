@@ -18,7 +18,13 @@ const props = defineProps<{
 
 const { __, resolveTranslatable } = useTranslation()
 
-const source = computed(() => props.formData ?? props.record)
+// formData is flat (one entry per component name), so dot paths like
+// `supplier_account.name` never resolve through it — useDarejerForm stores
+// them as a literal key with a null value. For dot paths fall back to the
+// nested record so eager-loaded relations render correctly.
+const source = computed(() =>
+  props.component.name.includes('.') ? props.record : (props.formData ?? props.record),
+)
 
 // Translatable fields go through the shared resolver (locale → default →
 // first non-empty); non-translatable values pass straight through so that
@@ -119,7 +125,7 @@ function resolvePath(obj: Record<string, unknown>, path: string): unknown {
 const decimals = computed<number>(() => {
   const path = props.component.decimalsField as string | undefined
   if (path) {
-    const v = resolvePath(source.value, path)
+    const v = resolvePath(props.record, path)
     if (typeof v === 'number') return v
     if (typeof v === 'string' && v !== '') {
       const n = Number(v)
@@ -142,7 +148,7 @@ const numberFormatted = computed(() => {
 const moneyCurrencyCode = computed<string | null>(() => {
   const field = props.component.currencyField as string | undefined
   if (!field) return null
-  const cur = resolvePath(source.value, field)
+  const cur = resolvePath(props.record, field)
   return cur ? String(cur) : null
 })
 
