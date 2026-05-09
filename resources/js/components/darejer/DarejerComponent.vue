@@ -28,6 +28,7 @@ import KanbanComponent from '@/components/darejer/components/KanbanComponent.vue
 import TreeGridComponent from '@/components/darejer/components/TreeGridComponent.vue'
 import InPlaceEditorComponent from '@/components/darejer/components/InPlaceEditorComponent.vue'
 import EditableTableComponent from '@/components/darejer/components/EditableTableComponent.vue'
+import TableComponent from '@/components/darejer/components/TableComponent.vue'
 import RepeaterComponent from '@/components/darejer/components/RepeaterComponent.vue'
 import PDFViewerComponent from '@/components/darejer/components/PDFViewerComponent.vue'
 import DiagramComponent from '@/components/darejer/components/DiagramComponent.vue'
@@ -78,6 +79,7 @@ const componentMap: Record<string, unknown> = {
   TreeGrid: TreeGridComponent,
   InPlaceEditor: InPlaceEditorComponent,
   EditableTable: EditableTableComponent,
+  Table: TableComponent,
   Repeater: RepeaterComponent,
   PDFViewer: PDFViewerComponent,
   Diagram: DiagramComponent,
