@@ -114,9 +114,29 @@ const badgeToneMap: Record<string, string> = {
   neutral: 'bg-paper-100 text-ink-500 border-paper-200',
 }
 
+// Translatable JSON arrives as an object (`{en: 'X', ar: 'س'}`) when
+// HasTranslations attributes pass through Inertia, or as a JSON-encoded
+// string when the cast is bypassed. Detect both so dot-path lookups onto
+// translatable columns (`item.name`, `uom.name`, …) render the resolved
+// string instead of `[object Object]` — without requiring every column
+// to opt in via `->translatable()`.
+function looksTranslatable(v: unknown): boolean {
+  if (v && typeof v === 'object' && !Array.isArray(v)) return true
+  if (typeof v === 'string') {
+    const t = v.trim()
+    return t.startsWith('{') && t.endsWith('}')
+  }
+  return false
+}
+
+function maybeResolveTranslatable(v: unknown, col: TableCol): unknown {
+  if (col.translatable || looksTranslatable(v)) return resolveTranslatable(v)
+  return v
+}
+
 function renderCell(col: TableCol, row: Record<string, unknown>): Cell {
   const raw = resolvePath(row, col.field)
-  const value = col.translatable ? resolveTranslatable(raw) : raw
+  const value = maybeResolveTranslatable(raw, col)
   const alignRight = !!col.alignRight
   if (value === null || value === undefined || value === '') {
     if (col.type === 'boolean') {
