@@ -10,7 +10,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { LogOut, Bell, Globe, Menu, ChevronDown } from 'lucide-vue-next'
+import { LogOut, Bell, Globe, Menu, ChevronDown, UserCog } from 'lucide-vue-next'
 import AppNotifications from '@/components/darejer/AppNotifications.vue'
 import AppGlobalSearch from '@/components/darejer/AppGlobalSearch.vue'
 import AppThemeToggle from '@/components/darejer/AppThemeToggle.vue'
@@ -58,6 +58,10 @@ const initials = (name: string) =>
     .slice(0, 2)
     .join('')
     .toUpperCase()
+
+function editProfile() {
+  router.visit(route('darejer.profile.edit').toString())
+}
 
 function logout() {
   router.post(route('logout').toString())
@@ -172,6 +176,14 @@ function logout() {
               {{ page.props.auth.user.email }}
             </p>
           </DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem
+            class="flex cursor-pointer items-center gap-2 text-sm"
+            @click="editProfile"
+          >
+            <UserCog class="h-3.5 w-3.5" />
+            {{ __('Edit Profile') }}
+          </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem class="flex cursor-pointer items-center gap-2 text-sm" @click="logout">
             <LogOut class="h-3.5 w-3.5" />
