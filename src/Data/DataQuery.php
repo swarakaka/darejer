@@ -4,6 +4,7 @@ namespace Darejer\Data;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 /**
  * Applies request query params to an Eloquent builder in a safe, ordered way.
@@ -144,7 +145,13 @@ class DataQuery
     }
 
     /**
-     * ?filters[status]=active — restricted to the model's fillable columns.
+     * ?filters[status]=active — applied against the model's fillable columns.
+     *
+     * For non-fillable filter keys, falls back to a named scope
+     * `filter{StudlyField}` if the model defines one — e.g. filter
+     * `warehouse_id` on Item resolves to `scopeFilterWarehouseId($q, $value)`.
+     * This lets combobox endpoints expose dependent filters (like "items in
+     * the selected warehouse") without exposing raw column writes.
      */
     protected function applyFilters(): static
     {
@@ -162,15 +169,18 @@ class DataQuery
                 continue;
             }
 
-            if (! empty($fillable) && ! in_array($field, $fillable, true)) {
-                continue;
-            }
-
-            if ($guarded !== ['*'] && in_array($field, $guarded, true)) {
-                continue;
-            }
-
             if ($value === '' || $value === null) {
+                continue;
+            }
+
+            $isFillable = empty($fillable) || in_array($field, $fillable, true);
+            $isGuarded = $guarded !== ['*'] && in_array($field, $guarded, true);
+
+            if (! $isFillable || $isGuarded) {
+                $scope = 'filter'.Str::studly($field);
+                if ($instance->hasNamedScope($scope)) {
+                    $this->query->{$scope}($value);
+                }
                 continue;
             }
 

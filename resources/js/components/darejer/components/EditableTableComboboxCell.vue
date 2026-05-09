@@ -26,6 +26,8 @@ interface ComboboxColumn {
   imageField?: string
   optionFields?: string[]
   fillFrom?: Record<string, string> | null
+  /** filterParam => formField. Sibling form values become `filters[param]`. */
+  filtersFrom?: Record<string, string> | null
   placeholder?: string
 }
 
@@ -35,6 +37,8 @@ const props = defineProps<{
   column: ComboboxColumn
   modelValue: unknown
   disabled?: boolean
+  /** Surrounding form data — read for filtersFrom mapping. */
+  formData?: Record<string, unknown>
 }>()
 
 const emit = defineEmits<{
@@ -85,6 +89,22 @@ const { load, http } = useDataUrl<Record_>(props.column.dataUrl, {
   fields: props.column.optionFields ?? [],
 })
 
+/**
+ * Build the `filters[param]=value` payload from sibling form fields.
+ * Empty / null / undefined values are dropped so the request stays clean.
+ */
+const derivedFilters = computed<Record<string, string>>(() => {
+  const map = props.column.filtersFrom
+  if (!map || !props.formData) return {}
+  const out: Record<string, string> = {}
+  for (const [param, formField] of Object.entries(map)) {
+    const v = props.formData[formField]
+    if (v === null || v === undefined || v === '') continue
+    out[param] = String(v)
+  }
+  return out
+})
+
 async function fetchOptions(reset = false): Promise<void> {
   if (reset) {
     page.value = 1
@@ -93,6 +113,7 @@ async function fetchOptions(reset = false): Promise<void> {
   const result = await load({
     search: search.value,
     page: page.value,
+    filters: derivedFilters.value,
   })
   if (!result) return
 
@@ -119,10 +140,14 @@ async function resolveSelectedRecord(): Promise<void> {
   const key = selectedKey.value
   if (key === '' || cache.value[key]) return
 
+  // Resolving the bound record is for label rendering only — bypass
+  // derivedFilters so a row that was saved before the filter became
+  // active still resolves its label.
   const result = await load({
     ids: [key],
     page: 1,
     perPage: 1,
+    filters: {},
   })
   if (!result) return
 
@@ -137,6 +162,9 @@ onMounted(async () => {
   fetchOptions(true)
 })
 watch(search, () => fetchOptions(true))
+// Refetch when a filtersFrom-bound form field changes — e.g. picking a
+// "From Warehouse" should narrow the items list.
+watch(derivedFilters, () => fetchOptions(true), { deep: true })
 
 const selectedKey = computed(() =>
   props.modelValue === null || props.modelValue === undefined || props.modelValue === ''

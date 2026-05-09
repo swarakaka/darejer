@@ -39,6 +39,7 @@ interface TableCol {
   imageField?: string
   optionFields?: string[]
   fillFrom?: Record<string, string> | null
+  filtersFrom?: Record<string, string> | null
 }
 
 type TableRow = Record<string, unknown> & { _id: number }
@@ -328,6 +329,7 @@ function formatCellValue(value: unknown, col: TableCol): string {
                 :column="col"
                 :model-value="row[col.field]"
                 :disabled="isDisabled || col.disabled"
+                :form-data="formData ?? record"
                 class="h-full w-full"
                 @update:model-value="onComboboxUpdate(row, col.field, $event)"
                 @select="onComboboxSelect(row, col, $event)"

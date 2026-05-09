@@ -54,6 +54,9 @@ class Column
     /** @var array<string,string> */
     protected array $fillFrom = [];
 
+    /** @var array<string,string> */
+    protected array $filtersFrom = [];
+
     protected ?string $compute = null;
 
     protected function __construct(string $field)
@@ -234,6 +237,28 @@ class Column
     }
 
     /**
+     * Filter combobox results by sibling form fields. The mapping is
+     * `filterParam => formField` — at fetch time the cell reads each form
+     * field from the surrounding form data and sends it as `filters[param]`.
+     *
+     * Example: an Item picker that should only show items in the warehouse
+     * the user already chose on the form.
+     *
+     *   ->filtersFrom(['warehouse_id' => 'from_warehouse_id'])
+     *
+     * The filter param must be either a fillable column on the target model
+     * or a named scope `filter{StudlyParam}` — see DataQuery::applyFilters.
+     *
+     * @param  array<string,string>  $mapping  filterParam => formField
+     */
+    public function filtersFrom(array $mapping): static
+    {
+        $this->filtersFrom = $mapping;
+
+        return $this;
+    }
+
+    /**
      * Mark this column as derived from sibling row fields. The `$expression`
      * is a JavaScript expression that may reference other column field names —
      * e.g. `'qty * rate'` or `'qty * rate * (1 - discount_pct / 100)'`. The
@@ -292,6 +317,7 @@ class Column
                 'subLabelField' => $this->subLabelField,
                 'imageField' => $this->imageField,
                 'fillFrom' => $this->fillFrom ?: null,
+                'filtersFrom' => $this->filtersFrom ?: null,
                 'optionFields' => $extras,
             ]);
         }
