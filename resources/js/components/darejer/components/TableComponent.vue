@@ -22,6 +22,7 @@ interface TableCol {
   booleanFalseLabel?: string
   alignRight?: boolean
   emptyText?: string
+  translatable?: boolean
 }
 
 const props = defineProps<{
@@ -31,7 +32,7 @@ const props = defineProps<{
   formData?: Record<string, unknown>
 }>()
 
-const { __ } = useTranslation()
+const { __, resolveTranslatable } = useTranslation()
 
 const columns = computed((): TableCol[] => (props.component.tableColumns as TableCol[]) ?? [])
 
@@ -114,7 +115,8 @@ const badgeToneMap: Record<string, string> = {
 }
 
 function renderCell(col: TableCol, row: Record<string, unknown>): Cell {
-  const value = resolvePath(row, col.field)
+  const raw = resolvePath(row, col.field)
+  const value = col.translatable ? resolveTranslatable(raw) : raw
   const alignRight = !!col.alignRight
   if (value === null || value === undefined || value === '') {
     if (col.type === 'boolean') {

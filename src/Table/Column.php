@@ -52,6 +52,8 @@ class Column
 
     protected ?string $emptyText = null;
 
+    protected bool $translatable = false;
+
     protected function __construct(string $field)
     {
         $this->field = $field;
@@ -87,6 +89,19 @@ class Column
     public function emptyText(string $emptyText): static
     {
         $this->emptyText = $emptyText;
+
+        return $this;
+    }
+
+    /**
+     * Mark the column value as translatable JSON (e.g. `{"en": "Hello", "ar": "مرحبا"}`).
+     * The frontend resolves the active locale, falling back to the configured
+     * default language. Use for plain text and badge columns whose underlying
+     * column is cast as a translatable array on the model.
+     */
+    public function translatable(bool $translatable = true): static
+    {
+        $this->translatable = $translatable;
 
         return $this;
     }
@@ -181,6 +196,7 @@ class Column
             'booleanFalseLabel' => $this->booleanFalseLabel,
             'alignRight' => $this->alignRight ?: null,
             'emptyText' => $this->emptyText,
+            'translatable' => $this->translatable ?: null,
         ], fn ($v) => $v !== null);
     }
 }
