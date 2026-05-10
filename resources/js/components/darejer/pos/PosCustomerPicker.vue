@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
 import { useHttp } from '@inertiajs/vue3'
+import { handleHttpException } from '@/lib/handleHttpException'
 import {
   Dialog,
   DialogContent,
@@ -65,6 +66,9 @@ async function load() {
       const r = response as { data?: Customer[] } | Customer[]
       customers.value = Array.isArray(r) ? r : (r?.data ?? [])
     },
+    onHttpException: (response: { status: number }) => {
+      handleHttpException(response)
+    },
   })
 }
 
@@ -103,6 +107,9 @@ function quickAdd() {
         emit('select', created)
         emit('update:open', false)
       }
+    },
+    onHttpException: (response: { status: number }) => {
+      handleHttpException(response)
     },
   })
 }

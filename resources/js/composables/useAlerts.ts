@@ -1,6 +1,11 @@
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import { useHttp, usePage } from '@inertiajs/vue3'
 import type { DarejerSharedProps } from '@/types/darejer'
+import { handleHttpException } from '@/lib/handleHttpException'
+
+function onAuthException(response: { status: number }): void {
+  handleHttpException(response)
+}
 
 /**
  * Per-user notification feed used by the topbar Bell + slideover.
@@ -83,6 +88,7 @@ export function useAlerts() {
             unreadCount.value = data.unread_count
           }
         },
+        onHttpException: onAuthException,
       })
       .then(
         () => undefined,
@@ -99,6 +105,7 @@ export function useAlerts() {
           unreadCount.value = (data?.meta as AlertsResponse['meta'] | undefined)?.unread_count ?? 0
           loaded.value = true
         },
+        onHttpException: onAuthException,
       })
       .then(
         () => undefined,
@@ -120,6 +127,7 @@ export function useAlerts() {
           }
           if (unreadCount.value > 0) unreadCount.value--
         },
+        onHttpException: onAuthException,
       })
       .then(
         () => undefined,
@@ -135,6 +143,7 @@ export function useAlerts() {
           items.value = items.value.map((a) => (a.read_at ? a : { ...a, read_at: now }))
           unreadCount.value = 0
         },
+        onHttpException: onAuthException,
       })
       .then(
         () => undefined,
@@ -152,6 +161,7 @@ export function useAlerts() {
             unreadCount.value--
           }
         },
+        onHttpException: onAuthException,
       })
       .then(
         () => undefined,
@@ -166,6 +176,7 @@ export function useAlerts() {
           items.value = []
           unreadCount.value = 0
         },
+        onHttpException: onAuthException,
       })
       .then(
         () => undefined,

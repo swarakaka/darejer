@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, watch, onMounted } from 'vue'
 import { useHttp } from '@inertiajs/vue3'
+import { handleHttpException } from '@/lib/handleHttpException'
 import { useDataUrl } from '@/composables/useDataUrl'
 import {
   Command,
@@ -196,6 +197,9 @@ function maybePrefillFromUrl(value: string | null) {
       if (data && typeof data === 'object') {
         emit('prefill', data as Record<string, unknown>)
       }
+    },
+    onHttpException: (response: { status: number }) => {
+      handleHttpException(response)
     },
   })
 }

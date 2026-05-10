@@ -1,6 +1,7 @@
 import { shallowReactive, shallowRef, computed } from 'vue'
 import { useHttp, router } from '@inertiajs/vue3'
 import type { DarejerComponent } from '@/types/darejer'
+import { handleHttpException } from '@/lib/handleHttpException'
 
 export interface DarejerFormOptions {
   url: string
@@ -141,6 +142,9 @@ export function useDarejerForm(options: DarejerFormOptions) {
       },
       onError: (errs: Record<string, string>) => {
         options.onError?.(errs)
+      },
+      onHttpException: (response: { status: number }) => {
+        handleHttpException(response)
       },
     })
   }

@@ -7,6 +7,7 @@ import listPlugin from '@fullcalendar/list'
 import interactionPlugin from '@fullcalendar/interaction'
 import type { CalendarOptions, EventClickArg, DateSelectArg } from '@fullcalendar/core'
 import { useHttp, router } from '@inertiajs/vue3'
+import { handleHttpException } from '@/lib/handleHttpException'
 import { Loader2 } from 'lucide-vue-next'
 import FieldWrapper from '@/components/darejer/FieldWrapper.vue'
 import useTranslation from '@/composables/useTranslation'
@@ -64,6 +65,9 @@ function loadEvents() {
           : defaultColor.value,
         extendedProps: row,
       }))
+    },
+    onHttpException: (response: { status: number }) => {
+      handleHttpException(response)
     },
   })
 }

@@ -8,6 +8,7 @@ import { useHttp } from '@inertiajs/vue3'
 import { Loader2 } from 'lucide-vue-next'
 import FieldWrapper from '@/components/darejer/FieldWrapper.vue'
 import type { DarejerComponent } from '@/types/darejer'
+import { handleHttpException } from '@/lib/handleHttpException'
 
 const props = defineProps<{
   component: DarejerComponent
@@ -73,6 +74,9 @@ function loadFromUrl() {
     onSuccess: (data) => {
       nodes.value = (data?.nodes ?? []).map(normalizeNode)
       edges.value = (data?.edges ?? []).map(normalizeEdge)
+    },
+    onHttpException: (response: { status: number }) => {
+      handleHttpException(response)
     },
   })
 }

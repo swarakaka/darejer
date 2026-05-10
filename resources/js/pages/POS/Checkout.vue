@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue'
 import { router, useHttp } from '@inertiajs/vue3'
+import { handleHttpException } from '@/lib/handleHttpException'
 import { Link } from '@inertiajs/vue3'
 import PosLayout from '@/layouts/PosLayout.vue'
 import { Button } from '@/components/ui/button'
@@ -224,6 +225,9 @@ function handleCheckout(tenders: Array<{ tender: string; amount: string; bank_ac
       const first = Object.values(errors)[0]
       if (first) error(first)
     },
+    onHttpException: (response: { status: number }) => {
+      handleHttpException(response)
+    },
   })
 }
 
@@ -248,6 +252,9 @@ function submitClose() {
     onError: (errors: Record<string, string>) => {
       const first = Object.values(errors)[0]
       if (first) error(first)
+    },
+    onHttpException: (response: { status: number }) => {
+      handleHttpException(response)
     },
   })
 }

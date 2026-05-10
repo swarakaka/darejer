@@ -5,6 +5,7 @@ import { Loader2 } from 'lucide-vue-next'
 import FieldWrapper from '@/components/darejer/FieldWrapper.vue'
 import useTranslation from '@/composables/useTranslation'
 import type { DarejerComponent } from '@/types/darejer'
+import { handleHttpException } from '@/lib/handleHttpException'
 
 const { __ } = useTranslation()
 
@@ -131,6 +132,9 @@ function loadData() {
       gantt.clearAll()
       // dhtmlx-gantt's typing for parse() is strict; cast to pass through.
       gantt.parse({ data: tasks, links } as Parameters<typeof gantt.parse>[0])
+    },
+    onHttpException: (response: { status: number }) => {
+      handleHttpException(response)
     },
   })
 }

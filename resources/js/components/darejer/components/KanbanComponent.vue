@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { router, useHttp } from '@inertiajs/vue3'
+import { handleHttpException } from '@/lib/handleHttpException'
 import { useDataUrl } from '@/composables/useDataUrl'
 import { VueDraggable } from 'vue-draggable-plus'
 import { Loader2, GripVertical } from 'lucide-vue-next'
@@ -115,6 +116,9 @@ function onCardMoved(card: CardRecord, fromColumn: string, toColumn: string) {
       columnCards.value[toColumn] = columnCards.value[toColumn].filter(
         (c) => (c.id as unknown) !== id,
       )
+    },
+    onHttpException: (response: { status: number }) => {
+      handleHttpException(response)
     },
     onFinish: () => {
       updating.value.delete(id)

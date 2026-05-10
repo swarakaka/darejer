@@ -5,6 +5,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Loader2 } from 'lucide-vue-next'
 import CreateInDialogForm from '@/components/darejer/CreateInDialogForm.vue'
 import useTranslation from '@/composables/useTranslation'
+import { handleHttpException } from '@/lib/handleHttpException'
 import type { DarejerComponent as DarejerComponentType, DarejerAction } from '@/types/darejer'
 
 const { __ } = useTranslation()
@@ -83,6 +84,7 @@ function fetchPage() {
       }
     },
     onHttpException: (httpResponse) => {
+      if (handleHttpException(httpResponse)) return
       error.value = __('Failed to load form (HTTP :status).', { status: httpResponse.status })
     },
     onNetworkError: () => {

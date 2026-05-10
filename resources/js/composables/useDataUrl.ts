@@ -1,5 +1,6 @@
 import { ref } from 'vue'
 import { useHttp } from '@inertiajs/vue3'
+import { handleHttpException } from '@/lib/handleHttpException'
 
 export interface DataUrlOptions {
   perPage?: number
@@ -114,6 +115,9 @@ export function useDataUrl<T = Record<string, unknown>>(
             from: (data?.from as number | undefined) ?? 0,
             to: (data?.to as number | undefined) ?? 0,
           }
+        },
+        onHttpException: (response: { status: number }) => {
+          handleHttpException(response)
         },
       })
       .then(

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { useHttp } from '@inertiajs/vue3'
+import { handleHttpException } from '@/lib/handleHttpException'
 import { Check, X, Pencil } from 'lucide-vue-next'
 import FieldWrapper from '@/components/darejer/FieldWrapper.vue'
 import type { DarejerComponent } from '@/types/darejer'
@@ -65,6 +66,9 @@ function save() {
   http.value = editValue.value
 
   http.patch(url, {
+    onHttpException: (response: { status: number }) => {
+      handleHttpException(response)
+    },
     onFinish: () => {
       editing.value = false
     },

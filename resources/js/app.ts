@@ -1,4 +1,4 @@
-import { createInertiaApp } from '@inertiajs/vue3'
+import { createInertiaApp, router } from '@inertiajs/vue3'
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers'
 import { ZiggyVue } from 'ziggy-js'
 import type { DefineComponent } from 'vue'
@@ -10,6 +10,17 @@ import '../css/app.css'
 // Apply persisted theme (light/dark/system) before the app mounts so the
 // first paint already has the right `dark` class on <html>.
 import '@/composables/useTheme'
+
+import { handleHttpException } from '@/lib/handleHttpException'
+
+// Safety net for non-Inertia responses to a router visit (e.g. session
+// expired mid-navigation). Per-call `useHttp` sites pass the same helper
+// to their own `onHttpException` so JSON endpoints also redirect on 401.
+router.on('httpException', (event) => {
+  if (handleHttpException(event.detail.response)) {
+    event.preventDefault()
+  }
+})
 
 createInertiaApp({
   title: (title) => `${title} - Darejer`,

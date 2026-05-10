@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, onMounted, watch, nextTick } from 'vue'
 import { useHttp } from '@inertiajs/vue3'
+import { handleHttpException } from '@/lib/handleHttpException'
 import { Input } from '@/components/ui/input'
 import useTranslation from '@/composables/useTranslation'
 import { Search, Barcode, Package } from 'lucide-vue-next'
@@ -64,6 +65,9 @@ async function load() {
       if (q !== lastTerm) return
       const r = response as { data?: PosItem[] }
       items.value = r?.data ?? []
+    },
+    onHttpException: (response: { status: number }) => {
+      handleHttpException(response)
     },
   })
 }

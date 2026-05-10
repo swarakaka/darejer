@@ -1,5 +1,6 @@
 import { ref, computed } from 'vue'
 import { useHttp } from '@inertiajs/vue3'
+import { handleHttpException } from '@/lib/handleHttpException'
 
 /**
  * Topbar quick-jump backed by `Darejer\Http\Controllers\SearchController`.
@@ -69,6 +70,9 @@ export function useGlobalSearch() {
             groups.value = (data?.groups as SearchGroup[]) ?? []
             total.value = (data?.total as number) ?? 0
             lastQ.value = term
+          },
+          onHttpException: (response: { status: number }) => {
+            handleHttpException(response)
           },
         })
         .then(

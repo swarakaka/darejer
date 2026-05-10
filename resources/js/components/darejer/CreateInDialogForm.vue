@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, shallowRef } from 'vue'
 import { useHttp } from '@inertiajs/vue3'
+import { handleHttpException } from '@/lib/handleHttpException'
 import DarejerComponent from '@/components/darejer/DarejerComponent.vue'
 import DarejerActions from '@/components/darejer/DarejerActions.vue'
 import type { DarejerComponent as DarejerComponentType, DarejerAction } from '@/types/darejer'
@@ -108,6 +109,9 @@ function submit() {
         url: response?.redirect ?? response?.url ?? null,
         flash,
       })
+    },
+    onHttpException: (response: { status: number }) => {
+      handleHttpException(response)
     },
   })
 }
