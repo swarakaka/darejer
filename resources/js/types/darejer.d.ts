@@ -148,7 +148,7 @@ export interface ScreenSection {
   title: string
   components: string[]
   collapsed?: boolean
-  alwaysExpanded?: boolean
+  collapsible?: boolean
   dependOn?: DependOnRule
 }
 

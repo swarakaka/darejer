@@ -130,7 +130,7 @@ The screen builder. See [`architecture/screen-engine.md`](../architecture/screen
 | `title($title)` | `static` |
 | `components($names)` | `static` |
 | `collapsed($flag = true)` | `static` |
-| `alwaysExpanded($flag = true)` | `static` |
+| `collapsible($flag = true)` | `static` |
 | `dependOn($rule)` | `static` |
 | `toArray()` | `array` |
 

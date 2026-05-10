@@ -9,7 +9,7 @@ class Section
 
     protected bool $collapsed = false;
 
-    protected bool $alwaysExpanded = false;
+    protected bool $collapsible = false;
 
     /** @var array<string, mixed>|null */
     protected ?array $dependOn = null;
@@ -45,11 +45,11 @@ class Section
         return $this;
     }
 
-    public function alwaysExpanded(bool $alwaysExpanded = true): static
+    public function collapsible(bool $collapsible = true): static
     {
-        $this->alwaysExpanded = $alwaysExpanded;
+        $this->collapsible = $collapsible;
 
-        if ($alwaysExpanded) {
+        if (! $collapsible) {
             $this->collapsed = false;
         }
 
@@ -75,7 +75,7 @@ class Section
             'title' => $this->title,
             'components' => $this->components,
             'collapsed' => $this->collapsed,
-            'alwaysExpanded' => $this->alwaysExpanded,
+            'collapsible' => $this->collapsible,
             'dependOn' => $this->dependOn,
         ], fn ($v) => $v !== null);
     }

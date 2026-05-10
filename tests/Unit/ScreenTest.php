@@ -107,18 +107,47 @@ it('serializes sections from Section instances', function () {
     expect($array['sections'][1]['collapsed'])->toBeTrue();
 });
 
-it('serializes alwaysExpanded sections and forces collapsed false', function () {
+it('defaults sections to non-collapsible (always expanded)', function () {
     $screen = Screen::make('Test')
         ->components([
             TextInput::make('name')->label('Name'),
         ])
         ->sections([
-            Section::make('General')->components(['name'])->collapsed()->alwaysExpanded(),
+            Section::make('General')->components(['name']),
         ]);
 
     $array = $screen->toArray();
 
-    expect($array['sections'][0]['alwaysExpanded'])->toBeTrue();
+    expect($array['sections'][0]['collapsible'])->toBeFalse();
+});
+
+it('serializes collapsible sections that start collapsed', function () {
+    $screen = Screen::make('Test')
+        ->components([
+            TextInput::make('name')->label('Name'),
+        ])
+        ->sections([
+            Section::make('General')->components(['name'])->collapsible()->collapsed(),
+        ]);
+
+    $array = $screen->toArray();
+
+    expect($array['sections'][0]['collapsible'])->toBeTrue();
+    expect($array['sections'][0]['collapsed'])->toBeTrue();
+});
+
+it('forces collapsed false when collapsible(false) is called', function () {
+    $screen = Screen::make('Test')
+        ->components([
+            TextInput::make('name')->label('Name'),
+        ])
+        ->sections([
+            Section::make('General')->components(['name'])->collapsed()->collapsible(false),
+        ]);
+
+    $array = $screen->toArray();
+
+    expect($array['sections'][0]['collapsible'])->toBeFalse();
     expect($array['sections'][0]['collapsed'])->toBeFalse();
 });
 

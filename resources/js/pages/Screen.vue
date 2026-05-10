@@ -232,13 +232,13 @@ function isTabVisible(tab: ScreenTab): boolean {
 
 const collapsed = ref<Record<string, boolean>>(
   Object.fromEntries(
-    (props.sections ?? []).map((s) => [s.title, s.alwaysExpanded ? false : (s.collapsed ?? false)]),
+    (props.sections ?? []).map((s) => [s.title, s.collapsible ? (s.collapsed ?? false) : false]),
   ),
 )
 
 function toggleSection(title: string) {
   const section = (props.sections ?? []).find((s) => s.title === title)
-  if (section?.alwaysExpanded) {
+  if (!section?.collapsible) {
     return
   }
   collapsed.value[title] = !collapsed.value[title]
@@ -476,10 +476,10 @@ const dialogSizeClass: Record<string, string> = {
                     !collapsed[section.title]
                       ? `border-b border-paper-200 bg-linear-to-b from-paper-75 to-card`
                       : 'bg-card',
-                    section.alwaysExpanded ? '' : `cursor-pointer hover:bg-paper-75`,
+                    section.collapsible ? `cursor-pointer hover:bg-paper-75` : '',
                   ]"
-                  :role="section.alwaysExpanded ? undefined : 'button'"
-                  :aria-expanded="section.alwaysExpanded ? undefined : !collapsed[section.title]"
+                  :role="section.collapsible ? 'button' : undefined"
+                  :aria-expanded="section.collapsible ? !collapsed[section.title] : undefined"
                   @click="toggleSection(section.title)"
                 >
                   <div class="flex min-w-0 items-center gap-3">
@@ -490,7 +490,7 @@ const dialogSizeClass: Record<string, string> = {
                     </h2>
                   </div>
                   <ChevronDown
-                    v-if="!section.alwaysExpanded"
+                    v-if="section.collapsible"
                     class="h-4 w-4 shrink-0 text-ink-400 transition-transform duration-150"
                     :class="collapsed[section.title] ? `-rotate-90 rtl:rotate-90` : `rotate-0`"
                   />

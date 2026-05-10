@@ -179,8 +179,8 @@ Screen::make('Edit Customer')
 | `make($title)` | Factory. |
 | `title($title)` | Rename. |
 | `components($names)` | Field names belonging to this section. |
-| `collapsed($flag = true)` | Start collapsed. |
-| `alwaysExpanded($flag = true)` | Suppress the collapse toggle. |
+| `collapsed($flag = true)` | Start collapsed (only meaningful with `collapsible()`). |
+| `collapsible($flag = true)` | Show the collapse toggle. Sections are always expanded by default. |
 | `dependOn($rule)` | `{field, operator, value}` — show only when the rule matches. |
 
 ## Tabs — `Darejer\Screen\Tab`
