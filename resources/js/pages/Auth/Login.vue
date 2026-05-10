@@ -36,7 +36,7 @@ function submit() {
         </div>
         <span class="text-xs font-semibold tracking-[0.28em] text-ink-700 uppercase">Darejer</span>
       </div>
-      <h1 class="text-3xl leading-tight font-semibold tracking-tight text-ink-900">
+      <h1 class="text-2xl leading-tight font-semibold tracking-tight text-ink-900">
         {{ __('Sign in to your account') }}
       </h1>
     </div>
