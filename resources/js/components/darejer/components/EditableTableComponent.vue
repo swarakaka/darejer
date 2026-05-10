@@ -39,8 +39,16 @@ interface TableCol {
   imageField?: string
   optionFields?: string[]
   fillFrom?: Record<string, string> | null
-  fillFromCap?: Record<string, string> | null
+  fillFromCap?: Record<string, FillFromCapValue> | null
   filtersFrom?: Record<string, string> | null
+}
+
+type FillFromCapValue = string | { form: string; row?: string }
+
+interface NormalizedCap {
+  rowField: string
+  formField: string
+  rowCeilingField?: string
 }
 
 type TableRow = Record<string, unknown> & { _id: number }
@@ -215,40 +223,70 @@ function onComboboxUpdate(row: TableRow, field: string, value: unknown) {
   emitValue()
 }
 
+const normalizedCaps = computed((): NormalizedCap[] => {
+  const out: NormalizedCap[] = []
+  for (const col of columns.value) {
+    if (!col.fillFromCap) continue
+    for (const [rowField, value] of Object.entries(col.fillFromCap)) {
+      if (typeof value === 'string') {
+        out.push({ rowField, formField: value })
+      } else if (value && typeof value === 'object' && typeof value.form === 'string') {
+        out.push({ rowField, formField: value.form, rowCeilingField: value.row })
+      }
+    }
+  }
+  return out
+})
+
+function redistributeCaps(): boolean {
+  const parent = props.formData ?? props.record
+  let changed = false
+  for (const cap of normalizedCaps.value) {
+    const total = Number(parent[cap.formField])
+    if (!Number.isFinite(total)) continue
+    let remaining = total
+    for (const row of rows.value) {
+      const ceiling = cap.rowCeilingField ? Number(row[cap.rowCeilingField]) : NaN
+      const upperBound = Number.isFinite(ceiling) ? ceiling : remaining
+      const target = Math.max(0, Math.min(upperBound, remaining))
+      const current = Number(row[cap.rowField])
+      if (!Number.isFinite(current) || current !== target) {
+        row[cap.rowField] = target
+        changed = true
+      }
+      remaining -= target
+    }
+  }
+  return changed
+}
+
 function onComboboxSelect(row: TableRow, col: TableCol, record: Record<string, unknown>) {
   const map = col.fillFrom
   if (map) {
-    const caps = col.fillFromCap ?? {}
-    const parent = props.formData ?? props.record
     for (const [rowField, recordField] of Object.entries(map)) {
       const v = record[recordField]
-      if (v === undefined || v === null) continue
-
-      const capField = caps[rowField]
-      if (capField) {
-        const parentTotal = Number(parent[capField])
-        if (Number.isFinite(parentTotal)) {
-          const otherSum = rows.value.reduce((acc, r) => {
-            if (r._id === row._id) return acc
-            const n = Number(r[rowField])
-            return Number.isFinite(n) ? acc + n : acc
-          }, 0)
-          const remaining = parentTotal - otherSum
-          const incoming = Number(v)
-          if (Number.isFinite(incoming)) {
-            row[rowField] = Math.max(0, Math.min(incoming, remaining))
-            continue
-          }
-        }
+      if (v !== undefined && v !== null) {
+        row[rowField] = v
       }
-
-      row[rowField] = v
     }
   }
   applyComputed(row)
   ensureTrailingBlankRow()
+  redistributeCaps()
   emitValue()
 }
+
+watch(
+  () => {
+    const parent = props.formData ?? props.record
+    return normalizedCaps.value.map((c) => parent[c.formField]).join('|')
+  },
+  () => {
+    if (redistributeCaps()) {
+      emitValue()
+    }
+  },
+)
 
 const gridTemplate = computed(() =>
   [
