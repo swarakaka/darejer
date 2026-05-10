@@ -250,12 +250,17 @@ const hasTabs = computed(() => !!(props.tabs && props.tabs.length > 0))
 
 const visibleTabs = computed<ScreenTab[]>(() => (props.tabs ?? []).filter(isTabVisible))
 
-const defaultTabValue = computed<string | undefined>(() => visibleTabs.value[0]?.title)
+const defaultTabValue = computed<string | undefined>(() => visibleTabs.value[0]?.name)
 
-// Persist the active tab in localStorage, scoped per Screen by title.
-const tabsPersistKey = computed<string | undefined>(() =>
-  props.title ? `screen:${props.title}` : undefined,
-)
+// Persist the active tab in localStorage, scoped per Screen by URL path.
+// The path is locale-independent (the locale lives in the session, not the
+// URL), so the same key resolves before and after a locale switch — and the
+// stored value matches a current tab because `tab.name` is also stable.
+const tabsPersistKey = computed<string | undefined>(() => {
+  const url = page.url ?? ''
+  const path = url.split('?')[0] || '/'
+  return `screen:${path}`
+})
 
 // Tab is "in error" when any of its components have a validation error
 // in mergedErrors. Errors may be nested (e.g. "field.0.subfield"), so
@@ -409,8 +414,8 @@ const dialogSizeClass: Record<string, string> = {
                 >
                   <TabsTrigger
                     v-for="tab in visibleTabs"
-                    :key="tab.title"
-                    :value="tab.title"
+                    :key="tab.name"
+                    :value="tab.name"
                     :has-error="tabHasError(tab)"
                     class="px-4 py-2 text-[13px] font-semibold tracking-tight text-ink-600 transition-colors hover:text-ink-900 data-[state=active]:rounded-[2px] data-[state=active]:bg-brand-50 data-[state=active]:text-brand-700 data-[state=active]:shadow-[inset_0_-2px_0_var(--color-brand-500)]"
                   >
@@ -419,8 +424,8 @@ const dialogSizeClass: Record<string, string> = {
                 </TabsList>
                 <TabsContent
                   v-for="tab in visibleTabs"
-                  :key="tab.title"
-                  :value="tab.title"
+                  :key="tab.name"
+                  :value="tab.name"
                   class="mt-0"
                 >
                   <section

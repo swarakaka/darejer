@@ -153,6 +153,7 @@ export interface ScreenSection {
 }
 
 export interface ScreenTab {
+  name: string
   title: string
   components: string[]
   dependOn?: DependOnRule

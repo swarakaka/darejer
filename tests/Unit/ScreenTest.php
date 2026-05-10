@@ -69,6 +69,25 @@ it('serializes tabs from Tab instances', function () {
     expect($array['sections'])->toBeNull();
 });
 
+it('auto-derives a stable tab name from the components list', function () {
+    $tab = Tab::make('Details')->components(['name', 'sku'])->toArray();
+
+    expect($tab['name'])->toBe('name,sku');
+});
+
+it('keeps the auto-derived tab name stable when the title is translated', function () {
+    $english = Tab::make('Details')->components(['name', 'sku'])->toArray();
+    $arabic = Tab::make('التفاصيل')->components(['name', 'sku'])->toArray();
+
+    expect($arabic['name'])->toBe($english['name']);
+});
+
+it('uses an explicit tab name when set via ->name()', function () {
+    $tab = Tab::make('Details')->name('details')->components(['name'])->toArray();
+
+    expect($tab['name'])->toBe('details');
+});
+
 it('serializes sections from Section instances', function () {
     $screen = Screen::make('Test')
         ->components([
