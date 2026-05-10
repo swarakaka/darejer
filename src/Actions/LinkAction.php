@@ -4,8 +4,6 @@ namespace Darejer\Actions;
 
 class LinkAction extends BaseAction
 {
-    protected bool $external = false;
-
     public function __construct(string $label = '')
     {
         parent::__construct($label);
@@ -19,20 +17,11 @@ class LinkAction extends BaseAction
 
     public function external(bool $external = true): static
     {
-        $this->external = $external;
-
-        return $this;
+        return $this->newTab($external);
     }
 
     protected function actionType(): string
     {
         return 'Link';
-    }
-
-    protected function actionProps(): array
-    {
-        return [
-            'external' => $this->external ?: null,
-        ];
     }
 }

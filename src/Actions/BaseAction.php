@@ -33,6 +33,8 @@ abstract class BaseAction implements Actionable
 
     protected bool $isFullWidth = false;
 
+    protected bool $newTab = false;
+
     protected ?array $dependOn = null;
 
     protected function __construct(string $label)
@@ -124,6 +126,13 @@ abstract class BaseAction implements Actionable
         return $this;
     }
 
+    public function newTab(bool $newTab = true): static
+    {
+        $this->newTab = $newTab;
+
+        return $this;
+    }
+
     /**
      * Show this action only when `$field` matches `$value` using `$operator`.
      * Client-side-only visibility — use `canSee()` for authorization.
@@ -211,6 +220,7 @@ abstract class BaseAction implements Actionable
             'disabled' => $this->disabled ?: null,
             'tooltip' => $this->tooltip,
             'fullWidth' => $this->isFullWidth ?: null,
+            'external' => $this->newTab ?: null,
             'dependOn' => $this->dependOn,
             ...$this->actionProps(),
         ], fn ($v) => $v !== null && $v !== false);
