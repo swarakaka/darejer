@@ -24,6 +24,19 @@ Wall times are *relative*; query counts are the load-bearing signal.
 
 ## Findings
 
+### 0. `AuditWriter::buffer()` — new opt-in helper (added 2026-05-10)
+
+`Darejer\Support\AuditWriter` now exposes `buffer(callable): mixed`. Inside
+the callable every call to `AuditWriter::write()` appends to an in-memory
+array; on success the rows flush in a single bulk INSERT into
+`audit_logs`, on exception the buffer is discarded, and nested
+`buffer()` calls passthrough so the outer scope owns the flush.
+
+Used by `syntax-crm`'s `PosCheckoutService::handle` to collapse 22
+per-save `audit_logs` inserts into one. Other hot paths that touch
+many auditable models (batch postings, importers) can opt in the same
+way. See `tests/Unit/AuditableTest.php` for the contract.
+
 ### Solid — keep it that way
 
 - **DataTable** rendering is at the floor (2 queries: count + page). Filters
