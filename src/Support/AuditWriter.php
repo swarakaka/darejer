@@ -32,6 +32,15 @@ final class AuditWriter
     private static ?bool $tableExists = null;
 
     /**
+     * Active in-memory row buffer when inside a {@see buffer()} call. Each
+     * write() appends here instead of inserting; the surrounding buffer()
+     * flushes them in one shot.
+     *
+     * @var ?list<array<string, mixed>>
+     */
+    private static ?array $buffer = null;
+
+    /**
      * @param  array<string, mixed>  $payload
      */
     public static function write(
@@ -47,7 +56,7 @@ final class AuditWriter
             return;
         }
 
-        DB::table('audit_logs')->insert([
+        $row = [
             'event' => $event,
             'subject_type' => $subjectType,
             'subject_id' => is_numeric($subjectId) ? (int) $subjectId : null,
@@ -59,7 +68,60 @@ final class AuditWriter
             'ip' => request()?->ip(),
             'user_agent' => substr((string) request()?->userAgent(), 0, 255),
             'created_at' => now(),
-        ]);
+        ];
+
+        if (self::$buffer !== null) {
+            self::$buffer[] = $row;
+
+            return;
+        }
+
+        DB::table('audit_logs')->insert($row);
+    }
+
+    /**
+     * Run a callable with audit writes batched into a single bulk INSERT
+     * at the end. Hot paths that touch many auditable models (POS
+     * checkout, batch postings) collapse N round-trips to 1.
+     *
+     * Semantics:
+     *   - Buffered rows flush once `$callback` returns successfully.
+     *   - If `$callback` throws, the buffer is discarded — no audit
+     *     trail of rolled-back work.
+     *   - Nested buffer() calls degrade to a passthrough so the outer
+     *     scope still owns the flush.
+     *   - Callers should run their DB transaction *inside* this
+     *     callable; the bulk insert then happens after commit, which
+     *     keeps audit consistency intact.
+     *
+     * @template T
+     *
+     * @param  callable():T  $callback
+     * @return T
+     */
+    public static function buffer(callable $callback): mixed
+    {
+        if (self::$buffer !== null) {
+            // Already buffering — let the outer scope own the flush.
+            return $callback();
+        }
+
+        self::$buffer = [];
+        try {
+            $result = $callback();
+        } catch (\Throwable $e) {
+            self::$buffer = null;
+            throw $e;
+        }
+
+        $rows = self::$buffer;
+        self::$buffer = null;
+
+        if ($rows !== [] && self::tableExists()) {
+            DB::table('audit_logs')->insert($rows);
+        }
+
+        return $result;
     }
 
     /**
@@ -70,6 +132,15 @@ final class AuditWriter
     public static function flushTableCheck(): void
     {
         self::$tableExists = null;
+    }
+
+    /**
+     * True when the writer is currently inside a {@see buffer()} block.
+     * Exposed for tests; production code should not branch on this.
+     */
+    public static function isBuffering(): bool
+    {
+        return self::$buffer !== null;
     }
 
     private static function tableExists(): bool

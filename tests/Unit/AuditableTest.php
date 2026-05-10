@@ -268,3 +268,88 @@ it('writes nothing when the audit_logs table does not exist', function (): void 
 
     expect(Schema::hasTable('audit_logs'))->toBeFalse();
 });
+
+// ─── buffer() ────────────────────────────────────────────────────────────────
+
+it('buffers audit writes and flushes once on success', function (): void {
+    $callCount = 0;
+    DB::listen(function ($query) use (&$callCount): void {
+        if (str_contains($query->sql, 'audit_logs')) {
+            $callCount++;
+        }
+    });
+
+    $result = AuditWriter::buffer(function () {
+        AuditableTestWidget::query()->create(['code' => 'W-001', 'name' => 'A']);
+        AuditableTestWidget::query()->create(['code' => 'W-002', 'name' => 'B']);
+        AuditableTestWidget::query()->create(['code' => 'W-003', 'name' => 'C']);
+
+        return 'done';
+    });
+
+    expect($result)->toBe('done');
+    expect(DB::table('audit_logs')->count())->toBe(3);
+    // 3 rows, but they should arrive via a single bulk INSERT.
+    $auditInserts = collect(DB::getQueryLog())
+        ->filter(fn ($q) => str_contains($q['query'] ?? '', 'audit_logs') && str_starts_with($q['query'] ?? '', 'insert'))
+        ->count();
+    expect($auditInserts)->toBeLessThanOrEqual(1);
+});
+
+it('discards the buffer when the callback throws', function (): void {
+    expect(fn () => AuditWriter::buffer(function () {
+        AuditableTestWidget::query()->create(['code' => 'W-001', 'name' => 'A']);
+        throw new RuntimeException('boom');
+    }))->toThrow(RuntimeException::class, 'boom');
+
+    expect(DB::table('audit_logs')->count())->toBe(0);
+    expect(AuditWriter::isBuffering())->toBeFalse();
+});
+
+it('writes immediately when buffer() is not active', function (): void {
+    AuditableTestWidget::query()->create(['code' => 'W-001', 'name' => 'A']);
+
+    expect(DB::table('audit_logs')->count())->toBe(1);
+    expect(AuditWriter::isBuffering())->toBeFalse();
+});
+
+it('treats nested buffer() as a passthrough so the outer scope flushes', function (): void {
+    AuditWriter::buffer(function () {
+        AuditableTestWidget::query()->create(['code' => 'W-001', 'name' => 'Outer']);
+
+        // Nested buffer() must not flush its own rows — the outer scope owns
+        // the single bulk insert.
+        AuditWriter::buffer(function () {
+            AuditableTestWidget::query()->create(['code' => 'W-002', 'name' => 'Inner']);
+            expect(AuditWriter::isBuffering())->toBeTrue();
+            // Nothing should have been flushed yet.
+            expect(DB::table('audit_logs')->count())->toBe(0);
+        });
+
+        // Still nothing — the outer is still buffering.
+        expect(DB::table('audit_logs')->count())->toBe(0);
+    });
+
+    expect(DB::table('audit_logs')->count())->toBe(2);
+    expect(AuditWriter::isBuffering())->toBeFalse();
+});
+
+it('emits no insert when the buffered block produces no audit rows', function (): void {
+    AuditWriter::buffer(function () {
+        // No auditable saves happen here.
+    });
+
+    expect(DB::table('audit_logs')->count())->toBe(0);
+});
+
+it('clears the buffering flag after a successful flush', function (): void {
+    AuditWriter::buffer(function () {
+        AuditableTestWidget::query()->create(['code' => 'W-001', 'name' => 'A']);
+    });
+
+    expect(AuditWriter::isBuffering())->toBeFalse();
+
+    // A subsequent un-buffered save should write inline.
+    AuditableTestWidget::query()->create(['code' => 'W-002', 'name' => 'B']);
+    expect(DB::table('audit_logs')->count())->toBe(2);
+});
