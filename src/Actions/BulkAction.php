@@ -20,6 +20,46 @@ class BulkAction extends BaseAction
         return new static($label);
     }
 
+    /**
+     * Soft-delete the selected rows. Posts to `$url` with `{ ids: [...] }`.
+     */
+    public static function delete(string $url): static
+    {
+        return static::make(__('Delete'))
+            ->icon('Trash2')
+            ->variant('destructive')
+            ->method('DELETE')
+            ->confirm(__('Are you sure you want to delete the selected records?'))
+            ->batchUrl($url);
+    }
+
+    /**
+     * Restore the selected soft-deleted rows. Used together with the
+     * `Filter::trashed()` filter set to "with" or "only".
+     */
+    public static function restore(string $url): static
+    {
+        return static::make(__('Restore'))
+            ->icon('RotateCcw')
+            ->method('PATCH')
+            ->confirm(__('Are you sure you want to restore the selected records?'))
+            ->batchUrl($url);
+    }
+
+    /**
+     * Permanently delete the selected rows. Only meaningful in the
+     * "Only deleted" view; surface alongside `Filter::trashed()`.
+     */
+    public static function forceDelete(string $url): static
+    {
+        return static::make(__('Delete permanently'))
+            ->icon('Trash')
+            ->variant('destructive')
+            ->method('DELETE')
+            ->confirm(__('Permanently delete the selected records? This cannot be undone.'))
+            ->batchUrl($url);
+    }
+
     public function batchUrl(string $url): static
     {
         $this->batchUrl = $url;

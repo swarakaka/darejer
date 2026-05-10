@@ -17,6 +17,8 @@ import {
   Pencil,
   Eye,
   Trash2,
+  Trash,
+  RotateCcw,
   MoreHorizontal,
   CheckCircle2,
   CalendarIcon,
@@ -51,6 +53,7 @@ import { Calendar } from '@/components/ui/calendar'
 import { CalendarDate, DateFormatter, getLocalTimeZone, parseDate } from '@internationalized/date'
 import type { DarejerAction } from '@/types/darejer'
 import useTranslation from '@/composables/useTranslation'
+import { evaluateDependOn } from '@/composables/useDependOn'
 
 defineOptions({ layout: AppLayout })
 
@@ -92,14 +95,29 @@ function isFilterActive(v: FilterValue): boolean {
   return Boolean(v.from) || Boolean(v.to)
 }
 
+interface DependOnCondition {
+  field: string
+  operator: string
+  value?: unknown
+}
+interface DependOnRule {
+  field?: string
+  operator?: string
+  value?: unknown
+  conditions?: DependOnCondition[]
+  logic?: 'and' | 'or'
+}
+
 interface GridRowAction {
   label: string
   icon?: string
   type: string
   urlPattern?: string
+  method?: string
   dialog?: boolean
   confirm?: string
   variant: string
+  dependOn?: DependOnRule
 }
 
 interface TableData {
@@ -391,13 +409,24 @@ function handleRowAction(action: GridRowAction, row: Record<string, unknown>) {
 function executeAction(action: GridRowAction, row: Record<string, unknown>) {
   if (!action.urlPattern) return
   const url = resolveUrl(action.urlPattern, row)
-  if (action.type === 'delete') {
+  const method = (action.method ?? (action.type === 'delete' ? 'DELETE' : 'GET')).toUpperCase()
+  if (method === 'DELETE') {
     router.delete(url)
+  } else if (method === 'PATCH') {
+    router.patch(url, {})
+  } else if (method === 'PUT') {
+    router.put(url, {})
+  } else if (method === 'POST') {
+    router.post(url, {})
   } else if (action.dialog) {
     router.visit(url, { data: { _dialog: '1' } })
   } else {
     router.visit(url)
   }
+}
+
+function rowActionsFor(row: Record<string, unknown>): GridRowAction[] {
+  return props.rowActions.filter((a) => evaluateDependOn(a.dependOn, row))
 }
 
 function executeConfirmed() {
@@ -448,7 +477,14 @@ function badgeLabel(col: GridColumn, value: unknown): string {
   return labels[key] ?? key
 }
 
-const iconMap: Record<string, unknown> = { Pencil, Eye, Trash2, MoreHorizontal }
+const iconMap: Record<string, unknown> = {
+  Pencil,
+  Eye,
+  Trash,
+  Trash2,
+  RotateCcw,
+  MoreHorizontal,
+}
 const resolveIcon = (name?: string) => (name ? (iconMap[name] ?? null) : null)
 
 const activeFilterEntries = computed(() =>
@@ -646,6 +682,21 @@ function clearFilter(field: string) {
               <SelectItem :value="ALL_SENTINEL">{{ __('All') }}</SelectItem>
               <SelectItem value="1">{{ __('Yes') }}</SelectItem>
               <SelectItem value="0">{{ __('No') }}</SelectItem>
+            </SelectContent>
+          </Select>
+
+          <Select
+            v-else-if="filter.type === 'trashed'"
+            :model-value="selectModelValue(filter.field)"
+            @update:model-value="(v: unknown) => onSelectChange(filter.field, v)"
+          >
+            <SelectTrigger :id="`filter-${filter.field}`">
+              <SelectValue :placeholder="__('Without deleted')" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem :value="ALL_SENTINEL">{{ __('Without deleted') }}</SelectItem>
+              <SelectItem value="with">{{ __('All') }}</SelectItem>
+              <SelectItem value="only">{{ __('Only deleted') }}</SelectItem>
             </SelectContent>
           </Select>
 
@@ -1011,7 +1062,7 @@ function clearFilter(field: string) {
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end" class="w-40">
                           <DropdownMenuItem
-                            v-for="action in rowActions"
+                            v-for="action in rowActionsFor(row)"
                             :key="action.label"
                             class="flex cursor-pointer items-center gap-2 text-sm"
                             :class="
@@ -1026,14 +1077,14 @@ function clearFilter(field: string) {
                               v-if="action.icon"
                               class="h-3.5 w-3.5 shrink-0"
                             />
-                            {{ action.label }}
+                            {{ __(action.label) }}
                           </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </template>
                     <template v-else>
                       <TooltipProvider :delay-duration="0">
-                        <Tooltip v-for="action in rowActions" :key="action.label">
+                        <Tooltip v-for="action in rowActionsFor(row)" :key="action.label">
                           <TooltipTrigger as-child>
                             <button
                               type="button"

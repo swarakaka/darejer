@@ -20,7 +20,9 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import {
   Save,
   X,
+  Trash,
   Trash2,
+  RotateCcw,
   ChevronDown,
   ExternalLink,
   Plus,
@@ -84,7 +86,9 @@ function openModalForm(action: DarejerAction) {
 const iconMap: Record<string, unknown> = {
   Save,
   X,
+  Trash,
   Trash2,
+  RotateCcw,
   ChevronDown,
   ExternalLink,
   Plus,
@@ -149,11 +153,18 @@ function executeAction(action: DarejerAction, skipConfirm = false) {
   if (action.type === 'BulkAction') {
     const target = action.batchUrl ?? action.url
     if (!target) return
-    router.post(
-      target,
-      { [action.batchParam ?? 'ids']: props.selected ?? [] },
-      { onSuccess: () => props.onBulkSuccess?.() },
-    )
+    const verb = (action.method ?? 'POST').toUpperCase()
+    const payload = { [action.batchParam ?? 'ids']: props.selected ?? [] }
+    const opts = { onSuccess: () => props.onBulkSuccess?.() }
+    if (verb === 'DELETE') {
+      router.delete(target, { ...opts, data: payload })
+    } else if (verb === 'PATCH') {
+      router.patch(target, payload, opts)
+    } else if (verb === 'PUT') {
+      router.put(target, payload, opts)
+    } else {
+      router.post(target, payload, opts)
+    }
     return
   }
 

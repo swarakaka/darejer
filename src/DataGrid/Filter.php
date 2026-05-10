@@ -55,6 +55,24 @@ class Filter
         return (new static($field))->type('boolean');
     }
 
+    /**
+     * Soft-delete scope filter. The field is a synthetic URL key (default
+     * `trashed`), not a model column. Recognised values:
+     *   ''     → withoutTrashed (default)
+     *   'with' → withTrashed (all rows)
+     *   'only' → onlyTrashed (deleted rows only)
+     *
+     * The DataTable applies the scope only when the model uses the
+     * `Illuminate\Database\Eloquent\SoftDeletes` trait; on other models it
+     * is silently ignored, so it's safe to keep in shared filter sets.
+     */
+    public static function trashed(string $field = 'trashed'): static
+    {
+        return (new static($field))
+            ->type('trashed')
+            ->label(__('Trashed'));
+    }
+
     public function label(string $label): static
     {
         $this->label = $label;

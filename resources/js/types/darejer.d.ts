@@ -113,6 +113,32 @@ export interface DarejerAction {
   [key: string]: unknown
 }
 
+// ─── DataTable row action ────────────────────────────────────────────────
+// Serialized shape from Darejer\DataGrid\RowAction::toArray().
+export interface DataTableRowAction {
+  label: string
+  icon?: string
+  type: string // 'link' | 'delete' | 'restore' | 'forceDelete' | …
+  urlPattern?: string
+  method?: string // HTTP verb when not GET
+  dialog?: boolean
+  confirm?: string
+  variant: string
+  dependOn?: DependOnRule // per-row visibility against the row's data
+}
+
+// ─── DataTable filter ────────────────────────────────────────────────────
+// `'trashed'` is a synthetic scope filter — see Darejer\DataGrid\Filter::trashed().
+export type DataTableFilterType = 'text' | 'select' | 'boolean' | 'date' | 'daterange' | 'trashed'
+
+export interface DataTableFilterDef {
+  field: string
+  label: string
+  type: DataTableFilterType
+  options?: { value: string; label: string }[]
+  placeholder?: string
+}
+
 // ── DependOn ──────────────────────────────────────────────────────────────
 export type DependOnOperator =
   | 'eq'

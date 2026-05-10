@@ -8,6 +8,7 @@ use Darejer\DataGrid\Filter;
 use Darejer\DataGrid\RowAction;
 use Darejer\Screen\Contracts\Actionable;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -464,13 +465,20 @@ class DataTable
         foreach ($this->filters as $filter) {
             $filterArr = $filter->toArray();
             $field = $filterArr['field'];
+            $type = $filterArr['type'];
             $value = $request->get($field);
+
+            if ($type === 'trashed') {
+                $this->applyTrashedScope($query, $value);
+
+                continue;
+            }
 
             if ($value === null || $value === '') {
                 continue;
             }
 
-            match ($filterArr['type']) {
+            match ($type) {
                 'text' => $query->where($field, 'like', "%{$value}%"),
                 'select' => $query->where($field, $value),
                 'boolean' => $query->where($field, (bool) $value),
@@ -524,6 +532,26 @@ class DataTable
         }
 
         return (float) $value;
+    }
+
+    /**
+     * Apply the soft-delete scope chosen by the trashed filter.
+     *
+     * Silently no-ops on models that don't use the SoftDeletes trait so the
+     * filter can live in shared filter sets without per-model gating.
+     */
+    protected function applyTrashedScope(Builder $query, mixed $value): void
+    {
+        $uses = class_uses_recursive($this->modelClass);
+        if (! in_array(SoftDeletes::class, $uses, true)) {
+            return;
+        }
+
+        match ($value) {
+            'with' => $query->withTrashed(),
+            'only' => $query->onlyTrashed(),
+            default => null, // empty / unknown → default scope (withoutTrashed)
+        };
     }
 
     protected function applyDateRange(Builder $query, string $field, mixed $value): void
