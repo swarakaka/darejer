@@ -51,7 +51,7 @@ import {
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Calendar } from '@/components/ui/calendar'
 import { CalendarDate, DateFormatter, getLocalTimeZone, parseDate } from '@internationalized/date'
-import type { DarejerAction } from '@/types/darejer'
+import type { DarejerAction, DependOnRule } from '@/types/darejer'
 import useTranslation from '@/composables/useTranslation'
 import { evaluateDependOn } from '@/composables/useDependOn'
 
@@ -93,19 +93,6 @@ function defaultFilterValue(filter: FilterDef): FilterValue {
 function isFilterActive(v: FilterValue): boolean {
   if (typeof v === 'string') return v !== ''
   return Boolean(v.from) || Boolean(v.to)
-}
-
-interface DependOnCondition {
-  field: string
-  operator: string
-  value?: unknown
-}
-interface DependOnRule {
-  field?: string
-  operator?: string
-  value?: unknown
-  conditions?: DependOnCondition[]
-  logic?: 'and' | 'or'
 }
 
 interface GridRowAction {
