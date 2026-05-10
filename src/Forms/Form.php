@@ -37,7 +37,7 @@ use Inertia\Response;
  *         return $this->form()
  *             ->title(__('New Quotation'))
  *             ->record(new SalesQuotation([...]))
- *             ->save(route('sales-quotations.store'), 'POST')
+ *             ->save(route('sales_quotations.store'), 'POST')
  *             ->renderAsScreen();
  *     }
  */

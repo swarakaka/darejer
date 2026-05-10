@@ -129,7 +129,7 @@ export function useAlerts() {
 
   function markAllRead(): Promise<void> {
     return ackHttp
-      .post(route('darejer.alerts.read-all').toString(), {
+      .post(route('darejer.alerts.read_all').toString(), {
         onSuccess: () => {
           const now = new Date().toISOString()
           items.value = items.value.map((a) => (a.read_at ? a : { ...a, read_at: now }))

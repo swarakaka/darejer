@@ -24,7 +24,7 @@ class AuditLogController extends DarejerController
 {
     protected ?string $resource = 'audit-log';
 
-    protected ?string $routeName = 'darejer.governance.audit-log';
+    protected ?string $routeName = 'darejer.governance.audit_log';
 
     protected ?string $parameter = 'audit_log';
 

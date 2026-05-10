@@ -62,7 +62,7 @@ Route::prefix(config('darejer.route_prefix', 'darejer'))
         Route::prefix('alerts')->name('alerts.')->group(function () {
             Route::get('/', [AlertsController::class, 'index'])->name('index');
             Route::get('/count', [AlertsController::class, 'count'])->name('count');
-            Route::post('/read-all', [AlertsController::class, 'markAllRead'])->name('read-all');
+            Route::post('/read-all', [AlertsController::class, 'markAllRead'])->name('read_all');
             Route::delete('/clear', [AlertsController::class, 'clear'])->name('clear');
             Route::post('/{id}/read', [AlertsController::class, 'markRead'])
                 ->whereNumber('id')->name('read');

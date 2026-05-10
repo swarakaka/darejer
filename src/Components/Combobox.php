@@ -164,7 +164,7 @@ class Combobox extends BaseComponent
     /**
      * Try to resolve the conventional `<resource>.forms` route name from
      * the bound model — for `CustomerAccount` this yields
-     * `customer-accounts.forms`. Falls back through lower-case variants and
+     * `customer_accounts.forms`. Falls back through lower-case variants and
      * returns null when no match is registered.
      */
     protected function guessFormsRouteName(): ?string
@@ -175,6 +175,8 @@ class Combobox extends BaseComponent
 
         $modelBase = class_basename($this->modelClass);
         $candidates = array_unique([
+            Str::plural(Str::snake($modelBase)).'.forms',
+            Str::snake($modelBase).'.forms',
             Str::plural(Str::kebab($modelBase)).'.forms',
             Str::kebab($modelBase).'.forms',
             Str::plural(strtolower($modelBase)).'.forms',

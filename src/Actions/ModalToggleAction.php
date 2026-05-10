@@ -24,7 +24,7 @@ use Darejer\Screen\Contracts\Componentable;
  *
  *     Example:
  *       ModalToggleAction::make('Soft-Close Period')
- *           ->url(route('periods.soft-close', $id))
+ *           ->url(route('periods.soft_close', $id))
  *           ->method('POST')
  *           ->form([
  *               Textarea::make('reason')->required(),
