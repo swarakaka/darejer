@@ -157,7 +157,9 @@ const booleanState = computed<boolean>(() => {
   const v = rawValue.value
   if (typeof v === 'boolean') return v
   if (typeof v === 'number') return v !== 0
-  if (typeof v === 'string') return ['1', 'true', 'yes', 'on'].includes(v.toLowerCase())
+  if (typeof v === 'string') {
+    return ['1', 'true', 'yes', 'on', 'active', 'enabled'].includes(v.toLowerCase())
+  }
   return false
 })
 
