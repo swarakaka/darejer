@@ -39,6 +39,7 @@ interface TableCol {
   imageField?: string
   optionFields?: string[]
   fillFrom?: Record<string, string> | null
+  fillFromCap?: Record<string, string> | null
   filtersFrom?: Record<string, string> | null
 }
 
@@ -217,11 +218,31 @@ function onComboboxUpdate(row: TableRow, field: string, value: unknown) {
 function onComboboxSelect(row: TableRow, col: TableCol, record: Record<string, unknown>) {
   const map = col.fillFrom
   if (map) {
+    const caps = col.fillFromCap ?? {}
+    const parent = props.formData ?? props.record
     for (const [rowField, recordField] of Object.entries(map)) {
       const v = record[recordField]
-      if (v !== undefined && v !== null) {
-        row[rowField] = v
+      if (v === undefined || v === null) continue
+
+      const capField = caps[rowField]
+      if (capField) {
+        const parentTotal = Number(parent[capField])
+        if (Number.isFinite(parentTotal)) {
+          const otherSum = rows.value.reduce((acc, r) => {
+            if (r._id === row._id) return acc
+            const n = Number(r[rowField])
+            return Number.isFinite(n) ? acc + n : acc
+          }, 0)
+          const remaining = parentTotal - otherSum
+          const incoming = Number(v)
+          if (Number.isFinite(incoming)) {
+            row[rowField] = Math.max(0, Math.min(incoming, remaining))
+            continue
+          }
+        }
       }
+
+      row[rowField] = v
     }
   }
   applyComputed(row)

@@ -55,6 +55,9 @@ class Column
     protected array $fillFrom = [];
 
     /** @var array<string,string> */
+    protected array $fillFromCap = [];
+
+    /** @var array<string,string> */
     protected array $filtersFrom = [];
 
     protected ?string $compute = null;
@@ -237,6 +240,21 @@ class Column
     }
 
     /**
+     * Cap auto-filled values by a sibling form field minus the sum of the same
+     * row field across other rows. Used to keep allocation amounts from
+     * exceeding a parent total — e.g. cap allocation `amount` by the payment's
+     * `amount` minus what is already allocated to other invoices.
+     *
+     * @param  array<string,string>  $mapping  rowColumnField => formField
+     */
+    public function fillFromCap(array $mapping): static
+    {
+        $this->fillFromCap = $mapping;
+
+        return $this;
+    }
+
+    /**
      * Filter combobox results by sibling form fields. The mapping is
      * `filterParam => formField` — at fetch time the cell reads each form
      * field from the surrounding form data and sends it as `filters[param]`.
@@ -317,6 +335,7 @@ class Column
                 'subLabelField' => $this->subLabelField,
                 'imageField' => $this->imageField,
                 'fillFrom' => $this->fillFrom ?: null,
+                'fillFromCap' => $this->fillFromCap ?: null,
                 'filtersFrom' => $this->filtersFrom ?: null,
                 'optionFields' => $extras,
             ]);
