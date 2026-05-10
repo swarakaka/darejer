@@ -92,7 +92,7 @@ it('renders the Governance/AuditLog page with rows scoped to the active company'
     $mineB = seedAuditRow(['event' => 'document.reversed']);
     seedAuditRow(['company_id' => 999]); // different company — must not appear
 
-    $request = Request::create('/darejer/governance/audit-log', 'GET');
+    $request = Request::create('/darejer/admin/audit-log', 'GET');
 
     $response = (new AuditLogController)->index($request);
     $page = inertiaPage($response, $request);
@@ -111,7 +111,7 @@ it('filters rows by event prefix', function (): void {
     seedAuditRow(['event' => 'document.reversed']);
     seedAuditRow(['event' => 'lead.qualified']);
 
-    $request = Request::create('/darejer/governance/audit-log', 'GET', ['event' => 'document']);
+    $request = Request::create('/darejer/admin/audit-log', 'GET', ['event' => 'document']);
 
     $response = (new AuditLogController)->index($request);
     $page = inertiaPage($response, $request);
@@ -127,7 +127,7 @@ it('filters rows by subject_type, subject_id, and causer_id', function (): void 
     seedAuditRow(['subject_type' => 'X\\Y', 'subject_id' => 1, 'causer_id' => 7]);
     seedAuditRow(['subject_type' => 'A\\B', 'subject_id' => 1, 'causer_id' => 9]);
 
-    $request = Request::create('/darejer/governance/audit-log', 'GET', [
+    $request = Request::create('/darejer/admin/audit-log', 'GET', [
         'subject_type' => 'A\\B',
         'subject_id' => 1,
         'causer_id' => 7,
@@ -145,7 +145,7 @@ it('filters by date range using inclusive endpoints', function (): void {
     seedAuditRow(['event' => 'inrange', 'created_at' => '2026-04-15 23:00:00']);
     seedAuditRow(['event' => 'future', 'created_at' => '2026-04-30 10:00:00']);
 
-    $request = Request::create('/darejer/governance/audit-log', 'GET', [
+    $request = Request::create('/darejer/admin/audit-log', 'GET', [
         'from' => '2026-04-10',
         'to' => '2026-04-20',
     ]);
@@ -161,7 +161,7 @@ it('exposes distinct event and subject type options for filter dropdowns', funct
     seedAuditRow(['event' => 'document.posted', 'subject_type' => 'A\\B']);
     seedAuditRow(['event' => 'lead.qualified', 'subject_type' => 'L\\Lead']);
 
-    $request = Request::create('/darejer/governance/audit-log', 'GET');
+    $request = Request::create('/darejer/admin/audit-log', 'GET');
 
     $response = (new AuditLogController)->index($request);
     $page = inertiaPage($response, $request);
@@ -181,7 +181,7 @@ it('joins users to expose the causer username on each row', function (): void {
     seedAuditRow(['causer_id' => $causer->id]);
     seedAuditRow(['causer_id' => null]);
 
-    $request = Request::create('/darejer/governance/audit-log', 'GET');
+    $request = Request::create('/darejer/admin/audit-log', 'GET');
     $response = (new AuditLogController)->index($request);
     $page = inertiaPage($response, $request);
 
@@ -193,7 +193,7 @@ it('joins users to expose the causer username on each row', function (): void {
 it('exposes the human summary in the row props', function (): void {
     seedAuditRow(['summary' => "Created Document 'DOC-1'"]);
 
-    $request = Request::create('/darejer/governance/audit-log', 'GET');
+    $request = Request::create('/darejer/admin/audit-log', 'GET');
     $response = (new AuditLogController)->index($request);
     $page = inertiaPage($response, $request);
 
@@ -211,7 +211,7 @@ it('aborts with 403 when the user lacks audit.log.view permission', function ():
         }
     });
 
-    $request = Request::create('/darejer/governance/audit-log', 'GET');
+    $request = Request::create('/darejer/admin/audit-log', 'GET');
 
     expect(fn () => (new AuditLogController)->index($request))
         ->toThrow(HttpException::class);

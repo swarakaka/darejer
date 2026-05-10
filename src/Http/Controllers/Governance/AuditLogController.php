@@ -24,11 +24,11 @@ class AuditLogController extends DarejerController
 {
     protected ?string $resource = 'audit-log';
 
-    protected ?string $routeName = 'darejer.governance.audit_log';
+    protected ?string $routeName = 'darejer.admin.audit_log';
 
     protected ?string $parameter = 'audit_log';
 
-    protected ?string $routePrefix = 'darejer/governance';
+    protected ?string $routePrefix = 'darejer/admin';
 
     /** Hard cap on rows returned per request. */
     private const ROW_LIMIT = 500;
