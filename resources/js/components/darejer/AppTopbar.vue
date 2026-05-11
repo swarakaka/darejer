@@ -47,7 +47,7 @@ function switchLanguage(locale: string) {
   router.post(
     route('darejer.locale.update').toString(),
     { locale },
-    { preserveScroll: true, preserveState: true },
+    { preserveScroll: true },
   )
 }
 
