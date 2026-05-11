@@ -155,18 +155,19 @@ class Column
      * Color the plain-text cell value based on a sibling field on the row.
      *
      * `$field` is the dot-notated path on the row whose value selects the
-     * variant from `$map` (e.g. `'balance_state' => ['debit' => 'danger',
-     * 'credit' => 'success']`). Variants follow the same `success`/`warning`/
-     * `danger`/`info`/`neutral` palette as `badge()`.
+     * variant from `$map`. Accepts either a `[value => color]` array or a
+     * backed-enum class string that exposes per-case colors via `color()`
+     * methods or a static `colors()` helper — same resolution as `badge()`.
      *
-     * No-op for badge columns (those have their own coloring).
+     * Variants follow the `success`/`warning`/`danger`/`info`/`neutral`
+     * palette. No-op for badge columns (those have their own coloring).
      *
-     * @param  array<string, string>  $map
+     * @param  array<string, string>|class-string<BackedEnum>  $colorMap
      */
-    public function textColorBy(string $field, array $map): static
+    public function textColorBy(string $field, array|string $colorMap): static
     {
         $this->textColorBy = $field;
-        $this->textColorMap = json_encode($map);
+        $this->textColorMap = json_encode(EnumOptions::colors($colorMap));
 
         return $this;
     }
