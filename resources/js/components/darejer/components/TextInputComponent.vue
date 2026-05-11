@@ -13,8 +13,22 @@ const props = defineProps<{
 
 const emit = defineEmits<{ (e: 'update', name: string, value: unknown): void }>()
 
-const value = ref(
-  (props.formData ?? props.record)[props.component.name] ?? props.component.default ?? '',
+const decimals = computed(() =>
+  typeof props.component.decimals === 'number' ? (props.component.decimals as number) : 0,
+)
+
+function formatNumeric(raw: unknown): string {
+  if (raw === '' || raw === null || raw === undefined) return ''
+  const n = Number(raw)
+  if (!Number.isFinite(n)) return String(raw)
+  return n.toFixed(decimals.value)
+}
+
+const initialRaw =
+  (props.formData ?? props.record)[props.component.name] ?? props.component.default ?? ''
+
+const value = ref<string | number>(
+  props.component.inputType === 'number' ? formatNumeric(initialRaw) : (initialRaw as string),
 )
 
 function onInput(e: Event) {
@@ -22,10 +36,6 @@ function onInput(e: Event) {
   value.value = val
   emit('update', props.component.name, val)
 }
-
-const decimals = computed(() =>
-  typeof props.component.decimals === 'number' ? (props.component.decimals as number) : 0,
-)
 
 const numberStep = computed(() => {
   if (props.component.inputType !== 'number') return undefined
@@ -36,9 +46,7 @@ function onBlur(e: Event) {
   if (props.component.inputType !== 'number') return
   const raw = (e.target as HTMLInputElement).value
   if (raw === '' || raw === null) return
-  const n = Number(raw)
-  if (!Number.isFinite(n)) return
-  const formatted = n.toFixed(decimals.value)
+  const formatted = formatNumeric(raw)
   if (formatted === raw) return
   value.value = formatted
   emit('update', props.component.name, formatted)
