@@ -221,6 +221,61 @@ it('serializes a Display boolean with default labels', function () {
         ->toHaveKey('booleanFalseLabel', 'No');
 });
 
+it('serializes a Display with a static link url', function () {
+    $array = Display::make('voucher_no')
+        ->link('/journal-vouchers/42')
+        ->toArray();
+
+    expect($array)
+        ->toHaveKey('url', '/journal-vouchers/42')
+        ->not->toHaveKey('external');
+});
+
+it('resolves a Display link closure against the parent record', function () {
+    $component = Display::make('journal_voucher.voucher_no')
+        ->link(fn ($record) => $record?->journal_voucher_id
+            ? "/journal-vouchers/{$record->journal_voucher_id}"
+            : null);
+
+    $record = new class extends Model
+    {
+        protected $guarded = [];
+    };
+    $record->journal_voucher_id = 7;
+
+    $component->withVisibilityRecord($record);
+
+    expect($component->toArray())
+        ->toHaveKey('url', '/journal-vouchers/7');
+});
+
+it('omits the Display url key when the closure returns null', function () {
+    $component = Display::make('journal_voucher.voucher_no')
+        ->link(fn ($record) => $record?->journal_voucher_id
+            ? "/journal-vouchers/{$record->journal_voucher_id}"
+            : null);
+
+    $record = new class extends Model
+    {
+        protected $guarded = [];
+    };
+
+    $component->withVisibilityRecord($record);
+
+    expect($component->toArray())
+        ->not->toHaveKey('url');
+});
+
+it('marks a Display link as external when requested', function () {
+    $array = Display::make('homepage')
+        ->link('https://example.com', external: true)
+        ->toArray();
+
+    expect($array)
+        ->toHaveKey('url', 'https://example.com')
+        ->toHaveKey('external', true);
+});
+
 it('serializes a Money component with default decimals and allowNegative', function () {
     $array = Money::make('amount')->label('Amount')->toArray();
 

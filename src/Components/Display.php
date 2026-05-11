@@ -3,7 +3,9 @@
 namespace Darejer\Components;
 
 use BackedEnum;
+use Closure;
 use Darejer\Support\EnumOptions;
+use Illuminate\Database\Eloquent\Model;
 
 /**
  * A read-only display field used on Show screens. Renders a value using the
@@ -16,6 +18,11 @@ class Display extends BaseComponent
 {
     /** @var DisplayType */
     protected string $displayType = 'text';
+
+    /** Static URL string or Closure(record, user) returning a URL (or null). */
+    protected string|Closure|null $url = null;
+
+    protected bool $external = false;
 
     /** @var array<string, string>|null Map of value → badge variant. */
     protected ?array $badgeMap = null;
@@ -158,6 +165,45 @@ class Display extends BaseComponent
         return $this;
     }
 
+    /**
+     * Render the value as a clickable link. The frontend wraps text-style
+     * displays (text/date/datetime/number/money) in an Inertia `<Link>` for
+     * internal URLs, or an `<a target="_blank">` when `$external` is true.
+     * Badge and boolean displays are not wrapped — their visual semantics
+     * already imply state, not navigation.
+     *
+     *   Display::make('journal_voucher.voucher_no')
+     *       ->link(fn ($record) => route('journal_vouchers.show', $record->journal_voucher_id))
+     *
+     * The closure receives the parent screen's record and the authenticated
+     * user (mirroring `visible()`). Return `null` to render without a link
+     * — useful when a related id may be missing.
+     *
+     * @param  string|Closure(Model|array|null $record, mixed $user): ?string  $url
+     */
+    public function link(string|Closure $url, bool $external = false): static
+    {
+        $this->url = $url;
+        $this->external = $external;
+
+        return $this;
+    }
+
+    protected function resolveUrl(): ?string
+    {
+        if ($this->url === null) {
+            return null;
+        }
+
+        if ($this->url instanceof Closure) {
+            $resolved = ($this->url)($this->visibilityRecord, auth()->user());
+
+            return $resolved === null ? null : (string) $resolved;
+        }
+
+        return $this->url;
+    }
+
     protected function componentType(): string
     {
         return 'Display';
@@ -179,6 +225,8 @@ class Display extends BaseComponent
             'suffix' => $this->suffix,
             'emptyText' => $this->emptyText,
             'translatable' => $this->translatable ?: null,
+            'url' => $this->resolveUrl(),
+            'external' => $this->external ?: null,
         ];
     }
 }

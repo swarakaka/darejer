@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
+import { Link } from '@inertiajs/vue3'
 import { Badge } from '@/components/ui/badge'
 import FieldWrapper from '@/components/darejer/FieldWrapper.vue'
 import useTranslation from '@/composables/useTranslation'
@@ -209,6 +210,29 @@ const badgeLabel = computed<string>(() => {
   }
   return String(rawValue.value ?? '')
 })
+
+// ── Link wrapper ─────────────────────────────────────────────────────────────
+// When PHP supplies `url`, wrap text-style values (text/date/datetime/number/
+// money) in an Inertia `<Link>` for internal navigation, or a plain `<a>` for
+// external URLs. Badge/boolean keep their state-only semantics — they're not
+// linked. When `url` is unset we render a `<span>` so the layout is identical
+// to the non-link case.
+const linkTag = computed<typeof Link | 'a' | 'span'>(() => {
+  if (!props.component.url) return 'span'
+  return props.component.external ? 'a' : Link
+})
+
+const linkAttrs = computed<Record<string, string>>(() => {
+  if (!props.component.url) return {}
+  const href = String(props.component.url)
+  return props.component.external
+    ? { href, target: '_blank', rel: 'noopener noreferrer' }
+    : { href }
+})
+
+const linkClass = computed<string | undefined>(() =>
+  props.component.url ? 'text-brand-700 hover:underline' : undefined,
+)
 </script>
 
 <template>
@@ -238,36 +262,56 @@ const badgeLabel = computed<string>(() => {
       </Badge>
 
       <!-- Date -->
-      <span v-else-if="displayType === 'date'" class="tabular-nums">
+      <component
+        :is="linkTag"
+        v-else-if="displayType === 'date'"
+        v-bind="linkAttrs"
+        :class="['tabular-nums', linkClass]"
+      >
         {{ dateFormatted }}
-      </span>
+      </component>
 
       <!-- Date+Time -->
-      <span v-else-if="displayType === 'datetime'" class="tabular-nums">
+      <component
+        :is="linkTag"
+        v-else-if="displayType === 'datetime'"
+        v-bind="linkAttrs"
+        :class="['tabular-nums', linkClass]"
+      >
         {{ dateTimeFormatted }}
-      </span>
+      </component>
 
       <!-- Number -->
-      <span v-else-if="displayType === 'number'" class="tabular-nums">
+      <component
+        :is="linkTag"
+        v-else-if="displayType === 'number'"
+        v-bind="linkAttrs"
+        :class="['tabular-nums', linkClass]"
+      >
         <span v-if="component.prefix" class="me-1 text-ink-500">{{ component.prefix }}</span>
         {{ numberFormatted }}
         <span v-if="component.suffix" class="ms-1 text-ink-500">{{ component.suffix }}</span>
-      </span>
+      </component>
 
       <!-- Money -->
-      <span v-else-if="displayType === 'money'" class="tabular-nums">
+      <component
+        :is="linkTag"
+        v-else-if="displayType === 'money'"
+        v-bind="linkAttrs"
+        :class="['tabular-nums', linkClass]"
+      >
         <span v-if="component.prefix" class="me-1 text-ink-500">{{ component.prefix }}</span>
         {{ numberFormatted }}
         <span v-if="moneyCurrencyCode" class="ms-1 text-ink-500">{{ moneyCurrencyCode }}</span>
         <span v-else-if="component.suffix" class="ms-1 text-ink-500">{{ component.suffix }}</span>
-      </span>
+      </component>
 
       <!-- Plain text (default) -->
-      <span v-else>
+      <component :is="linkTag" v-else v-bind="linkAttrs" :class="linkClass">
         <span v-if="component.prefix" class="me-1 text-ink-500">{{ component.prefix }}</span>
         {{ rawValue }}
         <span v-if="component.suffix" class="ms-1 text-ink-500">{{ component.suffix }}</span>
-      </span>
+      </component>
     </div>
   </FieldWrapper>
 </template>
