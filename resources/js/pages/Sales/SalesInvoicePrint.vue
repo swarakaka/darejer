@@ -34,10 +34,10 @@ interface Invoice {
   status: string
   posting_status: string
   payment_status: string
-  company: { code: string; name: Translatable; legal_name: Translatable; address: Translatable; tax_id: string | null; phone: string | null; email: string | null } | null
+  company: { code: string; name: Translatable; legal_name: Translatable; address: Translatable; tax_id: string | null; mobile: string | null; email: string | null } | null
   branch: { code: string; name: Translatable } | null
   department: { code: string; name: Translatable } | null
-  customer_account: { code: string; name: Translatable; legal_name: Translatable; tax_id: string | null; vat_id: string | null; email: string | null; phone: string | null } | null
+  customer_account: { code: string; name: Translatable; legal_name: Translatable; tax_id: string | null; vat_id: string | null; email: string | null; mobile: string | null } | null
   contact: { full_name: string } | null
   sales_order: { voucher_no: string } | null
   delivery_note: { voucher_no: string } | null
@@ -82,9 +82,9 @@ onMounted(() => {
         <div class="text-[20px] font-bold">{{ localized(invoice.company?.name) }}</div>
         <div v-if="invoice.company?.legal_name" class="text-[11px]">{{ localized(invoice.company?.legal_name) }}</div>
         <div v-if="invoice.company?.address" class="whitespace-pre-line text-[11px]">{{ localized(invoice.company?.address) }}</div>
-        <div v-if="invoice.company?.phone || invoice.company?.email" class="text-[11px]">
-          <span v-if="invoice.company?.phone">{{ invoice.company?.phone }}</span>
-          <span v-if="invoice.company?.phone && invoice.company?.email"> · </span>
+        <div v-if="invoice.company?.mobile || invoice.company?.email" class="text-[11px]">
+          <span v-if="invoice.company?.mobile">{{ invoice.company?.mobile }}</span>
+          <span v-if="invoice.company?.mobile && invoice.company?.email"> · </span>
           <span v-if="invoice.company?.email">{{ invoice.company?.email }}</span>
         </div>
         <div v-if="invoice.company?.tax_id" class="text-[11px]">{{ __('Tax ID') }}: {{ invoice.company?.tax_id }}</div>
@@ -108,7 +108,7 @@ onMounted(() => {
         <div v-if="invoice.customer_account?.tax_id" class="text-[11px]">{{ __('Tax ID') }}: {{ invoice.customer_account?.tax_id }}</div>
         <div v-if="invoice.customer_account?.vat_id" class="text-[11px]">{{ __('VAT ID') }}: {{ invoice.customer_account?.vat_id }}</div>
         <div v-if="invoice.customer_account?.email" class="text-[11px]">{{ invoice.customer_account?.email }}</div>
-        <div v-if="invoice.customer_account?.phone" class="text-[11px]">{{ invoice.customer_account?.phone }}</div>
+        <div v-if="invoice.customer_account?.mobile" class="text-[11px]">{{ invoice.customer_account?.mobile }}</div>
       </div>
       <div>
         <div class="mb-1 text-[10px] font-semibold uppercase tracking-wide text-gray-600">{{ __('Details') }}</div>

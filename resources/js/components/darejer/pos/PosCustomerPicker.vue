@@ -17,7 +17,7 @@ interface Customer {
   id: number
   code: string
   name: Record<string, string> | string
-  phone?: string | null
+  mobile?: string | null
 }
 
 const props = defineProps<{
@@ -40,20 +40,20 @@ const http = useHttp({ q: '' } as any) as unknown as Record<string, unknown> & {
   get(url: string, opts?: object): Promise<unknown>
 }
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const quickHttp = useHttp({ phone: '', name: '' } as any) as unknown as Record<string, unknown> & {
+const quickHttp = useHttp({ mobile: '', name: '' } as any) as unknown as Record<string, unknown> & {
   processing: boolean
   post(url: string, opts?: object): Promise<unknown>
 }
 
-// A "phone-ish" string is what the picker treats as a candidate for quick-add
+// A "mobile-ish" string is what the picker treats as a candidate for quick-add
 // when no match is found. Six chars is roughly the shortest mobile prefix that
 // is still useful as a contact handle.
-const phoneRegex = /^[\d\s+\-()]{6,}$/
+const mobileRegex = /^[\d\s+\-()]{6,}$/
 
-const isPhoneTerm = computed(() => phoneRegex.test(term.value.trim()))
+const isMobileTerm = computed(() => mobileRegex.test(term.value.trim()))
 const trimmedTerm = computed(() => term.value.trim())
 const noResults = computed(() => trimmedTerm.value !== '' && customers.value.length === 0)
-const canQuickAdd = computed(() => Boolean(props.quickAddUrl) && noResults.value && isPhoneTerm.value)
+const canQuickAdd = computed(() => Boolean(props.quickAddUrl) && noResults.value && isMobileTerm.value)
 
 let lastTerm = ''
 async function load() {
@@ -97,7 +97,7 @@ function pickWalkIn() {
 
 function quickAdd() {
   if (!props.quickAddUrl || !canQuickAdd.value) return
-  quickHttp.phone = trimmedTerm.value
+  quickHttp.mobile = trimmedTerm.value
   quickHttp.name = ''
   quickHttp.post(props.quickAddUrl, {
     onSuccess: (response: unknown) => {
@@ -126,7 +126,7 @@ function quickAdd() {
         <Phone class="absolute start-3 top-1/2 size-4 -translate-y-1/2 text-ink-400" />
         <Input
           v-model="term"
-          :placeholder="__('Phone, code or name…')"
+          :placeholder="__('Mobile, code or name…')"
           class="h-12 ps-9 text-[15px]"
           autofocus
           @keydown.escape="pickWalkIn"
@@ -144,7 +144,7 @@ function quickAdd() {
           <div class="text-[15px] font-medium">{{ localized(c.name) }}</div>
           <div class="flex items-center gap-2 text-[12px] text-ink-500">
             <span>{{ c.code }}</span>
-            <span v-if="c.phone">· {{ c.phone }}</span>
+            <span v-if="c.mobile">· {{ c.mobile }}</span>
           </div>
         </button>
         <div v-if="noResults && !canQuickAdd" class="p-8 text-center text-[14px] text-ink-500">
@@ -160,7 +160,7 @@ function quickAdd() {
           @click="quickAdd"
         >
           <UserPlus class="size-4" />
-          {{ __('Quick add :phone', { phone: trimmedTerm }) }}
+          {{ __('Quick add :mobile', { mobile: trimmedTerm }) }}
         </Button>
       </div>
 
