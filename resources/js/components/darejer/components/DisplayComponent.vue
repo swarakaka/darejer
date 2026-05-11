@@ -222,7 +222,7 @@ const linkTag = computed<typeof Link | 'a' | 'span'>(() => {
   return props.component.external ? 'a' : Link
 })
 
-const linkAttrs = computed<Record<string, string>>(() => {
+const linkAttrs = computed<Partial<Record<'href' | 'target' | 'rel', string>>>(() => {
   if (!props.component.url) return {}
   const href = String(props.component.url)
   return props.component.external
