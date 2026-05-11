@@ -36,6 +36,9 @@ class BulkAction extends BaseAction
     /**
      * Restore the selected soft-deleted rows. Used together with the
      * `Filter::trashed()` filter set to "with" or "only".
+     *
+     * Hidden by default unless the trashed filter is showing trashed rows —
+     * restoring is meaningless against the default `withoutTrashed()` view.
      */
     public static function restore(string $url): static
     {
@@ -43,12 +46,15 @@ class BulkAction extends BaseAction
             ->icon('RotateCcw')
             ->method('PATCH')
             ->confirm(__('Are you sure you want to restore the selected records?'))
-            ->batchUrl($url);
+            ->batchUrl($url)
+            ->dependOnIn('trashed', ['with', 'only']);
     }
 
     /**
      * Permanently delete the selected rows. Only meaningful in the
      * "Only deleted" view; surface alongside `Filter::trashed()`.
+     *
+     * Hidden by default unless the trashed filter is set to "only".
      */
     public static function forceDelete(string $url): static
     {
@@ -57,7 +63,8 @@ class BulkAction extends BaseAction
             ->variant('destructive')
             ->method('DELETE')
             ->confirm(__('Permanently delete the selected records? This cannot be undone.'))
-            ->batchUrl($url);
+            ->batchUrl($url)
+            ->dependOnIn('trashed', ['only']);
     }
 
     public function batchUrl(string $url): static

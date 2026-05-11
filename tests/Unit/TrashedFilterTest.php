@@ -183,20 +183,30 @@ describe('BulkAction soft-delete factories', function () {
         ]);
     });
 
-    it('restore() emits a PATCH BulkAction', function () {
+    it('restore() emits a PATCH BulkAction gated on the trashed filter', function () {
         $serialized = BulkAction::restore('/items/bulk-restore')->toArray();
 
         expect($serialized['method'])->toBe('PATCH')
-            ->and($serialized['batchUrl'])->toBe('/items/bulk-restore');
+            ->and($serialized['batchUrl'])->toBe('/items/bulk-restore')
+            ->and($serialized['dependOn'])->toMatchArray([
+                'field' => 'trashed',
+                'operator' => 'in',
+                'value' => ['with', 'only'],
+            ]);
     });
 
-    it('forceDelete() emits a destructive DELETE BulkAction', function () {
+    it('forceDelete() emits a destructive DELETE BulkAction gated on "only trashed"', function () {
         $serialized = BulkAction::forceDelete('/items/bulk-force')->toArray();
 
         expect($serialized)->toMatchArray([
             'method' => 'DELETE',
             'variant' => 'destructive',
             'batchUrl' => '/items/bulk-force',
+        ]);
+        expect($serialized['dependOn'])->toMatchArray([
+            'field' => 'trashed',
+            'operator' => 'in',
+            'value' => ['only'],
         ]);
     });
 });

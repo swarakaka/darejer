@@ -886,6 +886,7 @@ function clearFilter(field: string) {
             <DarejerActions
               :actions="bulkActions ?? []"
               :selected="selectedIds"
+              :form-data="activeFilters as Record<string, unknown>"
               :on-bulk-success="clearSelection"
               placement="header"
             />
