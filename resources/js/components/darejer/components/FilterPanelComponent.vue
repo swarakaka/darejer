@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import { router } from '@inertiajs/vue3'
+import { router, usePage } from '@inertiajs/vue3'
 import { X, CalendarIcon } from 'lucide-vue-next'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -19,6 +19,9 @@ import useTranslation from '@/composables/useTranslation'
 import type { DarejerComponent } from '@/types/darejer'
 
 const { __ } = useTranslation()
+
+const page = usePage<{ darejer?: { locale?: string } }>()
+const localeKey = computed(() => page.props.darejer?.locale ?? 'en')
 
 // Reka UI's <SelectItem> rejects an empty-string value, so the legacy
 // `<option value="">All</option>` pattern can't be ported verbatim. We
@@ -143,6 +146,7 @@ function clearField(field: string) {
 
         <Select
           v-else-if="filter.type === 'select'"
+          :key="`${filter.field}:${localeKey}`"
           :model-value="selectModelValue(filter.field)"
           @update:model-value="(v: unknown) => onSelectChange(filter.field, v)"
         >
@@ -197,6 +201,7 @@ function clearField(field: string) {
 
         <Select
           v-else-if="filter.type === 'boolean'"
+          :key="`${filter.field}:${localeKey}`"
           :model-value="selectModelValue(filter.field)"
           @update:model-value="(v: unknown) => onSelectChange(filter.field, v)"
         >
@@ -256,6 +261,7 @@ function clearField(field: string) {
 
           <Select
             v-else-if="filter.type === 'select'"
+            :key="`sidebar-${filter.field}:${localeKey}`"
             :model-value="selectModelValue(filter.field)"
             @update:model-value="(v: unknown) => onSelectChange(filter.field, v)"
           >

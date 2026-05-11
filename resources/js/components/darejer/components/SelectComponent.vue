@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
+import { usePage } from '@inertiajs/vue3'
 import {
   Select,
   SelectContent,
@@ -12,6 +13,9 @@ import useTranslation from '@/composables/useTranslation'
 import type { DarejerComponent } from '@/types/darejer'
 
 const { __ } = useTranslation()
+
+const page = usePage<{ darejer?: { locale?: string } }>()
+const localeKey = computed(() => page.props.darejer?.locale ?? 'en')
 
 const props = defineProps<{
   component: DarejerComponent
@@ -39,6 +43,7 @@ function onChange(val: unknown) {
   <FieldWrapper :component="component" :record="record" :errors="errors" :form-data="formData">
     <template #default="{ hasError }">
       <Select
+        :key="`${component.name}:${localeKey}`"
         :model-value="current"
         :disabled="component.disabled as boolean"
         @update:model-value="onChange"

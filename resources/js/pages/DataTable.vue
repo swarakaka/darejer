@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
-import { router } from '@inertiajs/vue3'
+import { router, usePage } from '@inertiajs/vue3'
 import AppLayout from '@/layouts/AppLayout.vue'
 import AppBreadcrumbs from '@/components/darejer/AppBreadcrumbs.vue'
 import DarejerActions from '@/components/darejer/DarejerActions.vue'
@@ -58,6 +58,9 @@ import { evaluateDependOn } from '@/composables/useDependOn'
 defineOptions({ layout: AppLayout })
 
 const { __ } = useTranslation()
+
+const page = usePage<{ darejer?: { locale?: string } }>()
+const localeKey = computed(() => page.props.darejer?.locale ?? 'en')
 
 interface GridColumn {
   field: string
@@ -643,6 +646,7 @@ function clearFilter(field: string) {
 
           <Select
             v-else-if="filter.type === 'select'"
+            :key="`${filter.field}:${localeKey}`"
             :model-value="selectModelValue(filter.field)"
             @update:model-value="(v: unknown) => onSelectChange(filter.field, v)"
           >
@@ -659,6 +663,7 @@ function clearFilter(field: string) {
 
           <Select
             v-else-if="filter.type === 'boolean'"
+            :key="`${filter.field}:${localeKey}`"
             :model-value="selectModelValue(filter.field)"
             @update:model-value="(v: unknown) => onSelectChange(filter.field, v)"
           >
@@ -674,6 +679,7 @@ function clearFilter(field: string) {
 
           <Select
             v-else-if="filter.type === 'trashed'"
+            :key="`${filter.field}:${localeKey}`"
             :model-value="selectModelValue(filter.field)"
             @update:model-value="(v: unknown) => onSelectChange(filter.field, v)"
           >
