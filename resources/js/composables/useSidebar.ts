@@ -1,11 +1,13 @@
 import { ref, computed } from 'vue'
 
 const STORAGE_KEY = 'darejer-sidebar-collapsed'
+const EXPANDED_GROUPS_KEY = 'darejer-sidebar-expanded-groups'
 const MOBILE_QUERY = '(max-width: 767px)'
 
 const mobileOpen = ref(false)
 const collapsed = ref(false)
 const isMobile = ref(false)
+const expandedGroups = ref<Set<string>>(new Set())
 
 let initialized = false
 let mediaQuery: MediaQueryList | null = null
@@ -17,6 +19,11 @@ function syncMobile(matches: boolean) {
   }
 }
 
+function persistExpandedGroups() {
+  if (typeof window === 'undefined') return
+  localStorage.setItem(EXPANDED_GROUPS_KEY, JSON.stringify([...expandedGroups.value]))
+}
+
 function init() {
   if (initialized || typeof window === 'undefined') return
   initialized = true
@@ -24,6 +31,18 @@ function init() {
   const stored = localStorage.getItem(STORAGE_KEY)
   if (stored !== null) {
     collapsed.value = stored === '1'
+  }
+
+  const storedGroups = localStorage.getItem(EXPANDED_GROUPS_KEY)
+  if (storedGroups !== null) {
+    try {
+      const parsed = JSON.parse(storedGroups)
+      if (Array.isArray(parsed)) {
+        expandedGroups.value = new Set(parsed.filter((k): k is string => typeof k === 'string'))
+      }
+    } catch {
+      // ignore malformed payload
+    }
   }
 
   if (typeof window.matchMedia === 'function') {
@@ -59,14 +78,38 @@ export function useSidebar() {
     }
   }
 
+  function isGroupExpanded(key: string): boolean {
+    return expandedGroups.value.has(key)
+  }
+
+  function toggleGroup(key: string, exclusive = true) {
+    if (expandedGroups.value.has(key)) {
+      expandedGroups.value.delete(key)
+    } else {
+      if (exclusive) expandedGroups.value.clear()
+      expandedGroups.value.add(key)
+    }
+    persistExpandedGroups()
+  }
+
+  function expandGroup(key: string) {
+    if (expandedGroups.value.has(key)) return
+    expandedGroups.value.add(key)
+    persistExpandedGroups()
+  }
+
   return {
     mobileOpen,
     collapsed,
     effectiveCollapsed,
     isMobile,
+    expandedGroups,
     openMobile,
     closeMobile,
     toggleMobile,
     toggleCollapsed,
+    isGroupExpanded,
+    toggleGroup,
+    expandGroup,
   }
 }

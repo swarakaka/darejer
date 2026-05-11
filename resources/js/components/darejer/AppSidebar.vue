@@ -46,13 +46,33 @@ import type { DarejerSharedProps, NavItem } from '@/types/darejer'
 const { __ } = useTranslation()
 
 const page = usePage<DarejerSharedProps>()
-const { mobileOpen, isMobile, effectiveCollapsed, collapsed, closeMobile } = useSidebar()
+const {
+  mobileOpen,
+  isMobile,
+  effectiveCollapsed,
+  collapsed,
+  closeMobile,
+  isGroupExpanded,
+  toggleGroup,
+  expandGroup,
+} = useSidebar()
+
+// Stable across locale switches — labels are translated, but URLs/routes
+// (or, failing that, the first child URL) survive a locale change.
+function groupKey(item: NavItem): string {
+  if (item.url) return `url:${item.url}`
+  if (item.route) return `route:${item.route}`
+  const firstChildUrl = item.children?.find((c) => c.url)?.url
+  if (firstChildUrl) return `child:${firstChildUrl}`
+  return `label:${item.label}`
+}
 
 onMounted(() => {
-  // Auto-expand parent groups that contain an active child
+  // Auto-expand parent groups that contain the active child, even if the
+  // user has not opened that group yet this session.
   for (const item of navItems.value) {
     if (item.children?.length && isGroupActive(item)) {
-      expandedGroups.value.add(item.label)
+      expandGroup(groupKey(item))
     }
   }
 })
@@ -175,9 +195,6 @@ function isGroupActive(item: NavItem): boolean {
 const flyoutOpen = ref(false)
 const activeGroup = ref<NavItem | null>(null)
 
-// ── Expanded inline children toggle ──────────────────────────────
-const expandedGroups = ref<Set<string>>(new Set())
-
 function onItemClick(item: NavItem, e: Event) {
   if (!item.children?.length) {
     closeFlyout()
@@ -195,13 +212,7 @@ function onItemClick(item: NavItem, e: Event) {
       flyoutOpen.value = true
     }
   } else {
-    const key = item.label
-    if (expandedGroups.value.has(key)) {
-      expandedGroups.value.delete(key)
-    } else {
-      expandedGroups.value.clear()
-      expandedGroups.value.add(key)
-    }
+    toggleGroup(groupKey(item))
   }
 }
 
@@ -349,7 +360,7 @@ function badgeClass(color?: string): string {
                 </span>
 
                 <component
-                  :is="expandedGroups.has(item.label) ? ChevronDown : ChevronRight"
+                  :is="isGroupExpanded(groupKey(item)) ? ChevronDown : ChevronRight"
                   v-if="item.children?.length"
                   class="h-3.5 w-3.5 shrink-0 text-[#c8c6c4] rtl:[&:not(.lucide-chevron-down)]:rotate-180"
                 />
@@ -357,7 +368,7 @@ function badgeClass(color?: string): string {
 
               <!-- Inline children (expanded mode) -->
               <div
-                v-if="item.children?.length && expandedGroups.has(item.label)"
+                v-if="item.children?.length && isGroupExpanded(groupKey(item))"
                 class="flex flex-col bg-black/15"
               >
                 <template v-for="(child, i) in item.children" :key="child.label">
