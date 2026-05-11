@@ -42,12 +42,12 @@ it('serializes a TextInput number with decimals precision', function () {
         ->toHaveKey('decimals', 3);
 });
 
-it('omits decimals when TextInput number is called without arguments', function () {
+it('defaults TextInput number decimals to 0', function () {
     $array = TextInput::make('quantity')->number()->toArray();
 
     expect($array)
         ->toHaveKey('inputType', 'number')
-        ->not->toHaveKey('decimals');
+        ->toHaveKey('decimals', 0);
 });
 
 it('serializes a SelectComponent with options', function () {

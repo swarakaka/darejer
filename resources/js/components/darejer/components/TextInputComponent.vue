@@ -24,16 +24,16 @@ function onInput(e: Event) {
 }
 
 const decimals = computed(() =>
-  typeof props.component.decimals === 'number' ? (props.component.decimals as number) : null,
+  typeof props.component.decimals === 'number' ? (props.component.decimals as number) : 0,
 )
 
 const numberStep = computed(() => {
-  if (props.component.inputType !== 'number' || decimals.value === null) return undefined
+  if (props.component.inputType !== 'number') return undefined
   return decimals.value <= 0 ? '1' : `0.${'0'.repeat(decimals.value - 1)}1`
 })
 
 function onBlur(e: Event) {
-  if (props.component.inputType !== 'number' || decimals.value === null) return
+  if (props.component.inputType !== 'number') return
   const raw = (e.target as HTMLInputElement).value
   if (raw === '' || raw === null) return
   const n = Number(raw)

@@ -22,7 +22,7 @@ class TextInput extends BaseComponent
 
     protected bool $revealable = false;
 
-    protected ?int $decimals = null;
+    protected int $decimals = 0;
 
     public function placeholder(string $placeholder): static
     {
@@ -49,16 +49,13 @@ class TextInput extends BaseComponent
     }
 
     /**
-     * Render as a numeric input. Pass `$decimals` to fix display precision —
-     * e.g. `number(3)` formats the value to 3 fraction digits on blur and
-     * sets `step="0.001"`. Omitting it keeps the input free-form, which is
-     * the right default for quantities and integer fields.
+     * Render as a numeric input. `$decimals` fixes display precision — e.g.
+     * `number(3)` formats the value to 3 fraction digits on blur and sets
+     * `step="0.001"`. Defaults to `0` (integer input, `step="1"`).
      */
-    public function number(?int $decimals = null): static
+    public function number(int $decimals = 0): static
     {
-        if ($decimals !== null) {
-            $this->decimals = $decimals;
-        }
+        $this->decimals = $decimals;
 
         return $this->type('number');
     }
