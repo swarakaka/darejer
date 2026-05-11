@@ -23,6 +23,27 @@ function onInput(e: Event) {
   emit('update', props.component.name, val)
 }
 
+const decimals = computed(() =>
+  typeof props.component.decimals === 'number' ? (props.component.decimals as number) : null,
+)
+
+const numberStep = computed(() => {
+  if (props.component.inputType !== 'number' || decimals.value === null) return undefined
+  return decimals.value <= 0 ? '1' : `0.${'0'.repeat(decimals.value - 1)}1`
+})
+
+function onBlur(e: Event) {
+  if (props.component.inputType !== 'number' || decimals.value === null) return
+  const raw = (e.target as HTMLInputElement).value
+  if (raw === '' || raw === null) return
+  const n = Number(raw)
+  if (!Number.isFinite(n)) return
+  const formatted = n.toFixed(decimals.value)
+  if (formatted === raw) return
+  value.value = formatted
+  emit('update', props.component.name, formatted)
+}
+
 const isRevealable = computed(
   () => props.component.inputType === 'password' && !!props.component.revealable,
 )
@@ -54,6 +75,7 @@ const hasSuffix = computed(() => !!props.component.suffix && !isRevealable.value
           :disabled="component.disabled as boolean"
           :maxlength="component.maxLength as number"
           :autofocus="component.autofocus as boolean"
+          :step="numberStep"
           class="w-full"
           :class="[
             hasError ? 'border-danger-600' : '',
@@ -61,6 +83,7 @@ const hasSuffix = computed(() => !!props.component.suffix && !isRevealable.value
             hasSuffix ? 'pe-20' : '',
           ]"
           @input="onInput"
+          @blur="onBlur"
         />
 
         <!-- Suffix -->

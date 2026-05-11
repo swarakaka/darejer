@@ -31,6 +31,25 @@ it('serializes a TextInput component', function () {
         ->toHaveKey('placeholder', 'you@example.com');
 });
 
+it('serializes a TextInput number with decimals precision', function () {
+    $array = TextInput::make('quantity')
+        ->label('Qty')
+        ->number(3)
+        ->toArray();
+
+    expect($array)
+        ->toHaveKey('inputType', 'number')
+        ->toHaveKey('decimals', 3);
+});
+
+it('omits decimals when TextInput number is called without arguments', function () {
+    $array = TextInput::make('quantity')->number()->toArray();
+
+    expect($array)
+        ->toHaveKey('inputType', 'number')
+        ->not->toHaveKey('decimals');
+});
+
 it('serializes a SelectComponent with options', function () {
     $component = SelectComponent::make('status')
         ->label('Status')

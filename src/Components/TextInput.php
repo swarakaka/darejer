@@ -22,6 +22,8 @@ class TextInput extends BaseComponent
 
     protected bool $revealable = false;
 
+    protected ?int $decimals = null;
+
     public function placeholder(string $placeholder): static
     {
         $this->placeholder = $placeholder;
@@ -46,8 +48,18 @@ class TextInput extends BaseComponent
         return $this->type('password');
     }
 
-    public function number(): static
+    /**
+     * Render as a numeric input. Pass `$decimals` to fix display precision —
+     * e.g. `number(3)` formats the value to 3 fraction digits on blur and
+     * sets `step="0.001"`. Omitting it keeps the input free-form, which is
+     * the right default for quantities and integer fields.
+     */
+    public function number(?int $decimals = null): static
     {
+        if ($decimals !== null) {
+            $this->decimals = $decimals;
+        }
+
         return $this->type('number');
     }
 
@@ -127,6 +139,7 @@ class TextInput extends BaseComponent
             'suffix' => $this->suffix,
             'autofocus' => $this->autofocus ?: null,
             'revealable' => $this->revealable ?: null,
+            'decimals' => $this->decimals,
         ];
     }
 }
