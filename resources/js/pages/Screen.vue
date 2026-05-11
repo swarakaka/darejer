@@ -256,10 +256,20 @@ const defaultTabValue = computed<string | undefined>(() => visibleTabs.value[0]?
 // The path is locale-independent (the locale lives in the session, not the
 // URL), so the same key resolves before and after a locale switch — and the
 // stored value matches a current tab because `tab.name` is also stable.
+//
+// Normalize the path so every variant of the same resource form shares one
+// key: drop numeric ID segments and the trailing `/create` / `/edit` action.
+// Without this, `/items/create`, `/items/1/edit`, and `/items/2/edit` each
+// get their own storage entry — so switching items or moving from create to
+// edit silently resets the active tab.
 const tabsPersistKey = computed<string | undefined>(() => {
   const url = page.url ?? ''
-  const path = url.split('?')[0] || '/'
-  return `screen:${path}`
+  const rawPath = url.split('?')[0] || '/'
+  const path = rawPath
+    .split('/')
+    .filter((seg) => seg !== '' && !/^\d+$/.test(seg) && seg !== 'create' && seg !== 'edit')
+    .join('/')
+  return `screen:/${path}`
 })
 
 // Tab is "in error" when any of its components have a validation error
