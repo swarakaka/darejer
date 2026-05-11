@@ -30,6 +30,10 @@ class Column
 
     protected ?string $badgeLabels = null;
 
+    protected ?string $textColorBy = null;
+
+    protected ?string $textColorMap = null;
+
     protected ?string $displayType = null;   // 'date' | 'datetime' | 'boolean' | 'money' | 'plain' | …
 
     protected ?string $dateFormat = null;   // PHP date() format string
@@ -143,6 +147,26 @@ class Column
         } elseif ($this->isBooleanColorMap($colorMap)) {
             $this->badgeLabels = json_encode(['1' => __('Yes'), '0' => __('No')]);
         }
+
+        return $this;
+    }
+
+    /**
+     * Color the plain-text cell value based on a sibling field on the row.
+     *
+     * `$field` is the dot-notated path on the row whose value selects the
+     * variant from `$map` (e.g. `'balance_state' => ['debit' => 'danger',
+     * 'credit' => 'success']`). Variants follow the same `success`/`warning`/
+     * `danger`/`info`/`neutral` palette as `badge()`.
+     *
+     * No-op for badge columns (those have their own coloring).
+     *
+     * @param  array<string, string>  $map
+     */
+    public function textColorBy(string $field, array $map): static
+    {
+        $this->textColorBy = $field;
+        $this->textColorMap = json_encode($map);
 
         return $this;
     }
@@ -308,6 +332,8 @@ class Column
             'align' => $this->align !== 'left' ? $this->align : null,
             'badge' => $this->badge,
             'badgeLabels' => $this->badgeLabels,
+            'textColorBy' => $this->textColorBy,
+            'textColorMap' => $this->textColorMap,
             'displayType' => $this->displayType,
             'dateFormat' => $this->dateFormat,
         ], fn ($v) => $v !== null && $v !== false);

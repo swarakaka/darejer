@@ -72,6 +72,8 @@ interface GridColumn {
   align?: 'left' | 'center' | 'right'
   badge?: string
   badgeLabels?: string
+  textColorBy?: string
+  textColorMap?: string
 }
 
 interface FilterDef {
@@ -465,6 +467,34 @@ function badgeLabel(col: GridColumn, value: unknown): string {
     labels = {}
   }
   return labels[key] ?? key
+}
+
+function readRowPath(row: Record<string, unknown>, path: string): unknown {
+  return path.split('.').reduce<unknown>(
+    (acc, segment) =>
+      acc && typeof acc === 'object' ? (acc as Record<string, unknown>)[segment] : undefined,
+    row,
+  )
+}
+
+function textColorClass(col: GridColumn, row: Record<string, unknown>): string {
+  if (!col.textColorBy || !col.textColorMap) return ''
+  let map: Record<string, string> = {}
+  try {
+    map = JSON.parse(col.textColorMap)
+  } catch {
+    map = {}
+  }
+  const variant = map[badgeKey(readRowPath(row, col.textColorBy))]
+  if (!variant) return ''
+  const classes: Record<string, string> = {
+    success: 'text-success-700',
+    warning: 'text-warning-700',
+    danger: 'text-danger-700',
+    info: 'text-brand-700',
+    neutral: 'text-ink-600',
+  }
+  return classes[variant] ?? ''
 }
 
 const iconMap: Record<string, unknown> = {
@@ -1035,7 +1065,10 @@ function clearFilter(field: string) {
                   <span
                     v-else
                     class="block max-w-xs truncate"
-                    :class="ci === 0 ? 'font-medium text-ink-900' : ''"
+                    :class="[
+                      ci === 0 ? 'font-medium text-ink-900' : '',
+                      textColorClass(col, row),
+                    ]"
                   >
                     {{ formatCell(row[col.field], col) ?? '—' }}
                   </span>
