@@ -283,6 +283,7 @@ return [
     'Permissions' => 'Permissions',
     'Super Admin' => 'Super Admin',
     'Created' => 'Created',
+    'Updated' => 'Updated',
     'Identity' => 'Identity',
     'Access' => 'Access',
     'Guard' => 'Guard',

@@ -282,6 +282,7 @@ return [
     'Permissions' => 'الصلاحيات',
     'Super Admin' => 'مسؤول أعلى',
     'Created' => 'تاريخ الإنشاء',
+    'Updated' => 'تاريخ التحديث',
     'Identity' => 'الهوية',
     'Access' => 'الوصول',
     'Guard' => 'الحارس',

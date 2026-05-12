@@ -281,6 +281,7 @@ return [
     'Permissions' => 'دەسەڵاتەکان',
     'Super Admin' => 'بەڕێوەبەری گشتی',
     'Created' => 'دروستکراوە',
+    'Updated' => 'نوێکراوەتەوە',
     'Identity' => 'پێناس',
     'Access' => 'دەستڕاگەیشتن',
     'Guard' => 'پاسەوان',
