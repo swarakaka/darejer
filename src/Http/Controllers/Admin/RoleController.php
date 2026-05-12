@@ -6,7 +6,7 @@ namespace Darejer\Http\Controllers\Admin;
 
 use Darejer\Actions\DeleteAction;
 use Darejer\Actions\LinkAction;
-use Darejer\Components\Combobox;
+use Darejer\Components\CheckboxList;
 use Darejer\Components\TextInput;
 use Darejer\DataGrid\Column;
 use Darejer\DataGrid\Filter;
@@ -207,10 +207,12 @@ class RoleController extends DarejerController
                 TextInput::make('name')->label(__darejer('Name'))->required()->maxLength(125),
                 TextInput::make('guard_name')->label(__darejer('Guard'))->required()->maxLength(125)
                     ->default($this->defaultGuard()),
-                Combobox::make('permission_ids')
+                CheckboxList::make('permission_ids')
                     ->label(__darejer('Permissions'))
-                    ->multiple()
                     ->model(SpatiePermission::class, 'id', 'name')
+                    ->groupBySeparator('.')
+                    ->columns(3)
+                    ->searchable()
                     ->fullWidth(),
             ])
             ->sections([

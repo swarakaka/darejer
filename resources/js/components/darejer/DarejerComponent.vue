@@ -9,6 +9,7 @@ import MoneyComponent from '@/components/darejer/components/MoneyComponent.vue'
 import TextareaComponent from '@/components/darejer/components/TextareaComponent.vue'
 import ToggleComponent from '@/components/darejer/components/ToggleComponent.vue'
 import CheckboxComponent from '@/components/darejer/components/CheckboxComponent.vue'
+import CheckboxListComponent from '@/components/darejer/components/CheckboxListComponent.vue'
 import RadioGroupComponent from '@/components/darejer/components/RadioGroupComponent.vue'
 import SelectComponent from '@/components/darejer/components/SelectComponent.vue'
 import TranslatableInputComponent from '@/components/darejer/components/TranslatableInputComponent.vue'
@@ -60,6 +61,7 @@ const componentMap: Record<string, unknown> = {
   Textarea: TextareaComponent,
   Toggle: ToggleComponent,
   Checkbox: CheckboxComponent,
+  CheckboxList: CheckboxListComponent,
   RadioGroup: RadioGroupComponent,
   Select: SelectComponent,
   TranslatableInput: TranslatableInputComponent,
