@@ -5,6 +5,7 @@ namespace Darejer\Http\Middleware;
 use Darejer\Navigation\NavigationManager;
 use Darejer\Support\Locales;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cookie;
 use Inertia\Middleware;
 
 /**
@@ -22,11 +23,12 @@ use Inertia\Middleware;
  * controllers should call `Inertia::flash('success', '...')` and the
  * frontend should read `usePage().flash`. See the FlashMessage component.
  *
- * Locale handling is built in: reads `?lang=` (persisting to session),
- * falls back to `session('darejer_locale')`, then the config default, and
- * validates against the configured languages. Applies `app()->setLocale()`
- * so Spatie Translatable + Laravel localization resolve against it for the
- * rest of the request cycle.
+ * Locale handling is built in: reads `?lang=` (persisting to session +
+ * a long-lived cookie), falls back to `session('darejer_locale')`, then
+ * the `darejer_locale` cookie (so the choice survives logout, which wipes
+ * the session), then the config default. Validates against the configured
+ * languages. Applies `app()->setLocale()` so Spatie Translatable + Laravel
+ * localization resolve against it for the rest of the request cycle.
  *
  * Host apps don't need their own `HandleInertiaRequests` — this is
  * registered to the `web` middleware group from the service provider.
@@ -104,8 +106,14 @@ class HandleInertiaRequests extends Middleware
         if ($request->has('lang') && in_array($request->get('lang'), $languages, true)) {
             $locale = $request->get('lang');
             session(['darejer_locale' => $locale]);
+            Cookie::queue('darejer_locale', $locale, 60 * 24 * 365);
+        } elseif ($sessionLocale = session('darejer_locale')) {
+            $locale = $sessionLocale;
+        } elseif (($cookieLocale = $request->cookie('darejer_locale')) && in_array($cookieLocale, $languages, true)) {
+            $locale = $cookieLocale;
+            session(['darejer_locale' => $locale]);
         } else {
-            $locale = session('darejer_locale', $default);
+            $locale = $default;
         }
 
         if (! in_array($locale, $languages, true)) {
