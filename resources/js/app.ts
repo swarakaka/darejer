@@ -1,4 +1,4 @@
-import { createInertiaApp, router } from '@inertiajs/vue3'
+import { createInertiaApp, router, usePage } from '@inertiajs/vue3'
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers'
 import { ZiggyVue } from 'ziggy-js'
 import type { DefineComponent } from 'vue'
@@ -22,8 +22,17 @@ router.on('httpException', (event) => {
   }
 })
 
+// `app_name` comes from the `darejer.app_name` config, shared on every
+// Inertia response. `usePage()` exposes the same global page state the
+// rest of the app reads — by the time the title callback fires the
+// initial page payload has already hydrated.
+function currentAppName(): string {
+  const props = usePage().props as { darejer?: { app_name?: string } } | undefined
+  return props?.darejer?.app_name ?? 'Darejer'
+}
+
 createInertiaApp({
-  title: (title) => `${title} - Darejer`,
+  title: (title) => `${title} - ${currentAppName()}`,
 
   resolve: (name) =>
     resolvePageComponent(
