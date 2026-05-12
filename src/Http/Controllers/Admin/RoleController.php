@@ -18,11 +18,11 @@ use Darejer\Routing\RoutePattern;
 use Darejer\Screen\Section;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Inertia\Inertia;
 use Inertia\Response;
 use Spatie\Permission\Models\Permission as SpatiePermission;
 use Spatie\Permission\Models\Role as SpatieRole;
 use Spatie\Permission\PermissionRegistrar;
-use Inertia\Inertia;
 
 /**
  * Admin → Roles. CRUD over Spatie roles with attached-permission editing.
@@ -72,9 +72,14 @@ class RoleController extends DarejerController
             ])
             ->rowActions([
                 RowAction::edit(RoutePattern::row('darejer.admin.roles.edit'))
-                    ->canSee('system.role.update'),
+                    ->canSee('system.role.update')
+                    ->dependOn('name', 'super-admin', 'neq'),
                 RowAction::delete(RoutePattern::row('darejer.admin.roles.destroy'))
-                    ->canSee('system.role.update'),
+                    ->canSee('system.role.update')
+                    ->dependOnConditions([
+                        ['field' => 'deleted_at', 'operator' => 'eq', 'value' => null],
+                        ['field' => 'name', 'operator' => 'neq', 'value' => 'super-admin'],
+                    ]),
             ])
             ->with(['permissions:id'])
             ->defaultSort('id', 'asc')
