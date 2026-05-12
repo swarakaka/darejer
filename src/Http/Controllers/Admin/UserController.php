@@ -17,13 +17,14 @@ use Darejer\Forms\Form;
 use Darejer\Http\Controllers\DarejerController;
 use Darejer\Routing\RoutePattern;
 use Darejer\Screen\Section;
+use Darejer\Enums\YesNo;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
+use Inertia\Inertia;
 use Inertia\Response;
 use Spatie\Permission\Models\Role as SpatieRole;
-use Inertia\Inertia;
 
 /**
  * Admin → Users. CRUD over the host's `User` model with Spatie role
@@ -55,8 +56,7 @@ class UserController extends DarejerController
                 Column::make('roles_csv')->label(__darejer('Roles'))
                     ->displayUsing(fn ($user) => $user->roles->pluck('name')->join(', ') ?: '—'),
                 Column::make('is_super_admin')->label(__darejer('Super Admin'))
-                    ->badge(['1' => 'success', '0' => 'muted'])
-                    ->displayUsing(fn ($user) => (bool) ($user->is_super_admin ?? false) ? ('Yes') : __('No')),
+                    ->badge(YesNo::class),
                 Column::make('created_at')->label(__darejer('Created'))->sortable()->dateTime(),
             ])
             ->filters([
