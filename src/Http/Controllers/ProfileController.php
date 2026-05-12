@@ -50,21 +50,15 @@ class ProfileController extends Controller
         $userTable = $user->getTable();
 
         $data = $request->validate([
-            'username' => [
-                'required', 'string', 'min:3', 'max:191', 'regex:/^[A-Za-z]+$/',
-                Rule::unique($userTable, 'username')->ignore($user->getKey())->whereNull('deleted_at'),
-            ],
             'email' => [
                 'required', 'email', 'max:191',
                 Rule::unique($userTable, 'email')->ignore($user->getKey())->whereNull('deleted_at'),
             ],
             'password' => ['nullable', 'string', 'min:8', 'confirmed'],
-        ], [
-            'username.regex' => __darejer('The username may only contain English letters.'),
         ]);
 
         $updateProfile->update($user, [
-            'username' => $data['username'],
+            'username' => $user->username,
             'email' => $data['email'],
         ]);
 
@@ -86,7 +80,7 @@ class ProfileController extends Controller
                 ['label' => __darejer('Profile')],
             ])
             ->components([
-                TextInput::make('username')->label(__darejer('Username'))->required()->maxLength(191),
+                TextInput::make('username')->label(__darejer('Username'))->disabled()->maxLength(191),
                 TextInput::make('email')->label(__darejer('Email'))->email()->required()->maxLength(191),
                 TextInput::make('password')->label(__darejer('Password'))->password()
                     ->hint(__darejer('Leave blank to keep the current password.')),
