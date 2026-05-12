@@ -62,6 +62,7 @@ class UserController extends DarejerController
             ->filters([
                 Filter::text('username')->label(__darejer('Username')),
                 Filter::text('email')->label(__darejer('Email')),
+                Filter::trashed(),
             ])
             ->headerActions([
                 ButtonAction::make(__darejer('New User'))
