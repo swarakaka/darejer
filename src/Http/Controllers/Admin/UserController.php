@@ -8,6 +8,7 @@ use Darejer\Actions\BulkAction;
 use Darejer\Actions\ButtonAction;
 use Darejer\Actions\DeleteAction;
 use Darejer\Components\Combobox;
+use Darejer\Components\Display;
 use Darejer\Components\TextInput;
 use Darejer\Components\Toggle;
 use Darejer\Concerns\HasSoftDeleteActions;
@@ -19,6 +20,7 @@ use Darejer\Enums\YesNo;
 use Darejer\Forms\Form;
 use Darejer\Http\Controllers\DarejerController;
 use Darejer\Routing\RoutePattern;
+use Darejer\Screen\Screen;
 use Darejer\Screen\Section;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
@@ -90,6 +92,8 @@ class UserController extends DarejerController
                     ->canSee('system.user.create'),
             ])
             ->rowActions([
+                RowAction::view(RoutePattern::row('darejer.admin.users.show'))
+                    ->canSee('system.user.viewAny'),
                 RowAction::edit(RoutePattern::row('darejer.admin.users.edit'))
                     ->canSee('system.user.update'),
                 RowAction::delete(RoutePattern::row('darejer.admin.users.destroy'))
@@ -124,6 +128,47 @@ class UserController extends DarejerController
             ->save(route('darejer.admin.users.store'), 'POST')
             ->cancel(route('darejer.admin.users.index'))
             ->renderAsScreen();
+    }
+
+    public function show(int $user): Response
+    {
+        $this->authorizePermission('system.user.viewAny');
+
+        $record = $this->userModel()::query()->with('roles')->findOrFail($user);
+
+        return Screen::make(__darejer('User').' — '.$record->username)
+            ->record(array_merge($record->toArray(), [
+                'roles_csv' => $record->roles->pluck('name')->join(', ') ?: '—',
+            ]))
+            ->breadcrumbs([
+                ['label' => __darejer('Administration')],
+                ['label' => __darejer('Users'), 'url' => route('darejer.admin.users.index')],
+                ['label' => $record->username],
+            ])
+            ->components([
+                Display::make('username')->label(__darejer('Username')),
+                Display::make('email')->label(__darejer('Email')),
+                Display::make('roles_csv')->label(__darejer('Roles')),
+                Display::make('is_super_admin')
+                    ->label(__darejer('Super Admin'))
+                    ->badge(YesNo::class),
+                Display::make('created_at')
+                    ->label(__darejer('Created'))
+                    ->dateTime(),
+                Display::make('updated_at')
+                    ->label(__darejer('Updated'))
+                    ->dateTime(),
+            ])
+            ->actions([
+                ButtonAction::make(__darejer('Back'))
+                    ->url(route('darejer.admin.users.index'))
+                    ->icon('ArrowLeft'),
+                ButtonAction::make(__darejer('Edit'))
+                    ->url(route('darejer.admin.users.edit', $record->id))
+                    ->icon('Pencil')
+                    ->canSee('system.user.update'),
+            ])
+            ->render();
     }
 
     public function edit(int $user): Response
