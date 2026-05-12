@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace Darejer\Http\Controllers\Admin;
 
+use Darejer\Actions\BulkAction;
 use Darejer\Actions\ButtonAction;
 use Darejer\Actions\DeleteAction;
 use Darejer\Components\Combobox;
 use Darejer\Components\TextInput;
 use Darejer\Components\Toggle;
+use Darejer\Concerns\HasSoftDeleteActions;
 use Darejer\DataGrid\Column;
 use Darejer\DataGrid\Filter;
 use Darejer\DataGrid\RowAction;
@@ -33,11 +35,28 @@ use Spatie\Permission\Models\Role as SpatieRole;
  */
 class UserController extends DarejerController
 {
+    use HasSoftDeleteActions;
+
     protected ?string $resource = 'users';
 
     protected ?string $routeName = 'darejer.admin.users';
 
     protected ?string $routePrefix = 'darejer/admin';
+
+    protected function softDeleteModel(): string
+    {
+        return $this->userModel();
+    }
+
+    protected function softDeleteAbility(string $verb): string
+    {
+        return match ($verb) {
+            'delete' => 'system.user.delete',
+            'restore' => 'system.user.restore',
+            'force_delete' => 'system.user.force_delete',
+            default => "system.user.{$verb}",
+        };
+    }
 
     public function index(Request $request): Response
     {
@@ -75,6 +94,18 @@ class UserController extends DarejerController
                     ->canSee('system.user.update'),
                 RowAction::delete(RoutePattern::row('darejer.admin.users.destroy'))
                     ->canSee('system.user.delete'),
+                RowAction::restore(RoutePattern::row('darejer.admin.users.restore'))
+                    ->canSee('system.user.restore'),
+                RowAction::forceDelete(RoutePattern::row('darejer.admin.users.force_destroy'))
+                    ->canSee('system.user.force_delete'),
+            ])
+            ->bulkActions([
+                BulkAction::delete(route('darejer.admin.users.bulk_destroy'))
+                    ->canSee('system.user.delete'),
+                BulkAction::restore(route('darejer.admin.users.bulk_restore'))
+                    ->canSee('system.user.restore'),
+                BulkAction::forceDelete(route('darejer.admin.users.bulk_force_destroy'))
+                    ->canSee('system.user.force_delete'),
             ])
             ->with(['roles'])
             ->defaultSort('id', 'desc')
