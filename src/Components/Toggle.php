@@ -4,6 +4,8 @@ namespace Darejer\Components;
 
 class Toggle extends BaseComponent
 {
+    protected mixed $default = false;
+
     protected ?string $onLabel = null;
 
     protected ?string $offLabel = null;
