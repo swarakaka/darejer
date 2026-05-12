@@ -19,6 +19,16 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | App Name
+    |--------------------------------------------------------------------------
+    | Wordmark shown in the topbar and used as the suffix on every page
+    | <title> (e.g. "Customers - Syntax CRM"). Host apps typically point this
+    | at their `app.name` config so it follows `APP_NAME` from `.env`.
+    */
+    'app_name' => env('APP_NAME', 'Darejer'),
+
+    /*
+    |--------------------------------------------------------------------------
     | Permissions
     |--------------------------------------------------------------------------
     */

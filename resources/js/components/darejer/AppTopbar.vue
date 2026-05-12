@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import { usePage, router } from '@inertiajs/vue3'
+import { computed, ref } from 'vue'
+import { usePage, router, Link } from '@inertiajs/vue3'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import {
   DropdownMenu,
@@ -21,6 +21,9 @@ import useTranslation from '@/composables/useTranslation'
 import type { DarejerSharedProps } from '@/types/darejer'
 
 const page = usePage<DarejerSharedProps>()
+
+const appName = computed(() => page.props.darejer.app_name)
+const homeUrl = computed(() => route('darejer.home').toString())
 
 const { __ } = useTranslation()
 const { toggleMobile, toggleCollapsed, isMobile } = useSidebar()
@@ -82,12 +85,14 @@ function logout() {
       <Menu class="h-[18px] w-[18px]" />
     </button>
 
-    <!-- Product wordmark -->
-    <span
-      class="hidden h-full items-center pe-3 text-[15px] font-normal tracking-tight text-white select-none md:inline-flex"
+    <!-- Product wordmark — links to the home route -->
+    <Link
+      :href="homeUrl"
+      class="hidden h-full items-center pe-3 text-[15px] font-normal tracking-tight text-white transition-colors select-none hover:bg-white/[0.12] md:inline-flex"
+      :aria-label="appName"
     >
-      {{ __('Darejer') }}
-    </span>
+      {{ appName }}
+    </Link>
 
     <!-- Global search — sits in the centre column on Azure portal -->
     <div class="flex flex-1 justify-center px-2">

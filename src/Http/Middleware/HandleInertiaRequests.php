@@ -61,6 +61,7 @@ class HandleInertiaRequests extends Middleware
 
         return array_merge(parent::share($request), [
             'darejer' => fn () => [
+                'app_name' => config('darejer.app_name', 'Darejer'),
                 'languages' => $languages,
                 'default_language' => $default,
                 'locale' => $current,

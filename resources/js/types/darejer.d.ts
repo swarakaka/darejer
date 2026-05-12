@@ -19,6 +19,7 @@ declare module 'vue' {
 // (`usePage().flash`), not under shared props. See FlashProps below.
 export interface DarejerSharedProps {
   darejer: {
+    app_name: string
     languages: string[]
     default_language: string
     locale?: string
