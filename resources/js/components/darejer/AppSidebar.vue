@@ -91,9 +91,7 @@ watch(collapsed, (isCollapsed) => {
 const navItems = computed((): NavItem[] => {
   const items = page.props.navigation ?? []
   if (items.length) return items
-  return [
-    { label: 'Dashboard', icon: 'LayoutDashboard', url: route('darejer.dashboard').toString() },
-  ]
+  return [{ label: 'Home', icon: 'LayoutDashboard', url: route('darejer.home').toString() }]
 })
 
 const iconMap: Record<string, unknown> = {

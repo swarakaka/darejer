@@ -3,6 +3,7 @@
 use Darejer\Http\Controllers\AlertsController;
 use Darejer\Http\Controllers\DashboardController;
 use Darejer\Http\Controllers\DataController;
+use Darejer\Http\Controllers\HomeController;
 use Darejer\Http\Controllers\LocaleController;
 use Darejer\Http\Controllers\ProfileController;
 use Darejer\Http\Controllers\SearchController;
@@ -32,10 +33,16 @@ Route::prefix(config('darejer.route_prefix', 'darejer'))
     ->name('darejer.')
     ->group(function () {
 
-        // Dashboard — default landing after login. Host apps swap this
-        // out via the `darejer.dashboard_controller` config to ship their
-        // own KPI / chart payload to Dashboard.vue.
-        Route::get('/', config('darejer.dashboard_controller', [DashboardController::class, 'index']))
+        // Home — default landing after login. Renders an ERPNext-style
+        // module index that mirrors the NavigationManager tree as a tile
+        // grid, so the home view itself is the navigation hub.
+        Route::get('/', [HomeController::class, 'index'])->name('home');
+
+        // Dashboard — KPI / chart view, now a regular nav entry rather
+        // than the landing page. Host apps swap the implementation via
+        // the `darejer.dashboard_controller` config and the bundled
+        // Dashboard.vue receives whatever props they ship.
+        Route::get('/dashboard', config('darejer.dashboard_controller', [DashboardController::class, 'index']))
             ->name('dashboard');
 
         // Data endpoint for Combobox, DataGrid, Kanban, TreeGrid etc.
