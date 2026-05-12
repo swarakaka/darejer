@@ -217,7 +217,7 @@ it('serializes a Display date with default format', function () {
 
     expect($array)
         ->toHaveKey('displayType', 'date')
-        ->toHaveKey('dateFormat', 'Y-m-d');
+        ->toHaveKey('dateFormat', 'Y/m/d');
 });
 
 it('serializes a Display money component with decimals and currency field', function () {

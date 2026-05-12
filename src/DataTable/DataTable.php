@@ -236,7 +236,7 @@ class DataTable
         // don't reflect over the column list per row.
         $dateColumns = collect($this->columns)
             ->filter(fn (Column $c) => in_array($c->getDisplayType(), ['date', 'datetime'], true))
-            ->mapWithKeys(fn (Column $c) => [$c->getField() => $c->getDateFormat() ?: 'Y-m-d'])
+            ->mapWithKeys(fn (Column $c) => [$c->getField() => $c->getDateFormat() ?: 'Y/m/d'])
             ->all();
 
         $booleanColumns = collect($this->columns)

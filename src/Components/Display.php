@@ -72,9 +72,9 @@ class Display extends BaseComponent
     }
 
     /**
-     * Render as a date. Default format `Y-m-d` (ISO short form).
+     * Render as a date. Default format `Y/m/d`.
      */
-    public function date(string $format = 'Y-m-d'): static
+    public function date(string $format = 'Y/m/d'): static
     {
         $this->displayType = 'date';
         $this->dateFormat = $format;
@@ -82,8 +82,8 @@ class Display extends BaseComponent
         return $this;
     }
 
-    /** Render as a date+time. Default `Y-m-d H:i`. */
-    public function dateTime(string $format = 'Y-m-d H:i'): static
+    /** Render as a date+time. Default `Y/m/d H:i`. */
+    public function dateTime(string $format = 'Y/m/d H:i'): static
     {
         $this->displayType = 'datetime';
         $this->dateFormat = $format;

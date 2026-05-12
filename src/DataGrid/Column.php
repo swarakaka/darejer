@@ -185,13 +185,13 @@ class Column
 
     /**
      * Render the column value as a date using the given PHP date() format.
-     * Default is `Y-m-d` (locale-independent ISO short form).
+     * Default is `Y/m/d`.
      *
      * The value is parsed by Carbon::parse() server-side at render time, so
      * the JSON sent to the frontend already contains the formatted string —
      * no per-column JS formatter is needed.
      */
-    public function date(string $format = 'Y-m-d'): static
+    public function date(string $format = 'Y/m/d'): static
     {
         $this->displayType = 'date';
         $this->dateFormat = $format;
@@ -200,9 +200,9 @@ class Column
     }
 
     /**
-     * Render the column value as a date+time. Default `Y-m-d H:i`.
+     * Render the column value as a date+time. Default `Y/m/d H:i`.
      */
-    public function dateTime(string $format = 'Y-m-d H:i'): static
+    public function dateTime(string $format = 'Y/m/d H:i'): static
     {
         $this->displayType = 'datetime';
         $this->dateFormat = $format;

@@ -12,7 +12,7 @@ class DatePicker extends BaseComponent
 
     protected bool $disabled = false;
 
-    protected string $format = 'Y-m-d';
+    protected string $format = 'Y/m/d';
 
     protected ?string $placeholder = null;
 

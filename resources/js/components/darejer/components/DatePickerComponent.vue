@@ -60,7 +60,7 @@ watch(
   },
 )
 
-const format = computed(() => (props.component.format as string | undefined) ?? 'Y-m-d')
+const format = computed(() => (props.component.format as string | undefined) ?? 'Y/m/d')
 
 const displayValue = computed(() =>
   selected.value ? formatPhpDate(selected.value.toDate(getLocalTimeZone()), format.value) : null,

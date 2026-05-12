@@ -142,7 +142,7 @@ class Column
         return $this;
     }
 
-    public function date(string $format = 'Y-m-d'): static
+    public function date(string $format = 'Y/m/d'): static
     {
         $this->type = 'date';
         $this->dateFormat = $format;
@@ -150,7 +150,7 @@ class Column
         return $this;
     }
 
-    public function dateTime(string $format = 'Y-m-d H:i'): static
+    public function dateTime(string $format = 'Y/m/d H:i'): static
     {
         $this->type = 'datetime';
         $this->dateFormat = $format;
