@@ -45,6 +45,8 @@ class TextInput extends BaseComponent
 
     public function password(): static
     {
+        $this->revealable = true;
+
         return $this->type('password');
     }
 
