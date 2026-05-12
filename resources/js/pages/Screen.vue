@@ -418,7 +418,12 @@ const dialogSizeClass: Record<string, string> = {
           <!-- Horizontal tabs / FastTabs -->
           <div v-else class="space-y-4">
             <template v-if="hasTabs">
-              <Tabs :default-value="defaultTabValue" :persist-key="tabsPersistKey" class="w-full">
+              <Tabs
+                :default-value="defaultTabValue"
+                :persist-key="tabsPersistKey"
+                :valid-values="visibleTabs.map((t) => t.name)"
+                class="w-full"
+              >
                 <TabsList
                   class="h-auto w-full justify-start gap-0 overflow-x-auto rounded-md border border-paper-200 bg-card p-1 shadow-[0_1px_0_rgba(0,0,0,0.02)]"
                 >
