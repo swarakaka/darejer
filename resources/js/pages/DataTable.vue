@@ -762,7 +762,7 @@ function clearFilter(field: string) {
               <button
                 :id="`filter-${filter.field}`"
                 type="button"
-                class="flex h-9 w-full items-center justify-between rounded-md border bg-card px-3 text-start text-[13px] text-ink-900 transition-colors duration-100 hover:border-ink-700 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/15 focus:outline-none"
+                class="flex h-8 w-full items-center justify-between rounded-[2px] border bg-card px-2.5 text-start text-[13px] text-ink-900 transition-colors duration-100 hover:border-ink-700 focus:border-brand-500 focus:shadow-[inset_0_0_0_1px_var(--color-brand-500)] focus:ring-0 focus:outline-none"
                 :class="[datePopoverOpen[filter.field] ? 'border-brand-500' : `border-paper-300`]"
               >
                 <span :class="stringValue(filter.field) ? 'text-ink-900' : `text-ink-400`">
@@ -804,7 +804,7 @@ function clearFilter(field: string) {
                 <button
                   :id="`filter-${filter.field}-from`"
                   type="button"
-                  class="flex h-9 min-w-[8.5rem] items-center justify-between rounded-md border bg-card px-3 text-start text-[13px] text-ink-900 transition-colors duration-100 hover:border-ink-700 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/15 focus:outline-none"
+                  class="flex h-8 min-w-[8.5rem] items-center justify-between rounded-[2px] border bg-card px-2.5 text-start text-[13px] text-ink-900 transition-colors duration-100 hover:border-ink-700 focus:border-brand-500 focus:shadow-[inset_0_0_0_1px_var(--color-brand-500)] focus:ring-0 focus:outline-none"
                   :class="[
                     datePopoverOpen[`${filter.field}:from`]
                       ? 'border-brand-500'
@@ -847,7 +847,7 @@ function clearFilter(field: string) {
                 <button
                   :id="`filter-${filter.field}-to`"
                   type="button"
-                  class="flex h-9 min-w-[8.5rem] items-center justify-between rounded-md border bg-card px-3 text-start text-[13px] text-ink-900 transition-colors duration-100 hover:border-ink-700 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/15 focus:outline-none"
+                  class="flex h-8 min-w-[8.5rem] items-center justify-between rounded-[2px] border bg-card px-2.5 text-start text-[13px] text-ink-900 transition-colors duration-100 hover:border-ink-700 focus:border-brand-500 focus:shadow-[inset_0_0_0_1px_var(--color-brand-500)] focus:ring-0 focus:outline-none"
                   :class="[
                     datePopoverOpen[`${filter.field}:to`] ? 'border-brand-500' : 'border-paper-300',
                   ]"
