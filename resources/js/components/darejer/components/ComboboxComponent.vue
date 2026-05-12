@@ -66,6 +66,24 @@ const { load, http } = useDataUrl<Option>(props.component.dataUrl as string | un
   searchFields: (props.component.searchFields as string[] | undefined) ?? undefined,
 })
 
+/**
+ * Build the `filters[param]=value` payload from sibling form fields when
+ * `filtersFrom` is configured. Mirrors the EditableTable cell behavior so a
+ * top-level combobox can narrow its options by another field's value
+ * (e.g. invoices for the chosen customer).
+ */
+const derivedFilters = computed<Record<string, string>>(() => {
+  const map = props.component.filtersFrom as Record<string, string> | null | undefined
+  if (!map || !props.formData) return {}
+  const out: Record<string, string> = {}
+  for (const [param, formField] of Object.entries(map)) {
+    const v = props.formData[formField]
+    if (v === null || v === undefined || v === '') continue
+    out[param] = String(v)
+  }
+  return out
+})
+
 const rawValue =
   (props.formData ?? props.record)[props.component.name] ?? props.component.default ?? null
 
@@ -97,6 +115,7 @@ async function fetchOptions(reset = false): Promise<void> {
   const result = await load({
     search: search.value,
     page: page.value,
+    filters: derivedFilters.value,
   })
 
   if (!result) return
@@ -130,6 +149,10 @@ async function resolveSelectedLabels(): Promise<void> {
     ids: missing,
     page: 1,
     perPage: missing.length,
+    // Resolve labels by id even when the current filtersFrom values would
+    // exclude the bound record (e.g. on edit, before the dependent field
+    // has been touched), so the trigger still shows the chosen label.
+    filters: {},
   })
   if (result) rememberLabels(result.data)
 }
@@ -140,6 +163,27 @@ onMounted(async () => {
 })
 
 watch(search, () => fetchOptions(true))
+
+// When a `filtersFrom`-bound field changes, refetch the options and drop
+// the current selection so the form can't end up holding a value that no
+// longer matches the new filter (e.g. picked invoice from old customer).
+// The initial mount value is captured first so pre-filled edit screens
+// don't lose their selection on first render.
+let initialFilters = JSON.stringify(derivedFilters.value)
+watch(
+  derivedFilters,
+  (next) => {
+    const serialized = JSON.stringify(next)
+    if (serialized === initialFilters) return
+    initialFilters = serialized
+    if (selected.value.length > 0) {
+      selected.value = []
+      emit('update', props.component.name, isMultiple.value ? [] : null)
+    }
+    fetchOptions(true)
+  },
+  { deep: true },
+)
 
 watch(open, (isOpen) => {
   if (isOpen) {

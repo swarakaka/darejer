@@ -44,6 +44,9 @@ class Combobox extends BaseComponent
 
     protected ?string $prefillUrl = null;
 
+    /** @var array<string, string> filterParam => sibling form field */
+    protected array $filtersFrom = [];
+
     /**
      * Bind to an Eloquent model — Darejer auto-generates the dataUrl.
      *
@@ -261,6 +264,29 @@ class Combobox extends BaseComponent
         return $this;
     }
 
+    /**
+     * Filter combobox results by sibling form fields. The mapping is
+     * `filterParam => formField` — at fetch time the component reads each
+     * form field's value and sends it as `filters[param]` on every request.
+     *
+     * Example: an Invoice picker that only lists invoices for the customer
+     * the user already chose on the form.
+     *
+     *   ->filtersFrom(['by_customer' => 'customer_account_id'])
+     *
+     * The filter param must be either a fillable column on the target model
+     * or a named scope `filter{StudlyParam}` — see DataQuery::applyFilters.
+     * Mirrors the same-named API on `Darejer\EditableTable\Column`.
+     *
+     * @param  array<string, string>  $mapping  filterParam => formField
+     */
+    public function filtersFrom(array $mapping): static
+    {
+        $this->filtersFrom = $mapping;
+
+        return $this;
+    }
+
     protected function componentType(): string
     {
         return 'Combobox';
@@ -287,6 +313,7 @@ class Combobox extends BaseComponent
             'labelFields' => $labelFields,
             'searchFields' => $this->searchFields ?? $labelFields,
             'prefillUrl' => $this->prefillUrl,
+            'filtersFrom' => $this->filtersFrom ?: null,
         ];
     }
 }
