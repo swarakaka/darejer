@@ -208,7 +208,8 @@ class RoleController extends DarejerController
                     ->default($this->defaultGuard()),
                 CheckboxList::make('permission_ids')
                     ->label(__darejer('Permissions'))
-                    ->model(SpatiePermission::class, 'id', 'name')
+                    ->model(SpatiePermission::class, 'id', 'description')
+                    ->subtitleField('name')
                     ->groupBySeparator('.')
                     ->columns(3)
                     ->searchable()

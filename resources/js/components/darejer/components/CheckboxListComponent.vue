@@ -19,7 +19,7 @@ const props = defineProps<{
 
 const emit = defineEmits<{ (e: 'update', name: string, value: unknown): void }>()
 
-type Option = { value: string; label: string }
+type Option = { value: string; label: string; subtitle?: string }
 type Group = { key: string; label: string; options: Option[] }
 
 const options = ref<Option[]>([])
@@ -39,6 +39,8 @@ const staticOptions = computed(
   () => (props.component.staticOptions as Option[] | undefined) ?? null,
 )
 
+const subtitleField = computed(() => (props.component.subtitleField as string | null) ?? null)
+
 const { load } = useDataUrl<Record<string, unknown>>(
   props.component.dataUrl as string | undefined,
   {
@@ -46,16 +48,25 @@ const { load } = useDataUrl<Record<string, unknown>>(
     combobox: true,
     keyField: (props.component.keyField as string) ?? 'id',
     labelField: (props.component.labelField as string) ?? 'name',
+    subtitleField: subtitleField.value ?? undefined,
   },
 )
 
 function normalize(items: Record<string, unknown>[]): Option[] {
   const keyField = (props.component.keyField as string) ?? 'id'
   const labelField = (props.component.labelField as string) ?? 'name'
-  return items.map((row) => ({
-    value: String(row.value ?? row[keyField] ?? ''),
-    label: String(row.label ?? row[labelField] ?? ''),
-  }))
+  const subField = subtitleField.value
+  return items.map((row) => {
+    const label = String(row.label ?? row[labelField] ?? '')
+    const subtitleRaw = subField
+      ? String(row.subtitle ?? row[subField] ?? '')
+      : ''
+    return {
+      value: String(row.value ?? row[keyField] ?? ''),
+      label: label || subtitleRaw,
+      subtitle: subtitleRaw && subtitleRaw !== label ? subtitleRaw : undefined,
+    }
+  })
 }
 
 async function fetchOptions(): Promise<void> {
@@ -80,10 +91,22 @@ onMounted(fetchOptions)
 const filteredOptions = computed<Option[]>(() => {
   const term = search.value.trim().toLowerCase()
   if (!term) return options.value
-  return options.value.filter((o) => o.label.toLowerCase().includes(term))
+  return options.value.filter(
+    (o) =>
+      o.label.toLowerCase().includes(term) ||
+      (o.subtitle ? o.subtitle.toLowerCase().includes(term) : false),
+  )
 })
 
 const separator = computed(() => (props.component.groupBySeparator as string | null) ?? null)
+
+function groupKey(option: Option, sep: string): string {
+  // When a subtitle is present (e.g. the dotted technical name), prefer it
+  // for grouping so the user-facing label can be a free-form description.
+  const source = option.subtitle && option.subtitle.includes(sep) ? option.subtitle : option.label
+  const idx = source.indexOf(sep)
+  return idx === -1 ? source : source.slice(0, idx)
+}
 
 const groups = computed<Group[]>(() => {
   const sep = separator.value
@@ -92,8 +115,7 @@ const groups = computed<Group[]>(() => {
   }
   const map = new Map<string, Option[]>()
   for (const option of filteredOptions.value) {
-    const idx = option.label.indexOf(sep)
-    const key = idx === -1 ? option.label : option.label.slice(0, idx)
+    const key = groupKey(option, sep)
     if (!map.has(key)) map.set(key, [])
     map.get(key)!.push(option)
   }
@@ -224,19 +246,26 @@ const disabled = computed(() => !!props.component.disabled)
               <div
                 v-for="option in group.options"
                 :key="option.value"
-                class="flex items-center gap-2"
+                class="flex items-start gap-2"
               >
                 <Checkbox
                   :id="`${component.name}-${option.value}`"
                   :model-value="isChecked(option.value)"
                   :disabled="disabled"
+                  class="mt-0.5"
                   @update:model-value="(v) => toggle(option.value, v)"
                 />
                 <label
                   :for="`${component.name}-${option.value}`"
-                  class="cursor-pointer text-xs text-ink-700 select-none"
+                  class="flex cursor-pointer flex-col leading-tight select-none"
                 >
-                  {{ option.label }}
+                  <span class="text-xs text-ink-700">{{ option.label }}</span>
+                  <span
+                    v-if="option.subtitle"
+                    class="font-mono text-[10px] text-ink-400"
+                  >
+                    {{ option.subtitle }}
+                  </span>
                 </label>
               </div>
             </div>

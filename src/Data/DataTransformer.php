@@ -21,6 +21,8 @@ class DataTransformer
     /** @var array<int, string>|null */
     protected ?array $labelFields;
 
+    protected ?string $subtitleField;
+
     protected bool $isCombobox;
 
     /**
@@ -40,12 +42,14 @@ class DataTransformer
         string $labelField = 'name',
         bool $isCombobox = false,
         ?array $labelFields = null,
+        ?string $subtitleField = null,
     ) {
         $this->modelClass = $modelClass;
         $this->keyField = $keyField;
         $this->labelField = $labelField;
         $this->isCombobox = $isCombobox;
         $this->labelFields = $labelFields ? array_values($labelFields) : null;
+        $this->subtitleField = $subtitleField;
     }
 
     public function transform(Model $item): array
@@ -65,10 +69,16 @@ class DataTransformer
         }
 
         if ($this->isCombobox) {
-            return [
+            $shape = [
                 'value' => (string) ($arr[$this->keyField] ?? ''),
                 'label' => $this->composeLabel($arr),
             ];
+
+            if ($this->subtitleField !== null) {
+                $shape['subtitle'] = (string) ($arr[$this->subtitleField] ?? '');
+            }
+
+            return $shape;
         }
 
         return $arr;

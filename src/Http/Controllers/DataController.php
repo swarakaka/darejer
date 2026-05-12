@@ -49,12 +49,18 @@ class DataController extends Controller
             $labelFields = null;
         }
 
+        $subtitleField = $request->get('subtitle_field');
+        if (! is_string($subtitleField) || ! preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*$/', $subtitleField)) {
+            $subtitleField = null;
+        }
+
         $transformer = new DataTransformer(
             $modelClass,
             $keyField,
             $labelField,
             $isCombobox,
             $labelFields,
+            $subtitleField,
         );
 
         $query = $modelClass::query();

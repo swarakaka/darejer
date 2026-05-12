@@ -26,6 +26,8 @@ class CheckboxList extends BaseComponent
 
     protected string $labelField = 'name';
 
+    protected ?string $subtitleField = null;
+
     protected ?Closure $queryScope = null;
 
     protected ?string $dataUrl = null;
@@ -52,6 +54,18 @@ class CheckboxList extends BaseComponent
 
         $modelSlug = strtolower(class_basename($modelClass));
         $this->dataUrl = route('darejer.data.index', ['model' => $modelSlug]);
+
+        return $this;
+    }
+
+    /**
+     * Show a secondary line of text beneath each option's label, sourced from
+     * the named model column. Useful when the technical name (e.g. a dotted
+     * permission key) should accompany a human-readable description.
+     */
+    public function subtitleField(string $field): static
+    {
+        $this->subtitleField = $field;
 
         return $this;
     }
@@ -116,6 +130,7 @@ class CheckboxList extends BaseComponent
             'staticOptions' => $this->staticOptions,
             'keyField' => $this->keyField,
             'labelField' => $this->labelField,
+            'subtitleField' => $this->subtitleField,
             'columns' => $this->columns,
             'groupBySeparator' => $this->groupBySeparator,
             'searchable' => $this->searchable ?: null,
