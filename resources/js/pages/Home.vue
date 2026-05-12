@@ -105,19 +105,10 @@ function childCount(item: NavItem): number {
 
 <template>
   <div class="flex h-full flex-col overflow-y-auto">
-    <header class="shrink-0 px-8 pt-10 pb-2">
-      <h1 class="text-[26px] leading-[1.1] font-semibold tracking-tight text-ink-900">
-        {{ __('Home') }}
-      </h1>
-      <p class="mt-1 text-[13px] text-ink-500">
-        {{ __('Jump into any module to get started.') }}
-      </p>
-    </header>
-
-    <div class="flex-1 px-8 py-8">
+    <div class="mx-auto w-full max-w-3xl px-6 py-10">
       <div
         v-if="tiles.length"
-        class="grid grid-cols-2 gap-x-6 gap-y-8 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6"
+        class="grid grid-cols-2 gap-x-6 gap-y-8 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5"
       >
         <Link
           v-for="item in tiles"
@@ -136,10 +127,7 @@ function childCount(item: NavItem): number {
             >
               {{ item.label }}
             </span>
-            <span
-              v-if="childCount(item)"
-              class="text-[11px] text-ink-500 tabular-nums"
-            >
+            <span v-if="childCount(item)" class="text-[11px] text-ink-500 tabular-nums">
               {{ childCount(item) }} {{ childCount(item) === 1 ? __('item') : __('items') }}
             </span>
           </div>
