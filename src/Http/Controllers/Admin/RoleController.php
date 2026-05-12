@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Darejer\Http\Controllers\Admin;
 
+use Darejer\Actions\ButtonAction;
 use Darejer\Actions\DeleteAction;
-use Darejer\Actions\LinkAction;
 use Darejer\Components\CheckboxList;
 use Darejer\Components\TextInput;
 use Darejer\DataGrid\Column;
@@ -64,10 +64,9 @@ class RoleController extends DarejerController
                 ]),
             ])
             ->headerActions([
-                LinkAction::make(__darejer('New Role'))
+                ButtonAction::make(__darejer('New Role'))
                     ->url(route('darejer.admin.roles.create'))
                     ->icon('Plus')
-                    ->variant('default')
                     ->canSee('system.role.update'),
             ])
             ->rowActions([
