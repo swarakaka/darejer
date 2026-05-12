@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Darejer\Http\Controllers\Admin;
 
+use Darejer\Actions\ButtonAction;
 use Darejer\Actions\DeleteAction;
-use Darejer\Actions\LinkAction;
 use Darejer\Components\Combobox;
 use Darejer\Components\TextInput;
 use Darejer\Components\Toggle;
@@ -13,11 +13,11 @@ use Darejer\DataGrid\Column;
 use Darejer\DataGrid\Filter;
 use Darejer\DataGrid\RowAction;
 use Darejer\DataTable\DataTable;
+use Darejer\Enums\YesNo;
 use Darejer\Forms\Form;
 use Darejer\Http\Controllers\DarejerController;
 use Darejer\Routing\RoutePattern;
 use Darejer\Screen\Section;
-use Darejer\Enums\YesNo;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -64,10 +64,9 @@ class UserController extends DarejerController
                 Filter::text('email')->label(__darejer('Email')),
             ])
             ->headerActions([
-                LinkAction::make(__darejer('New User'))
+                ButtonAction::make(__darejer('New User'))
                     ->url(route('darejer.admin.users.create'))
                     ->icon('Plus')
-                    ->variant('default')
                     ->canSee('system.user.create'),
             ])
             ->rowActions([
