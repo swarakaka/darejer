@@ -5,6 +5,7 @@ declare(strict_types=1);
 use Darejer\DataGrid\Column;
 use Darejer\DataGrid\Filter;
 use Darejer\DataTable\DataTable;
+use Darejer\Enums\YesNo;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Schema\Blueprint;
@@ -23,6 +24,30 @@ class DataTableDateRangeModel extends Model
     protected $guarded = [];
 
     public $timestamps = false;
+}
+
+class DataTableBadgeEnumModel extends Model
+{
+    protected $table = 'data_table_badge_enum';
+
+    protected $guarded = [];
+
+    public $timestamps = false;
+
+    protected function casts(): array
+    {
+        return ['is_active' => 'boolean'];
+    }
+}
+
+function renderDataTableProps(DataTable $table): array
+{
+    $request = Request::create('/', 'GET');
+    $request->headers->set('X-Inertia', 'true');
+
+    $response = $table->render($request)->toResponse($request);
+
+    return json_decode($response->getContent(), true)['props'] ?? [];
 }
 
 function callBuildRenderColumns(DataTable $table): array
@@ -152,5 +177,48 @@ describe('Filter::dateRange', function () {
             ->map(fn ($d) => (string) $d)->all();
 
         expect($dates)->toBe(['2026-01-15', '2026-03-10']);
+    });
+});
+
+describe('Column::badge with a backed enum', function () {
+    beforeEach(function (): void {
+        Schema::create('data_table_badge_enum', function (Blueprint $table): void {
+            $table->id();
+            $table->boolean('is_active');
+        });
+
+        DataTableBadgeEnumModel::query()->create(['is_active' => true]);
+        DataTableBadgeEnumModel::query()->create(['is_active' => false]);
+    });
+
+    it('resolves the cell server-side into a {label, variant} pair', function () {
+        $table = DataTable::make(DataTableBadgeEnumModel::class)
+            ->columns([
+                Column::make('id'),
+                Column::make('is_active')->badge(YesNo::class),
+            ])
+            ->defaultSort('id', 'asc');
+
+        $rows = renderDataTableProps($table)['tableData']['data'];
+
+        expect($rows)->toHaveCount(2);
+        expect($rows[0]['is_active'])->toBe(['label' => 'Yes', 'variant' => 'success']);
+        expect($rows[1]['is_active'])->toBe(['label' => 'No', 'variant' => 'muted']);
+    });
+
+    it('does not pre-resolve array-form badge cells', function () {
+        $table = DataTable::make(DataTableBadgeEnumModel::class)
+            ->columns([
+                Column::make('id'),
+                Column::make('is_active')->badge(['1' => 'success', '0' => 'muted']),
+            ])
+            ->defaultSort('id', 'asc');
+
+        $rows = renderDataTableProps($table)['tableData']['data'];
+
+        // Array-form callers don't carry an enum class, so the raw boolean
+        // value flows through and the frontend handles the lookup.
+        expect($rows[0]['is_active'])->toBeTrue();
+        expect($rows[1]['is_active'])->toBeFalse();
     });
 });

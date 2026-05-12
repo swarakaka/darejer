@@ -2,6 +2,7 @@
 
 namespace Darejer\DataTable;
 
+use BackedEnum;
 use Carbon\CarbonImmutable;
 use Darejer\DataGrid\Column;
 use Darejer\DataGrid\Filter;
@@ -285,8 +286,16 @@ class DataTable
             })
             ->all();
 
+        $badgeEnumColumns = collect($this->columns)
+            ->mapWithKeys(function (Column $column): array {
+                $enum = $column->getBadgeEnum();
+
+                return $enum ? [$column->getField() => $enum] : [];
+            })
+            ->all();
+
         $numeric = $this->numeric;
-        $data = collect($paginated->items())->values()->map(function ($item, $index) use ($dateColumns, $booleanColumns, $numberColumns, $moneyColumns, $displayUsingColumns, $formatColumns, $numeric, $startIndex) {
+        $data = collect($paginated->items())->values()->map(function ($item, $index) use ($dateColumns, $booleanColumns, $numberColumns, $moneyColumns, $displayUsingColumns, $formatColumns, $badgeEnumColumns, $numeric, $startIndex) {
             $arr = $item->toArray();
 
             if ($numeric) {
@@ -357,6 +366,20 @@ class DataTable
                     }
                 }
                 $arr[$field] = $formatted;
+            }
+
+            foreach ($badgeEnumColumns as $field => $enumClass) {
+                if (! array_key_exists($field, $arr)) {
+                    continue;
+                }
+                $case = self::resolveEnumCase($enumClass, $arr[$field]);
+                if ($case === null) {
+                    continue;
+                }
+                $arr[$field] = [
+                    'label' => method_exists($case, 'label') ? $case->label() : (string) $case->value,
+                    'variant' => method_exists($case, 'color') ? $case->color() : 'neutral',
+                ];
             }
 
             foreach ($displayUsingColumns as $field => $callback) {
@@ -532,6 +555,43 @@ class DataTable
         }
 
         return (float) $value;
+    }
+
+    /**
+     * Resolve a backed-enum case from a row value, tolerating both string and
+     * integer enum backings and PHP booleans (which Eloquent's boolean cast
+     * surfaces). Booleans try `'true'/'false'` first (matches the YesNo
+     * convention) then `'1'/'0'` for integer-backed enums.
+     *
+     * @param  class-string<BackedEnum>  $enumClass
+     */
+    protected static function resolveEnumCase(string $enumClass, mixed $value): ?BackedEnum
+    {
+        if (! is_subclass_of($enumClass, BackedEnum::class)) {
+            return null;
+        }
+        if ($value instanceof BackedEnum) {
+            return $value instanceof $enumClass ? $value : null;
+        }
+        if ($value === null) {
+            return null;
+        }
+
+        $candidates = is_bool($value)
+            ? [$value ? 'true' : 'false', $value ? 1 : 0, $value ? '1' : '0']
+            : [$value, is_numeric($value) ? (int) $value : null, (string) $value];
+
+        foreach ($candidates as $candidate) {
+            if ($candidate === null || (! is_int($candidate) && ! is_string($candidate))) {
+                continue;
+            }
+            $case = $enumClass::tryFrom($candidate);
+            if ($case !== null) {
+                return $case;
+            }
+        }
+
+        return null;
     }
 
     /**

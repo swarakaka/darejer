@@ -433,31 +433,61 @@ function formatCell(value: unknown, _col: object | unknown): unknown {
 }
 
 function badgeKey(value: unknown): string {
-  if (value === true) return '1'
-  if (value === false) return '0'
   return value == null ? '' : String(value)
 }
 
+// Cells coming from `Column::badge(EnumClass::class)` arrive pre-resolved
+// from PHP as `{ label, variant }`, so neither side has to coerce booleans
+// or look up keys. Legacy array-form callers still send a raw primitive.
+type ResolvedBadge = { label: string; variant: string }
+function isResolvedBadge(value: unknown): value is ResolvedBadge {
+  return typeof value === 'object'
+    && value !== null
+    && typeof (value as Record<string, unknown>).label === 'string'
+    && typeof (value as Record<string, unknown>).variant === 'string'
+}
+
+// Resolve a badge map entry for the cell value. Booleans accept either
+// `'true'/'false'` (YesNo-enum backing) or `'1'/'0'` (legacy array-form
+// callers) so both conventions coexist.
+function lookupBadge(map: Record<string, string>, value: unknown): string | undefined {
+  if (value === true) {
+    return map['true'] ?? map['1']
+  }
+  if (value === false) {
+    return map['false'] ?? map['0']
+  }
+  return map[badgeKey(value)]
+}
+
+const badgeVariantClasses: Record<string, string> = {
+  success: 'bg-success-50 text-success-700 ring-success-100',
+  warning: 'bg-warning-50 text-warning-700 ring-warning-100',
+  danger: 'bg-danger-50 text-danger-700 ring-danger-100',
+  info: 'bg-brand-50 text-brand-700 ring-brand-100',
+  neutral: 'bg-paper-100 text-ink-600 ring-paper-200',
+  muted: 'bg-paper-100 text-ink-600 ring-paper-200',
+}
+
 function badgeClass(col: GridColumn, value: unknown): string {
-  if (!col.badge) return ''
-  let map: Record<string, string> = {}
-  try {
-    map = JSON.parse(col.badge)
-  } catch {
-    map = {}
+  if (!col.badge && !isResolvedBadge(value)) return ''
+  let variant: string
+  if (isResolvedBadge(value)) {
+    variant = value.variant
+  } else {
+    let map: Record<string, string> = {}
+    try {
+      map = JSON.parse(col.badge!)
+    } catch {
+      map = {}
+    }
+    variant = lookupBadge(map, value) ?? 'neutral'
   }
-  const variant = map[badgeKey(value)] ?? 'neutral'
-  const classes: Record<string, string> = {
-    success: 'bg-success-50 text-success-700 ring-success-100',
-    warning: 'bg-warning-50 text-warning-700 ring-warning-100',
-    danger: 'bg-danger-50 text-danger-700 ring-danger-100',
-    info: 'bg-brand-50 text-brand-700 ring-brand-100',
-    neutral: 'bg-paper-100 text-ink-600 ring-paper-200',
-  }
-  return classes[variant] ?? classes.neutral
+  return badgeVariantClasses[variant] ?? badgeVariantClasses.neutral
 }
 
 function badgeLabel(col: GridColumn, value: unknown): string {
+  if (isResolvedBadge(value)) return value.label
   const key = badgeKey(value)
   if (!col.badgeLabels) return key
   let labels: Record<string, string> = {}
@@ -466,7 +496,7 @@ function badgeLabel(col: GridColumn, value: unknown): string {
   } catch {
     labels = {}
   }
-  return labels[key] ?? key
+  return lookupBadge(labels, value) ?? key
 }
 
 function readRowPath(row: Record<string, unknown>, path: string): unknown {
@@ -485,7 +515,7 @@ function textColorClass(col: GridColumn, row: Record<string, unknown>): string {
   } catch {
     map = {}
   }
-  const variant = map[badgeKey(readRowPath(row, col.textColorBy))]
+  const variant = lookupBadge(map, readRowPath(row, col.textColorBy))
   if (!variant) return ''
   const classes: Record<string, string> = {
     success: 'text-success-700',

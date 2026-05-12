@@ -30,6 +30,9 @@ class Column
 
     protected ?string $badgeLabels = null;
 
+    /** @var class-string<BackedEnum>|null */
+    protected ?string $badgeEnum = null;
+
     protected ?string $textColorBy = null;
 
     protected ?string $textColorMap = null;
@@ -140,6 +143,10 @@ class Column
     {
         $this->badge = json_encode(EnumOptions::colors($colorMap));
 
+        if (is_string($colorMap) && is_subclass_of($colorMap, BackedEnum::class)) {
+            $this->badgeEnum = $colorMap;
+        }
+
         if ($labels !== null) {
             $this->badgeLabels = json_encode($labels);
         } elseif (is_string($colorMap)) {
@@ -149,6 +156,12 @@ class Column
         }
 
         return $this;
+    }
+
+    /** @return class-string<BackedEnum>|null */
+    public function getBadgeEnum(): ?string
+    {
+        return $this->badgeEnum;
     }
 
     /**
