@@ -97,10 +97,6 @@ function tileHref(item: NavItem): string {
   const firstChildUrl = item.children?.find((c) => c.url)?.url
   return firstChildUrl ?? '#'
 }
-
-function childCount(item: NavItem): number {
-  return item.children?.length ?? 0
-}
 </script>
 
 <template>
@@ -114,23 +110,18 @@ function childCount(item: NavItem): number {
           v-for="item in tiles"
           :key="item.label"
           :href="tileHref(item)"
-          class="group flex flex-col items-start gap-2 no-underline outline-none"
+          class="group flex flex-col items-center gap-2 text-center no-underline outline-none"
         >
           <span
             class="inline-flex h-14 w-14 items-center justify-center rounded-md bg-brand-500 text-white shadow-[0_1px_2px_rgba(0,0,0,0.08)] ring-1 ring-brand-600/30 ring-inset transition-all duration-150 group-hover:-translate-y-0.5 group-hover:bg-brand-600 group-hover:shadow-[0_6px_14px_-6px_rgba(0,120,212,0.55)]"
           >
             <component :is="getIcon(item.icon)" class="h-6 w-6" />
           </span>
-          <div class="flex flex-col">
-            <span
-              class="text-[13px] font-semibold tracking-tight text-ink-900 transition-colors group-hover:text-brand-700"
-            >
-              {{ item.label }}
-            </span>
-            <span v-if="childCount(item)" class="text-[11px] text-ink-500 tabular-nums">
-              {{ childCount(item) }} {{ childCount(item) === 1 ? __('item') : __('items') }}
-            </span>
-          </div>
+          <span
+            class="text-[13px] font-semibold tracking-tight text-ink-900 transition-colors group-hover:text-brand-700"
+          >
+            {{ item.label }}
+          </span>
         </Link>
       </div>
 
