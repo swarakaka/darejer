@@ -213,7 +213,7 @@ function renderCell(col: TableCol, row: Record<string, unknown>): Cell {
 }
 
 const gridTemplate = computed(() =>
-  columns.value.map((c) => c.width ?? '1fr').join(' '),
+  columns.value.map((c) => c.width ?? 'minmax(8rem, 1fr)').join(' '),
 )
 
 const AGGREGATORS = ['sum', 'avg', 'min', 'max', 'count'] as const
@@ -340,7 +340,8 @@ function renderFooter(col: TableCol): FooterCell | null {
     :form-data="formData"
     class="col-span-full"
   >
-    <div class="overflow-hidden rounded-md border border-paper-200 bg-card">
+    <div class="overflow-x-auto rounded-md border border-paper-200 bg-card">
+     <div class="min-w-max">
       <!-- Header -->
       <div
         class="grid border-b border-paper-200 bg-paper-75"
@@ -406,6 +407,7 @@ function renderFooter(col: TableCol): FooterCell | null {
           {{ renderFooter(col)?.text ?? '' }}
         </div>
       </div>
+     </div>
     </div>
   </FieldWrapper>
 </template>
