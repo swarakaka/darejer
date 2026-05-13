@@ -54,6 +54,8 @@ class Column
 
     protected bool $translatable = false;
 
+    protected ?string $footer = null;
+
     protected function __construct(string $field)
     {
         $this->field = $field;
@@ -179,6 +181,23 @@ class Column
         return $this;
     }
 
+    /**
+     * Render a footer cell that aggregates this column across all rows.
+     *
+     * Pass a bare aggregator (`'sum'`, `'avg'`, `'min'`, `'max'`, `'count'`)
+     * to apply it to this column's field, or an expression that references
+     * row fields inside aggregate calls — e.g. `'sum(qty * rate)'` or
+     * `'sum(amount) - sum(discount_amount)'`. Numeric formatting follows the
+     * column's own type (`number`/`money`/decimals/currency).
+     */
+    public function footer(string $expression): static
+    {
+        $this->footer = $expression;
+        $this->alignRight = true;
+
+        return $this;
+    }
+
     public function toArray(): array
     {
         return array_filter([
@@ -197,6 +216,7 @@ class Column
             'alignRight' => $this->alignRight ?: null,
             'emptyText' => $this->emptyText,
             'translatable' => $this->translatable ?: null,
+            'footer' => $this->footer,
         ], fn ($v) => $v !== null);
     }
 }

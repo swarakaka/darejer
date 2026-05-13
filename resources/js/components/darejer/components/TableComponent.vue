@@ -23,6 +23,7 @@ interface TableCol {
   alignRight?: boolean
   emptyText?: string
   translatable?: boolean
+  footer?: string
 }
 
 const props = defineProps<{
@@ -214,6 +215,105 @@ function renderCell(col: TableCol, row: Record<string, unknown>): Cell {
 const gridTemplate = computed(() =>
   columns.value.map((c) => c.width ?? '1fr').join(' '),
 )
+
+const AGGREGATORS = ['sum', 'avg', 'min', 'max', 'count'] as const
+type Aggregator = (typeof AGGREGATORS)[number]
+const AGG_RE = /\b(sum|avg|min|max|count)\s*\(\s*([^()]*?)\s*\)/g
+
+function numericRowValue(row: Record<string, unknown>, field: string): number {
+  const v = resolvePath(row, field)
+  const n = typeof v === 'number' ? v : Number(v)
+  return Number.isFinite(n) ? n : 0
+}
+
+function compileRowExpression(expr: string, fields: string[]): ((row: Record<string, unknown>) => number) | null {
+  const trimmed = expr.trim()
+  if (trimmed === '') return () => 1
+  try {
+    const fn = new Function(...fields, `"use strict"; return (${trimmed});`) as (
+      ...args: number[]
+    ) => unknown
+    return (row) => {
+      const args = fields.map((f) => numericRowValue(row, f))
+      const result = fn(...args)
+      const n = typeof result === 'number' ? result : Number(result)
+      return Number.isFinite(n) ? n : 0
+    }
+  } catch (e) {
+    console.error(`[Table] failed to compile footer expression: ${expr}`, e)
+    return null
+  }
+}
+
+function aggregate(kind: Aggregator, values: number[]): number {
+  if (kind === 'count') return values.length
+  if (values.length === 0) return 0
+  if (kind === 'sum') return values.reduce((a, b) => a + b, 0)
+  if (kind === 'avg') return values.reduce((a, b) => a + b, 0) / values.length
+  if (kind === 'min') return Math.min(...values)
+  return Math.max(...values)
+}
+
+function evaluateFooter(col: TableCol, allRows: Record<string, unknown>[]): number | null {
+  const raw = col.footer
+  if (!raw) return null
+  const fieldSet = new Set(columns.value.map((c) => c.field))
+  const bare = raw.trim().toLowerCase()
+  const expr = (AGGREGATORS as readonly string[]).includes(bare) ? `${bare}(${col.field})` : raw
+
+  const replacements: { token: string; value: number }[] = []
+  let idx = 0
+  const placeholderForm = expr.replace(AGG_RE, (_, name: string, inner: string) => {
+    const kind = name.toLowerCase() as Aggregator
+    const compiled = compileRowExpression(inner, Array.from(fieldSet))
+    if (!compiled) return '0'
+    const values = allRows.map((row) => compiled(row))
+    const result = aggregate(kind, values)
+    const token = `__agg_${idx++}__`
+    replacements.push({ token, value: result })
+    return token
+  })
+
+  try {
+    const tokens = replacements.map((r) => r.token)
+    const fn = new Function(...tokens, `"use strict"; return (${placeholderForm});`) as (
+      ...args: number[]
+    ) => unknown
+    const result = fn(...replacements.map((r) => r.value))
+    const n = typeof result === 'number' ? result : Number(result)
+    return Number.isFinite(n) ? n : null
+  } catch (e) {
+    console.error(`[Table] failed to evaluate footer expression: ${raw}`, e)
+    return null
+  }
+}
+
+const hasFooter = computed(() => columns.value.some((c) => !!c.footer))
+
+interface FooterCell {
+  text: string
+  alignRight: boolean
+}
+
+function renderFooter(col: TableCol): FooterCell | null {
+  if (!col.footer) return null
+  const n = evaluateFooter(col, rows.value)
+  if (n === null) return { text: '—', alignRight: true }
+  const dec = col.decimalsField
+    ? decimalsFor(col, source.value as Record<string, unknown>)
+    : (col.decimals ?? 0)
+  const formatted = new Intl.NumberFormat(undefined, {
+    minimumFractionDigits: dec,
+    maximumFractionDigits: dec,
+  }).format(n)
+  if (col.type === 'money') {
+    const code = col.currencyField
+      ? (resolvePath(source.value, col.currencyField) as string | undefined)
+      : null
+    return { text: code ? `${formatted} ${code}` : formatted, alignRight: true }
+  }
+  return { text: formatted, alignRight: true }
+}
 </script>
 
 <template>
@@ -272,6 +372,22 @@ const gridTemplate = computed(() =>
           <template v-else>
             {{ renderCell(col, row).text }}
           </template>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div
+        v-if="hasFooter && rows.length > 0"
+        class="grid border-t border-paper-200 bg-paper-75"
+        :style="{ gridTemplateColumns: gridTemplate }"
+      >
+        <div
+          v-for="col in columns"
+          :key="col.field"
+          class="flex h-9 items-center border-e border-paper-200 px-2.5 text-sm font-semibold tabular-nums text-ink-800 last:border-e-0"
+          :class="col.alignRight ? 'justify-end' : 'justify-start'"
+        >
+          {{ renderFooter(col)?.text ?? '' }}
         </div>
       </div>
     </div>
