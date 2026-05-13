@@ -1187,7 +1187,6 @@ function clearFilter(field: string) {
                   :class="[
                     col.align === 'right' ? 'text-end tabular-nums' : '',
                     col.align === 'center' ? 'text-center' : '',
-                    col.footer && !col.align ? 'text-end tabular-nums' : '',
                   ]"
                 >
                   {{ footerValues?.[col.field] ?? '' }}

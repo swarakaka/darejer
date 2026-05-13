@@ -3,10 +3,12 @@
 namespace Darejer\Table;
 
 use BackedEnum;
+use Darejer\Components\Display;
+use Darejer\Components\Table;
 use Darejer\Support\EnumOptions;
 
 /**
- * Fluent column definition for the read-only {@see \Darejer\Components\Table}.
+ * Fluent column definition for the read-only {@see Table}.
  *
  * Mirrors the shape of {@see \Darejer\EditableTable\Column} but is purely
  * presentational — the frontend renders values straight out of the row, no
@@ -131,7 +133,7 @@ class Column
      * Render as money — localized number with `$decimals` fraction digits and
      * thousand separators. `$currencyField` / `$decimalsField` accept dot
      * paths into the parent record so per-currency precision works without
-     * controller-side math (mirrors {@see \Darejer\Components\Display::money}).
+     * controller-side math (mirrors {@see Display::money}).
      */
     public function money(int $decimals = 2, ?string $currencyField = null, ?string $decimalsField = null): static
     {
@@ -193,7 +195,6 @@ class Column
     public function footer(string $expression): static
     {
         $this->footer = $expression;
-        $this->alignRight = true;
 
         return $this;
     }

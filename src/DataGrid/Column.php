@@ -323,10 +323,6 @@ class Column
             $this->footerCallback = null;
         }
 
-        if ($this->align === 'left') {
-            $this->align = 'right';
-        }
-
         return $this;
     }
 
