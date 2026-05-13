@@ -2,6 +2,7 @@
 
 use Darejer\Actions\SaveAction;
 use Darejer\Components\TextInput;
+use Darejer\Report\Column as ReportColumn;
 use Darejer\Screen\Screen;
 use Darejer\Screen\Section;
 use Darejer\Screen\Tab;
@@ -180,3 +181,41 @@ it('serializes breadcrumbs', function () {
     expect($array['breadcrumbs'])->toHaveCount(2);
     expect($array['breadcrumbs'][0]['label'])->toBe('Home');
 });
+
+it('serializes reportColumns from Column instances', function () {
+    $screen = Screen::make('Customer Statement')
+        ->reportColumns([
+            ReportColumn::make('date')->label('Date')->date(),
+            ReportColumn::make('debit')->label('Debit')->money(2),
+            ReportColumn::make('reference')->label('Reference'),
+        ]);
+
+    $array = $screen->toArray();
+
+    expect($array['reportColumns'])->toHaveCount(3);
+    expect($array['reportColumns'][0])->toMatchArray([
+        'field' => 'date',
+        'label' => 'Date',
+        'displayType' => 'date',
+    ]);
+    expect($array['reportColumns'][1])->toMatchArray([
+        'field' => 'debit',
+        'label' => 'Debit',
+        'displayType' => 'money',
+        'decimals' => 2,
+        'align' => 'right',
+    ]);
+    expect($array['reportColumns'][2]['field'])->toBe('reference');
+    expect($array['reportColumns'][2])->not->toHaveKey('align');
+});
+
+it('returns null reportColumns when none defined', function () {
+    $screen = Screen::make('Test');
+    expect($screen->toArray()['reportColumns'])->toBeNull();
+});
+
+it('rejects array form for reportColumns', function () {
+    Screen::make('Test')->reportColumns([
+        ['field' => 'date', 'label' => 'Date'],
+    ]);
+})->throws(InvalidArgumentException::class);
