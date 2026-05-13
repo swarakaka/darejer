@@ -226,15 +226,17 @@ function numericRowValue(row: Record<string, unknown>, field: string): number {
   return Number.isFinite(n) ? n : 0
 }
 
-function compileRowExpression(expr: string, fields: string[]): ((row: Record<string, unknown>) => number) | null {
+function compileRowExpression(expr: string, fieldSet: Set<string>): ((row: Record<string, unknown>) => number) | null {
   const trimmed = expr.trim()
   if (trimmed === '') return () => 1
+  const tokens = trimmed.match(/\b[a-zA-Z_][a-zA-Z0-9_]*\b/g) ?? []
+  const deps = Array.from(new Set(tokens.filter((t) => fieldSet.has(t))))
   try {
-    const fn = new Function(...fields, `"use strict"; return (${trimmed});`) as (
+    const fn = new Function(...deps, `"use strict"; return (${trimmed});`) as (
       ...args: number[]
     ) => unknown
     return (row) => {
-      const args = fields.map((f) => numericRowValue(row, f))
+      const args = deps.map((f) => numericRowValue(row, f))
       const result = fn(...args)
       const n = typeof result === 'number' ? result : Number(result)
       return Number.isFinite(n) ? n : 0
@@ -265,7 +267,7 @@ function evaluateFooter(col: TableCol, allRows: Record<string, unknown>[]): numb
   let idx = 0
   const placeholderForm = expr.replace(AGG_RE, (_, name: string, inner: string) => {
     const kind = name.toLowerCase() as Aggregator
-    const compiled = compileRowExpression(inner, Array.from(fieldSet))
+    const compiled = compileRowExpression(inner, fieldSet)
     if (!compiled) return '0'
     const values = allRows.map((row) => compiled(row))
     const result = aggregate(kind, values)
