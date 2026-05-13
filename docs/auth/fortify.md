@@ -26,12 +26,12 @@ Darejer ships its own `config/fortify.php` enabling:
 
 | Feature | Status |
 |---|---|
-| `resetPasswords` | ✅ enabled |
-| `updateProfileInformation` | ✅ enabled |
-| `updatePasswords` | ✅ enabled |
-| `twoFactorAuthentication` (with `confirm` + `confirmPassword`) | ✅ enabled |
-| `registration` | ❌ disabled |
-| `emailVerification` | ❌ disabled |
+| `resetPasswords` | enabled |
+| `updateProfileInformation` | enabled |
+| `updatePasswords` | enabled |
+| `twoFactorAuthentication` (with `confirm` + `confirmPassword`) | enabled |
+| `registration` | disabled |
+| `emailVerification` | disabled |
 
 **To enable registration / email verification**, publish the Fortify config:
 
