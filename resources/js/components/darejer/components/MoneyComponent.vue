@@ -383,7 +383,8 @@ function onBlur() {
           :class="[
             hasError ? 'border-danger-600' : '',
             hasPrefix ? 'ps-20' : '',
-            hasInputSuffix || hasSuffixAction ? 'pe-20' : '',
+            hasInputSuffix && !hasSuffixAction ? 'pe-20' : '',
+            hasSuffixAction ? 'pe-8' : '',
             hasPicker ? 'rounded-e-none' : '',
           ]"
           @focus="onFocus"
@@ -398,17 +399,17 @@ function onBlur() {
           {{ staticSuffix }}
         </span>
 
-        <!-- Suffix action: clickable button that opens an inline dialog -->
+        <!-- Suffix action: clickable icon button sitting INSIDE the input. -->
         <TooltipProvider v-if="hasSuffixAction" :delay-duration="0">
           <Tooltip>
             <TooltipTrigger as-child>
               <button
                 type="button"
-                class="absolute inset-y-0 inset-e-0 z-10 flex items-center justify-center rounded-e-md border-s border-paper-300 bg-paper-50 px-2.5 text-ink-500 transition-colors hover:bg-paper-100 hover:text-ink-900 focus:outline-none focus:ring-2 focus:ring-brand-500"
+                class="absolute inset-y-0 inset-e-1 z-10 my-auto flex h-6 w-6 items-center justify-center rounded-sm text-ink-400 transition-colors hover:bg-paper-200 hover:text-ink-900 focus:outline-none focus:ring-2 focus:ring-brand-500"
                 :aria-label="suffixActionTooltip ?? 'Add'"
                 @click="openSuffixDialog"
               >
-                <Plus class="h-4 w-4" />
+                <Plus class="h-3.5 w-3.5" />
               </button>
             </TooltipTrigger>
             <TooltipContent v-if="suffixActionTooltip" side="top" class="text-xs">
