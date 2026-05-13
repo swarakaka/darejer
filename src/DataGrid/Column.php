@@ -53,6 +53,8 @@ class Column
 
     protected ?string $footer = null;
 
+    protected ?Closure $footerCallback = null;
+
     protected function __construct(string $field)
     {
         $this->field = $field;
@@ -288,21 +290,39 @@ class Column
 
     /**
      * Render a footer cell that aggregates this column across the entire
-     * filtered dataset (not just the visible page). Accepts a bare aggregator:
-     * `'sum'`, `'avg'`, `'min'`, `'max'`, or `'count'`. The value is computed
-     * server-side via a single Eloquent aggregate query and formatted with the
-     * column's display type (`number`/`money` precision).
+     * filtered dataset (not just the visible page).
+     *
+     * Pass a bare aggregator (`'sum'`, `'avg'`, `'min'`, `'max'`, `'count'`)
+     * to run a SQL aggregate against this column's field — works for real
+     * DB columns only.
+     *
+     * For accessor columns or anything needing a join/subquery, pass a
+     * Closure that receives a clone of the filtered Eloquent Builder (with
+     * its ORDER BY cleared) and returns the value. Return a numeric scalar
+     * or stringified BigDecimal; the result is formatted with the column's
+     * `number`/`money` precision.
+     *
+     *   ->footer(fn (Builder $q) => DB::table('lines')
+     *       ->whereIn('payment_id', $q->select('id'))
+     *       ->sum('amount'))
      */
-    public function footer(string $aggregator): static
+    public function footer(string|Closure $aggregator): static
     {
-        $valid = ['sum', 'avg', 'min', 'max', 'count'];
-        $normalized = strtolower(trim($aggregator));
-        if (! in_array($normalized, $valid, true)) {
-            throw new \InvalidArgumentException(
-                "DataGrid Column footer must be one of: ".implode(', ', $valid).". Got: {$aggregator}"
-            );
+        if ($aggregator instanceof Closure) {
+            $this->footer = 'callback';
+            $this->footerCallback = $aggregator;
+        } else {
+            $valid = ['sum', 'avg', 'min', 'max', 'count'];
+            $normalized = strtolower(trim($aggregator));
+            if (! in_array($normalized, $valid, true)) {
+                throw new \InvalidArgumentException(
+                    'DataGrid Column footer must be one of: '.implode(', ', $valid).". Got: {$aggregator}"
+                );
+            }
+            $this->footer = $normalized;
+            $this->footerCallback = null;
         }
-        $this->footer = $normalized;
+
         if ($this->align === 'left') {
             $this->align = 'right';
         }
@@ -363,6 +383,11 @@ class Column
     public function getFooter(): ?string
     {
         return $this->footer;
+    }
+
+    public function getFooterCallback(): ?Closure
+    {
+        return $this->footerCallback;
     }
 
     public function toArray(): array

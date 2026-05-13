@@ -471,17 +471,20 @@ class DataTable
 
         foreach ($footerColumns as $col) {
             $field = $col->getField();
-            $agg = $col->getFooter();
             $cloned = $base->clone();
 
-            $raw = match ($agg) {
-                'sum' => $cloned->sum($field),
-                'avg' => $cloned->avg($field),
-                'min' => $cloned->min($field),
-                'max' => $cloned->max($field),
-                'count' => $cloned->count(),
-                default => null,
-            };
+            if ($callback = $col->getFooterCallback()) {
+                $raw = $callback($cloned);
+            } else {
+                $raw = match ($col->getFooter()) {
+                    'sum' => $cloned->sum($field),
+                    'avg' => $cloned->avg($field),
+                    'min' => $cloned->min($field),
+                    'max' => $cloned->max($field),
+                    'count' => $cloned->count(),
+                    default => null,
+                };
+            }
 
             $values[$field] = $this->formatFooterValue($col, $raw);
         }
