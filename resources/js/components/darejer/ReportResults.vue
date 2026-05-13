@@ -12,12 +12,16 @@ import {
 } from '@/components/ui/table'
 import useTranslation from '@/composables/useTranslation'
 import {
+  type ReportColumn,
   type Row,
   type Totals,
   deriveColumns,
+  formatCell,
   formatDisplay,
   humanize,
   isNumericColumn,
+  isNumericColumnDef,
+  visibleColumns,
 } from '@/lib/reportTable'
 
 const { __ } = useTranslation()
@@ -25,13 +29,25 @@ const { __ } = useTranslation()
 const props = defineProps<{
   rows: Row[]
   totals?: Totals | null
+  columns?: ReportColumn[] | null
 }>()
 
-const columns = computed<string[]>(() => deriveColumns(props.rows))
+const hasSchema = computed(() => Array.isArray(props.columns) && props.columns.length > 0)
 
-const numericColumnSet = computed<Set<string>>(() => {
+const schemaColumns = computed<ReportColumn[]>(() =>
+  hasSchema.value ? visibleColumns(props.columns!) : [],
+)
+
+const derivedColumns = computed<string[]>(() =>
+  hasSchema.value ? [] : deriveColumns(props.rows),
+)
+
+const numericDerivedSet = computed<Set<string>>(() => {
   const set = new Set<string>()
-  for (const c of columns.value) {
+  if (hasSchema.value) {
+    return set
+  }
+  for (const c of derivedColumns.value) {
     if (isNumericColumn(props.rows, c)) {
       set.add(c)
     }
@@ -39,20 +55,52 @@ const numericColumnSet = computed<Set<string>>(() => {
   return set
 })
 
-function totalsCellFor(column: string): unknown {
+function alignClass(align: 'left' | 'right' | 'center' | undefined): string {
+  if (align === 'right') return 'text-end'
+  if (align === 'center') return 'text-center'
+  return ''
+}
+
+function schemaCellClass(column: ReportColumn): string {
+  const numeric = isNumericColumnDef(column)
+  const align = column.align ?? (numeric ? 'right' : 'left')
+  return [
+    alignClass(align),
+    numeric ? 'font-mono tabular-nums' : '',
+  ]
+    .filter(Boolean)
+    .join(' ')
+}
+
+function schemaHeaderClass(column: ReportColumn): string {
+  const numeric = isNumericColumnDef(column)
+  const align = column.align ?? (numeric ? 'right' : 'left')
+  return alignClass(align)
+}
+
+function derivedCellClass(column: string): string {
+  return numericDerivedSet.value.has(column)
+    ? 'text-end font-mono tabular-nums'
+    : ''
+}
+
+function totalsCellFor(field: string): unknown {
   const t = props.totals
   if (!t) {
     return null
   }
-  return Object.prototype.hasOwnProperty.call(t, column) ? t[column] : null
+  return Object.prototype.hasOwnProperty.call(t, field) ? t[field] : null
 }
 
 const hasAnyTotal = computed(() => {
   if (!props.totals) {
     return false
   }
-  for (const c of columns.value) {
-    const v = totalsCellFor(c)
+  const fields = hasSchema.value
+    ? schemaColumns.value.map((c) => c.field)
+    : derivedColumns.value
+  for (const f of fields) {
+    const v = totalsCellFor(f)
     if (v !== null && v !== undefined) {
       return true
     }
@@ -94,13 +142,57 @@ const rowCount = computed(() => {
       <p class="text-sm">{{ __('No data — adjust filters and click Apply.') }}</p>
     </div>
 
+    <!-- Schema-driven rendering when explicit columns are provided -->
+    <Table v-else-if="hasSchema" class="text-[13px] print:text-[10.5px]">
+      <TableHeader>
+        <TableRow>
+          <TableHead
+            v-for="column in schemaColumns"
+            :key="column.field"
+            :class="schemaHeaderClass(column)"
+            :style="column.width ? { width: column.width } : undefined"
+          >
+            {{ __(column.label) }}
+          </TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        <TableRow v-for="(row, idx) in rows" :key="idx">
+          <TableCell
+            v-for="column in schemaColumns"
+            :key="column.field"
+            :class="schemaCellClass(column)"
+          >
+            {{ formatCell(row[column.field], column, row) }}
+          </TableCell>
+        </TableRow>
+      </TableBody>
+      <TableFooter v-if="hasAnyTotal">
+        <TableRow>
+          <TableCell
+            v-for="(column, i) in schemaColumns"
+            :key="column.field"
+            :class="['font-semibold', schemaCellClass(column)]"
+          >
+            <template v-if="i === 0 && totalsCellFor(column.field) === null">
+              {{ __('Total') }}
+            </template>
+            <template v-else-if="totalsCellFor(column.field) !== null">
+              {{ formatCell(totalsCellFor(column.field), column, (totals ?? {}) as Row) }}
+            </template>
+          </TableCell>
+        </TableRow>
+      </TableFooter>
+    </Table>
+
+    <!-- Fallback: auto-derive columns from row keys (legacy reports) -->
     <Table v-else class="text-[13px] print:text-[10.5px]">
       <TableHeader>
         <TableRow>
           <TableHead
-            v-for="column in columns"
+            v-for="column in derivedColumns"
             :key="column"
-            :class="numericColumnSet.has(column) ? 'text-end' : ''"
+            :class="derivedCellClass(column)"
           >
             {{ __(humanize(column)) }}
           </TableHead>
@@ -109,31 +201,26 @@ const rowCount = computed(() => {
       <TableBody>
         <TableRow v-for="(row, idx) in rows" :key="idx">
           <TableCell
-            v-for="column in columns"
+            v-for="column in derivedColumns"
             :key="column"
-            :class="[
-              numericColumnSet.has(column) ? 'text-end font-mono tabular-nums' : '',
-            ]"
+            :class="derivedCellClass(column)"
           >
-            {{ formatDisplay(row[column], numericColumnSet.has(column)) }}
+            {{ formatDisplay(row[column], numericDerivedSet.has(column)) }}
           </TableCell>
         </TableRow>
       </TableBody>
       <TableFooter v-if="hasAnyTotal">
         <TableRow>
           <TableCell
-            v-for="(column, i) in columns"
+            v-for="(column, i) in derivedColumns"
             :key="column"
-            :class="[
-              'font-semibold',
-              numericColumnSet.has(column) ? 'text-end font-mono tabular-nums' : '',
-            ]"
+            :class="['font-semibold', derivedCellClass(column)]"
           >
             <template v-if="i === 0 && totalsCellFor(column) === null">
               {{ __('Total') }}
             </template>
             <template v-else-if="totalsCellFor(column) !== null">
-              {{ formatDisplay(totalsCellFor(column), numericColumnSet.has(column)) }}
+              {{ formatDisplay(totalsCellFor(column), numericDerivedSet.has(column)) }}
             </template>
           </TableCell>
         </TableRow>

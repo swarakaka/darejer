@@ -2,6 +2,7 @@
 
 namespace Darejer\Screen;
 
+use Darejer\Report\Column as ReportColumn;
 use Darejer\Screen\Concerns\HasActions;
 use Darejer\Screen\Concerns\HasComponents;
 use Darejer\Screen\Concerns\HasDialog;
@@ -22,6 +23,9 @@ class Screen
     protected array $sections = [];
 
     protected array $tabs = [];
+
+    /** @var ReportColumn[] */
+    protected array $reportColumns = [];
 
     protected array $extraProps = [];
 
@@ -97,6 +101,28 @@ class Screen
     }
 
     /**
+     * Declare explicit columns for a report results table. When set, the
+     * frontend uses these for headers, alignment, and display formatting
+     * instead of auto-deriving columns from the first row's keys.
+     *
+     * @param  ReportColumn[]  $columns
+     */
+    public function reportColumns(array $columns): static
+    {
+        foreach ($columns as $column) {
+            if (! $column instanceof ReportColumn) {
+                throw new \InvalidArgumentException(
+                    'Screen::reportColumns() expects an array of '.ReportColumn::class.' instances.'
+                );
+            }
+        }
+
+        $this->reportColumns = $columns;
+
+        return $this;
+    }
+
+    /**
      * Merge any extra Inertia props that don't fit the standard structure.
      */
     public function with(array $props): static
@@ -127,6 +153,7 @@ class Screen
             'breadcrumbs' => $this->breadcrumbs,
             'sections' => $this->sections ? array_map(fn (Section $s) => $s->toArray(), $this->sections) : null,
             'tabs' => $this->tabs ? array_map(fn (Tab $t) => $t->toArray(), $this->tabs) : null,
+            'reportColumns' => $this->reportColumns ? array_map(fn (ReportColumn $c) => $c->toArray(), $this->reportColumns) : null,
             'fullWidth' => $this->fullWidth ?: null,
         ], $this->extraProps);
     }

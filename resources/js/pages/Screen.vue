@@ -9,6 +9,7 @@ import DarejerActions from '@/components/darejer/DarejerActions.vue'
 import AppBreadcrumbs from '@/components/darejer/AppBreadcrumbs.vue'
 import ReportResults from '@/components/darejer/ReportResults.vue'
 import {
+  type ReportColumn,
   buildCsv,
   deriveColumns,
   downloadFile,
@@ -110,6 +111,11 @@ const reportTotals = computed<Record<string, unknown> | null>(() => {
   return t && typeof t === 'object' ? (t as Record<string, unknown>) : null
 })
 
+const reportColumns = computed<ReportColumn[] | null>(() => {
+  const c = page.props.reportColumns
+  return Array.isArray(c) ? (c as ReportColumn[]) : null
+})
+
 const isReport = computed(() => reportRows.value !== null)
 
 function applyFilters() {
@@ -140,7 +146,7 @@ function exportCsv() {
   if (!canExport.value || !reportRows.value) {
     return
   }
-  const columns = deriveColumns(reportRows.value)
+  const columns = reportColumns.value ?? deriveColumns(reportRows.value)
   const csv = buildCsv(reportRows.value, columns, reportTotals.value)
   downloadFile(`${exportFilenameStem()}.csv`, 'text/csv', csv)
 }
@@ -579,6 +585,7 @@ const dialogSizeClass: Record<string, string> = {
               v-if="isReport && reportRows"
               :rows="reportRows"
               :totals="reportTotals"
+              :columns="reportColumns"
             />
           </div>
         </div>
