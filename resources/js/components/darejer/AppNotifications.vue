@@ -183,7 +183,7 @@ function onClick(alert: AlertRecord): void {
               </div>
               <button
                 type="button"
-                class="rounded-md p-1 text-ink-400 opacity-0 transition-opacity group-hover:opacity-100 hover:bg-danger-50 hover:text-danger-600"
+                class="rounded-md p-1 text-ink-400 transition-colors hover:bg-danger-50 hover:text-danger-600"
                 :aria-label="__('Delete notification')"
                 @click.stop="destroy(alert.id)"
               >
