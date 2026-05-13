@@ -13,7 +13,6 @@ import {
   CheckCheck,
   CircleCheck,
   CircleX,
-  ExternalLink,
   Info,
   Trash2,
   TriangleAlert,
@@ -173,12 +172,8 @@ function onClick(alert: AlertRecord): void {
                 >
                   {{ alert.message }}
                 </p>
-                <div class="mt-1 flex items-center gap-2 text-2xs text-ink-400 tabular-nums">
-                  <span>{{ timeAgo(alert.created_at) }}</span>
-                  <span v-if="alert.link" class="inline-flex items-center gap-1 text-brand-600">
-                    <ExternalLink class="h-3 w-3" />
-                    {{ __('Open') }}
-                  </span>
+                <div class="mt-1 text-2xs text-ink-400 tabular-nums">
+                  {{ timeAgo(alert.created_at) }}
                 </div>
               </div>
               <button
