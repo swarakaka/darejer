@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
-import { router, usePage } from '@inertiajs/vue3'
+import { Head, router, usePage } from '@inertiajs/vue3'
 import AppLayout from '@/layouts/AppLayout.vue'
 import AppBreadcrumbs from '@/components/darejer/AppBreadcrumbs.vue'
 import DarejerActions from '@/components/darejer/DarejerActions.vue'
@@ -571,6 +571,7 @@ function clearFilter(field: string) {
 </script>
 
 <template>
+  <Head :title="title" />
   <div class="flex h-full flex-col overflow-hidden bg-paper-100">
     <!-- Page header — refined hero with subtle gradient -->
     <header class="relative shrink-0 overflow-hidden border-b border-paper-200 bg-card">

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
-import { router, usePage } from '@inertiajs/vue3'
+import { Head, router, usePage } from '@inertiajs/vue3'
 import AppLayout from '@/layouts/AppLayout.vue'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { ChevronDown, Circle, Play, FileSpreadsheet, FileText } from 'lucide-vue-next'
@@ -316,6 +316,7 @@ const dialogSizeClass: Record<string, string> = {
 </script>
 
 <template>
+  <Head :title="title" />
   <!-- ── Full-page mode ──────────────────────────────────────────── -->
   <template v-if="!isDialog">
     <div class="flex h-full flex-col overflow-hidden bg-paper-100 print:block print:h-auto print:overflow-visible print:bg-white">

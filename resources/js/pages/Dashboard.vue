@@ -14,7 +14,7 @@ import {
   ArrowRight,
 } from 'lucide-vue-next'
 import useTranslation from '@/composables/useTranslation'
-import { Link } from '@inertiajs/vue3'
+import { Head, Link } from '@inertiajs/vue3'
 
 defineOptions({ layout: AppLayout })
 
@@ -79,6 +79,7 @@ const chartIcon = (type: 'line' | 'bar' | 'doughnut') => {
 </script>
 
 <template>
+  <Head :title="title" />
   <div class="flex h-full flex-col overflow-hidden bg-paper-100">
     <!-- Page header — refined hero with subtle gradient and accent rail -->
     <header class="relative shrink-0 overflow-hidden border-b border-paper-200 bg-card">

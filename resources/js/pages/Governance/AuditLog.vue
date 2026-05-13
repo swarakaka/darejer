@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
-import { router } from '@inertiajs/vue3'
+import { Head, router } from '@inertiajs/vue3'
 import AppLayout from '@/layouts/AppLayout.vue'
 import AppBreadcrumbs from '@/components/darejer/AppBreadcrumbs.vue'
 import {
@@ -159,6 +159,7 @@ watch(
 </script>
 
 <template>
+  <Head :title="title" />
   <div class="flex h-full flex-col overflow-hidden bg-paper-50">
     <!-- Page title -->
     <header class="shrink-0 border-b border-paper-200 bg-card">
