@@ -228,6 +228,7 @@ class DataTable
     public function render(Request $request): Response
     {
         $query = $this->buildQuery($request);
+        $footerValues = $this->buildFooterValues($query);
         $paginated = $query->paginate($this->perPage)->withQueryString();
 
         $renderColumns = $this->buildRenderColumns();
@@ -444,7 +445,72 @@ class DataTable
             ),
             'sort' => $request->get('sort', $this->defaultSort ?? 'id'),
             'order' => $request->get('order', $this->defaultOrder),
+            'footerValues' => $footerValues,
         ], $this->extraProps));
+    }
+
+    /**
+     * Run aggregate queries for each footer-bearing column across the entire
+     * filtered dataset (not just the visible page) and format the results.
+     *
+     * @return array<string, string>
+     */
+    protected function buildFooterValues(Builder $query): array
+    {
+        $footerColumns = array_values(array_filter(
+            $this->columns,
+            fn (Column $c) => $c->getFooter() !== null,
+        ));
+
+        if ($footerColumns === []) {
+            return [];
+        }
+
+        $base = $query->clone()->reorder();
+        $values = [];
+
+        foreach ($footerColumns as $col) {
+            $field = $col->getField();
+            $agg = $col->getFooter();
+            $cloned = $base->clone();
+
+            $raw = match ($agg) {
+                'sum' => $cloned->sum($field),
+                'avg' => $cloned->avg($field),
+                'min' => $cloned->min($field),
+                'max' => $cloned->max($field),
+                'count' => $cloned->count(),
+                default => null,
+            };
+
+            $values[$field] = $this->formatFooterValue($col, $raw);
+        }
+
+        return $values;
+    }
+
+    protected function formatFooterValue(Column $col, mixed $raw): string
+    {
+        if ($raw === null) {
+            return '';
+        }
+
+        $type = $col->getDisplayType();
+        $value = self::coerceNumeric($raw);
+
+        if ($col->getFooter() === 'count') {
+            return number_format((float) $raw, 0, '.', ',');
+        }
+
+        if ($value === null) {
+            return (string) $raw;
+        }
+
+        if ($type === 'money' || $type === 'number') {
+            return number_format($value, $col->getDecimals(), '.', ',');
+        }
+
+        return number_format($value, 0, '.', ',');
     }
 
     /**

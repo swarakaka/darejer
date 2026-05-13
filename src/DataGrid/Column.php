@@ -51,6 +51,8 @@ class Column
 
     protected ?string $booleanFalseLabel = null;
 
+    protected ?string $footer = null;
+
     protected function __construct(string $field)
     {
         $this->field = $field;
@@ -284,6 +286,30 @@ class Column
         return $this;
     }
 
+    /**
+     * Render a footer cell that aggregates this column across the entire
+     * filtered dataset (not just the visible page). Accepts a bare aggregator:
+     * `'sum'`, `'avg'`, `'min'`, `'max'`, or `'count'`. The value is computed
+     * server-side via a single Eloquent aggregate query and formatted with the
+     * column's display type (`number`/`money` precision).
+     */
+    public function footer(string $aggregator): static
+    {
+        $valid = ['sum', 'avg', 'min', 'max', 'count'];
+        $normalized = strtolower(trim($aggregator));
+        if (! in_array($normalized, $valid, true)) {
+            throw new \InvalidArgumentException(
+                "DataGrid Column footer must be one of: ".implode(', ', $valid).". Got: {$aggregator}"
+            );
+        }
+        $this->footer = $normalized;
+        if ($this->align === 'left') {
+            $this->align = 'right';
+        }
+
+        return $this;
+    }
+
     public function getField(): string
     {
         return $this->field;
@@ -334,6 +360,11 @@ class Column
         return $this->format;
     }
 
+    public function getFooter(): ?string
+    {
+        return $this->footer;
+    }
+
     public function toArray(): array
     {
         return array_filter([
@@ -350,6 +381,7 @@ class Column
             'textColorMap' => $this->textColorMap,
             'displayType' => $this->displayType,
             'dateFormat' => $this->dateFormat,
+            'footer' => $this->footer,
         ], fn ($v) => $v !== null && $v !== false);
     }
 }

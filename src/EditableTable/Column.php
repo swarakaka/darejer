@@ -62,6 +62,8 @@ class Column
 
     protected ?string $compute = null;
 
+    protected ?string $footer = null;
+
     protected function __construct(string $field)
     {
         $this->field = $field;
@@ -291,6 +293,22 @@ class Column
         return $this;
     }
 
+    /**
+     * Render a footer cell that aggregates this column across all rows.
+     *
+     * Pass a bare aggregator (`'sum'`, `'avg'`, `'min'`, `'max'`, `'count'`)
+     * to apply it to this column's field, or an expression that references
+     * row fields inside aggregate calls — e.g. `'sum(qty * rate)'` or
+     * `'sum(amount) - sum(discount_amount)'`. Re-evaluates live as rows or
+     * cells change. Numeric formatting follows the column's own decimals.
+     */
+    public function footer(string $expression): static
+    {
+        $this->footer = $expression;
+
+        return $this;
+    }
+
     public function getField(): string
     {
         return $this->field;
@@ -308,6 +326,7 @@ class Column
             'options' => $this->options,
             'decimals' => $this->decimals,
             'compute' => $this->compute,
+            'footer' => $this->footer,
         ];
 
         if ($this->type === 'combobox') {

@@ -74,6 +74,7 @@ interface GridColumn {
   badgeLabels?: string
   textColorBy?: string
   textColorMap?: string
+  footer?: string
 }
 
 interface FilterDef {
@@ -138,6 +139,7 @@ const props = defineProps<{
   activeFilters: Record<string, string | DateRange>
   sort: string
   order: string
+  footerValues?: Record<string, string>
 }>()
 
 const sortField = ref(props.sort || props.defaultSort)
@@ -164,6 +166,8 @@ const confirmAction = ref<GridRowAction | null>(null)
 const confirmRow = ref<Record<string, unknown> | null>(null)
 
 const visibleColumns = computed(() => props.columns.filter((c) => !c.hidden))
+
+const hasFooter = computed(() => visibleColumns.value.some((c) => !!c.footer))
 
 const allSelected = computed(
   () =>
@@ -1172,6 +1176,25 @@ function clearFilter(field: string) {
                 </td>
               </tr>
             </tbody>
+
+            <tfoot v-if="hasFooter && tableData.data.length > 0">
+              <tr class="border-t border-paper-200 bg-paper-75">
+                <td v-if="selectable" class="h-10 px-3" />
+                <td
+                  v-for="col in visibleColumns"
+                  :key="col.field"
+                  class="h-10 px-3 text-[13px] font-semibold text-ink-800"
+                  :class="[
+                    col.align === 'right' ? 'text-end tabular-nums' : '',
+                    col.align === 'center' ? 'text-center' : '',
+                    col.footer && !col.align ? 'text-end tabular-nums' : '',
+                  ]"
+                >
+                  {{ footerValues?.[col.field] ?? '' }}
+                </td>
+                <td v-if="rowActions.length" class="h-10 px-3" />
+              </tr>
+            </tfoot>
           </table>
         </div>
 

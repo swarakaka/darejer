@@ -29,6 +29,7 @@ interface TableCol {
   options?: { value: string; label: string }[]
   decimals?: number
   compute?: string
+  footer?: string
   // combobox-only:
   dataUrl?: string
   keyField?: string
@@ -325,6 +326,100 @@ function onMoneyInput(row: TableRow, field: string, e: Event) {
   ensureTrailingBlankRow()
   emitValue()
 }
+
+const AGGREGATORS = ['sum', 'avg', 'min', 'max', 'count'] as const
+type Aggregator = (typeof AGGREGATORS)[number]
+const AGG_RE = /\b(sum|avg|min|max|count)\s*\(\s*([^()]*?)\s*\)/g
+
+function numericRowValue(row: Record<string, unknown>, field: string): number {
+  const v = row[field]
+  const n = typeof v === 'number' ? v : Number(v)
+  return Number.isFinite(n) ? n : 0
+}
+
+function compileFooterRowExpression(
+  expr: string,
+  fieldSet: Set<string>,
+): ((row: Record<string, unknown>) => number) | null {
+  const trimmed = expr.trim()
+  if (trimmed === '') return () => 1
+  const tokens = trimmed.match(/\b[a-zA-Z_][a-zA-Z0-9_]*\b/g) ?? []
+  const deps = Array.from(new Set(tokens.filter((t) => fieldSet.has(t))))
+  try {
+    const fn = new Function(...deps, `"use strict"; return (${trimmed});`) as (
+      ...args: number[]
+    ) => unknown
+    return (row) => {
+      const args = deps.map((f) => numericRowValue(row, f))
+      const result = fn(...args)
+      const n = typeof result === 'number' ? result : Number(result)
+      return Number.isFinite(n) ? n : 0
+    }
+  } catch (e) {
+    console.error(`[EditableTable] failed to compile footer expression: ${expr}`, e)
+    return null
+  }
+}
+
+function aggregate(kind: Aggregator, values: number[]): number {
+  if (kind === 'count') return values.length
+  if (values.length === 0) return 0
+  if (kind === 'sum') return values.reduce((a, b) => a + b, 0)
+  if (kind === 'avg') return values.reduce((a, b) => a + b, 0) / values.length
+  if (kind === 'min') return Math.min(...values)
+  return Math.max(...values)
+}
+
+const aggregableRows = computed<Record<string, unknown>[]>(() =>
+  rows.value.filter((r) => !isRowBlank(r)),
+)
+
+function evaluateFooter(col: TableCol): number | null {
+  const raw = col.footer
+  if (!raw) return null
+  const fieldSet = new Set(columns.value.map((c) => c.field))
+  const bare = raw.trim().toLowerCase()
+  const expr = (AGGREGATORS as readonly string[]).includes(bare) ? `${bare}(${col.field})` : raw
+
+  const replacements: { token: string; value: number }[] = []
+  let idx = 0
+  const placeholderForm = expr.replace(AGG_RE, (_, name: string, inner: string) => {
+    const kind = name.toLowerCase() as Aggregator
+    const compiled = compileFooterRowExpression(inner, fieldSet)
+    if (!compiled) return '0'
+    const values = aggregableRows.value.map((row) => compiled(row))
+    const result = aggregate(kind, values)
+    const token = `__agg_${idx++}__`
+    replacements.push({ token, value: result })
+    return token
+  })
+
+  try {
+    const tokens = replacements.map((r) => r.token)
+    const fn = new Function(...tokens, `"use strict"; return (${placeholderForm});`) as (
+      ...args: number[]
+    ) => unknown
+    const result = fn(...replacements.map((r) => r.value))
+    const n = typeof result === 'number' ? result : Number(result)
+    return Number.isFinite(n) ? n : null
+  } catch (e) {
+    console.error(`[EditableTable] failed to evaluate footer expression: ${raw}`, e)
+    return null
+  }
+}
+
+const hasFooter = computed(() => columns.value.some((c) => !!c.footer))
+
+function renderFooter(col: TableCol): string {
+  if (!col.footer) return ''
+  const n = evaluateFooter(col)
+  if (n === null) return '—'
+  const dec = typeof col.decimals === 'number' ? col.decimals : col.type === 'money' ? 2 : 0
+  return new Intl.NumberFormat(undefined, {
+    minimumFractionDigits: dec,
+    maximumFractionDigits: dec,
+  }).format(n)
+}
 </script>
 
 <template>
@@ -462,6 +557,28 @@ function onMoneyInput(row: TableRow, field: string, e: Event) {
             </div>
           </div>
         </VueDraggable>
+
+        <!-- Footer -->
+        <div
+          v-if="hasFooter && aggregableRows.length > 0"
+          class="grid border-t border-paper-200 bg-paper-75"
+          :style="{ gridTemplateColumns: gridTemplate }"
+        >
+          <div v-if="isSortable" class="h-9" />
+          <div
+            v-for="col in columns"
+            :key="col.field"
+            class="flex h-9 items-center border-e border-paper-200 px-2.5 text-sm font-semibold tabular-nums text-ink-800 last:border-e-0"
+            :class="
+              col.footer && (col.type === 'money' || col.type === 'number')
+                ? 'justify-end'
+                : 'justify-start'
+            "
+          >
+            {{ renderFooter(col) }}
+          </div>
+          <div v-if="isDeletable" class="h-9" />
+        </div>
 
         <!-- Add row -->
         <div
