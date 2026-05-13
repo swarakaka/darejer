@@ -32,6 +32,12 @@ class Money extends BaseComponent
 
     protected ?string $suffix = null;
 
+    protected ?string $suffixActionUrl = null;
+
+    protected ?string $suffixActionIcon = null;
+
+    protected ?string $suffixActionTooltip = null;
+
     protected float|int|null $min = null;
 
     protected float|int|null $max = null;
@@ -154,6 +160,20 @@ class Money extends BaseComponent
         return $this;
     }
 
+    /**
+     * Render the suffix as a clickable button that opens `$url` in an inline
+     * dialog (re-using the same CreateInDialog mechanism as Combobox::addable).
+     * The icon (Lucide name) defaults to `Plus`; the tooltip is shown on hover.
+     */
+    public function suffixAction(string $url, ?string $icon = null, ?string $tooltip = null): static
+    {
+        $this->suffixActionUrl = $url;
+        $this->suffixActionIcon = $icon;
+        $this->suffixActionTooltip = $tooltip;
+
+        return $this;
+    }
+
     public function min(float|int $min): static
     {
         $this->min = $min;
@@ -234,6 +254,9 @@ class Money extends BaseComponent
             'currencyField' => $this->currencyField,
             'prefix' => $this->prefix,
             'suffix' => $this->suffix,
+            'suffixActionUrl' => $this->suffixActionUrl,
+            'suffixActionIcon' => $this->suffixActionIcon,
+            'suffixActionTooltip' => $this->suffixActionTooltip,
             'min' => $this->min,
             'max' => $this->max,
             'step' => $this->step,

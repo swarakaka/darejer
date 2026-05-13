@@ -1,7 +1,15 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { Input, InputPassword } from '@/components/ui/input'
+import { Plus } from 'lucide-vue-next'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip'
 import FieldWrapper from '@/components/darejer/FieldWrapper.vue'
+import CreateInDialog from '@/components/darejer/CreateInDialog.vue'
 import type { DarejerComponent } from '@/types/darejer'
 
 const props = defineProps<{
@@ -58,6 +66,20 @@ const isRevealable = computed(
 
 const hasPrefix = computed(() => !!props.component.prefix)
 const hasSuffix = computed(() => !!props.component.suffix && !isRevealable.value)
+
+const suffixActionUrl = computed(
+  () => (props.component.suffixActionUrl as string | undefined) ?? null,
+)
+const suffixActionTooltip = computed(
+  () => (props.component.suffixActionTooltip as string | undefined) ?? null,
+)
+const hasSuffixAction = computed(() => suffixActionUrl.value !== null && !isRevealable.value)
+
+const suffixDialogOpen = ref(false)
+function openSuffixDialog() {
+  if (!suffixActionUrl.value) return
+  suffixDialogOpen.value = true
+}
 </script>
 
 <template>
@@ -88,19 +110,45 @@ const hasSuffix = computed(() => !!props.component.suffix && !isRevealable.value
           :class="[
             hasError ? 'border-danger-600' : '',
             hasPrefix ? 'ps-20' : '',
-            hasSuffix ? 'pe-20' : '',
+            hasSuffix || hasSuffixAction ? 'pe-20' : '',
           ]"
           @input="onInput"
           @blur="onBlur"
         />
 
-        <!-- Suffix -->
+        <!-- Suffix (static text) -->
         <span
-          v-if="hasSuffix"
+          v-if="hasSuffix && !hasSuffixAction"
           class="pointer-events-none absolute inset-y-0 inset-e-0 z-10 flex max-w-[40%] items-center truncate rounded-e-md border-s border-paper-300 bg-paper-50 px-2.5 text-sm whitespace-nowrap text-ink-500 select-none"
         >
           {{ component.suffix }}
         </span>
+
+        <!-- Suffix action: clickable button that opens an inline dialog -->
+        <TooltipProvider v-if="hasSuffixAction" :delay-duration="0">
+          <Tooltip>
+            <TooltipTrigger as-child>
+              <button
+                type="button"
+                class="absolute inset-y-0 inset-e-0 z-10 flex items-center justify-center rounded-e-md border-s border-paper-300 bg-paper-50 px-2.5 text-ink-500 transition-colors hover:bg-paper-100 hover:text-ink-900 focus:outline-none focus:ring-2 focus:ring-brand-500"
+                :aria-label="suffixActionTooltip ?? 'Add'"
+                @click="openSuffixDialog"
+              >
+                <Plus class="h-4 w-4" />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent v-if="suffixActionTooltip" side="top" class="text-xs">
+              {{ suffixActionTooltip }}
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+
+        <CreateInDialog
+          v-if="hasSuffixAction"
+          v-model:open="suffixDialogOpen"
+          :url="suffixActionUrl as string"
+          mode="page"
+        />
       </div>
     </template>
   </FieldWrapper>

@@ -10,9 +10,16 @@ import {
   CommandItem,
   CommandList,
 } from '@/components/ui/command'
-import { Check, ChevronDown, Loader2 } from 'lucide-vue-next'
+import { Check, ChevronDown, Loader2, Plus } from 'lucide-vue-next'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip'
 import { useDataUrl } from '@/composables/useDataUrl'
 import FieldWrapper from '@/components/darejer/FieldWrapper.vue'
+import CreateInDialog from '@/components/darejer/CreateInDialog.vue'
 import useTranslation from '@/composables/useTranslation'
 import type { DarejerComponent } from '@/types/darejer'
 
@@ -264,6 +271,23 @@ const staticSuffix = computed<string | null>(() => {
 const hasPrefix = computed(() => !!props.component.prefix)
 const hasInputSuffix = computed(() => !hasPicker.value && !!staticSuffix.value)
 
+// Optional clickable suffix that opens an inline dialog (e.g. "+ Add
+// Exchange Rate"). When set, the static suffix is hidden in favor of
+// the action button.
+const suffixActionUrl = computed(
+  () => (props.component.suffixActionUrl as string | undefined) ?? null,
+)
+const suffixActionTooltip = computed(
+  () => (props.component.suffixActionTooltip as string | undefined) ?? null,
+)
+const hasSuffixAction = computed(() => suffixActionUrl.value !== null && !hasPicker.value)
+
+const suffixDialogOpen = ref(false)
+function openSuffixDialog() {
+  if (!suffixActionUrl.value) return
+  suffixDialogOpen.value = true
+}
+
 // ── Editing handlers ────────────────────────────────────────────────────────
 function sanitizeTyping(raw: string): string {
   const ds = decimalSeparator.value
@@ -359,7 +383,7 @@ function onBlur() {
           :class="[
             hasError ? 'border-danger-600' : '',
             hasPrefix ? 'ps-20' : '',
-            hasInputSuffix ? 'pe-20' : '',
+            hasInputSuffix || hasSuffixAction ? 'pe-20' : '',
             hasPicker ? 'rounded-e-none' : '',
           ]"
           @focus="onFocus"
@@ -368,11 +392,37 @@ function onBlur() {
         />
 
         <span
-          v-if="hasInputSuffix"
+          v-if="hasInputSuffix && !hasSuffixAction"
           class="pointer-events-none absolute inset-y-0 inset-e-0 z-10 flex max-w-[40%] items-center truncate rounded-e-md border-s border-paper-300 bg-paper-50 px-2.5 text-sm whitespace-nowrap text-ink-500 select-none"
         >
           {{ staticSuffix }}
         </span>
+
+        <!-- Suffix action: clickable button that opens an inline dialog -->
+        <TooltipProvider v-if="hasSuffixAction" :delay-duration="0">
+          <Tooltip>
+            <TooltipTrigger as-child>
+              <button
+                type="button"
+                class="absolute inset-y-0 inset-e-0 z-10 flex items-center justify-center rounded-e-md border-s border-paper-300 bg-paper-50 px-2.5 text-ink-500 transition-colors hover:bg-paper-100 hover:text-ink-900 focus:outline-none focus:ring-2 focus:ring-brand-500"
+                :aria-label="suffixActionTooltip ?? 'Add'"
+                @click="openSuffixDialog"
+              >
+                <Plus class="h-4 w-4" />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent v-if="suffixActionTooltip" side="top" class="text-xs">
+              {{ suffixActionTooltip }}
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+
+        <CreateInDialog
+          v-if="hasSuffixAction"
+          v-model:open="suffixDialogOpen"
+          :url="suffixActionUrl as string"
+          mode="page"
+        />
 
         <Popover v-if="hasPicker" v-model:open="pickerOpen">
           <PopoverTrigger as-child>
