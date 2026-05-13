@@ -27,7 +27,7 @@ class InstallCommand extends Command
 
         $this->seedRolesAndPermissions();
 
-        $this->info('✓ Darejer installed successfully.');
+        $this->info('Darejer installed successfully.');
         $this->line('');
         $this->line('  Next steps:');
         $this->line('  1. Add <info>HasRoles</info> and <info>HasDarejerPermissions</info> to your User model.');
@@ -79,6 +79,6 @@ class InstallCommand extends Command
             ->get();
         $viewerRole->syncPermissions($viewerPerms);
 
-        $this->info('✓ Roles and permissions seeded.');
+        $this->info('Roles and permissions seeded.');
     }
 }

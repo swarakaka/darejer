@@ -75,7 +75,7 @@ class LanguageCommand extends Command
 
         File::put($configPath, $newContent);
 
-        $this->info('✓ Languages updated: '.implode(', ', $languages));
+        $this->info('Languages updated: '.implode(', ', $languages));
         $this->line('Restart your dev server for changes to take effect.');
 
         return self::SUCCESS;

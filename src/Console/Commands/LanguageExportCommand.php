@@ -49,7 +49,7 @@ class LanguageExportCommand extends Command
                 json_encode($strings, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES).PHP_EOL,
             );
 
-            $this->line("✓ {$locale} → ".basename($jsonPath));
+            $this->line("{$locale} -> ".basename($jsonPath));
             $written++;
         }
 
