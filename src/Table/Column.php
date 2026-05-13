@@ -124,7 +124,6 @@ class Column
     {
         $this->type = 'number';
         $this->decimals = $decimals;
-        $this->alignRight = true;
 
         return $this;
     }
@@ -141,7 +140,6 @@ class Column
         $this->decimals = $decimals;
         $this->currencyField = $currencyField;
         $this->decimalsField = $decimalsField;
-        $this->alignRight = true;
 
         return $this;
     }
