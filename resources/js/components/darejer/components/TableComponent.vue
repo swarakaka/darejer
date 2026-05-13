@@ -259,9 +259,23 @@ function aggregate(kind: Aggregator, values: number[]): number {
 function evaluateFooter(col: TableCol, allRows: Record<string, unknown>[]): number | null {
   const raw = col.footer
   if (!raw) return null
-  const fieldSet = new Set(columns.value.map((c) => c.field))
   const bare = raw.trim().toLowerCase()
-  const expr = (AGGREGATORS as readonly string[]).includes(bare) ? `${bare}(${col.field})` : raw
+
+  // Fast path: a bare aggregator aggregates this column's own field. Pulled
+  // through resolvePath so dot-path columns (`invoice.grand_total`,
+  // `tax_code.code`) total correctly without needing the field name to be
+  // a valid JS identifier.
+  if ((AGGREGATORS as readonly string[]).includes(bare)) {
+    const values = allRows.map((row) => {
+      const v = resolvePath(row, col.field)
+      const n = typeof v === 'number' ? v : Number(v)
+      return Number.isFinite(n) ? n : 0
+    })
+    return aggregate(bare as Aggregator, values)
+  }
+
+  const fieldSet = new Set(columns.value.map((c) => c.field))
+  const expr = raw
 
   const replacements: { token: string; value: number }[] = []
   let idx = 0
