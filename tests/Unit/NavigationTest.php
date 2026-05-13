@@ -44,3 +44,29 @@ it('serializes a nav item with children', function () {
     expect($array)->toHaveKey('children');
     expect($array['children'])->toHaveCount(2);
 });
+
+it('shows a parent group when any child is visible, even if the parent gate fails', function () {
+    $item = NavItem::make('Inventory')
+        ->canSee(fn () => false)
+        ->children([
+            NavItem::make('Items')->url('/items')->canSee(fn () => false),
+            NavItem::make('Warehouses')->url('/warehouses')->canSee(fn () => true),
+        ]);
+
+    $array = $item->toArray();
+
+    expect($array)->toHaveKey('label', 'Inventory');
+    expect($array['children'])->toHaveCount(1);
+    expect($array['children'][0])->toHaveKey('label', 'Warehouses');
+});
+
+it('hides a parent group when no child is visible', function () {
+    $item = NavItem::make('Inventory')
+        ->canSee(fn () => true)
+        ->children([
+            NavItem::make('Items')->url('/items')->canSee(fn () => false),
+            NavItem::make('Warehouses')->url('/warehouses')->canSee(fn () => false),
+        ]);
+
+    expect($item->toArray())->toBeEmpty();
+});

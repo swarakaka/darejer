@@ -111,6 +111,21 @@ class NavItem
 
     public function isVisible(): bool
     {
+        // Parent groups inherit visibility from their children: if the user
+        // can see any child, the group is shown — regardless of the gate set
+        // on the group itself. Without this, a group gated on a single
+        // permission (e.g. inventory.item.viewAny) hides the whole branch
+        // for users who only have access to other items inside it.
+        if (! empty($this->children)) {
+            foreach ($this->children as $child) {
+                if ($child->isVisible()) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         if ($this->canSee === null) {
             return true;
         }
