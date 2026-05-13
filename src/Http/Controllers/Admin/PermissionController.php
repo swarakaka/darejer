@@ -42,6 +42,7 @@ class PermissionController extends DarejerController
             ->columns([
                 Column::make('id')->label('#')->width('80px')->sortable(),
                 Column::make('name')->label(__darejer('Name'))->sortable()->searchable(),
+                Column::make('description')->label(__darejer('Description')),
                 Column::make('guard_name')->label(__darejer('Guard'))->sortable(),
                 Column::make('roles_csv')->label(__darejer('Granted To'))
                     ->displayUsing(fn ($permission) => $permission->roles->pluck('name')->join(', ') ?: '—'),
