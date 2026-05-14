@@ -61,7 +61,7 @@ return [
     'Sign in to your account' => 'چوونەژوورەوە بۆ هەژمارەکەت',
     'Signing in' => 'چوونەژوورەوە...',
     'Sign out' => 'دەرچوون',
-    'Keep me signed in' => 'بمهێڵەرەوە چووبیتمە ژوورەوە',
+    'Keep me signed in' => 'لەژوورەوە بمهێڵەرەوە',
     'Back to sign in' => 'گەڕانەوە بۆ چوونەژوورەوە',
     'Create account' => 'دروستکردنی هەژمار',
     'Save new password' => 'پاشەکەوتکردنی تێپەڕەوشەی نوێ',
