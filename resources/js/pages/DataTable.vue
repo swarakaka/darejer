@@ -601,26 +601,29 @@ function clearFilter(field: string) {
         </div>
 
         <div class="flex shrink-0 flex-col items-end gap-2">
-          <button
-            v-if="filters.length"
-            type="button"
-            class="flex h-9 items-center gap-1.5 rounded-md border px-3 text-[12.5px] font-semibold shadow-[0_1px_0_rgba(0,0,0,0.02)] transition-all"
-            :class="
-              showFilters
-                ? `border-brand-200 bg-brand-50 text-brand-800 hover:bg-brand-100`
-                : `border-paper-300 bg-card text-ink-700 hover:border-paper-400 hover:bg-paper-75`
-            "
-            @click="showFilters = !showFilters"
-          >
-            <SlidersHorizontal class="h-3.5 w-3.5" />
-            {{ __('Filters') }}
-            <span
-              v-if="activeFilterCount > 0"
-              class="inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-brand-600 px-1 text-[9px] font-bold text-white tabular-nums"
+          <div class="flex flex-wrap items-center justify-end gap-1.5 print:hidden">
+            <DarejerActions :actions="headerActions" placement="header" />
+            <button
+              v-if="filters.length"
+              type="button"
+              class="flex h-9 items-center gap-1.5 rounded-md border px-3 text-[12.5px] font-semibold shadow-[0_1px_0_rgba(0,0,0,0.02)] transition-all"
+              :class="
+                showFilters
+                  ? `border-brand-200 bg-brand-50 text-brand-800 hover:bg-brand-100`
+                  : `border-paper-300 bg-card text-ink-700 hover:border-paper-400 hover:bg-paper-75`
+              "
+              @click="showFilters = !showFilters"
             >
-              {{ activeFilterCount }}
-            </span>
-          </button>
+              <SlidersHorizontal class="h-3.5 w-3.5" />
+              {{ __('Filters') }}
+              <span
+                v-if="activeFilterCount > 0"
+                class="inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-brand-600 px-1 text-[9px] font-bold text-white tabular-nums"
+              >
+                {{ activeFilterCount }}
+              </span>
+            </button>
+          </div>
 
           <div class="flex items-center gap-2">
             <span
@@ -640,11 +643,6 @@ function clearFilter(field: string) {
         </div>
       </div>
     </header>
-
-    <!-- Action Pane — under breadcrumbs and title -->
-    <div class="flex flex-wrap items-center justify-end gap-1.5 px-6 pt-6 print:hidden">
-      <DarejerActions :actions="headerActions" placement="header" />
-    </div>
 
     <!-- Content -->
     <div class="scrollbar-darejer scrollbar-gutter-stable flex-1 overflow-y-auto px-6 py-5">
