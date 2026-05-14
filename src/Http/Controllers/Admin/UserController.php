@@ -43,7 +43,7 @@ class UserController extends DarejerController
 
     protected ?string $routeName = 'darejer.admin.users';
 
-    protected ?string $routePrefix = 'darejer/admin';
+    protected ?string $routePrefix = 'admin';
 
     protected function softDeleteModel(): string
     {

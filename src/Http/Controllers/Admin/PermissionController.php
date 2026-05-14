@@ -27,7 +27,7 @@ class PermissionController extends DarejerController
 
     protected ?string $routeName = 'darejer.admin.permissions';
 
-    protected ?string $routePrefix = 'darejer/admin';
+    protected ?string $routePrefix = 'admin';
 
     public function index(Request $request): Response
     {

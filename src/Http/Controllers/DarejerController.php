@@ -55,7 +55,13 @@ abstract class DarejerController extends BaseController
     protected array $routeMiddleware = ['web', 'auth'];
 
     /**
-     * Optional URL prefix stacked on top of `$resource`.
+     * Module path stacked between the package prefix and `$resource`.
+     *
+     * The package prefix (from `config('darejer.route_prefix')`) is always
+     * prepended by `darejerRoutePrefix()`, so subclasses set only the module
+     * slug here. For example, `$routePrefix = 'sales'` with a package prefix
+     * of `'darejer'` produces routes under `/darejer/sales/{resource}`.
+     * Leave null to register routes directly under the package prefix.
      */
     protected ?string $routePrefix = null;
 
@@ -97,7 +103,10 @@ abstract class DarejerController extends BaseController
 
     public function darejerRoutePrefix(): ?string
     {
-        return $this->routePrefix;
+        $package = trim((string) config('darejer.route_prefix', ''), '/');
+        $module = trim((string) $this->routePrefix, '/');
+
+        return trim($package.'/'.$module, '/') ?: null;
     }
 
     public function darejerParameter(): string

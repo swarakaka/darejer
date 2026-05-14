@@ -28,7 +28,7 @@ class AuditLogController extends DarejerController
 
     protected ?string $parameter = 'audit_log';
 
-    protected ?string $routePrefix = 'darejer/admin';
+    protected ?string $routePrefix = 'admin';
 
     /** Hard cap on rows returned per request. */
     private const ROW_LIMIT = 500;
