@@ -14,14 +14,16 @@ class Section
     /** @var array<string, mixed>|null */
     protected ?array $dependOn = null;
 
-    protected function __construct(protected string $title) {}
+    protected ?string $title = null;
 
-    public static function make(string $title): static
+    protected function __construct(protected string $key) {}
+
+    public static function make(string $key): static
     {
-        return new static($title);
+        return new static($key);
     }
 
-    public function title(string $title): static
+    public function title(?string $title): static
     {
         $this->title = $title;
 
@@ -72,6 +74,7 @@ class Section
     public function toArray(): array
     {
         return array_filter([
+            'key' => $this->key,
             'title' => $this->title,
             'components' => $this->components,
             'collapsed' => $this->collapsed,

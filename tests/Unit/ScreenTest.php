@@ -96,16 +96,32 @@ it('serializes sections from Section instances', function () {
             TextInput::make('sku')->label('SKU'),
         ])
         ->sections([
-            Section::make('General')->components(['name']),
-            Section::make('Inventory')->components(['sku'])->collapsed(),
+            Section::make('general')->title('General')->components(['name']),
+            Section::make('inventory')->title('Inventory')->components(['sku'])->collapsed(),
         ]);
 
     $array = $screen->toArray();
 
     expect($array['sections'])->toHaveCount(2);
+    expect($array['sections'][0]['key'])->toBe('general');
     expect($array['sections'][0]['title'])->toBe('General');
     expect($array['sections'][0]['collapsed'])->toBeFalse();
     expect($array['sections'][1]['collapsed'])->toBeTrue();
+});
+
+it('omits title from serialized output when none was set', function () {
+    $screen = Screen::make('Test')
+        ->components([
+            TextInput::make('name')->label('Name'),
+        ])
+        ->sections([
+            Section::make('general')->components(['name']),
+        ]);
+
+    $array = $screen->toArray();
+
+    expect($array['sections'][0]['key'])->toBe('general');
+    expect($array['sections'][0])->not->toHaveKey('title');
 });
 
 it('defaults sections to non-collapsible (always expanded)', function () {
@@ -114,7 +130,7 @@ it('defaults sections to non-collapsible (always expanded)', function () {
             TextInput::make('name')->label('Name'),
         ])
         ->sections([
-            Section::make('General')->components(['name']),
+            Section::make('general')->components(['name']),
         ]);
 
     $array = $screen->toArray();
@@ -128,7 +144,7 @@ it('serializes collapsible sections that start collapsed', function () {
             TextInput::make('name')->label('Name'),
         ])
         ->sections([
-            Section::make('General')->components(['name'])->collapsible()->collapsed(),
+            Section::make('general')->components(['name'])->collapsible()->collapsed(),
         ]);
 
     $array = $screen->toArray();
@@ -143,7 +159,7 @@ it('forces collapsed false when collapsible(false) is called', function () {
             TextInput::make('name')->label('Name'),
         ])
         ->sections([
-            Section::make('General')->components(['name'])->collapsed()->collapsible(false),
+            Section::make('general')->components(['name'])->collapsed()->collapsible(false),
         ]);
 
     $array = $screen->toArray();

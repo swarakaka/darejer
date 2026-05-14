@@ -216,8 +216,8 @@ class RoleController extends DarejerController
                     ->fullWidth(),
             ])
             ->sections([
-                Section::make(__darejer('General'))->components(['name', 'guard_name']),
-                Section::make(__darejer('Permissions'))->components(['permission_ids']),
+                Section::make('general')->title(__darejer('General'))->components(['name', 'guard_name']),
+                Section::make('permissions')->title(__darejer('Permissions'))->components(['permission_ids']),
             ]);
     }
 

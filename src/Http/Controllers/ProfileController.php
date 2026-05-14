@@ -91,8 +91,8 @@ class ProfileController extends DarejerController
                 TextInput::make('password_confirmation')->label(__darejer('Confirm Password'))->password(),
             ])
             ->sections([
-                Section::make(__darejer('Identity'))->components(['username', 'email']),
-                Section::make(__darejer('Password'))->components(['password', 'password_confirmation']),
+                Section::make('identity')->title(__darejer('Identity'))->components(['username', 'email']),
+                Section::make('password')->title(__darejer('Password'))->components(['password', 'password_confirmation']),
             ]);
     }
 }

@@ -172,7 +172,8 @@ export interface DependOnRule {
 }
 
 export interface ScreenSection {
-  title: string
+  key: string
+  title?: string
   components: string[]
   collapsed?: boolean
   collapsible?: boolean

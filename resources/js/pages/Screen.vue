@@ -238,16 +238,16 @@ function isTabVisible(tab: ScreenTab): boolean {
 
 const collapsed = ref<Record<string, boolean>>(
   Object.fromEntries(
-    (props.sections ?? []).map((s) => [s.title, s.collapsible ? (s.collapsed ?? false) : false]),
+    (props.sections ?? []).map((s) => [s.key, s.collapsible ? (s.collapsed ?? false) : false]),
   ),
 )
 
-function toggleSection(title: string) {
-  const section = (props.sections ?? []).find((s) => s.title === title)
+function toggleSection(key: string) {
+  const section = (props.sections ?? []).find((s) => s.key === key)
   if (!section?.collapsible) {
     return
   }
-  collapsed.value[title] = !collapsed.value[title]
+  collapsed.value[key] = !collapsed.value[key]
 }
 
 const hasSections = computed(() => !!(props.sections && props.sections.length > 0))
@@ -478,25 +478,26 @@ const dialogSizeClass: Record<string, string> = {
               <section
                 v-for="section in sections ?? []"
                 v-show="isSectionVisible(section)"
-                :key="section.title"
+                :key="section.key"
                 class="group/section relative overflow-hidden rounded-md border border-paper-200 bg-card shadow-[0_1px_0_rgba(0,0,0,0.02)] transition-all duration-150"
                 :class="
-                  !collapsed[section.title]
+                  !collapsed[section.key]
                     ? `border-paper-300 ring-1 ring-brand-100/50`
                     : 'hover:border-paper-300'
                 "
               >
                 <header
+                  v-if="section.title"
                   class="flex items-center justify-between gap-3 px-5 py-3 transition-colors select-none"
                   :class="[
-                    !collapsed[section.title]
+                    !collapsed[section.key]
                       ? `border-b border-paper-200 bg-linear-to-b from-paper-75 to-card`
                       : 'bg-card',
                     section.collapsible ? `cursor-pointer hover:bg-paper-75` : '',
                   ]"
                   :role="section.collapsible ? 'button' : undefined"
-                  :aria-expanded="section.collapsible ? !collapsed[section.title] : undefined"
-                  @click="toggleSection(section.title)"
+                  :aria-expanded="section.collapsible ? !collapsed[section.key] : undefined"
+                  @click="toggleSection(section.key)"
                 >
                   <div class="flex min-w-0 items-center gap-3">
                     <h2
@@ -508,10 +509,10 @@ const dialogSizeClass: Record<string, string> = {
                   <ChevronDown
                     v-if="section.collapsible"
                     class="h-4 w-4 shrink-0 text-ink-400 transition-transform duration-150"
-                    :class="collapsed[section.title] ? `-rotate-90 rtl:rotate-90` : `rotate-0`"
+                    :class="collapsed[section.key] ? `-rotate-90 rtl:rotate-90` : `rotate-0`"
                   />
                 </header>
-                <div v-if="!collapsed[section.title]" class="p-5">
+                <div v-if="!collapsed[section.key]" class="p-5">
                   <div class="grid w-full grid-cols-1 gap-x-5 gap-y-5 sm:grid-cols-2">
                     <DarejerComponent
                       v-for="component in componentsForSection(section)"

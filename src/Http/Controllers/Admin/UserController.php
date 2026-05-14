@@ -308,9 +308,9 @@ class UserController extends DarejerController
             ])
             ->components($components)
             ->sections([
-                Section::make(__darejer('Identity'))->components(['username', 'email']),
-                Section::make(__darejer('Password'))->components(['password', 'password_confirmation']),
-                Section::make(__darejer('Access'))
+                Section::make('identity')->title(__darejer('Identity'))->components(['username', 'email']),
+                Section::make('password')->title(__darejer('Password'))->components(['password', 'password_confirmation']),
+                Section::make('access')->title(__darejer('Access'))
                     ->components(array_values(array_filter([
                         $this->canAssignRoles() ? 'role_ids' : null,
                         $hasSuperAdmin ? 'is_super_admin' : null,
