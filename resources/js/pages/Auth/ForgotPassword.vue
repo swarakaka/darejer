@@ -1,14 +1,18 @@
 <script setup lang="ts">
-import { useForm, Link } from '@inertiajs/vue3'
+import { computed } from 'vue'
+import { useForm, Link, usePage } from '@inertiajs/vue3'
 import AuthLayout from '@/layouts/AuthLayout.vue'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { CheckCircle2, ArrowLeft, ArrowRight, AlertCircle } from 'lucide-vue-next'
 import useTranslation from '@/composables/useTranslation'
+import type { DarejerSharedProps } from '@/types/darejer'
 
 defineOptions({ layout: AuthLayout })
 
 const { __ } = useTranslation()
+const page = usePage<DarejerSharedProps>()
+const appName = computed(() => page.props.darejer?.app_name ?? 'Darejer')
 
 defineProps<{ status?: string }>()
 
@@ -20,7 +24,7 @@ function submit() {
 </script>
 
 <template>
-  <div class="space-y-7">
+  <div class="space-y-7 p-4">
     <div class="flex flex-col gap-3 lg:gap-2">
       <div class="flex items-center gap-2.5 lg:hidden">
         <div
@@ -28,12 +32,11 @@ function submit() {
         >
           <span class="text-base leading-none font-semibold text-white">D</span>
         </div>
-        <span class="text-xs font-semibold tracking-[0.28em] text-ink-700 uppercase">Darejer</span>
+        <span class="text-xs font-semibold tracking-[0.28em] text-ink-700 uppercase">{{
+          appName
+        }}</span>
       </div>
-      <span class="text-2xs font-semibold tracking-[0.24em] text-brand-700 uppercase">{{
-        __('Recovery')
-      }}</span>
-      <h1 class="text-3xl leading-tight font-semibold tracking-tight text-ink-900">
+      <h1 class="text-2xl leading-tight font-semibold tracking-tight text-ink-900">
         {{ __('Forgot password?') }}
       </h1>
       <p class="text-sm leading-relaxed text-ink-500">
@@ -90,8 +93,8 @@ function submit() {
     <div
       class="flex items-center justify-between border-t border-paper-200 pt-5 text-2xs tracking-[0.18em] text-ink-400 uppercase tabular-nums"
     >
-      <p>{{ __('© :year Darejer', { year: new Date().getFullYear() }) }}</p>
-      <p>{{ __('Secured with TLS') }}</p>
+      <p>{{ __('© :year', { year: new Date().getFullYear() }) }}</p>
+      <p>{{ appName }}</p>
     </div>
   </div>
 </template>
