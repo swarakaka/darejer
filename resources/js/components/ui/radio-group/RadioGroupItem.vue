@@ -2,7 +2,6 @@
 import type { RadioGroupItemProps } from 'reka-ui'
 import type { HTMLAttributes } from 'vue'
 import { reactiveOmit } from '@vueuse/core'
-import { Circle } from 'lucide-vue-next'
 import { RadioGroupIndicator, RadioGroupItem, useForwardProps } from 'reka-ui'
 import { cn } from '@/lib/utils'
 
@@ -18,13 +17,13 @@ const forwardedProps = useForwardProps(delegatedProps)
     v-bind="forwardedProps"
     :class="
       cn(
-        `peer flex aspect-square h-4 w-4 cursor-pointer items-center justify-center rounded-full border border-(--input-border) bg-input transition-colors focus:outline-none focus-visible:ring-1 focus-visible:ring-brand-500 focus-visible:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:border-brand-600`,
+        `peer relative aspect-square h-4 w-4 cursor-pointer rounded-full border border-(--input-border) bg-input p-0 transition-colors focus:outline-none focus-visible:ring-1 focus-visible:ring-brand-500 focus-visible:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:border-brand-600`,
         props.class,
       )
     "
   >
-    <RadioGroupIndicator class="flex items-center justify-center">
-      <Circle class="h-2 w-2 fill-brand-600 text-brand-600" />
-    </RadioGroupIndicator>
+    <RadioGroupIndicator
+      class="pointer-events-none absolute inset-0 after:absolute after:left-1/2 after:top-1/2 after:h-2 after:w-2 after:-translate-x-1/2 after:-translate-y-1/2 after:rounded-full after:bg-brand-600 after:content-['']"
+    />
   </RadioGroupItem>
 </template>
