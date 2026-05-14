@@ -486,12 +486,6 @@ const dialogSizeClass: Record<string, string> = {
                     : 'hover:border-paper-300'
                 "
               >
-                <!-- Accent rail when expanded -->
-                <span
-                  v-if="!collapsed[section.title]"
-                  class="absolute inset-y-0 inset-s-0 w-0.5 bg-linear-to-b from-brand-500 via-brand-400 to-brand-500/30"
-                />
-
                 <header
                   class="flex items-center justify-between gap-3 px-5 py-3 transition-colors select-none"
                   :class="[
@@ -540,10 +534,6 @@ const dialogSizeClass: Record<string, string> = {
                 class="relative overflow-hidden rounded-md border border-paper-200 bg-card shadow-[0_1px_0_rgba(0,0,0,0.02)]"
                 :class="isReport ? 'print:hidden' : ''"
               >
-                <span
-                  v-if="!collapsed['General']"
-                  class="absolute inset-y-0 inset-s-0 w-0.5 bg-linear-to-b from-brand-500 via-brand-400 to-brand-500/30"
-                />
                 <header
                   class="flex cursor-pointer items-center justify-between gap-3 px-5 py-3 transition-colors select-none"
                   :class="
