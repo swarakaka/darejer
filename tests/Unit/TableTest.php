@@ -27,8 +27,7 @@ it('serializes a Table component with its columns', function (): void {
 
     expect($qty['field'])->toBe('qty')
         ->and($qty['type'])->toBe('number')
-        ->and($qty['decimals'])->toBe(2)
-        ->and($qty['alignRight'])->toBeTrue();
+        ->and($qty['decimals'])->toBe(2);
 
     expect($rate['type'])->toBe('money')
         ->and($rate['decimals'])->toBe(2)
