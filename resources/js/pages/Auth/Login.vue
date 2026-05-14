@@ -1,15 +1,19 @@
 <script setup lang="ts">
-import { Link, useForm } from '@inertiajs/vue3'
+import { computed } from 'vue'
+import { Link, useForm, usePage } from '@inertiajs/vue3'
 import AuthLayout from '@/layouts/AuthLayout.vue'
 import { Input, InputPassword } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Checkbox } from '@/components/ui/checkbox'
 import { ArrowRight, AlertCircle } from 'lucide-vue-next'
 import useTranslation from '@/composables/useTranslation'
+import type { DarejerSharedProps } from '@/types/darejer'
 
 defineOptions({ layout: AuthLayout })
 
 const { __ } = useTranslation()
+const page = usePage<DarejerSharedProps>()
+const appName = computed(() => page.props.darejer?.app_name ?? 'Darejer')
 
 const form = useForm({
   username: '',
@@ -110,7 +114,7 @@ function submit() {
       class="flex items-center justify-between border-t border-paper-200 pt-5 text-2xs tracking-[0.18em] text-ink-400 uppercase tabular-nums"
     >
       <p>{{ __('© :year', { year: new Date().getFullYear() }) }}</p>
-      <p>{{ __('Darejer') }}</p>
+      <p>{{ appName }}</p>
     </div>
   </div>
 </template>
