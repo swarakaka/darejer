@@ -121,7 +121,7 @@ it('does not require username in the request body', function (): void {
         app(UpdatesUserPasswords::class),
     );
 
-    expect($response->getStatusCode())->toBe(302);
+    expect($response->getStatusCode())->toBe(200);
 });
 
 it('still validates email format', function (): void {
