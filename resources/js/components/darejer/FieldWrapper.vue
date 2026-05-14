@@ -1,16 +1,18 @@
 <script setup lang="ts">
-import { computed, watch } from 'vue'
+import { computed, type HTMLAttributes, watch } from 'vue'
 import { Label } from '@/components/ui/label'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { HelpCircle, AlertCircle } from 'lucide-vue-next'
 import { evaluateDependOn } from '@/composables/useDependOn'
 import type { DarejerComponent } from '@/types/darejer'
+import { cn } from '@/lib/utils'
 
 const props = defineProps<{
   component: DarejerComponent
   record: Record<string, unknown>
   errors: Record<string, string>
   formData?: Record<string, unknown>
+  class?: HTMLAttributes['class']
 }>()
 
 const emit = defineEmits<{
@@ -51,11 +53,10 @@ const hasError = computed(() => !!fieldError.value)
 <template>
   <div
     v-if="isVisible"
-    class="flex flex-col gap-1.5"
-    :class="{ 'col-span-full': component.fullWidth }"
+    :class="cn('flex flex-col gap-1.5', props.class, { 'col-span-full': component.fullWidth })"
   >
     <!-- Label row -->
-    <div v-if="component.label" class="flex min-h-[14px] items-center gap-1.5">
+    <div v-if="component.label" class="flex min-h-3.5 items-center gap-1.5">
       <Label
         :for="component.name"
         class="flex items-center gap-1 text-xs font-semibold tracking-tight"

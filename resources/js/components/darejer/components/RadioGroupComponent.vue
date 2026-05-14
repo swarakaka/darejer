@@ -27,7 +27,7 @@ function onChange(val: unknown) {
 </script>
 
 <template>
-  <FieldWrapper :component="component" :record="record" :errors="errors" :form-data="formData">
+  <FieldWrapper :component="component" :record="record" :errors="errors" :form-data="formData" :class="{'gap-5' :(component.layout as string) === 'horizontal'}">
     <template #default>
       <RadioGroup
         :model-value="current"
