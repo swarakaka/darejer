@@ -456,7 +456,7 @@ const dialogSizeClass: Record<string, string> = {
                     <span
                       class="absolute inset-x-0 top-0 h-0.5 bg-linear-to-e from-brand-500 via-brand-400 to-transparent"
                     />
-                    <div class="grid w-full grid-cols-1 gap-x-5 gap-y-5 sm:grid-cols-2">
+                    <div class="grid w-full grid-cols-1 gap-x-5 gap-y-5 sm:grid-cols-2 lg::grid-cols-3">
                       <DarejerComponent
                         v-for="component in componentsForTab(tab)"
                         :key="component.name"
@@ -513,7 +513,7 @@ const dialogSizeClass: Record<string, string> = {
                   />
                 </header>
                 <div v-if="!collapsed[section.key]" class="p-5">
-                  <div class="grid w-full grid-cols-1 gap-x-5 gap-y-5 sm:grid-cols-2">
+                  <div class="grid w-full grid-cols-1 gap-x-5 gap-y-5 sm:grid-cols-2 lg::grid-cols-3">
                     <DarejerComponent
                       v-for="component in componentsForSection(section)"
                       :key="component.name"
@@ -556,7 +556,7 @@ const dialogSizeClass: Record<string, string> = {
                   />
                 </header>
                 <div v-if="!collapsed['General']" class="p-5">
-                  <div class="grid w-full grid-cols-1 gap-x-5 gap-y-5 sm:grid-cols-2">
+                  <div class="grid w-full grid-cols-1 gap-x-5 gap-y-5 sm:grid-cols-2 lg::grid-cols-3">
                     <DarejerComponent
                       v-for="component in components"
                       :key="component.name"
