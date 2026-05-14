@@ -7,24 +7,25 @@ namespace Darejer\Http\Controllers;
 use Darejer\Components\TextInput;
 use Darejer\Forms\Form;
 use Darejer\Screen\Section;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 use Inertia\Response;
-use Laravel\Fortify\Contracts\UpdatesUserPasswords;
 use Laravel\Fortify\Contracts\UpdatesUserProfileInformation;
 
 /**
  * Self-service profile editor for the currently authenticated user.
  *
  * Linked from the topbar user dropdown. Reuses the standard Form/Screen
- * builder so the page layout matches the rest of the admin surface.
- * Actual persistence is delegated to Fortify's UpdatesUserProfileInformation
- * and UpdatesUserPasswords contracts so host overrides keep working.
+ * builder so the page layout matches the rest of the admin surface. The
+ * form submits via Inertia v3 `useHttp`, so `update()` returns the standard
+ * Darejer JSON envelope (`jsonRedirect`) rather than a Laravel redirect —
+ * a plain `redirect()` is swallowed by `useHttp`, breaking flash + error
+ * surfacing.
  */
-class ProfileController extends Controller
+class ProfileController extends DarejerController
 {
     public function edit(): Response
     {
@@ -42,7 +43,7 @@ class ProfileController extends Controller
             ->renderAsScreen();
     }
 
-    public function update(Request $request, UpdatesUserProfileInformation $updateProfile, UpdatesUserPasswords $updatePassword)
+    public function update(Request $request, UpdatesUserProfileInformation $updateProfile): JsonResponse
     {
         $user = $request->user();
         abort_unless($user, 403);
@@ -70,7 +71,10 @@ class ProfileController extends Controller
 
         Inertia::flash('success', __darejer('Profile updated.'));
 
-        return redirect()->route('darejer.profile.edit');
+        return $this->jsonRedirect(
+            route('darejer.profile.edit'),
+            __darejer('Profile updated.'),
+        );
     }
 
     protected function form(): Form
