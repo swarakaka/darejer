@@ -67,9 +67,11 @@ class DarejerServiceProvider extends ServiceProvider
         ], 'darejer-migrations');
 
         // Publish compiled assets (JS + CSS build output) to host app's public folder.
-        $this->publishes([
-            __DIR__.'/../public/build' => public_path('vendor/darejer'),
-        ], 'darejer-assets');
+        if (is_dir(__DIR__.'/../public/build')) {
+            $this->publishes([
+                __DIR__.'/../public/build' => public_path('vendor/darejer'),
+            ], 'darejer-assets');
+        }
 
         $this->loadRoutesFrom(__DIR__.'/../routes/darejer.php');
         $this->loadTranslationsFrom(__DIR__.'/../lang', 'darejer');

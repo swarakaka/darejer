@@ -32,13 +32,22 @@ jobs:
       - name: Build assets for release
         run: pnpm run build
 
-      - name: Commit build artifacts to release branch
+      - name: Commit build artifacts and move tag
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add public/build/ -f
-          git commit -m "chore: include compiled assets for release ${{ github.ref_name }}" || echo "No changes"
+          if git diff --staged --quiet; then
+            echo "No build artifacts to commit"
+            exit 0
+          fi
+          git commit -m "chore: include compiled assets for ${{ github.ref_name }}"
+          # Mirror to a release branch for traceability
           git push origin HEAD:refs/heads/release/${{ github.ref_name }}
+          # Move the tag onto the build commit so Composer consumers (^x.y.z)
+          # pull a ref that contains public/build/.
+          git tag -f "${{ github.ref_name }}"
+          git push origin "refs/tags/${{ github.ref_name }}" --force
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
