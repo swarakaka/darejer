@@ -323,7 +323,7 @@ const dialogSizeClass: Record<string, string> = {
       <!-- Scrolling content -->
       <div
         :class="[
-          'flex-1 overflow-y-auto print:overflow-visible',
+          'scrollbar-darejer scrollbar-gutter-stable flex-1 overflow-y-auto print:overflow-visible',
           fullWidth ? 'flex flex-col' : '',
         ]"
       >
@@ -432,7 +432,7 @@ const dialogSizeClass: Record<string, string> = {
                 class="w-full"
               >
                 <TabsList
-                  class="h-auto w-full justify-start gap-0 overflow-x-auto rounded-md border border-paper-200 bg-card p-1 shadow-[0_1px_0_rgba(0,0,0,0.02)]"
+                  class="scrollbar-darejer h-auto w-full justify-start gap-0 overflow-x-auto rounded-md border border-paper-200 bg-card p-1 shadow-[0_1px_0_rgba(0,0,0,0.02)]"
                 >
                   <TabsTrigger
                     v-for="tab in visibleTabs"
@@ -612,7 +612,7 @@ const dialogSizeClass: Record<string, string> = {
           }}</DialogTitle>
         </DialogHeader>
 
-        <div class="min-h-0 flex-1 overflow-y-auto bg-card px-5 py-5">
+        <div class="scrollbar-darejer scrollbar-gutter-stable min-h-0 flex-1 overflow-y-auto bg-card px-5 py-5">
           <div class="grid w-full grid-cols-1 gap-x-5 gap-y-4 sm:grid-cols-2">
             <DarejerComponent
               v-for="component in components"

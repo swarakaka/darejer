@@ -295,7 +295,7 @@ const pages = computed(() => {
     </div>
 
     <!-- Table -->
-    <div class="overflow-x-auto">
+    <div class="scrollbar-darejer overflow-x-auto">
       <table class="w-full border-collapse">
         <thead>
           <tr class="border-b border-paper-200 bg-paper-75">

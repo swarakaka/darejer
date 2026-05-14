@@ -355,22 +355,41 @@ html[dir='rtl'] body {
   @apply bg-brand-200 text-brand-900;
 }
 
-::-webkit-scrollbar {
-  @apply h-2.5 w-2.5;
-}
+/*
+ * ─── Scrollbars (Tailwind v4.3) ──────────────────────────────────────────────
+ *  Opt-in via `class="scrollbar-darejer"` on scroll containers (sidebar,
+ *  dialog/sheet content, dropdown menus, data-grid viewports). Cross-browser:
+ *  Firefox/standards via scrollbar-width + scrollbar-color, WebKit via the
+ *  ::-webkit-scrollbar pseudo-elements.
+ *
+ *  Other Tailwind v4.3 features considered & skipped for now:
+ *    - @container-size: no @container layouts in darejer yet.
+ *    - zoom-*: PDFViewerComponent uses transform: scale via JS; CSS zoom not needed.
+ *    - tab-*: TipTap renders inline <code>, not <pre> blocks.
+ *    - @variant stacked/compound: third-party overrides (Vue Flow, FullCalendar,
+ *      dhtmlx-gantt) don't currently repeat hover/focus enough to benefit.
+ *    - --default(...) in --value(...): no functional @utility blocks here yet
+ *      (the bg-linear-to-* utilities above are static, not value-based).
+ */
 
-::-webkit-scrollbar-track {
-  @apply bg-transparent;
-}
+@utility scrollbar-darejer {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-paper-300) transparent;
 
-::-webkit-scrollbar-thumb {
-  @apply rounded-none border-2 border-transparent bg-paper-300;
-  background-clip: padding-box;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  @apply border-2 border-transparent bg-ink-400;
-  background-clip: padding-box;
+  &::-webkit-scrollbar {
+    @apply h-2.5 w-2.5;
+  }
+  &::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+  &::-webkit-scrollbar-thumb {
+    @apply rounded-none border-2 border-transparent bg-paper-300;
+    background-clip: padding-box;
+  }
+  &::-webkit-scrollbar-thumb:hover {
+    @apply border-2 border-transparent bg-ink-400;
+    background-clip: padding-box;
+  }
 }
 
 /*

@@ -278,7 +278,7 @@ function badgeClass(color?: string): string {
         </div>
 
         <!-- Nav -->
-        <nav class="flex flex-1 flex-col overflow-x-hidden overflow-y-auto py-2">
+        <nav class="scrollbar-darejer flex flex-1 flex-col overflow-x-hidden overflow-y-auto py-2">
           <template v-for="item in navItems" :key="item.label">
             <!-- ── Collapsed: icon-only with tooltip ── -->
             <template v-if="effectiveCollapsed">
@@ -444,7 +444,7 @@ function badgeClass(color?: string): string {
         </div>
 
         <!-- Flyout nav items -->
-        <nav class="flex flex-1 flex-col overflow-y-auto py-1">
+        <nav class="scrollbar-darejer flex flex-1 flex-col overflow-y-auto py-1">
           <template v-for="(child, i) in activeGroup.children" :key="child.label">
             <div
               v-if="

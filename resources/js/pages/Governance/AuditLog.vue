@@ -192,7 +192,7 @@ watch(
     </header>
 
     <!-- Content -->
-    <div class="flex-1 overflow-y-auto px-6 py-6">
+    <div class="scrollbar-darejer scrollbar-gutter-stable flex-1 overflow-y-auto px-6 py-6">
       <!-- Filter bar -->
       <div
         v-if="showFilters"
@@ -309,7 +309,7 @@ watch(
           </span>
         </div>
 
-        <div class="overflow-x-auto">
+        <div class="scrollbar-darejer overflow-x-auto">
           <table class="w-full border-collapse">
             <thead>
               <tr class="border-b border-paper-200 bg-paper-50">
@@ -416,7 +416,7 @@ watch(
           </SheetDescription>
         </SheetHeader>
 
-        <div v-if="selected" class="min-h-0 flex-1 space-y-5 overflow-y-auto px-5 py-4">
+        <div v-if="selected" class="scrollbar-darejer scrollbar-gutter-stable min-h-0 flex-1 space-y-5 overflow-y-auto px-5 py-4">
           <section v-if="selected.summary">
             <p class="text-sm leading-relaxed text-ink-800">
               {{ selected.summary }}
@@ -477,7 +477,7 @@ watch(
               {{ __('Payload') }}
             </h3>
             <pre
-              class="overflow-x-auto rounded-md border border-paper-200 bg-paper-75 p-3 font-mono text-xs leading-relaxed break-all whitespace-pre-wrap text-ink-800"
+              class="scrollbar-darejer overflow-x-auto rounded-md border border-paper-200 bg-paper-75 p-3 font-mono text-xs leading-relaxed break-all whitespace-pre-wrap text-ink-800"
               >{{ prettyPayload }}</pre
             >
           </section>

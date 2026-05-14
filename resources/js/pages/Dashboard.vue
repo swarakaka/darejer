@@ -115,7 +115,7 @@ const chartIcon = (type: 'line' | 'bar' | 'doughnut') => {
     </header>
 
     <!-- Scrolling body -->
-    <div class="flex-1 space-y-6 overflow-y-auto px-6 py-6">
+    <div class="scrollbar-darejer scrollbar-gutter-stable flex-1 space-y-6 overflow-y-auto px-6 py-6">
       <!-- KPI strip -->
       <section
         v-if="kpis?.length"
@@ -225,7 +225,7 @@ const chartIcon = (type: 'line' | 'bar' | 'doughnut') => {
             </Link>
           </header>
 
-          <div v-if="panel.rows.length" class="overflow-x-auto">
+          <div v-if="panel.rows.length" class="scrollbar-darejer overflow-x-auto">
             <table class="w-full text-sm">
               <thead>
                 <tr class="border-b border-paper-200 bg-paper-75/60">

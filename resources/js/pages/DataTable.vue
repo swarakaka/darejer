@@ -647,7 +647,7 @@ function clearFilter(field: string) {
     </div>
 
     <!-- Content -->
-    <div class="flex-1 overflow-y-auto px-6 py-5">
+    <div class="scrollbar-darejer scrollbar-gutter-stable flex-1 overflow-y-auto px-6 py-5">
       <!-- Active filter chips -->
       <div v-if="activeFilterEntries.length" class="mb-3 flex flex-wrap items-center gap-2">
         <span class="text-[10.5px] font-bold tracking-[0.12em] text-ink-500 uppercase">
@@ -953,7 +953,7 @@ function clearFilter(field: string) {
         </div>
 
         <!-- Table -->
-        <div class="overflow-x-auto">
+        <div class="scrollbar-darejer overflow-x-auto">
           <table class="w-full border-collapse">
             <thead>
               <tr class="sticky top-0 z-10 border-b border-paper-200 bg-paper-75">

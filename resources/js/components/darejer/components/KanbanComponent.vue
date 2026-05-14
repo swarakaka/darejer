@@ -254,7 +254,7 @@ function onDragEnd(col: KanbanCol) {
       </div>
 
       <!-- Board -->
-      <div v-else class="flex h-full gap-3 overflow-x-auto px-4 pb-2" style="min-height: 24rem">
+      <div v-else class="scrollbar-darejer flex h-full gap-3 overflow-x-auto px-4 pb-2" style="min-height: 24rem">
         <div
           v-for="col in columns"
           :key="col.value"
