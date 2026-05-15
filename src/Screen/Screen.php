@@ -6,13 +6,14 @@ use Darejer\Report\Column as ReportColumn;
 use Darejer\Screen\Concerns\HasActions;
 use Darejer\Screen\Concerns\HasComponents;
 use Darejer\Screen\Concerns\HasDialog;
+use Darejer\Screen\Concerns\HasLayout;
 use Darejer\Screen\Concerns\HasRecord;
 use Inertia\Inertia;
 use Inertia\Response;
 
 class Screen
 {
-    use HasActions, HasComponents, HasDialog, HasRecord;
+    use HasActions, HasComponents, HasDialog, HasLayout, HasRecord;
 
     protected string $title = '';
 
@@ -155,6 +156,7 @@ class Screen
             'tabs' => $this->tabs ? array_map(fn (Tab $t) => $t->toArray(), $this->tabs) : null,
             'reportColumns' => $this->reportColumns ? array_map(fn (ReportColumn $c) => $c->toArray(), $this->reportColumns) : null,
             'fullWidth' => $this->fullWidth ?: null,
+            'layout' => $this->layout,
         ], $this->extraProps);
     }
 

@@ -67,6 +67,7 @@ export interface ScreenProps {
   dialog: boolean
   dialogSize?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'full' | null
   fullWidth?: boolean | null
+  layout?: string | null
   record: Record<string, unknown>
   components: DarejerComponent[]
   actions: DarejerAction[]

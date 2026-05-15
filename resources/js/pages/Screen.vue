@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
 import { Head, router, usePage } from '@inertiajs/vue3'
-import AppLayout from '@/layouts/AppLayout.vue'
+import { layouts } from '@/layouts/registry'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { ChevronDown, Circle, Play, FileSpreadsheet, FileText } from 'lucide-vue-next'
 import DarejerComponent from '@/components/darejer/DarejerComponent.vue'
@@ -26,7 +26,15 @@ import type {
   DarejerComponent as DarejerComponentType,
 } from '@/types/darejer'
 
-defineOptions({ layout: AppLayout })
+// Layout is picked at runtime from the registry using the `layout` prop sent
+// by Screen::layout('minimal'). Defaults to 'app' (AppLayout) when no layout
+// is requested. Inertia's single-arg layout callback receives page props.
+defineOptions({
+  layout: (props: { layout?: string | null }) => {
+    const name = props.layout ?? 'app'
+    return layouts[name] ?? layouts.app
+  },
+})
 
 const { __ } = useTranslation()
 
