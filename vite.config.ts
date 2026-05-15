@@ -14,7 +14,7 @@ export default defineConfig({
   base: '/vendor/darejer/',
   experimental: {
     renderBuiltUrl(filename) {
-      return { relative: `/vendor/darejer/${filename}` }
+      return `/vendor/darejer/${filename}`
     },
   },
   plugins: [

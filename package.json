@@ -1,6 +1,6 @@
 {
     "name": "darejer",
-    "version": "1.0.17",
+    "version": "1.0.0",
     "private": true,
     "type": "module",
     "packageManager": "pnpm@10.20.0",
