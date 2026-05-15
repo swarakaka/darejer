@@ -286,7 +286,7 @@ function badgeClass(color?: string): string {
                 <TooltipTrigger as-child>
                   <Link
                     :href="item.url ?? '#'"
-                    class="relative flex h-9 items-center justify-center no-underline transition-colors duration-100"
+                    class="relative flex h-9 shrink-0 items-center justify-center no-underline transition-colors duration-100"
                     :class="
                       isGroupActive(item) || (activeGroup?.label === item.label && flyoutOpen)
                         ? `bg-[color:var(--sidebar-item-bg-active)] text-white`
@@ -330,7 +330,7 @@ function badgeClass(color?: string): string {
             <template v-else>
               <Link
                 :href="item.url ?? '#'"
-                class="relative flex h-9 items-center gap-3 overflow-hidden px-3 no-underline transition-colors duration-100"
+                class="relative flex h-9 shrink-0 items-center gap-3 overflow-hidden px-3 no-underline transition-colors duration-100"
                 :class="
                   isGroupActive(item)
                     ? `bg-[color:var(--sidebar-item-bg-active)] font-semibold text-white`
@@ -367,7 +367,7 @@ function badgeClass(color?: string): string {
               <!-- Inline children (expanded mode) -->
               <div
                 v-if="item.children?.length && isGroupExpanded(groupKey(item))"
-                class="flex flex-col bg-black/15"
+                class="flex shrink-0 flex-col bg-black/15"
               >
                 <template v-for="(child, i) in item.children" :key="child.label">
                   <div
@@ -379,7 +379,7 @@ function badgeClass(color?: string): string {
 
                   <Link
                     :href="child.url ?? '#'"
-                    class="relative flex h-8 items-center gap-2 ps-10 pe-3 text-[12.5px] no-underline transition-colors duration-100"
+                    class="relative flex h-8 shrink-0 items-center gap-2 ps-10 pe-3 text-[12.5px] no-underline transition-colors duration-100"
                     :class="
                       isActive(child)
                         ? `bg-[color:var(--sidebar-item-bg-active)] font-semibold text-white`
@@ -457,7 +457,7 @@ function badgeClass(color?: string): string {
 
             <Link
               :href="child.url ?? '#'"
-              class="relative flex h-8 items-center gap-2.5 px-4 text-[13px] no-underline transition-colors duration-100"
+              class="relative flex h-8 shrink-0 items-center gap-2.5 px-4 text-[13px] no-underline transition-colors duration-100"
               :class="
                 isActive(child)
                   ? 'bg-brand-50 font-semibold text-brand-700'
