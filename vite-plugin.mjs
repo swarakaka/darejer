@@ -62,6 +62,18 @@ export default function darejer(options = {}) {
             // the boundary.
             dedupe: ['vue', '@inertiajs/vue3'],
           },
+          // Darejer's bootstrap uses `import.meta.glob` to discover pages.
+          // That's a Vite-only transform — if Vite pre-bundles darejer via
+          // esbuild (the default for node_modules deps), the glob collapses
+          // to {} at runtime and every Inertia visit fails with
+          // "Page not found". Excluding darejer keeps it on the source path
+          // so the glob is rewritten properly.
+          optimizeDeps: {
+            exclude: ['darejer'],
+          },
+          ssr: {
+            noExternal: ['darejer'],
+          },
         }
       },
     },
