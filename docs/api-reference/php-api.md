@@ -367,13 +367,12 @@ Globally available functions (autoloaded via `composer.json` `files`).
 1. Merges `config/darejer.php`.
 2. Applies Darejer-friendly Fortify defaults (unless `config/fortify.php` is published).
 3. Registers `Gate::before(...)` for super-admin bypass.
-4. Publishes config / migrations / Fortify config / compiled assets.
+4. Publishes config / migrations / Fortify config.
 5. Auto-loads package migrations.
 6. Loads package translations from `lang/`.
 7. Registers Spatie's Role/Permission models in the `ModelRegistry`.
 8. Discovers + registers controllers via `ControllerRouteRegistrar`.
-9. Registers the `@darejerAssets` Blade directive.
-10. Appends `HandleInertiaRequests` to the `web` middleware group.
+9. Appends `HandleInertiaRequests` to the `web` middleware group.
 
 `Darejer\Providers\FortifyServiceProvider` wires Fortify GET views to Inertia pages — see [`auth/fortify.md`](../auth/fortify.md).
 
@@ -388,7 +387,6 @@ These exist in the codebase but are **not** part of the public API. They may cha
 - `Darejer\Http\Controllers\DataController` (use through `dataUrl` props)
 - `Darejer\Http\Controllers\Admin\*`
 - `Darejer\Http\Middleware\HandleInertiaRequests`
-- `Darejer\Helpers\AssetHelper`
 - `Darejer\Support\AuditWriter`, `GlobalSearch`, `Locales`, `Alert`
 - `Darejer\Models\Alert`
 - Anything under `resources/js/` — the entire frontend is internal.

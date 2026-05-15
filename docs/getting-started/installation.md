@@ -25,17 +25,7 @@ The package's service providers are auto-discovered:
 - `Darejer\DarejerServiceProvider`
 - `Darejer\Providers\FortifyServiceProvider`
 
-## Publish assets
-
-The compiled JS + CSS bundle ships pre-built. Publish it to your host app's `public/vendor/darejer`:
-
-```bash
-php artisan vendor:publish --tag=darejer-assets --force
-```
-
-> Always publish with `--force` after upgrading the package — the build output is the source of truth and stale assets cause silent UI regressions.
-
-Optionally publish:
+## Optional config publishing
 
 ```bash
 # Override darejer.php config (languages, prefix, middleware)
@@ -56,16 +46,70 @@ php artisan migrate
 
 Darejer ships its own migrations (e.g. the `alerts` table) and auto-loads them — `php artisan migrate` is enough; you do not need to publish them first.
 
-## Render assets in your layout
+## Wire up the frontend
 
-In your root Blade layout (`resources/views/app.blade.php` or wherever your Inertia root lives) emit the package's bundle tags:
+Darejer's Vue/Inertia frontend is consumed by your host app's Vite build via the `darejer/vite` plugin — there is no asset publishing step.
+
+### 1. Install npm dependencies
+
+```bash
+pnpm add -D vite laravel-vite-plugin @tailwindcss/vite tailwindcss
+pnpm add darejer
+```
+
+> When working against a local checkout of the package, declare it as a file dep: `"darejer": "file:vendor/swarakaka/darejer"`.
+
+`.npmrc` should hoist the package's transitive deps so the host's Vite can resolve them:
+
+```ini
+shamefully-hoist=true
+```
+
+### 2. `vite.config.js`
+
+```js
+import { defineConfig } from 'vite'
+import laravel from 'laravel-vite-plugin'
+import darejer from 'darejer/vite'
+import tailwindcss from '@tailwindcss/vite'
+
+export default defineConfig({
+    plugins: [
+        laravel({
+            input: ['resources/css/app.css', 'resources/js/app.js'],
+            refresh: true,
+        }),
+        darejer(),
+        tailwindcss(),
+    ],
+})
+```
+
+### 3. `resources/js/app.js`
+
+```js
+import { bootstrapDarejer } from 'darejer/bootstrap'
+
+// Optional: host-app Vue pages override package pages with the same Inertia name.
+const hostPages = import.meta.glob('./pages/**/*.vue')
+
+bootstrapDarejer({ hostPages })
+```
+
+### 4. `resources/css/app.css`
+
+```css
+@import 'darejer/css';
+```
+
+### 5. Root Blade layout
 
 ```blade
 <!DOCTYPE html>
 <html>
 <head>
    @routes
-   @darejerAssets
+   @vite(['resources/css/app.css', 'resources/js/app.js'])
    <x-inertia::head />
 </head>
 <body>
@@ -73,8 +117,6 @@ In your root Blade layout (`resources/views/app.blade.php` or wherever your Iner
 </body>
 </html>
 ```
-
-The `@darejerAssets` directive expands to the `<link>` + `<script>` tags driven by the published Vite manifest at `public/vendor/darejer/manifest.json`.
 
 ## Verify
 

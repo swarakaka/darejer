@@ -4,7 +4,6 @@ import { ZiggyVue } from 'ziggy-js'
 import type { DefineComponent } from 'vue'
 
 // CSS is imported here so Vite records it against the app entry in manifest.json.
-// AssetHelper::tags() then emits a <link> for it from the published build output.
 import '../css/app.css'
 
 // Apply persisted theme (light/dark/system) before the app mounts so the

@@ -44,8 +44,9 @@ The package serializes your PHP screen definitions to Inertia page props, which 
 ```bash
 composer require swarakaka/darejer
 php artisan darejer:install
-php artisan vendor:publish --tag=darejer-assets
 ```
+
+Then wire Darejer's frontend into your host app's Vite config and entry point — see the [installation guide](docs/getting-started/installation.md) for the snippets.
 
 ---
 

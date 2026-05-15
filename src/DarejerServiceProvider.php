@@ -9,7 +9,6 @@ use Darejer\Data\ModelRegistry;
 use Darejer\Http\Middleware\HandleInertiaRequests;
 use Darejer\Routing\ControllerRouteRegistrar;
 use Illuminate\Contracts\Http\Kernel;
-use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Translation\FileLoader;
@@ -65,13 +64,6 @@ class DarejerServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__.'/../database/migrations' => database_path('migrations'),
         ], 'darejer-migrations');
-
-        // Publish compiled assets (JS + CSS build output) to host app's public folder.
-        if (is_dir(__DIR__.'/../public/build')) {
-            $this->publishes([
-                __DIR__.'/../public/build' => public_path('vendor/darejer'),
-            ], 'darejer-assets');
-        }
 
         $this->loadRoutesFrom(__DIR__.'/../routes/darejer.php');
         $this->loadTranslationsFrom(__DIR__.'/../lang', 'darejer');
@@ -147,12 +139,6 @@ class DarejerServiceProvider extends ServiceProvider
                 __DIR__.'/Http/Controllers/Governance' => 'Darejer\\Http\\Controllers\\Governance',
             ])->register();
         }
-
-        // @darejerAssets Blade directive — emits <link> + <script> tags from
-        // the published Vite manifest.
-        Blade::directive('darejerAssets', function () {
-            return "<?php echo \Darejer\Helpers\AssetHelper::tags(); ?>";
-        });
 
         // Append Darejer's Inertia middleware to the `web` group. It replaces
         // both the host's own HandleInertiaRequests and any locale middleware:
