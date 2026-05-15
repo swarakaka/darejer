@@ -1,9 +1,14 @@
 {
-    "name": "@swarakaka/darejer",
+    "name": "darejer",
     "version": "0.1.0",
     "private": true,
     "type": "module",
     "packageManager": "pnpm@10.20.0",
+    "exports": {
+        "./vite": "./vite-plugin.mjs",
+        "./bootstrap": "./resources/js/bootstrap.ts",
+        "./css": "./resources/css/app.css"
+    },
     "scripts": {
         "dev": "vite",
         "build": "vue-tsc --noEmit && vite build",

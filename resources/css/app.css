@@ -4,6 +4,13 @@
 @import '@vue-flow/core/dist/theme-default.css';
 @import 'vue-sonner/style.css';
 
+/* Tailwind v4 auto-detects sources but excludes anything inside .gitignored
+ * paths — so when a host app imports this file via `@import 'darejer/css'`
+ * (loaded from vendor/), our own Vue/TS source would be skipped. These
+ * directives force inclusion so the host's compile knows about every
+ * utility class darejer's components actually use. */
+@source '../js/**/*.{vue,ts,js}';
+
 /*
  * ═══════════════════════════════════════════════════════════════
  *  DAREJER — AZURE / FLUENT DESIGN SYSTEM
