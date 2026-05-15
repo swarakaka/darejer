@@ -696,3 +696,24 @@ html[dir='rtl'] body {
 .gantt_grid_data .gantt_cell {
   @apply border-paper-150! text-sm! text-ink-700!;
 }
+
+/* ──────────────────────────────────────────────────────────────────────
+ * Inertia progress bar (NProgress)
+ *
+ * Inertia injects its own `<style>` for `#nprogress` at runtime (after our
+ * stylesheet), so overrides need `!important` to win the cascade. We make
+ * the default 2px bar a touch thicker and add a soft glow so it's visible
+ * on top of the dark topbar/sidebar header.
+ * ────────────────────────────────────────────────────────────────────── */
+#nprogress .bar {
+  height: 3px !important;
+  box-shadow:
+    0 0 8px var(--color-brand-500),
+    0 0 2px var(--color-brand-500) !important;
+}
+
+#nprogress .peg {
+  box-shadow:
+    0 0 12px var(--color-brand-500),
+    0 0 8px var(--color-brand-500) !important;
+}

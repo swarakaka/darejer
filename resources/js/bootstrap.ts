@@ -54,6 +54,9 @@ export function bootstrapDarejer(options: BootstrapDarejerOptions = {}): void {
     },
 
     progress: {
+      // Lower the default 250ms threshold so the bar still appears on fast
+      // local navigations (Herd often completes a visit in <250ms).
+      delay: 100,
       color: 'var(--color-brand-500)',
       showSpinner: false,
     },
