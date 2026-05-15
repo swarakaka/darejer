@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref, watch, shallowRef } from 'vue'
 import { useHttp } from '@inertiajs/vue3'
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
-import { Loader2 } from 'lucide-vue-next'
+import { Dialog, DialogClose, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { Loader2, X } from 'lucide-vue-next'
 import CreateInDialogForm from '@/components/darejer/CreateInDialogForm.vue'
 import useTranslation from '@/composables/useTranslation'
 import { handleHttpException } from '@/lib/handleHttpException'
@@ -118,13 +118,22 @@ function onCreated(payload: { url: string | null; flash: unknown }) {
 <template>
   <Dialog :open="open" @update:open="emit('update:open', $event)">
     <DialogContent
+      hide-close
       class="flex max-h-[calc(100dvh-2rem)] w-[calc(100vw-2rem)] flex-col overflow-hidden p-0"
       style="max-width: 36rem"
     >
-      <DialogHeader class="shrink-0 border-b border-paper-200 bg-paper-75 px-5 py-4">
+      <DialogHeader
+        class="flex shrink-0 flex-row items-center justify-between gap-3 border-b border-paper-200 bg-paper-75 px-5 py-4"
+      >
         <DialogTitle class="text-xl">
           {{ fetched?.title ?? __('Loading…') }}
         </DialogTitle>
+        <DialogClose
+          class="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-[2px] text-ink-700 transition-colors hover:bg-paper-150 hover:text-ink-900 focus:outline-none focus-visible:outline-1 focus-visible:outline-brand-500 disabled:pointer-events-none"
+        >
+          <X class="h-4 w-4" />
+          <span class="sr-only">{{ __('Close') }}</span>
+        </DialogClose>
       </DialogHeader>
 
       <div
