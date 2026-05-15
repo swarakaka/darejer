@@ -23,6 +23,7 @@ const {
   defaultLanguage,
   currentLocale,
   isMultilingual,
+  localeDirection,
   localeLabel,
   localeName,
   parseTranslatable,
@@ -72,6 +73,7 @@ function localeError(locale: string): string | null {
         :readonly="component.readonly as boolean"
         :disabled="component.disabled as boolean"
         :value="translations[currentLocale] ?? translations[defaultLanguage] ?? ''"
+        :dir="localeDirection(currentLocale)"
         class="w-full resize-y text-sm"
         :class="hasError ? 'border-danger-600' : ''"
         @input="onSingleInput"
@@ -125,6 +127,7 @@ function localeError(locale: string): string | null {
               :readonly="component.readonly as boolean"
               :disabled="component.disabled as boolean"
               :value="translations[locale] ?? ''"
+              :dir="localeDirection(locale)"
               class="w-full resize-y rounded-none border-none text-sm focus:ring-0"
               @input="onInput(locale, $event)"
             />

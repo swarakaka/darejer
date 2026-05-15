@@ -17,6 +17,13 @@ export function useLanguages() {
 
   const isMultilingual = computed(() => languages.value.length > 1)
 
+  // Per-locale text direction map shared from the server (Locales::direction).
+  const directions = computed(() => page.props.darejer?.directions ?? {})
+
+  function localeDirection(locale: string): 'ltr' | 'rtl' {
+    return directions.value[locale] === 'rtl' ? 'rtl' : 'ltr'
+  }
+
   function localeLabel(locale: string): string {
     return locale.split('-')[0].toUpperCase()
   }
@@ -47,6 +54,7 @@ export function useLanguages() {
     defaultLanguage,
     currentLocale,
     isMultilingual,
+    localeDirection,
     localeLabel,
     localeName,
     parseTranslatable,

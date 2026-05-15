@@ -32,6 +32,7 @@ const {
   defaultLanguage,
   currentLocale,
   isMultilingual,
+  localeDirection,
   localeLabel,
   localeName,
   parseTranslatable,
@@ -109,6 +110,7 @@ function saveDialog() {
         :value="displayValue"
         :readonly="component.readonly as boolean"
         :disabled="component.disabled as boolean"
+        :dir="localeDirection(currentLocale)"
         class="w-full"
         :class="hasError ? 'border-danger-600' : ''"
         @input="onMainInput"
@@ -123,6 +125,7 @@ function saveDialog() {
           :value="displayValue"
           :readonly="component.readonly as boolean"
           :disabled="component.disabled as boolean"
+          :dir="localeDirection(currentLocale)"
           class="w-full pe-9"
           :class="hasError ? 'border-danger-600' : ''"
           @input="onMainInput"
@@ -182,6 +185,7 @@ function saveDialog() {
                 :id="`${component.name}-${locale}`"
                 :placeholder="(component.placeholder as string) ?? ''"
                 :value="translations[locale] ?? ''"
+                :dir="localeDirection(locale)"
                 class="w-full"
                 :class="localeError(locale) ? `border-danger-600` : ''"
                 @input="onDialogInput(locale, $event)"
