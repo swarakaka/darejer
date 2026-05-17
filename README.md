@@ -156,7 +156,21 @@ Screen::make(__darejer('Edit Product'))
 
 ## Documentation
 
-Full documentation lives in the [`docs/`](docs) directory and on [github.com/swarakaka/darejer](https://github.com/swarakaka/darejer).
+The package ships with a `docs/` folder — your reference for everything that doesn't fit in this README. Start with [`docs/README.md`](docs/README.md) for the table of contents, then dive into the section you need:
+
+| Folder | What's inside |
+|---|---|
+| [`docs/getting-started/`](docs/getting-started) | Installation, configuration, your first screen |
+| [`docs/architecture/`](docs/architecture) | `DarejerController` base, Screen engine, JSON envelope, HTTP rules |
+| [`docs/components/`](docs/components) | Reference page for every component (DataGrid, Kanban, Combobox, RichTextEditor, …) |
+| [`docs/actions/`](docs/actions) | Save, Cancel, Delete, Button, Link, Dropdown, ModalToggle, BulkAction |
+| [`docs/auth/`](docs/auth) | Laravel Fortify integration and customization |
+| [`docs/api-reference/`](docs/api-reference) | Full PHP API surface (Screen, Section, Tab, components, actions) |
+| [`docs/permissions.md`](docs/permissions.md) | Spatie Permissions wiring, roles, `canSee()` |
+| [`docs/translations.md`](docs/translations.md) | `darejer.php` languages config, `__darejer()` helper, model translations |
+| [`docs/CHANGELOG.md`](docs/CHANGELOG.md) / [`docs/CONTRIBUTING.md`](docs/CONTRIBUTING.md) | Release history and contribution guide |
+
+Everything in the docs is kept in sync with the source — when in doubt, the docs reflect the current behavior of the package.
 
 ---
 

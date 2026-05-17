@@ -9,7 +9,7 @@ Darejer is a Composer package: `swarakaka/darejer`.
 | PHP | `^8.4` |
 | Laravel | `^13.0` |
 | Inertia Laravel | `^3.0` |
-| Laravel Fortify | `^1.38` |
+| Laravel Fortify | `^1.37` |
 | Spatie Permission | `^6.0` |
 | Spatie Translatable | `^6.0` |
 | Tightenco Ziggy | `^2.0` |

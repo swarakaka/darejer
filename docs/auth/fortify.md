@@ -1,6 +1,6 @@
 # Authentication — Fortify
 
-Authentication is powered by **Laravel Fortify** (`^1.38`). Fortify owns every POST handler (login, logout, password reset, 2FA challenge, email verification, password confirmation). Darejer wires Fortify's GET views to Inertia pages so host apps never write auth controllers.
+Authentication is powered by **Laravel Fortify** (`^1.37`). Fortify owns every POST handler (login, logout, password reset, 2FA challenge, email verification, password confirmation). Darejer wires Fortify's GET views to Inertia pages so host apps never write auth controllers.
 
 ## Routes
 
