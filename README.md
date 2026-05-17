@@ -13,7 +13,7 @@ The package serializes your PHP screen definitions to Inertia page props, which 
 - **Auth out of the box** — Laravel Fortify wired to Inertia pages (login, forgot/reset password, 2FA challenge, email verification, confirm password)
 - **`DarejerController` base** — controllers extend one class; REST routes auto-register, `#[Route]` attribute for custom endpoints, standard JSON envelope helpers — nothing to add to `routes/web.php`
 - **Screen engine** — define pages, forms, and actions entirely in PHP
-- **30+ components** — DataGrid, Kanban, Gantt, Scheduler, Diagram, RichTextEditor, Signature, Repeater, and more
+- **37 built-in components** — DataGrid, Kanban, TreeGrid, Gantt, Scheduler, Diagram, RichTextEditor, Signature, Repeater, Combobox, FilterPanel, Pagination, FileUpload, DatePicker, TimePicker, TagsInput, KeyValueEditor, EditableTable, InPlaceEditor, PDFViewer, Money, TextInput, Textarea, SelectComponent, CheckboxComponent, CheckboxList, RadioGroup, Toggle, TranslatableInput, TranslatableTextarea, Display, Icon, TooltipComponent, BreadcrumbsComponent, Navigation, Table, PermissionGuard
 - **FastTab layout** — collapsible accordion sections like Microsoft Dynamics 365
 - **Translatable fields** — Spatie Translatable integration with multi-language UI
 - **Permission system** — Spatie Permissions with super-admin bypass and `canSee()` on every component
