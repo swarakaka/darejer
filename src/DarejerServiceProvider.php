@@ -7,8 +7,13 @@ use Darejer\Console\Commands\LanguageCommand;
 use Darejer\Console\Commands\LanguageExportCommand;
 use Darejer\Data\ModelRegistry;
 use Darejer\Http\Middleware\HandleInertiaRequests;
+use Darejer\Http\Middleware\SecurityHeaders;
+use Darejer\Http\Middleware\ThrottlePasswordReset;
+use Darejer\Listeners\AuthEventSubscriber;
+use Darejer\Listeners\PermissionEventSubscriber;
 use Darejer\Routing\ControllerRouteRegistrar;
 use Illuminate\Contracts\Http\Kernel;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Translation\FileLoader;
@@ -49,6 +54,9 @@ class DarejerServiceProvider extends ServiceProvider
     {
         // Grant super-admin all abilities (Spatie laravel-permission convention).
         Gate::before(fn ($user, $ability) => method_exists($user, 'hasRole') && $user->hasRole('super-admin') ? true : null);
+
+        Event::subscribe(AuthEventSubscriber::class);
+        Event::subscribe(PermissionEventSubscriber::class);
 
         // Publish config
         $this->publishes([
@@ -148,6 +156,8 @@ class DarejerServiceProvider extends ServiceProvider
             $kernel = $this->app->make(Kernel::class);
             if (method_exists($kernel, 'appendMiddlewareToGroup')) {
                 $kernel->appendMiddlewareToGroup('web', HandleInertiaRequests::class);
+                $kernel->appendMiddlewareToGroup('web', SecurityHeaders::class);
+                $kernel->appendMiddlewareToGroup('web', ThrottlePasswordReset::class);
             }
         });
     }
