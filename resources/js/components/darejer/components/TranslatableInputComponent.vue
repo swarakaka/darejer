@@ -1,17 +1,11 @@
 <script setup lang="ts">
-import { ref, reactive, computed } from 'vue'
-import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from '@/components/ui/dialog'
-import { Label } from '@/components/ui/label'
 import { Globe } from 'lucide-vue-next'
+import { ref, reactive, computed } from 'vue'
 import FieldWrapper from '@/components/darejer/FieldWrapper.vue'
+import { Button } from '@/components/ui/button'
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 import { useLanguages } from '@/composables/useLanguages'
 import useTranslation from '@/composables/useTranslation'
 import type { DarejerComponent } from '@/types/darejer'
@@ -38,8 +32,7 @@ const {
   parseTranslatable,
 } = useLanguages()
 
-const rawValue =
-  (props.formData ?? props.record)[props.component.name] ?? props.component.default ?? ''
+const rawValue = (props.formData ?? props.record)[props.component.name] ?? props.component.default ?? ''
 
 // Reactive bag of translations, mutated in place on each keystroke. A
 // writable-computed + object-spread (previous pattern) allocated a new
@@ -134,11 +127,7 @@ function saveDialog() {
         <button
           type="button"
           class="absolute end-0 flex h-full w-9 items-center justify-center rounded-e border-s border-slate-200 transition-colors duration-100"
-          :class="
-            hasAnyLocaleError
-              ? `text-danger-600 hover:text-danger-700`
-              : `text-slate-400 hover:text-brand-600`
-          "
+          :class="hasAnyLocaleError ? `text-danger-600 hover:text-danger-700` : `hover:text-brand-600 text-slate-400`"
           :title="
             __('Translate (:filled/:total filled)', {
               filled: filledCount,
@@ -148,21 +137,15 @@ function saveDialog() {
           @click="dialogOpen = true"
         >
           <Globe class="h-3.5 w-3.5" />
-          <span
-            v-if="hasAnyLocaleError"
-            class="absolute end-1 top-1 h-1.5 w-1.5 rounded-full bg-danger-600"
-          />
-          <span
-            v-else-if="filledCount > 0"
-            class="absolute end-1 top-1 h-1.5 w-1.5 rounded-full bg-brand-600"
-          />
+          <span v-if="hasAnyLocaleError" class="bg-danger-600 absolute end-1 top-1 h-1.5 w-1.5 rounded-full" />
+          <span v-else-if="filledCount > 0" class="bg-brand-600 absolute end-1 top-1 h-1.5 w-1.5 rounded-full" />
         </button>
       </div>
 
       <!-- Translation Dialog -->
       <Dialog :open="dialogOpen" @update:open="dialogOpen = $event">
         <DialogContent class="max-w-lg overflow-hidden p-0">
-          <DialogHeader class="border-b border-slate-200 bg-slate-75 px-4 py-3">
+          <DialogHeader class="bg-slate-75 border-b border-slate-200 px-4 py-3">
             <DialogTitle class="text-base font-semibold">
               {{ __(':label — Translations', { label: component.label ?? '' }) }}
             </DialogTitle>
@@ -177,9 +160,7 @@ function saveDialog() {
                   {{ localeLabel(locale) }}
                 </span>
                 {{ localeName(locale) }}
-                <span v-if="locale === defaultLanguage" class="text-xs text-slate-400">{{
-                  __('(default)')
-                }}</span>
+                <span v-if="locale === defaultLanguage" class="text-xs text-slate-400">{{ __('(default)') }}</span>
               </Label>
               <Input
                 :id="`${component.name}-${locale}`"
@@ -190,20 +171,18 @@ function saveDialog() {
                 :class="localeError(locale) ? `border-danger-600` : ''"
                 @input="onDialogInput(locale, $event)"
               />
-              <p v-if="localeError(locale)" class="text-xs leading-snug text-danger-600">
+              <p v-if="localeError(locale)" class="text-danger-600 text-xs leading-snug">
                 {{ localeError(locale) }}
               </p>
             </div>
           </div>
 
-          <DialogFooter
-            class="flex justify-end gap-1.5 border-t border-slate-200 bg-slate-75 px-4 py-3"
-          >
+          <DialogFooter class="bg-slate-75 flex justify-end gap-1.5 border-t border-slate-200 px-4 py-3">
             <Button variant="outline" class="h-[2.125rem] text-sm" @click="dialogOpen = false">
               {{ __('Cancel') }}
             </Button>
             <Button
-              class="h-[2.125rem] border-none bg-brand-600 text-sm text-white hover:bg-brand-700"
+              class="bg-brand-600 hover:bg-brand-700 h-[2.125rem] border-none text-sm text-white"
               @click="saveDialog"
             >
               {{ __('Apply') }}

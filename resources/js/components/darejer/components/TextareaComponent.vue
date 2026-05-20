@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { Textarea } from '@/components/ui/textarea'
 import FieldWrapper from '@/components/darejer/FieldWrapper.vue'
+import { Textarea } from '@/components/ui/textarea'
 import type { DarejerComponent } from '@/types/darejer'
 
 const props = defineProps<{
@@ -13,9 +13,7 @@ const props = defineProps<{
 
 const emit = defineEmits<{ (e: 'update', name: string, value: unknown): void }>()
 
-const value = ref(
-  (props.formData ?? props.record)[props.component.name] ?? props.component.default ?? '',
-)
+const value = ref((props.formData ?? props.record)[props.component.name] ?? props.component.default ?? '')
 
 function onInput(e: Event) {
   const val = (e.target as HTMLTextAreaElement).value

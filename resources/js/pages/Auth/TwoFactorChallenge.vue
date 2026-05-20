@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
 import { useForm } from '@inertiajs/vue3'
-import AuthLayout from '@/layouts/AuthLayout.vue'
+import { ArrowRight, AlertCircle, ShieldCheck } from 'lucide-vue-next'
+import { ref, computed } from 'vue'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { ArrowRight, AlertCircle, ShieldCheck } from 'lucide-vue-next'
 import useTranslation from '@/composables/useTranslation'
+import AuthLayout from '@/layouts/AuthLayout.vue'
 
 defineOptions({ layout: AuthLayout })
 
@@ -18,9 +18,7 @@ const form = useForm({
   recovery_code: '',
 })
 
-const heading = computed(() =>
-  recovery.value ? __('Enter recovery code') : __('Two-factor verification'),
-)
+const heading = computed(() => (recovery.value ? __('Enter recovery code') : __('Two-factor verification')))
 
 const subhead = computed(() =>
   recovery.value
@@ -46,31 +44,27 @@ function submit() {
     <div class="flex flex-col gap-3 lg:gap-2">
       <div class="flex items-center gap-2.5 lg:hidden">
         <div
-          class="flex h-7 w-7 items-center justify-center rounded-md bg-brand-600 shadow-sm ring-1 ring-brand-400/30"
+          class="bg-brand-600 ring-brand-400/30 flex h-7 w-7 items-center justify-center rounded-md shadow-sm ring-1"
         >
           <span class="text-base leading-none font-semibold text-white">D</span>
         </div>
-        <span class="text-xs font-semibold tracking-[0.28em] text-ink-700 uppercase">Darejer</span>
+        <span class="text-ink-700 text-xs font-semibold tracking-[0.28em] uppercase">Darejer</span>
       </div>
-      <span
-        class="inline-flex items-center gap-1 text-2xs font-semibold tracking-[0.24em] text-brand-700 uppercase"
-      >
+      <span class="text-2xs text-brand-700 inline-flex items-center gap-1 font-semibold tracking-[0.24em] uppercase">
         <ShieldCheck class="h-3 w-3" />
         {{ __('Two-factor') }}
       </span>
-      <h1 class="text-3xl leading-tight font-semibold tracking-tight text-ink-900">
+      <h1 class="text-ink-900 text-3xl leading-tight font-semibold tracking-tight">
         {{ heading }}
       </h1>
-      <p class="text-sm leading-relaxed text-ink-500">
+      <p class="text-ink-500 text-sm leading-relaxed">
         {{ subhead }}
       </p>
     </div>
 
     <form class="space-y-5" @submit.prevent="submit">
       <div v-if="!recovery" class="flex flex-col gap-1.5">
-        <Label for="code" class="text-xs font-semibold text-ink-700">{{
-          __('Authentication code')
-        }}</Label>
+        <Label for="code" class="text-ink-700 text-xs font-semibold">{{ __('Authentication code') }}</Label>
         <Input
           id="code"
           v-model="form.code"
@@ -81,16 +75,14 @@ function submit() {
           class="h-11 text-center font-mono text-lg tracking-[0.35em] tabular-nums"
           :class="{ 'border-danger-600 focus-visible:ring-danger-500/20': form.errors.code }"
         />
-        <p v-if="form.errors.code" class="flex items-center gap-1 text-xs text-danger-600">
+        <p v-if="form.errors.code" class="text-danger-600 flex items-center gap-1 text-xs">
           <AlertCircle class="h-3 w-3" />
           {{ form.errors.code }}
         </p>
       </div>
 
       <div v-else class="flex flex-col gap-1.5">
-        <Label for="recovery_code" class="text-xs font-semibold text-ink-700">{{
-          __('Recovery code')
-        }}</Label>
+        <Label for="recovery_code" class="text-ink-700 text-xs font-semibold">{{ __('Recovery code') }}</Label>
         <Input
           id="recovery_code"
           v-model="form.recovery_code"
@@ -101,7 +93,7 @@ function submit() {
             'border-danger-600 focus-visible:ring-danger-500/20': form.errors.recovery_code,
           }"
         />
-        <p v-if="form.errors.recovery_code" class="flex items-center gap-1 text-xs text-danger-600">
+        <p v-if="form.errors.recovery_code" class="text-danger-600 flex items-center gap-1 text-xs">
           <AlertCircle class="h-3 w-3" />
           {{ form.errors.recovery_code }}
         </p>
@@ -109,7 +101,7 @@ function submit() {
 
       <button
         type="submit"
-        class="group inline-flex h-11 w-full items-center justify-center gap-2 rounded-md bg-brand-600 px-4 text-sm font-semibold tracking-wide text-white shadow-sm transition-colors hover:bg-brand-700 disabled:cursor-not-allowed disabled:opacity-60"
+        class="group bg-brand-600 hover:bg-brand-700 inline-flex h-11 w-full items-center justify-center gap-2 rounded-md px-4 text-sm font-semibold tracking-wide text-white shadow-sm transition-colors disabled:cursor-not-allowed disabled:opacity-60"
         :disabled="form.processing"
       >
         {{ form.processing ? __('Verifying') : __('Continue') }}
@@ -120,7 +112,7 @@ function submit() {
 
       <button
         type="button"
-        class="text-sm font-medium text-ink-500 transition-colors hover:text-brand-700"
+        class="text-ink-500 hover:text-brand-700 text-sm font-medium transition-colors"
         @click="toggle"
       >
         {{ recovery ? __('Use an authentication code') : __('Use a recovery code') }}
@@ -128,7 +120,7 @@ function submit() {
     </form>
 
     <div
-      class="flex items-center justify-between border-t border-paper-200 pt-5 text-2xs tracking-[0.18em] text-ink-400 uppercase tabular-nums"
+      class="border-paper-200 text-2xs text-ink-400 flex items-center justify-between border-t pt-5 tracking-[0.18em] uppercase tabular-nums"
     >
       <p>{{ __('© :year Darejer', { year: new Date().getFullYear() }) }}</p>
       <p>{{ __('Secured with TLS') }}</p>

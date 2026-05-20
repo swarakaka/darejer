@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { ref, watch, shallowRef } from 'vue'
 import { useHttp } from '@inertiajs/vue3'
-import { Dialog, DialogClose, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Loader2, X } from 'lucide-vue-next'
+import { ref, watch, shallowRef } from 'vue'
 import CreateInDialogForm from '@/components/darejer/CreateInDialogForm.vue'
+import { Dialog, DialogClose, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import useTranslation from '@/composables/useTranslation'
 import { handleHttpException } from '@/lib/handleHttpException'
 import type { DarejerComponent as DarejerComponentType, DarejerAction } from '@/types/darejer'
@@ -73,9 +73,10 @@ function fetchPage() {
       // 'form' mode returns the schema directly; 'page' mode returns
       // an Inertia page JSON with the schema nested under `.props`.
       const raw = (response ?? {}) as Record<string, unknown>
-      const p = (
-        props.mode === 'form' ? raw : ((raw.props as Record<string, unknown> | undefined) ?? {})
-      ) as Record<string, unknown>
+      const p = (props.mode === 'form' ? raw : ((raw.props as Record<string, unknown> | undefined) ?? {})) as Record<
+        string,
+        unknown
+      >
       fetched.value = {
         title: (p.title as string) ?? 'New',
         components: (p.components as DarejerComponentType[]) ?? [],
@@ -123,30 +124,24 @@ function onCreated(payload: { url: string | null; flash: unknown }) {
       style="max-width: 36rem"
     >
       <DialogHeader
-        class="flex shrink-0 flex-row items-center justify-between gap-3 border-b border-paper-200 bg-paper-75 px-5 py-4"
+        class="border-paper-200 bg-paper-75 flex shrink-0 flex-row items-center justify-between gap-3 border-b px-5 py-4"
       >
         <DialogTitle class="text-xl">
           {{ fetched?.title ?? __('Loading…') }}
         </DialogTitle>
         <DialogClose
-          class="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-[2px] text-ink-700 transition-colors hover:bg-paper-150 hover:text-ink-900 focus:outline-none focus-visible:outline-1 focus-visible:outline-brand-500 disabled:pointer-events-none"
+          class="text-ink-700 hover:bg-paper-150 hover:text-ink-900 focus-visible:outline-brand-500 inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-[2px] transition-colors focus:outline-none focus-visible:outline-1 disabled:pointer-events-none"
         >
           <X class="h-4 w-4" />
           <span class="sr-only">{{ __('Close') }}</span>
         </DialogClose>
       </DialogHeader>
 
-      <div
-        v-if="http.processing"
-        class="flex flex-1 items-center justify-center gap-2 py-10 text-sm text-ink-400"
-      >
+      <div v-if="http.processing" class="text-ink-400 flex flex-1 items-center justify-center gap-2 py-10 text-sm">
         <Loader2 class="h-4 w-4 animate-spin" /> {{ __('Loading form…') }}
       </div>
 
-      <div
-        v-else-if="error"
-        class="flex flex-1 items-center justify-center py-10 text-sm text-danger-600"
-      >
+      <div v-else-if="error" class="text-danger-600 flex flex-1 items-center justify-center py-10 text-sm">
         {{ error }}
       </div>
 

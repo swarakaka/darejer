@@ -1,7 +1,7 @@
-import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import { useHttp, usePage } from '@inertiajs/vue3'
-import type { DarejerSharedProps } from '@/types/darejer'
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import { handleHttpException } from '@/lib/handleHttpException'
+import type { DarejerSharedProps } from '@/types/darejer'
 
 function onAuthException(response: { status: number }): void {
   handleHttpException(response)
@@ -70,9 +70,7 @@ let subscribed = false
 export function useAlerts() {
   const page = usePage<DarejerSharedProps>()
 
-  const userId = computed<number | null>(
-    () => (page.props.auth?.user?.id as number | undefined) ?? null,
-  )
+  const userId = computed<number | null>(() => (page.props.auth?.user?.id as number | undefined) ?? null)
 
   const hasUnread = computed(() => unreadCount.value > 0)
 

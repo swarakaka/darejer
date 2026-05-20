@@ -1,25 +1,13 @@
 <script setup lang="ts">
+import { Check, ChevronDown, Loader2, Plus } from 'lucide-vue-next'
 import { computed, ref, watch, onMounted } from 'vue'
+import CreateInDialog from '@/components/darejer/CreateInDialog.vue'
+import FieldWrapper from '@/components/darejer/FieldWrapper.vue'
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command'
 import { Input } from '@/components/ui/input'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from '@/components/ui/command'
-import { Check, ChevronDown, Loader2, Plus } from 'lucide-vue-next'
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { useDataUrl } from '@/composables/useDataUrl'
-import FieldWrapper from '@/components/darejer/FieldWrapper.vue'
-import CreateInDialog from '@/components/darejer/CreateInDialog.vue'
 import useTranslation from '@/composables/useTranslation'
 import type { DarejerComponent } from '@/types/darejer'
 
@@ -36,29 +24,17 @@ const emit = defineEmits<{ (e: 'update', name: string, value: unknown): void }>(
 
 type CurrencyRow = Record<string, unknown>
 
-const fallbackDecimals = computed<number>(
-  () => (props.component.decimals as number | undefined) ?? 2,
-)
-const allowNegative = computed<boolean>(
-  () => (props.component.allowNegative as boolean | undefined) ?? true,
-)
+const fallbackDecimals = computed<number>(() => (props.component.decimals as number | undefined) ?? 2)
+const allowNegative = computed<boolean>(() => (props.component.allowNegative as boolean | undefined) ?? true)
 
 // ── Currency picker state ───────────────────────────────────────────────────
-const currencyDataUrl = computed<string | undefined>(
-  () => props.component.currencyDataUrl as string | undefined,
-)
-const currencyKeyField = computed<string>(
-  () => (props.component.currencyKeyField as string | undefined) ?? 'id',
-)
-const currencyLabelField = computed<string>(
-  () => (props.component.currencyLabelField as string | undefined) ?? 'code',
-)
+const currencyDataUrl = computed<string | undefined>(() => props.component.currencyDataUrl as string | undefined)
+const currencyKeyField = computed<string>(() => (props.component.currencyKeyField as string | undefined) ?? 'id')
+const currencyLabelField = computed<string>(() => (props.component.currencyLabelField as string | undefined) ?? 'code')
 const currencyDecimalsField = computed<string>(
   () => (props.component.currencyDecimalsField as string | undefined) ?? 'minor_units',
 )
-const currencyValueField = computed<string | undefined>(
-  () => props.component.currencyValueField as string | undefined,
-)
+const currencyValueField = computed<string | undefined>(() => props.component.currencyValueField as string | undefined)
 
 const hasPicker = computed(() => !!currencyDataUrl.value && !!currencyValueField.value)
 
@@ -115,13 +91,9 @@ const localeParts = computed(() =>
   }).formatToParts(12345.6),
 )
 
-const localeDecimalSeparator = computed<string>(
-  () => localeParts.value.find((p) => p.type === 'decimal')?.value ?? '.',
-)
+const localeDecimalSeparator = computed<string>(() => localeParts.value.find((p) => p.type === 'decimal')?.value ?? '.')
 
-const localeGroupSeparator = computed<string>(
-  () => localeParts.value.find((p) => p.type === 'group')?.value ?? ',',
-)
+const localeGroupSeparator = computed<string>(() => localeParts.value.find((p) => p.type === 'group')?.value ?? ',')
 
 const decimalSeparator = computed<string>(
   () => (props.component.decimalSeparator as string | undefined) ?? localeDecimalSeparator.value,
@@ -136,9 +108,7 @@ function toNumber(value: unknown): number | null {
   if (value === null || value === undefined || value === '') return null
   if (typeof value === 'number') return Number.isFinite(value) ? value : null
   if (typeof value !== 'string') return null
-  const cleaned = value
-    .replace(new RegExp(`\\${groupSeparator.value}`, 'g'), '')
-    .replace(decimalSeparator.value, '.')
+  const cleaned = value.replace(new RegExp(`\\${groupSeparator.value}`, 'g'), '').replace(decimalSeparator.value, '.')
   const n = Number(cleaned)
   return Number.isFinite(n) ? n : null
 }
@@ -184,10 +154,7 @@ if (currencyValueField.value) {
   watch(
     () => source.value[currencyValueField.value as string],
     (incoming) => {
-      if (
-        selectedCurrency.value &&
-        String(selectedCurrency.value[currencyKeyField.value]) === String(incoming)
-      ) {
+      if (selectedCurrency.value && String(selectedCurrency.value[currencyKeyField.value]) === String(incoming)) {
         return
       }
       void resolveSelectedCurrency(incoming)
@@ -233,9 +200,7 @@ function selectCurrency(row: CurrencyRow) {
 }
 
 const selectedKey = computed<string | null>(() =>
-  selectedCurrency.value
-    ? String(selectedCurrency.value[currencyKeyField.value] ?? '')
-    : null,
+  selectedCurrency.value ? String(selectedCurrency.value[currencyKeyField.value] ?? '') : null,
 )
 
 // ── Static suffix (when picker is not used) ─────────────────────────────────
@@ -243,8 +208,7 @@ function resolvePath(obj: Record<string, unknown>, path: string): unknown {
   return path
     .split('.')
     .reduce<unknown>(
-      (acc, key) =>
-        acc && typeof acc === 'object' ? (acc as Record<string, unknown>)[key] : undefined,
+      (acc, key) => (acc && typeof acc === 'object' ? (acc as Record<string, unknown>)[key] : undefined),
       obj,
     )
 }
@@ -274,12 +238,8 @@ const hasInputSuffix = computed(() => !hasPicker.value && !!staticSuffix.value)
 // Optional clickable suffix that opens an inline dialog (e.g. "+ Add
 // Exchange Rate"). When set, the static suffix is hidden in favor of
 // the action button.
-const suffixActionUrl = computed(
-  () => (props.component.suffixActionUrl as string | undefined) ?? null,
-)
-const suffixActionTooltip = computed(
-  () => (props.component.suffixActionTooltip as string | undefined) ?? null,
-)
+const suffixActionUrl = computed(() => (props.component.suffixActionUrl as string | undefined) ?? null)
+const suffixActionTooltip = computed(() => (props.component.suffixActionTooltip as string | undefined) ?? null)
 const hasSuffixAction = computed(() => suffixActionUrl.value !== null && !hasPicker.value)
 
 const suffixDialogOpen = ref(false)
@@ -364,7 +324,7 @@ function onBlur() {
       <div class="relative flex w-full items-center">
         <span
           v-if="hasPrefix"
-          class="pointer-events-none absolute inset-y-0 inset-s-0 z-10 flex max-w-[40%] items-center truncate rounded-s-md border-e border-paper-300 bg-paper-50 px-2.5 text-sm whitespace-nowrap text-ink-500 select-none"
+          class="border-paper-300 bg-paper-50 text-ink-500 pointer-events-none absolute inset-y-0 inset-s-0 z-10 flex max-w-[40%] items-center truncate rounded-s-md border-e px-2.5 text-sm whitespace-nowrap select-none"
         >
           {{ component.prefix }}
         </span>
@@ -394,7 +354,7 @@ function onBlur() {
 
         <span
           v-if="hasInputSuffix && !hasSuffixAction"
-          class="pointer-events-none absolute inset-y-0 inset-e-0 z-10 flex max-w-[40%] items-center truncate rounded-e-md border-s border-paper-300 bg-paper-50 px-2.5 text-sm whitespace-nowrap text-ink-500 select-none"
+          class="border-paper-300 bg-paper-50 text-ink-500 pointer-events-none absolute inset-y-0 inset-e-0 z-10 flex max-w-[40%] items-center truncate rounded-e-md border-s px-2.5 text-sm whitespace-nowrap select-none"
         >
           {{ staticSuffix }}
         </span>
@@ -405,7 +365,7 @@ function onBlur() {
             <TooltipTrigger as-child>
               <button
                 type="button"
-                class="absolute inset-y-0 inset-e-1 z-10 my-auto flex h-6 w-6 items-center justify-center rounded-sm text-ink-400 transition-colors hover:bg-paper-200 hover:text-ink-900 focus:outline-none focus:ring-2 focus:ring-brand-500"
+                class="text-ink-400 hover:bg-paper-200 hover:text-ink-900 focus:ring-brand-500 absolute inset-y-0 inset-e-1 z-10 my-auto flex h-6 w-6 items-center justify-center rounded-sm transition-colors focus:ring-2 focus:outline-none"
                 :aria-label="suffixActionTooltip ?? 'Add'"
                 @click="openSuffixDialog"
               >
@@ -430,27 +390,20 @@ function onBlur() {
             <button
               type="button"
               :disabled="component.disabled as boolean"
-              class="flex h-8 min-w-16 items-center gap-1 rounded-e-[2px] border border-s-0 border-(--input-border) bg-paper-50 px-2 text-[13px] text-ink-700 transition-colors hover:bg-paper-100 focus:border-brand-500 focus:shadow-[inset_0_0_0_1px_var(--color-brand-500)] focus:ring-0 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+              class="bg-paper-50 text-ink-700 hover:bg-paper-100 focus:border-brand-500 flex h-8 min-w-16 items-center gap-1 rounded-e-[2px] border border-s-0 border-(--input-border) px-2 text-[13px] transition-colors focus:shadow-[inset_0_0_0_1px_var(--color-brand-500)] focus:ring-0 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
               :class="hasError ? 'border-danger-600' : ''"
             >
               <span class="truncate font-medium">
                 {{ pickerSuffix ?? __('—') }}
               </span>
-              <ChevronDown class="h-3 w-3 shrink-0 text-ink-400" />
+              <ChevronDown class="text-ink-400 h-3 w-3 shrink-0" />
             </button>
           </PopoverTrigger>
           <PopoverContent class="w-56 p-0" align="end">
             <Command :should-filter="false">
-              <CommandInput
-                v-model="pickerSearch"
-                :placeholder="__('Search currencies…')"
-                class="h-9"
-              />
+              <CommandInput v-model="pickerSearch" :placeholder="__('Search currencies…')" class="h-9" />
               <CommandList>
-                <div
-                  v-if="pickerLoading"
-                  class="flex items-center justify-center gap-1.5 py-3 text-xs text-ink-500"
-                >
+                <div v-if="pickerLoading" class="text-ink-500 flex items-center justify-center gap-1.5 py-3 text-xs">
                   <Loader2 class="h-3 w-3 animate-spin" />
                   {{ __('Loading…') }}
                 </div>
@@ -464,17 +417,10 @@ function onBlur() {
                   >
                     <Check
                       class="me-2 h-4 w-4"
-                      :class="
-                        selectedKey === String(row[currencyKeyField] ?? '')
-                          ? 'opacity-100'
-                          : 'opacity-0'
-                      "
+                      :class="selectedKey === String(row[currencyKeyField] ?? '') ? 'opacity-100' : 'opacity-0'"
                     />
                     <span class="font-medium">{{ row[currencyLabelField] }}</span>
-                    <span
-                      v-if="row[currencyDecimalsField] !== undefined"
-                      class="ms-auto text-xs text-ink-400"
-                    >
+                    <span v-if="row[currencyDecimalsField] !== undefined" class="text-ink-400 ms-auto text-xs">
                       {{ row[currencyDecimalsField] }}d
                     </span>
                   </CommandItem>

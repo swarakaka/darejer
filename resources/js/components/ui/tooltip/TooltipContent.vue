@@ -1,20 +1,17 @@
 <script setup lang="ts">
-import type { TooltipContentEmits, TooltipContentProps } from 'reka-ui'
-import type { HTMLAttributes } from 'vue'
 import { reactiveOmit } from '@vueuse/core'
+import type { TooltipContentEmits, TooltipContentProps } from 'reka-ui'
 import { TooltipContent, TooltipPortal, useForwardPropsEmits } from 'reka-ui'
+import type { HTMLAttributes } from 'vue'
 import { cn } from '@/lib/utils'
 
 defineOptions({
   inheritAttrs: false,
 })
 
-const props = withDefaults(
-  defineProps<TooltipContentProps & { class?: HTMLAttributes['class'] }>(),
-  {
-    sideOffset: 4,
-  },
-)
+const props = withDefaults(defineProps<TooltipContentProps & { class?: HTMLAttributes['class'] }>(), {
+  sideOffset: 4,
+})
 
 const emits = defineEmits<TooltipContentEmits>()
 
@@ -29,7 +26,7 @@ const forwarded = useForwardPropsEmits(delegatedProps, emits)
       v-bind="{ ...forwarded, ...$attrs }"
       :class="
         cn(
-          `z-50 animate-in overflow-hidden rounded-[2px] border border-ink-700 bg-ink-900 px-2 py-1 text-[12px] text-paper-50 shadow-[0_3.2px_7.2px_rgba(0,0,0,0.13)] fade-in-0 zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95`,
+          `animate-in border-ink-700 bg-ink-900 text-paper-50 fade-in-0 zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 z-50 overflow-hidden rounded-[2px] border px-2 py-1 text-[12px] shadow-[0_3.2px_7.2px_rgba(0,0,0,0.13)]`,
           props.class,
         )
       "

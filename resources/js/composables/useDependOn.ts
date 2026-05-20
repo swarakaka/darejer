@@ -4,10 +4,7 @@ import type { DependOnCondition, DependOnRule } from '@/types/darejer'
  * Compare two values by operator. All string-equality comparisons coerce both
  * sides to string so `1` and `'1'` (e.g. a form radio value) match.
  */
-function evaluateCondition(
-  condition: DependOnCondition,
-  formData: Record<string, unknown>,
-): boolean {
+function evaluateCondition(condition: DependOnCondition, formData: Record<string, unknown>): boolean {
   const fieldValue = formData[condition.field]
   const ruleValue = condition.value
 
@@ -28,14 +25,10 @@ function evaluateCondition(
       return Number(fieldValue) <= Number(ruleValue)
 
     case 'in':
-      return Array.isArray(ruleValue)
-        ? ruleValue.map(String).includes(String(fieldValue ?? ''))
-        : false
+      return Array.isArray(ruleValue) ? ruleValue.map(String).includes(String(fieldValue ?? '')) : false
 
     case 'notIn':
-      return Array.isArray(ruleValue)
-        ? !ruleValue.map(String).includes(String(fieldValue ?? ''))
-        : true
+      return Array.isArray(ruleValue) ? !ruleValue.map(String).includes(String(fieldValue ?? '')) : true
 
     case 'contains':
       return String(fieldValue ?? '')
@@ -72,10 +65,7 @@ function evaluateCondition(
  * owning component / section / action should be visible. A null rule means
  * "always visible."
  */
-export function evaluateDependOn(
-  rule: DependOnRule | null | undefined,
-  formData: Record<string, unknown>,
-): boolean {
+export function evaluateDependOn(rule: DependOnRule | null | undefined, formData: Record<string, unknown>): boolean {
   if (!rule) return true
 
   if (rule.conditions && Array.isArray(rule.conditions)) {

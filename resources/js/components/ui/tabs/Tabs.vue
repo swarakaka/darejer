@@ -1,12 +1,10 @@
 <script setup lang="ts">
-import type { TabsRootEmits, TabsRootProps } from 'reka-ui'
 import { reactiveOmit } from '@vueuse/core'
+import type { TabsRootEmits, TabsRootProps } from 'reka-ui'
 import { TabsRoot, useForwardPropsEmits } from 'reka-ui'
 import { computed } from 'vue'
 
-const props = defineProps<
-  TabsRootProps & { persistKey?: string; validValues?: (string | number)[] }
->()
+const props = defineProps<TabsRootProps & { persistKey?: string; validValues?: (string | number)[] }>()
 const emits = defineEmits<TabsRootEmits>()
 
 const storageKey = computed(() => (props.persistKey ? `darejer:tabs:${props.persistKey}` : null))
@@ -45,11 +43,7 @@ function handleUpdate(value: string | number) {
 </script>
 
 <template>
-  <TabsRoot
-    v-bind="forwarded"
-    :default-value="initialDefaultValue"
-    @update:model-value="handleUpdate"
-  >
+  <TabsRoot v-bind="forwarded" :default-value="initialDefaultValue" @update:model-value="handleUpdate">
     <slot />
   </TabsRoot>
 </template>

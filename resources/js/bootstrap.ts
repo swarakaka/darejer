@@ -1,15 +1,13 @@
 import { createInertiaApp, router, usePage } from '@inertiajs/vue3'
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers'
-import { ZiggyVue } from 'ziggy-js'
 import type { DefineComponent } from 'vue'
-
+import { ZiggyVue } from 'ziggy-js'
 // CSS is imported here so Vite records it against the app entry in manifest.json.
 import '../css/app.css'
 
 // Apply persisted theme (light/dark/system) before the app mounts so the
 // first paint already has the right `dark` class on <html>.
 import '@/composables/useTheme'
-
 import { handleHttpException } from '@/lib/handleHttpException'
 
 type PageGlob = Record<string, () => Promise<DefineComponent>>

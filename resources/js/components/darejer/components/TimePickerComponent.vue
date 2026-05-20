@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Clock, ChevronUp, ChevronDown } from 'lucide-vue-next'
+import { ref, computed } from 'vue'
 import FieldWrapper from '@/components/darejer/FieldWrapper.vue'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import useTranslation from '@/composables/useTranslation'
 import type { DarejerComponent } from '@/types/darejer'
 
@@ -19,8 +19,7 @@ const emit = defineEmits<{ (e: 'update', name: string, value: unknown): void }>(
 
 const open = ref(false)
 
-const rawValue =
-  (props.formData ?? props.record)[props.component.name] ?? props.component.default ?? null
+const rawValue = (props.formData ?? props.record)[props.component.name] ?? props.component.default ?? null
 
 function parseTime(v: unknown): { h: number; m: number; s: number } {
   if (typeof v === 'string' && v.match(/^\d{2}:\d{2}/)) {
@@ -103,10 +102,10 @@ function onUnitInput(unit: 'h' | 'm' | 's', e: Event) {
           <button
             type="button"
             :disabled="component.disabled as boolean"
-            class="flex h-[2.125rem] w-full items-center justify-between rounded border bg-card px-2.5 text-sm transition-colors duration-100 disabled:cursor-not-allowed disabled:opacity-50"
+            class="bg-card flex h-[2.125rem] w-full items-center justify-between rounded border px-2.5 text-sm transition-colors duration-100 disabled:cursor-not-allowed disabled:opacity-50"
             :class="[
               hasError ? 'border-danger-600' : 'border-slate-300',
-              open ? 'border-brand-500 ring-1 ring-brand-500/20' : `hover:border-slate-400`,
+              open ? 'border-brand-500 ring-brand-500/20 ring-1' : `hover:border-slate-400`,
             ]"
           >
             <span class="font-mono text-slate-900">{{ displayValue }}</span>
@@ -118,11 +117,7 @@ function onUnitInput(unit: 'h' | 'm' | 's', e: Event) {
           <div class="flex items-center gap-2">
             <!-- Hour -->
             <div class="flex flex-col items-center gap-1">
-              <button
-                type="button"
-                class="p-0.5 text-slate-400 hover:text-slate-700"
-                @click="increment('h')"
-              >
+              <button type="button" class="p-0.5 text-slate-400 hover:text-slate-700" @click="increment('h')">
                 <ChevronUp class="h-4 w-4" />
               </button>
               <input
@@ -133,11 +128,7 @@ function onUnitInput(unit: 'h' | 'm' | 's', e: Event) {
                 class="h-8 w-10 rounded border border-slate-200 text-center font-mono text-sm"
                 @change="onUnitInput('h', $event)"
               />
-              <button
-                type="button"
-                class="p-0.5 text-slate-400 hover:text-slate-700"
-                @click="decrement('h')"
-              >
+              <button type="button" class="p-0.5 text-slate-400 hover:text-slate-700" @click="decrement('h')">
                 <ChevronDown class="h-4 w-4" />
               </button>
               <span class="text-xs text-slate-400">{{ __('hr') }}</span>
@@ -147,11 +138,7 @@ function onUnitInput(unit: 'h' | 'm' | 's', e: Event) {
 
             <!-- Minute -->
             <div class="flex flex-col items-center gap-1">
-              <button
-                type="button"
-                class="p-0.5 text-slate-400 hover:text-slate-700"
-                @click="increment('m')"
-              >
+              <button type="button" class="p-0.5 text-slate-400 hover:text-slate-700" @click="increment('m')">
                 <ChevronUp class="h-4 w-4" />
               </button>
               <input
@@ -162,11 +149,7 @@ function onUnitInput(unit: 'h' | 'm' | 's', e: Event) {
                 class="h-8 w-10 rounded border border-slate-200 text-center font-mono text-sm"
                 @change="onUnitInput('m', $event)"
               />
-              <button
-                type="button"
-                class="p-0.5 text-slate-400 hover:text-slate-700"
-                @click="decrement('m')"
-              >
+              <button type="button" class="p-0.5 text-slate-400 hover:text-slate-700" @click="decrement('m')">
                 <ChevronDown class="h-4 w-4" />
               </button>
               <span class="text-xs text-slate-400">{{ __('min') }}</span>
@@ -176,11 +159,7 @@ function onUnitInput(unit: 'h' | 'm' | 's', e: Event) {
             <template v-if="withSeconds">
               <span class="mb-4 font-mono text-lg text-slate-400">:</span>
               <div class="flex flex-col items-center gap-1">
-                <button
-                  type="button"
-                  class="p-0.5 text-slate-400 hover:text-slate-700"
-                  @click="increment('s')"
-                >
+                <button type="button" class="p-0.5 text-slate-400 hover:text-slate-700" @click="increment('s')">
                   <ChevronUp class="h-4 w-4" />
                 </button>
                 <input
@@ -191,11 +170,7 @@ function onUnitInput(unit: 'h' | 'm' | 's', e: Event) {
                   class="h-8 w-10 rounded border border-slate-200 text-center font-mono text-sm"
                   @change="onUnitInput('s', $event)"
                 />
-                <button
-                  type="button"
-                  class="p-0.5 text-slate-400 hover:text-slate-700"
-                  @click="decrement('s')"
-                >
+                <button type="button" class="p-0.5 text-slate-400 hover:text-slate-700" @click="decrement('s')">
                   <ChevronDown class="h-4 w-4" />
                 </button>
                 <span class="text-xs text-slate-400">{{ __('sec') }}</span>
@@ -208,9 +183,7 @@ function onUnitInput(unit: 'h' | 'm' | 's', e: Event) {
                 type="button"
                 class="rounded px-2 py-1 text-xs font-semibold transition-colors"
                 :class="
-                  meridiem === 'AM'
-                    ? 'bg-brand-600 text-white'
-                    : `bg-slate-100 text-slate-500 hover:bg-slate-200`
+                  meridiem === 'AM' ? 'bg-brand-600 text-white' : `bg-slate-100 text-slate-500 hover:bg-slate-200`
                 "
                 @click="meridiem !== 'AM' && toggleMeridiem()"
               >
@@ -220,9 +193,7 @@ function onUnitInput(unit: 'h' | 'm' | 's', e: Event) {
                 type="button"
                 class="rounded px-2 py-1 text-xs font-semibold transition-colors"
                 :class="
-                  meridiem === 'PM'
-                    ? 'bg-brand-600 text-white'
-                    : `bg-slate-100 text-slate-500 hover:bg-slate-200`
+                  meridiem === 'PM' ? 'bg-brand-600 text-white' : `bg-slate-100 text-slate-500 hover:bg-slate-200`
                 "
                 @click="meridiem !== 'PM' && toggleMeridiem()"
               >

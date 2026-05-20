@@ -1,6 +1,6 @@
 import { usePage } from '@inertiajs/vue3'
-import { getTranslations } from '@/lib/translations'
 import { computed } from 'vue'
+import { getTranslations } from '@/lib/translations'
 
 interface DarejerShare {
   locale: string
@@ -50,11 +50,7 @@ const useTranslation = () => {
     return translation
   }
 
-  const __n = (
-    key: string,
-    number: number,
-    replace: Record<string, string | number | null> = {},
-  ) => {
+  const __n = (key: string, number: number, replace: Record<string, string | number | null> = {}) => {
     const options = key.split('|')
 
     const resolved = number === 1 ? options[0] : options[1]

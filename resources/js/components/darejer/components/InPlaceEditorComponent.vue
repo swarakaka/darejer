@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
 import { useHttp } from '@inertiajs/vue3'
-import { handleHttpException } from '@/lib/handleHttpException'
 import { Check, X, Pencil } from 'lucide-vue-next'
+import { ref, computed } from 'vue'
 import FieldWrapper from '@/components/darejer/FieldWrapper.vue'
+import { handleHttpException } from '@/lib/handleHttpException'
 import type { DarejerComponent } from '@/types/darejer'
 
 const props = defineProps<{
@@ -24,9 +24,7 @@ const isDisabled = computed(() => !!props.component.disabled)
 type Option = { value: string; label: string }
 const options = computed((): Option[] => (props.component.options as Option[]) ?? [])
 
-const displayValue = computed(() =>
-  String((props.formData ?? props.record)[displayField.value] ?? '—'),
-)
+const displayValue = computed(() => String((props.formData ?? props.record)[displayField.value] ?? '—'))
 
 const editValue = ref(String((props.formData ?? props.record)[editField.value] ?? ''))
 
@@ -58,9 +56,7 @@ function save() {
     return
   }
 
-  const url = updateUrl.value.replace(/\{(\w+)\}/g, (_, key) =>
-    String((props.record ?? {})[key] ?? ''),
-  )
+  const url = updateUrl.value.replace(/\{(\w+)\}/g, (_, key) => String((props.record ?? {})[key] ?? ''))
 
   http.field = editField.value
   http.value = editValue.value
@@ -97,17 +93,13 @@ const displayLabel = computed(() => {
       <div
         v-if="!editing"
         class="group flex h-8 items-center gap-1.5 rounded-sm border border-transparent px-2.5 transition-colors duration-100"
-        :class="
-          isDisabled
-            ? 'cursor-default text-ink-500'
-            : `cursor-pointer hover:border-paper-300 hover:bg-paper-75`
-        "
+        :class="isDisabled ? 'text-ink-500 cursor-default' : `hover:border-paper-300 hover:bg-paper-75 cursor-pointer`"
         @click="startEdit"
       >
-        <span class="flex-1 truncate text-sm text-ink-800">{{ displayLabel }}</span>
+        <span class="text-ink-800 flex-1 truncate text-sm">{{ displayLabel }}</span>
         <Pencil
           v-if="!isDisabled"
-          class="h-3 w-3 shrink-0 text-ink-300 opacity-0 transition-all group-hover:text-ink-500 group-hover:opacity-100"
+          class="text-ink-300 group-hover:text-ink-500 h-3 w-3 shrink-0 opacity-0 transition-all group-hover:opacity-100"
         />
       </div>
 
@@ -119,7 +111,7 @@ const displayLabel = computed(() => {
           v-model="editValue"
           :type="cellType === 'number' ? 'number' : cellType === 'date' ? 'date' : 'text'"
           :placeholder="(component.placeholder as string) ?? ''"
-          class="h-8 flex-1 rounded-sm border border-brand-500 bg-card px-2.5 text-sm focus:ring-1 focus:ring-brand-500/20 focus:outline-none"
+          class="border-brand-500 bg-card focus:ring-brand-500/20 h-8 flex-1 rounded-sm border px-2.5 text-sm focus:ring-1 focus:outline-none"
           @keydown="onKeydown"
           @blur="save"
         />
@@ -128,7 +120,7 @@ const displayLabel = computed(() => {
           v-else
           ref="inputEl"
           v-model="editValue"
-          class="h-8 flex-1 rounded-sm border border-brand-500 bg-card px-2 text-sm focus:outline-none"
+          class="border-brand-500 bg-card h-8 flex-1 rounded-sm border px-2 text-sm focus:outline-none"
           @change="save"
           @keydown.escape="cancel"
         >
@@ -139,7 +131,7 @@ const displayLabel = computed(() => {
 
         <button
           type="button"
-          class="flex h-7 w-7 shrink-0 items-center justify-center rounded-sm bg-brand-600 text-white transition-colors hover:bg-brand-700 disabled:opacity-50"
+          class="bg-brand-600 hover:bg-brand-700 flex h-7 w-7 shrink-0 items-center justify-center rounded-sm text-white transition-colors disabled:opacity-50"
           :disabled="http.processing"
           @click="save"
         >
@@ -148,7 +140,7 @@ const displayLabel = computed(() => {
 
         <button
           type="button"
-          class="flex h-7 w-7 shrink-0 items-center justify-center rounded-sm border border-paper-300 text-ink-500 transition-colors hover:bg-paper-100"
+          class="border-paper-300 text-ink-500 hover:bg-paper-100 flex h-7 w-7 shrink-0 items-center justify-center rounded-sm border transition-colors"
           @click="cancel"
         >
           <X class="h-3.5 w-3.5" />

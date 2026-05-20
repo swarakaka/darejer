@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, watch } from 'vue'
 import { usePage, Link } from '@inertiajs/vue3'
 import {
   Layers,
@@ -38,6 +37,7 @@ import {
   UserSquare,
   ClipboardCheck,
 } from 'lucide-vue-next'
+import { ref, computed, onMounted, watch } from 'vue'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { useSidebar } from '@/composables/useSidebar'
 import useTranslation from '@/composables/useTranslation'
@@ -46,16 +46,8 @@ import type { DarejerSharedProps, NavItem } from '@/types/darejer'
 const { __ } = useTranslation()
 
 const page = usePage<DarejerSharedProps>()
-const {
-  mobileOpen,
-  isMobile,
-  effectiveCollapsed,
-  collapsed,
-  closeMobile,
-  isGroupExpanded,
-  toggleGroup,
-  expandGroup,
-} = useSidebar()
+const { mobileOpen, isMobile, effectiveCollapsed, collapsed, closeMobile, isGroupExpanded, toggleGroup, expandGroup } =
+  useSidebar()
 
 // Stable across locale switches — labels are translated, but URLs/routes
 // (or, failing that, the first child URL) survive a locale change.
@@ -246,11 +238,7 @@ function badgeClass(color?: string): string {
       leave-from-class="opacity-100"
       leave-to-class="opacity-0"
     >
-      <div
-        v-if="mobileOpen && isMobile"
-        class="fixed inset-0 z-30 bg-ink-900/55 md:hidden"
-        @click="closeMobile"
-      />
+      <div v-if="mobileOpen && isMobile" class="bg-ink-900/55 fixed inset-0 z-30 md:hidden" @click="closeMobile" />
     </transition>
 
     <TooltipProvider :delay-duration="120">
@@ -295,10 +283,8 @@ function badgeClass(color?: string): string {
                     @click="(e) => onItemClick(item, e)"
                   >
                     <span
-                      v-if="
-                        isGroupActive(item) || (activeGroup?.label === item.label && flyoutOpen)
-                      "
-                      class="absolute start-0 top-0 bottom-0 w-[2px] bg-brand-500"
+                      v-if="isGroupActive(item) || (activeGroup?.label === item.label && flyoutOpen)"
+                      class="bg-brand-500 absolute start-0 top-0 bottom-0 w-[2px]"
                     />
                     <component :is="getIcon(item.icon)" class="h-4 w-4" />
 
@@ -310,17 +296,10 @@ function badgeClass(color?: string): string {
                       {{ item.badge }}
                     </span>
 
-                    <span
-                      v-if="item.children?.length"
-                      class="absolute end-1 bottom-1 h-1 w-1 bg-brand-500/70"
-                    />
+                    <span v-if="item.children?.length" class="bg-brand-500/70 absolute end-1 bottom-1 h-1 w-1" />
                   </Link>
                 </TooltipTrigger>
-                <TooltipContent
-                  side="right"
-                  class="text-xs font-medium tracking-wide"
-                  :side-offset="10"
-                >
+                <TooltipContent side="right" class="text-xs font-medium tracking-wide" :side-offset="10">
                   {{ item.label }}
                 </TooltipContent>
               </Tooltip>
@@ -338,16 +317,13 @@ function badgeClass(color?: string): string {
                 "
                 @click="(e) => onItemClick(item, e)"
               >
-                <span
-                  v-if="isGroupActive(item)"
-                  class="absolute inset-s-0 top-0 bottom-0 w-[2px] bg-brand-500"
-                />
+                <span v-if="isGroupActive(item)" class="bg-brand-500 absolute inset-s-0 top-0 bottom-0 w-[2px]" />
                 <component
                   :is="getIcon(item.icon)"
                   class="h-4 w-4 shrink-0"
                   :class="isGroupActive(item) ? 'text-white' : `text-[#c8c6c4]`"
                 />
-                <span class="flex-1 truncate text-md">{{ item.label }}</span>
+                <span class="text-md flex-1 truncate">{{ item.label }}</span>
 
                 <span
                   v-if="item.badge"
@@ -386,10 +362,7 @@ function badgeClass(color?: string): string {
                         : `text-[#e1dfdd] hover:bg-white/[0.08] hover:text-white`
                     "
                   >
-                    <span
-                      v-if="isActive(child)"
-                      class="absolute inset-s-0 top-0 bottom-0 w-[2px] bg-brand-500"
-                    />
+                    <span v-if="isActive(child)" class="bg-brand-500 absolute inset-s-0 top-0 bottom-0 w-[2px]" />
                     <component
                       :is="getIcon(child.icon)"
                       v-if="child.icon"
@@ -425,18 +398,16 @@ function badgeClass(color?: string): string {
     >
       <div
         v-if="effectiveCollapsed && flyoutOpen && activeGroup"
-        class="absolute start-full top-0 z-10 flex h-full w-(--flyout-width) flex-col border-s border-paper-200 bg-card shadow-[var(--shadow-blade)]"
+        class="border-paper-200 bg-card absolute start-full top-0 z-10 flex h-full w-(--flyout-width) flex-col border-s shadow-[var(--shadow-blade)]"
       >
         <!-- Flyout header -->
         <div
-          class="flex h-(--topbar-height) shrink-0 items-center justify-between border-b border-paper-200 bg-paper-75 px-4"
+          class="border-paper-200 bg-paper-75 flex h-(--topbar-height) shrink-0 items-center justify-between border-b px-4"
         >
-          <span class="text-[13px] font-semibold tracking-tight text-ink-900">{{
-            activeGroup.label
-          }}</span>
+          <span class="text-ink-900 text-[13px] font-semibold tracking-tight">{{ activeGroup.label }}</span>
           <button
             type="button"
-            class="text-ink-500 transition-colors hover:text-brand-600 rtl:rotate-180"
+            class="text-ink-500 hover:text-brand-600 transition-colors rtl:rotate-180"
             @click="closeFlyout"
           >
             <ChevronLeft class="h-4 w-4" />
@@ -447,10 +418,8 @@ function badgeClass(color?: string): string {
         <nav class="scrollbar-darejer flex flex-1 flex-col overflow-y-auto py-1">
           <template v-for="(child, i) in activeGroup.children" :key="child.label">
             <div
-              v-if="
-                child.group && (i === 0 || activeGroup.children?.[i - 1]?.group !== child.group)
-              "
-              class="px-4 pt-3 pb-1 text-[10px] font-semibold tracking-[0.14em] text-ink-500 uppercase select-none"
+              v-if="child.group && (i === 0 || activeGroup.children?.[i - 1]?.group !== child.group)"
+              class="text-ink-500 px-4 pt-3 pb-1 text-[10px] font-semibold tracking-[0.14em] uppercase select-none"
             >
               {{ child.group }}
             </div>
@@ -460,15 +429,12 @@ function badgeClass(color?: string): string {
               class="relative flex h-8 shrink-0 items-center gap-2.5 px-4 text-[13px] no-underline transition-colors duration-100"
               :class="
                 isActive(child)
-                  ? 'bg-brand-50 font-semibold text-brand-700'
+                  ? 'bg-brand-50 text-brand-700 font-semibold'
                   : `text-ink-700 hover:bg-paper-100 hover:text-ink-900`
               "
               @click="closeFlyout"
             >
-              <span
-                v-if="isActive(child)"
-                class="absolute inset-s-0 top-0 bottom-0 w-[2px] bg-brand-500"
-              />
+              <span v-if="isActive(child)" class="bg-brand-500 absolute inset-s-0 top-0 bottom-0 w-[2px]" />
               <component
                 :is="getIcon(child.icon)"
                 v-if="child.icon"

@@ -1,7 +1,7 @@
-import { shallowReactive, shallowRef, computed } from 'vue'
 import { useHttp, router } from '@inertiajs/vue3'
-import type { DarejerComponent } from '@/types/darejer'
+import { shallowReactive, shallowRef, computed } from 'vue'
 import { handleHttpException } from '@/lib/handleHttpException'
+import type { DarejerComponent } from '@/types/darejer'
 
 export interface DarejerFormOptions {
   url: string
@@ -99,9 +99,7 @@ export function useDarejerForm(options: DarejerFormOptions) {
     }
   }
 
-  const errors = computed(
-    (): Record<string, string> => ({ ...(http.errors ?? {}) }),
-  )
+  const errors = computed((): Record<string, string> => ({ ...(http.errors ?? {}) }))
 
   const processing = computed(() => http.processing)
 
@@ -155,10 +153,7 @@ export function useDarejerForm(options: DarejerFormOptions) {
    * Without this, formData would still hold the pre-submit values and
    * shadow the new record until a hard refresh.
    */
-  function syncRecord(
-    record: Record<string, unknown>,
-    components: DarejerComponent[] = options.components,
-  ) {
+  function syncRecord(record: Record<string, unknown>, components: DarejerComponent[] = options.components) {
     const next = buildInitialData(record, components)
 
     for (const key of Object.keys(formData)) delete formData[key]

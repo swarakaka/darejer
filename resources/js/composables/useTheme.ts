@@ -46,9 +46,7 @@ function init() {
 // Apply ASAP — runs at module import time, before the app mounts, to minimise flash.
 init()
 
-const isDark = computed(
-  () => mode.value === 'dark' || (mode.value === 'system' && systemIsDark.value),
-)
+const isDark = computed(() => mode.value === 'dark' || (mode.value === 'system' && systemIsDark.value))
 
 export function useTheme() {
   function setMode(next: ThemeMode) {

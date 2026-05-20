@@ -1,8 +1,8 @@
 <script lang="ts" setup>
-import type { RangeCalendarCellProps } from 'reka-ui'
-import type { HTMLAttributes } from 'vue'
 import { reactiveOmit } from '@vueuse/core'
+import type { RangeCalendarCellProps } from 'reka-ui'
 import { RangeCalendarCell, useForwardProps } from 'reka-ui'
+import type { HTMLAttributes } from 'vue'
 import { cn } from '@/lib/utils'
 
 const props = defineProps<RangeCalendarCellProps & { class?: HTMLAttributes['class'] }>()
@@ -16,7 +16,7 @@ const forwardedProps = useForwardProps(delegatedProps)
   <RangeCalendarCell
     :class="
       cn(
-        `relative h-9 w-9 p-0 text-center text-sm focus-within:relative focus-within:z-20 [&:has([data-selected])]:bg-accent first:[&:has([data-selected])]:rounded-s-md last:[&:has([data-selected])]:rounded-e-md [&:has([data-selected][data-outside-view])]:bg-accent/50 [&:has([data-selected][data-selection-end])]:rounded-e-md [&:has([data-selected][data-selection-start])]:rounded-s-md`,
+        `[&:has([data-selected])]:bg-accent [&:has([data-selected][data-outside-view])]:bg-accent/50 relative h-9 w-9 p-0 text-center text-sm focus-within:relative focus-within:z-20 first:[&:has([data-selected])]:rounded-s-md last:[&:has([data-selected])]:rounded-e-md [&:has([data-selected][data-selection-end])]:rounded-e-md [&:has([data-selected][data-selection-start])]:rounded-s-md`,
         props.class,
       )
     "

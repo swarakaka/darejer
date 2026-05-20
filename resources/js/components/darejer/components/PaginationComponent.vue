@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { computed } from 'vue'
 import { usePage, router } from '@inertiajs/vue3'
 import { ChevronLeft, ChevronRight } from 'lucide-vue-next'
+import { computed } from 'vue'
 import useTranslation from '@/composables/useTranslation'
 import type { DarejerComponent, PaginatedData } from '@/types/darejer'
 
@@ -65,7 +65,7 @@ function goTo(p: number) {
     v-if="paginated && total > (paginated.per_page ?? 15)"
     class="col-span-full flex items-center justify-between px-1 py-2"
   >
-    <span class="text-xs text-ink-400 tabular-nums">
+    <span class="text-ink-400 text-xs tabular-nums">
       {{ __('Showing :from–:to of :total records', { from, to, total }) }}
     </span>
 
@@ -73,19 +73,14 @@ function goTo(p: number) {
       <button
         type="button"
         :disabled="current <= 1"
-        class="flex h-7 w-7 items-center justify-center rounded-sm border border-paper-300 text-ink-500 transition-colors hover:bg-paper-100 disabled:cursor-not-allowed disabled:opacity-40"
+        class="border-paper-300 text-ink-500 hover:bg-paper-100 flex h-7 w-7 items-center justify-center rounded-sm border transition-colors disabled:cursor-not-allowed disabled:opacity-40"
         @click="goTo(current - 1)"
       >
         <ChevronLeft class="h-3.5 w-3.5" />
       </button>
 
       <template v-for="(p, idx) in pages" :key="`${idx}-${p}`">
-        <span
-          v-if="p === '...'"
-          class="flex h-7 w-7 items-center justify-center text-xs text-ink-300"
-        >
-          …
-        </span>
+        <span v-if="p === '...'" class="text-ink-300 flex h-7 w-7 items-center justify-center text-xs"> … </span>
         <button
           v-else
           type="button"
@@ -104,7 +99,7 @@ function goTo(p: number) {
       <button
         type="button"
         :disabled="current >= last"
-        class="flex h-7 w-7 items-center justify-center rounded-sm border border-paper-300 text-ink-500 transition-colors hover:bg-paper-100 disabled:cursor-not-allowed disabled:opacity-40"
+        class="border-paper-300 text-ink-500 hover:bg-paper-100 flex h-7 w-7 items-center justify-center rounded-sm border transition-colors disabled:cursor-not-allowed disabled:opacity-40"
         @click="goTo(current + 1)"
       >
         <ChevronRight class="h-3.5 w-3.5" />

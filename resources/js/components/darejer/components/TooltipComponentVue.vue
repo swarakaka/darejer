@@ -1,7 +1,7 @@
 <script setup lang="ts">
+import { HelpCircle } from 'lucide-vue-next'
 import { computed } from 'vue'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
-import { HelpCircle } from 'lucide-vue-next'
 import type { DarejerComponent } from '@/types/darejer'
 
 const props = defineProps<{
@@ -24,14 +24,14 @@ const side = computed(() => (props.component.side as 'top' | 'bottom' | 'left' |
         <TooltipTrigger as-child>
           <span
             v-if="triggerType === 'text'"
-            class="cursor-help text-sm text-ink-700 underline decoration-ink-400 decoration-dotted underline-offset-2"
+            class="text-ink-700 decoration-ink-400 cursor-help text-sm underline decoration-dotted underline-offset-2"
           >
             {{ trigger }}
           </span>
           <button
             v-else
             type="button"
-            class="inline-flex items-center justify-center text-ink-400 transition-colors hover:text-ink-600"
+            class="text-ink-400 hover:text-ink-600 inline-flex items-center justify-center transition-colors"
           >
             <HelpCircle class="h-4 w-4" />
           </button>

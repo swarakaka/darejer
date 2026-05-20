@@ -1,8 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, watch, onMounted } from 'vue'
 import { router } from '@inertiajs/vue3'
-import { useDataUrl } from '@/composables/useDataUrl'
-import { Button } from '@/components/ui/button'
 import {
   ChevronUp,
   ChevronDown,
@@ -17,12 +14,8 @@ import {
   Trash2,
   MoreHorizontal,
 } from 'lucide-vue-next'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
+import { ref, computed, watch, onMounted } from 'vue'
+import { Button } from '@/components/ui/button'
 import {
   Dialog,
   DialogContent,
@@ -31,6 +24,8 @@ import {
   DialogDescription,
   DialogFooter,
 } from '@/components/ui/dialog'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
+import { useDataUrl } from '@/composables/useDataUrl'
 import useTranslation from '@/composables/useTranslation'
 import type { DarejerComponent } from '@/types/darejer'
 
@@ -87,26 +82,19 @@ const columns = computed((): GridColumn[] =>
   ((props.component.gridColumns as GridColumn[]) ?? []).filter((c) => !c.hidden),
 )
 
-const rowActions = computed(
-  (): GridRowAction[] => (props.component.rowActions as GridRowAction[]) ?? [],
-)
+const rowActions = computed((): GridRowAction[] => (props.component.rowActions as GridRowAction[]) ?? [])
 
 const perPage = computed(() => (props.component.perPage as number) ?? 15)
 const isSelectable = computed(() => !!props.component.selectable)
 const emptyMsg = computed(() => (props.component.emptyMessage as string) ?? __('No records found.'))
 
-const allSelected = computed(
-  () => rows.value.length > 0 && rows.value.every((r) => selected.value.has(r.id ?? r)),
-)
+const allSelected = computed(() => rows.value.length > 0 && rows.value.every((r) => selected.value.has(r.id ?? r)))
 
-const someSelected = computed(
-  () => !allSelected.value && rows.value.some((r) => selected.value.has(r.id ?? r)),
-)
+const someSelected = computed(() => !allSelected.value && rows.value.some((r) => selected.value.has(r.id ?? r)))
 
-const { load, http } = useDataUrl<Record<string, unknown>>(
-  props.component.dataUrl as string | undefined,
-  { perPage: perPage.value },
-)
+const { load, http } = useDataUrl<Record<string, unknown>>(props.component.dataUrl as string | undefined, {
+  perPage: perPage.value,
+})
 
 async function fetchData() {
   const result = await load({
@@ -273,24 +261,22 @@ const pages = computed(() => {
 </script>
 
 <template>
-  <div
-    class="col-span-full flex flex-col overflow-hidden rounded-md border border-paper-200 bg-card"
-  >
+  <div class="border-paper-200 bg-card col-span-full flex flex-col overflow-hidden rounded-md border">
     <!-- Toolbar -->
-    <div class="flex items-center gap-2 border-b border-paper-200 bg-paper-75 px-3 py-2">
+    <div class="border-paper-200 bg-paper-75 flex items-center gap-2 border-b px-3 py-2">
       <div v-if="component.searchable !== false" class="relative max-w-xs flex-1">
-        <Search class="absolute start-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-ink-400" />
+        <Search class="text-ink-400 absolute start-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2" />
         <input
           v-model="globalSearch"
           type="search"
           :placeholder="__('Search…')"
-          class="h-8 w-full rounded-sm border border-paper-300 bg-card ps-8 pe-3 text-sm transition-colors duration-100 placeholder:text-ink-400 focus:border-brand-500 focus:outline-none"
+          class="border-paper-300 bg-card placeholder:text-ink-400 focus:border-brand-500 h-8 w-full rounded-sm border ps-8 pe-3 text-sm transition-colors duration-100 focus:outline-none"
         />
       </div>
 
-      <div class="ms-auto flex items-center gap-2 text-xs text-ink-400 tabular-nums">
+      <div class="text-ink-400 ms-auto flex items-center gap-2 text-xs tabular-nums">
         <span v-if="total > 0">{{ __(':from–:to of :total', { from, to, total }) }}</span>
-        <Loader2 v-if="http.processing" class="h-3.5 w-3.5 animate-spin text-brand-500" />
+        <Loader2 v-if="http.processing" class="text-brand-500 h-3.5 w-3.5 animate-spin" />
       </div>
     </div>
 
@@ -298,13 +284,13 @@ const pages = computed(() => {
     <div class="scrollbar-darejer overflow-x-auto">
       <table class="w-full border-collapse">
         <thead>
-          <tr class="border-b border-paper-200 bg-paper-75">
+          <tr class="border-paper-200 bg-paper-75 border-b">
             <th v-if="isSelectable" class="h-9 w-9 px-3">
               <input
                 type="checkbox"
                 :checked="allSelected"
                 :indeterminate.prop="someSelected"
-                class="h-4 w-4 cursor-pointer rounded-sm accent-brand-600"
+                class="accent-brand-600 h-4 w-4 cursor-pointer rounded-sm"
                 @change="toggleAll"
               />
             </th>
@@ -314,7 +300,7 @@ const pages = computed(() => {
               :key="col.field"
               class="h-9 px-3 text-start whitespace-nowrap select-none"
               :class="[
-                col.sortable ? `cursor-pointer transition-colors hover:bg-paper-100` : '',
+                col.sortable ? `hover:bg-paper-100 cursor-pointer transition-colors` : '',
                 col.align === 'center' ? 'text-center' : '',
                 col.align === 'right' ? 'text-end' : '',
               ]"
@@ -323,27 +309,18 @@ const pages = computed(() => {
             >
               <div
                 class="flex items-center gap-1"
-                :class="
-                  col.align === 'center'
-                    ? `justify-center`
-                    : col.align === 'right'
-                      ? `justify-end`
-                      : ''
-                "
+                :class="col.align === 'center' ? `justify-center` : col.align === 'right' ? `justify-end` : ''"
               >
-                <span class="text-[10px] font-semibold tracking-[0.08em] text-ink-400 uppercase">
+                <span class="text-ink-400 text-[10px] font-semibold tracking-[0.08em] uppercase">
                   {{ col.label }}
                 </span>
                 <template v-if="col.sortable">
-                  <ChevronUp
-                    v-if="sortField === col.field && sortOrder === 'asc'"
-                    class="h-3 w-3 text-brand-600"
-                  />
+                  <ChevronUp v-if="sortField === col.field && sortOrder === 'asc'" class="text-brand-600 h-3 w-3" />
                   <ChevronDown
                     v-else-if="sortField === col.field && sortOrder === 'desc'"
-                    class="h-3 w-3 text-brand-600"
+                    class="text-brand-600 h-3 w-3"
                   />
-                  <ChevronsUpDown v-else class="h-3 w-3 text-ink-300" />
+                  <ChevronsUpDown v-else class="text-ink-300 h-3 w-3" />
                 </template>
               </div>
             </th>
@@ -355,13 +332,13 @@ const pages = computed(() => {
         <tbody>
           <!-- Loading skeleton -->
           <template v-if="http.processing && rows.length === 0">
-            <tr v-for="i in perPage" :key="i" class="border-b border-paper-100">
+            <tr v-for="i in perPage" :key="i" class="border-paper-100 border-b">
               <td v-if="isSelectable" class="h-9 px-3">
-                <div class="h-4 w-4 animate-pulse rounded-sm bg-paper-100" />
+                <div class="bg-paper-100 h-4 w-4 animate-pulse rounded-sm" />
               </td>
               <td v-for="col in columns" :key="col.field" class="h-9 px-3">
                 <div
-                  class="h-3 animate-pulse rounded-sm bg-paper-100"
+                  class="bg-paper-100 h-3 animate-pulse rounded-sm"
                   :style="{ width: Math.random() * 40 + 40 + '%' }"
                 />
               </td>
@@ -376,7 +353,7 @@ const pages = computed(() => {
                 :colspan="columns.length + (isSelectable ? 1 : 0) + (rowActions.length ? 1 : 0)"
                 class="px-3 py-10 text-center"
               >
-                <div class="flex flex-col items-center gap-2 text-ink-400">
+                <div class="text-ink-400 flex flex-col items-center gap-2">
                   <Inbox class="h-8 w-8" />
                   <span class="text-sm">{{ emptyMsg }}</span>
                 </div>
@@ -389,14 +366,14 @@ const pages = computed(() => {
             <tr
               v-for="row in rows"
               :key="String(row.id ?? row)"
-              class="border-b border-paper-100 transition-colors duration-75 hover:bg-paper-50"
+              class="border-paper-100 hover:bg-paper-50 border-b transition-colors duration-75"
               :class="selected.has(row.id ?? row) ? 'bg-brand-50' : ''"
             >
               <td v-if="isSelectable" class="h-9 px-3">
                 <input
                   type="checkbox"
                   :checked="selected.has(row.id ?? row)"
-                  class="h-4 w-4 cursor-pointer rounded-sm accent-brand-600"
+                  class="accent-brand-600 h-4 w-4 cursor-pointer rounded-sm"
                   @change="toggleRow(row.id ?? row)"
                 />
               </td>
@@ -404,7 +381,7 @@ const pages = computed(() => {
               <td
                 v-for="col in columns"
                 :key="col.field"
-                class="h-9 px-3 text-sm text-ink-800"
+                class="text-ink-800 h-9 px-3 text-sm"
                 :class="[
                   col.align === 'center' ? 'text-center' : '',
                   col.align === 'right' ? `text-end tabular-nums` : '',
@@ -438,11 +415,7 @@ const pages = computed(() => {
                       :title="rowActions[0].label"
                       @click="handleRowAction(rowActions[0], row)"
                     >
-                      <component
-                        :is="resolveIcon(rowActions[0].icon)"
-                        v-if="rowActions[0].icon"
-                        class="h-3.5 w-3.5"
-                      />
+                      <component :is="resolveIcon(rowActions[0].icon)" v-if="rowActions[0].icon" class="h-3.5 w-3.5" />
                       <span v-else class="text-xs">{{ rowActions[0].label }}</span>
                     </button>
                   </template>
@@ -453,7 +426,7 @@ const pages = computed(() => {
                       <DropdownMenuTrigger as-child>
                         <button
                           type="button"
-                          class="flex h-7 w-7 items-center justify-center rounded-sm text-ink-400 transition-colors duration-100 hover:bg-paper-100 hover:text-ink-700"
+                          class="text-ink-400 hover:bg-paper-100 hover:text-ink-700 flex h-7 w-7 items-center justify-center rounded-sm transition-colors duration-100"
                         >
                           <MoreHorizontal class="h-4 w-4" />
                         </button>
@@ -463,18 +436,10 @@ const pages = computed(() => {
                           v-for="action in rowActions"
                           :key="action.label"
                           class="flex cursor-pointer items-center gap-2 text-sm"
-                          :class="
-                            action.variant === 'destructive'
-                              ? `text-danger-700 focus:text-danger-700`
-                              : ''
-                          "
+                          :class="action.variant === 'destructive' ? `text-danger-700 focus:text-danger-700` : ''"
                           @click="handleRowAction(action, row)"
                         >
-                          <component
-                            :is="resolveIcon(action.icon)"
-                            v-if="action.icon"
-                            class="h-3.5 w-3.5 shrink-0"
-                          />
+                          <component :is="resolveIcon(action.icon)" v-if="action.icon" class="h-3.5 w-3.5 shrink-0" />
                           {{ action.label }}
                         </DropdownMenuItem>
                       </DropdownMenuContent>
@@ -491,9 +456,9 @@ const pages = computed(() => {
     <!-- Pagination -->
     <div
       v-if="total > perPage"
-      class="flex items-center justify-between border-t border-paper-200 bg-paper-75 px-3 py-2"
+      class="border-paper-200 bg-paper-75 flex items-center justify-between border-t px-3 py-2"
     >
-      <span class="text-xs text-ink-400 tabular-nums">
+      <span class="text-ink-400 text-xs tabular-nums">
         {{ __('Showing :from–:to of :total records', { from, to, total }) }}
       </span>
 
@@ -501,19 +466,14 @@ const pages = computed(() => {
         <button
           type="button"
           :disabled="currentPage <= 1"
-          class="flex h-7 w-7 items-center justify-center rounded-sm border border-paper-300 text-ink-500 transition-colors duration-100 hover:bg-paper-100 disabled:cursor-not-allowed disabled:opacity-40"
+          class="border-paper-300 text-ink-500 hover:bg-paper-100 flex h-7 w-7 items-center justify-center rounded-sm border transition-colors duration-100 disabled:cursor-not-allowed disabled:opacity-40"
           @click="currentPage--"
         >
           <ChevronLeft class="h-3.5 w-3.5" />
         </button>
 
         <template v-for="(p, idx) in pages" :key="`${idx}-${p}`">
-          <span
-            v-if="p === '...'"
-            class="flex h-7 w-7 items-center justify-center text-xs text-ink-300"
-          >
-            …
-          </span>
+          <span v-if="p === '...'" class="text-ink-300 flex h-7 w-7 items-center justify-center text-xs"> … </span>
           <button
             v-else
             type="button"
@@ -532,7 +492,7 @@ const pages = computed(() => {
         <button
           type="button"
           :disabled="currentPage >= lastPage"
-          class="flex h-7 w-7 items-center justify-center rounded-sm border border-paper-300 text-ink-500 transition-colors duration-100 hover:bg-paper-100 disabled:cursor-not-allowed disabled:opacity-40"
+          class="border-paper-300 text-ink-500 hover:bg-paper-100 flex h-7 w-7 items-center justify-center rounded-sm border transition-colors duration-100 disabled:cursor-not-allowed disabled:opacity-40"
           @click="currentPage++"
         >
           <ChevronRight class="h-3.5 w-3.5" />
@@ -544,20 +504,20 @@ const pages = computed(() => {
   <!-- Confirm dialog -->
   <Dialog :open="confirmOpen" @update:open="confirmOpen = $event">
     <DialogContent class="max-w-sm overflow-hidden p-0">
-      <DialogHeader class="border-b border-paper-200 bg-paper-75 px-4 py-3">
+      <DialogHeader class="border-paper-200 bg-paper-75 border-b px-4 py-3">
         <DialogTitle class="text-lg">{{ __('Confirm') }}</DialogTitle>
       </DialogHeader>
       <div class="px-4 py-4">
-        <DialogDescription class="text-sm text-ink-600">
+        <DialogDescription class="text-ink-600 text-sm">
           {{ confirmMsg }}
         </DialogDescription>
       </div>
-      <DialogFooter class="flex justify-end gap-2 border-t border-paper-200 bg-paper-75 px-4 py-3">
+      <DialogFooter class="border-paper-200 bg-paper-75 flex justify-end gap-2 border-t px-4 py-3">
         <Button variant="outline" class="h-8 text-sm" @click="confirmOpen = false">
           {{ __('Cancel') }}
         </Button>
         <Button
-          class="h-8 border-transparent bg-danger-600 text-sm text-white hover:bg-danger-700"
+          class="bg-danger-600 hover:bg-danger-700 h-8 border-transparent text-sm text-white"
           @click="executeConfirmed"
         >
           {{ confirmAction?.label }}

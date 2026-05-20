@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { Sun, Moon, Monitor, Check } from 'lucide-vue-next'
 import { computed } from 'vue'
 import {
   DropdownMenu,
@@ -7,7 +8,6 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { Sun, Moon, Monitor, Check } from 'lucide-vue-next'
 import { useTheme, type ThemeMode } from '@/composables/useTheme'
 import useTranslation from '@/composables/useTranslation'
 
@@ -35,16 +35,14 @@ const triggerIcon = computed(() => {
       <component :is="triggerIcon" class="h-4 w-4" />
     </DropdownMenuTrigger>
     <DropdownMenuContent align="end" class="w-44">
-      <DropdownMenuLabel
-        class="px-3 py-1.5 text-[10px] font-semibold tracking-[0.14em] text-ink-500 uppercase"
-      >
+      <DropdownMenuLabel class="text-ink-500 px-3 py-1.5 text-[10px] font-semibold tracking-[0.14em] uppercase">
         {{ __('Appearance') }}
       </DropdownMenuLabel>
       <DropdownMenuItem
         v-for="opt in options"
         :key="opt.value"
         class="flex cursor-pointer items-center gap-2 text-sm"
-        :class="mode === opt.value ? 'font-medium text-brand-600' : ''"
+        :class="mode === opt.value ? 'text-brand-600 font-medium' : ''"
         @click="setMode(opt.value)"
       >
         <component :is="opt.icon" class="h-3.5 w-3.5" />

@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
 import { UploadCloud, X, FileText, ImageIcon, AlertCircle } from 'lucide-vue-next'
+import { ref, computed } from 'vue'
 import FieldWrapper from '@/components/darejer/FieldWrapper.vue'
 import useTranslation from '@/composables/useTranslation'
 import type { DarejerComponent } from '@/types/darejer'
@@ -32,9 +32,7 @@ const dragging = ref(false)
 const inputEl = ref<HTMLInputElement | null>(null)
 
 const isMultiple = computed(() => !!props.component.multiple)
-const accept = computed(
-  () => (props.component.accept as string[] | undefined)?.join(',') ?? undefined,
-)
+const accept = computed(() => (props.component.accept as string[] | undefined)?.join(',') ?? undefined)
 const maxSize = computed(() => props.component.maxSize as number | undefined)
 const maxFiles = computed(() => props.component.maxFiles as number | undefined)
 const showPreview = computed(() => props.component.preview !== false)
@@ -64,8 +62,7 @@ function validateFile(file: File): string | null {
 
 function createEntry(file: File): FileEntry {
   const error = validateFile(file)
-  const preview =
-    showPreview.value && file.type.startsWith('image/') && !error ? URL.createObjectURL(file) : null
+  const preview = showPreview.value && file.type.startsWith('image/') && !error ? URL.createObjectURL(file) : null
 
   return { id: nextId++, file, name: file.name, size: file.size, type: file.type, preview, error }
 }
@@ -138,14 +135,7 @@ const dropLabel = computed(() => {
   <FieldWrapper :component="component" :record="record" :errors="errors" :form-data="formData">
     <template #default="{ hasError }">
       <!-- Hidden file input -->
-      <input
-        ref="inputEl"
-        type="file"
-        :accept="accept"
-        :multiple="isMultiple"
-        class="hidden"
-        @change="onFileInput"
-      />
+      <input ref="inputEl" type="file" :accept="accept" :multiple="isMultiple" class="hidden" @change="onFileInput" />
 
       <!-- Drop zone -->
       <div
@@ -156,7 +146,7 @@ const dropLabel = computed(() => {
             ? 'border-brand-400 bg-brand-50'
             : hasError
               ? 'border-danger-300 bg-danger-50/30'
-              : `border-slate-200 bg-slate-50 hover:border-slate-300 hover:bg-slate-75`,
+              : `hover:bg-slate-75 border-slate-200 bg-slate-50 hover:border-slate-300`,
           (component.disabled as boolean) ? `cursor-not-allowed opacity-50` : '',
         ]"
         @dragover="onDragOver"
@@ -170,9 +160,7 @@ const dropLabel = computed(() => {
           <p class="mt-0.5 text-xs text-slate-400">
             <span v-if="accept">{{ accept }}</span>
             <span v-if="maxSize"> · {{ __('max :size KB', { size: maxSize }) }}</span>
-            <span v-if="maxFiles && isMultiple">
-              · {{ __('up to :max files', { max: maxFiles }) }}</span
-            >
+            <span v-if="maxFiles && isMultiple"> · {{ __('up to :max files', { max: maxFiles }) }}</span>
           </p>
         </div>
       </div>
@@ -183,7 +171,7 @@ const dropLabel = computed(() => {
           v-for="entry in files"
           :key="entry.id"
           class="flex items-center gap-2 rounded-md border p-2"
-          :class="entry.error ? 'border-danger-200 bg-danger-50' : `border-slate-200 bg-card`"
+          :class="entry.error ? 'border-danger-200 bg-danger-50' : `bg-card border-slate-200`"
         >
           <!-- Preview or icon -->
           <div class="shrink-0">
@@ -193,10 +181,7 @@ const dropLabel = computed(() => {
               :alt="entry.name"
               class="h-10 w-10 rounded border border-slate-200 object-cover"
             />
-            <div
-              v-else
-              class="flex h-10 w-10 items-center justify-center rounded border border-slate-200 bg-slate-100"
-            >
+            <div v-else class="flex h-10 w-10 items-center justify-center rounded border border-slate-200 bg-slate-100">
               <ImageIcon v-if="entry.type.startsWith('image/')" class="h-5 w-5 text-slate-400" />
               <FileText v-else class="h-5 w-5 text-slate-400" />
             </div>
@@ -205,7 +190,7 @@ const dropLabel = computed(() => {
           <!-- File info -->
           <div class="min-w-0 flex-1">
             <p class="truncate text-sm font-medium text-slate-700">{{ entry.name }}</p>
-            <p v-if="entry.error" class="flex items-center gap-1 text-xs text-danger-600">
+            <p v-if="entry.error" class="text-danger-600 flex items-center gap-1 text-xs">
               <AlertCircle class="h-3 w-3" />
               {{ entry.error }}
             </p>
@@ -215,7 +200,7 @@ const dropLabel = computed(() => {
           <!-- Remove -->
           <button
             type="button"
-            class="shrink-0 text-slate-300 transition-colors hover:text-danger-600"
+            class="hover:text-danger-600 shrink-0 text-slate-300 transition-colors"
             @click="removeFile(entry.id)"
           >
             <X class="h-4 w-4" />

@@ -1,8 +1,8 @@
-import { defineConfig } from 'vite'
-import inertia from '@inertiajs/vite'
-import vue from '@vitejs/plugin-vue'
-import tailwindcss from '@tailwindcss/vite'
 import { resolve } from 'path'
+import inertia from '@inertiajs/vite'
+import tailwindcss from '@tailwindcss/vite'
+import vue from '@vitejs/plugin-vue'
+import { defineConfig } from 'vite'
 
 export default defineConfig({
   // All assets are served from /vendor/darejer/ after `vendor:publish` copies them
@@ -24,28 +24,28 @@ export default defineConfig({
     vue(),
     tailwindcss(),
   ],
-    resolve: {
-        alias: {
-            '@': resolve(__dirname, 'resources/js'),
-            '@darejer': resolve(__dirname, 'resources/js'),
-            '@lang': resolve(__dirname, 'lang'),
-        },
+  resolve: {
+    alias: {
+      '@': resolve(__dirname, 'resources/js'),
+      '@darejer': resolve(__dirname, 'resources/js'),
+      '@lang': resolve(__dirname, 'lang'),
     },
-    build: {
-        outDir: 'public/build',
-        emptyOutDir: true,
-        manifest: 'manifest.json',
-        rollupOptions: {
-            input: {
-                app: resolve(__dirname, 'resources/js/app.ts'),
-            },
-            output: {
-                manualChunks(id) {
-                    if (id.includes('node_modules/vue/') || id.includes('node_modules/@inertiajs/vue3/')) {
-                        return 'vendor'
-                    }
-                },
-            },
+  },
+  build: {
+    outDir: 'public/build',
+    emptyOutDir: true,
+    manifest: 'manifest.json',
+    rollupOptions: {
+      input: {
+        app: resolve(__dirname, 'resources/js/app.ts'),
+      },
+      output: {
+        manualChunks(id) {
+          if (id.includes('node_modules/vue/') || id.includes('node_modules/@inertiajs/vue3/')) {
+            return 'vendor'
+          }
         },
+      },
     },
+  },
 })

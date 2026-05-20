@@ -117,8 +117,7 @@
 
   /* ── Typography — Segoe UI stack (Azure portal default) ─────── */
   --font-sans:
-    'Segoe UI', 'Segoe UI Web (West European)', -apple-system, BlinkMacSystemFont, 'Helvetica Neue',
-    Arial, sans-serif;
+    'Segoe UI', 'Segoe UI Web (West European)', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
   --font-serif: 'Segoe UI', Georgia, serif;
   --font-mono: 'Cascadia Code', 'Cascadia Mono', Consolas, 'Courier New', monospace;
   --font-darejer: 'IBM Plex Sans Arabic', 'Segoe UI', system-ui, sans-serif;
@@ -350,7 +349,7 @@ html {
 }
 
 body {
-  @apply bg-background text-base leading-[1.45] text-foreground antialiased;
+  @apply bg-background text-foreground text-base leading-[1.45] antialiased;
   font-feature-settings: 'cv11', 'ss01', 'ss03';
 }
 
@@ -390,11 +389,11 @@ html[dir='rtl'] body {
     @apply bg-transparent;
   }
   &::-webkit-scrollbar-thumb {
-    @apply rounded-none border-2 border-transparent bg-paper-300;
+    @apply bg-paper-300 rounded-none border-2 border-transparent;
     background-clip: padding-box;
   }
   &::-webkit-scrollbar-thumb:hover {
-    @apply border-2 border-transparent bg-ink-400;
+    @apply bg-ink-400 border-2 border-transparent;
     background-clip: padding-box;
   }
 }
@@ -406,7 +405,7 @@ html[dir='rtl'] body {
  */
 
 .darejer-rte {
-  @apply overflow-hidden rounded-md border border-(--input-border) bg-input transition-colors duration-120;
+  @apply bg-input overflow-hidden rounded-md border border-(--input-border) transition-colors duration-120;
 }
 
 .darejer-rte:focus-within {
@@ -418,11 +417,11 @@ html[dir='rtl'] body {
 }
 
 .darejer-rte-toolbar {
-  @apply flex flex-wrap items-center gap-0.5 border-b border-paper-200 bg-paper-75 px-2 py-[0.3rem];
+  @apply border-paper-200 bg-paper-75 flex flex-wrap items-center gap-0.5 border-b px-2 py-[0.3rem];
 }
 
 .darejer-rte-btn {
-  @apply flex h-8 w-8 shrink-0 cursor-pointer items-center justify-center rounded-sm border-0 bg-transparent p-0 text-xs text-ink-500 transition-colors duration-100;
+  @apply text-ink-500 flex h-8 w-8 shrink-0 cursor-pointer items-center justify-center rounded-sm border-0 bg-transparent p-0 text-xs transition-colors duration-100;
 }
 
 .darejer-rte-btn:hover {
@@ -434,7 +433,7 @@ html[dir='rtl'] body {
 }
 
 .darejer-rte-divider {
-  @apply mx-1 h-5.5 w-px bg-paper-200;
+  @apply bg-paper-200 mx-1 h-5.5 w-px;
 }
 
 .darejer-rte-content {
@@ -446,7 +445,7 @@ html[dir='rtl'] body {
 }
 
 .darejer-rte-content .tiptap {
-  @apply text-base leading-normal text-foreground outline-none;
+  @apply text-foreground text-base leading-normal outline-none;
 }
 
 .darejer-rte-content .tiptap p {
@@ -466,7 +465,7 @@ html[dir='rtl'] body {
 }
 
 .darejer-rte-content .tiptap h3 {
-  @apply mt-2 mb-1 text-md font-semibold;
+  @apply text-md mt-2 mb-1 font-semibold;
 }
 
 .darejer-rte-content .tiptap ul,
@@ -479,15 +478,15 @@ html[dir='rtl'] body {
 }
 
 .darejer-rte-content .tiptap blockquote {
-  @apply my-2 border-s-[3px] border-brand-500 ps-3 text-ink-500 italic;
+  @apply border-brand-500 text-ink-500 my-2 border-s-[3px] ps-3 italic;
 }
 
 .darejer-rte-content .tiptap code {
-  @apply rounded-xs border border-paper-200 bg-paper-100 px-[0.3rem] py-[0.1rem] text-sm;
+  @apply border-paper-200 bg-paper-100 rounded-xs border px-[0.3rem] py-[0.1rem] text-sm;
 }
 
 .darejer-rte-content .tiptap pre {
-  @apply my-2 overflow-x-auto rounded-md border border-paper-200 bg-paper-100 px-3.5 py-2.5;
+  @apply border-paper-200 bg-paper-100 my-2 overflow-x-auto rounded-md border px-3.5 py-2.5;
 }
 
 .darejer-rte-content .tiptap pre code {
@@ -495,16 +494,16 @@ html[dir='rtl'] body {
 }
 
 .darejer-rte-content .tiptap a {
-  @apply cursor-pointer text-brand-600 underline;
+  @apply text-brand-600 cursor-pointer underline;
 }
 
 .darejer-rte-content .tiptap .is-editor-empty::before {
   content: attr(data-placeholder);
-  @apply pointer-events-none float-left h-0 text-ink-400;
+  @apply text-ink-400 pointer-events-none float-left h-0;
 }
 
 .darejer-rte-footer {
-  @apply flex justify-end border-t border-paper-200 bg-paper-75 px-2.5 py-1 text-2xs tracking-[0.04em] text-ink-400 tabular-nums;
+  @apply border-paper-200 bg-paper-75 text-2xs text-ink-400 flex justify-end border-t px-2.5 py-1 tracking-[0.04em] tabular-nums;
 }
 
 .darejer-rte-footer.is-over-limit {
@@ -522,7 +521,7 @@ html[dir='rtl'] body {
 .vue-flow__node-default,
 .vue-flow__node-input,
 .vue-flow__node-output {
-  @apply rounded-md! border! border-paper-300! bg-paper-50! px-3.5! py-2! text-sm! text-ink-800! shadow-(--shadow-blade)!;
+  @apply border-paper-300! bg-paper-50! text-ink-800! rounded-md! border! px-3.5! py-2! text-sm! shadow-(--shadow-blade)!;
 }
 
 .vue-flow__node-input {
@@ -535,7 +534,7 @@ html[dir='rtl'] body {
 
 .vue-flow__node.selected .vue-flow__node-default,
 .vue-flow__node.selected > div {
-  @apply border-brand-500! outline-2! outline-brand-200! outline-solid!;
+  @apply border-brand-500! outline-brand-200! outline-2! outline-solid!;
 }
 
 .vue-flow__edge-path {
@@ -553,11 +552,11 @@ html[dir='rtl'] body {
 }
 
 .vue-flow__controls {
-  @apply overflow-hidden! rounded-md! border! border-paper-200! shadow-(--shadow-blade)!;
+  @apply border-paper-200! overflow-hidden! rounded-md! border! shadow-(--shadow-blade)!;
 }
 
 .vue-flow__controls-button {
-  @apply h-7! w-7! border-0! border-b! border-paper-200! bg-paper-50! p-0! text-ink-500!;
+  @apply border-paper-200! bg-paper-50! text-ink-500! h-7! w-7! border-0! border-b! p-0!;
 }
 
 .vue-flow__controls-button:hover {
@@ -565,7 +564,7 @@ html[dir='rtl'] body {
 }
 
 .vue-flow__minimap {
-  @apply rounded-md! border! border-paper-200!;
+  @apply border-paper-200! rounded-md! border!;
 }
 
 .vue-flow__background {
@@ -581,11 +580,11 @@ html[dir='rtl'] body {
 }
 
 .fc-toolbar-title {
-  @apply text-[0.9375rem]! font-semibold! text-ink-800!;
+  @apply text-ink-800! text-[0.9375rem]! font-semibold!;
 }
 
 .fc-button {
-  @apply h-8! rounded-sm! border! border-paper-300! bg-paper-50! px-2.5! py-1! text-xs! font-semibold! text-ink-700! shadow-none! transition-colors! duration-100!;
+  @apply border-paper-300! bg-paper-50! text-ink-700! h-8! rounded-sm! border! px-2.5! py-1! text-xs! font-semibold! shadow-none! transition-colors! duration-100!;
 }
 
 .fc-button:hover {
@@ -610,11 +609,11 @@ html[dir='rtl'] body {
 }
 
 .fc-col-header-cell-cushion {
-  @apply text-[0.6875rem]! font-semibold! tracking-[0.04em]! text-ink-500! uppercase! no-underline!;
+  @apply text-ink-500! text-[0.6875rem]! font-semibold! tracking-[0.04em]! uppercase! no-underline!;
 }
 
 .fc-daygrid-day-number {
-  @apply text-xs! text-ink-600! no-underline!;
+  @apply text-ink-600! text-xs! no-underline!;
 }
 
 .fc-day-today {
@@ -622,7 +621,7 @@ html[dir='rtl'] body {
 }
 
 .fc-day-today .fc-daygrid-day-number {
-  @apply font-semibold! text-brand-700!;
+  @apply text-brand-700! font-semibold!;
 }
 
 .fc-event {
@@ -634,7 +633,7 @@ html[dir='rtl'] body {
 }
 
 .fc-list-event-title a {
-  @apply text-sm! text-ink-800! no-underline!;
+  @apply text-ink-800! text-sm! no-underline!;
 }
 
 .fc-list-event:hover td {
@@ -655,12 +654,12 @@ html[dir='rtl'] body {
  */
 
 .gantt_container {
-  @apply overflow-hidden! rounded-md! border! border-paper-200! text-sm!;
+  @apply border-paper-200! overflow-hidden! rounded-md! border! text-sm!;
 }
 
 .gantt_grid_head_cell,
 .gantt_scale_cell {
-  @apply border-paper-200! bg-paper-75! text-[0.6875rem]! font-semibold! tracking-[0.04em]! text-ink-500! uppercase!;
+  @apply border-paper-200! bg-paper-75! text-ink-500! text-[0.6875rem]! font-semibold! tracking-[0.04em]! uppercase!;
 }
 
 .gantt_row {
@@ -677,7 +676,7 @@ html[dir='rtl'] body {
 }
 
 .gantt_task_line {
-  @apply rounded-sm! border-0! bg-brand-500!;
+  @apply bg-brand-500! rounded-sm! border-0!;
 }
 
 .gantt_task_line .gantt_task_content {
@@ -694,7 +693,7 @@ html[dir='rtl'] body {
 }
 
 .gantt_grid_data .gantt_cell {
-  @apply border-paper-150! text-sm! text-ink-700!;
+  @apply border-paper-150! text-ink-700! text-sm!;
 }
 
 /* ──────────────────────────────────────────────────────────────────────

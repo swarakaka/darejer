@@ -1,30 +1,19 @@
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
 import { Head, router, usePage } from '@inertiajs/vue3'
-import { layouts } from '@/layouts/registry'
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { ChevronDown, Circle, Play, FileSpreadsheet, FileText } from 'lucide-vue-next'
-import DarejerComponent from '@/components/darejer/DarejerComponent.vue'
-import DarejerActions from '@/components/darejer/DarejerActions.vue'
+import { ref, computed, watch } from 'vue'
 import AppBreadcrumbs from '@/components/darejer/AppBreadcrumbs.vue'
+import DarejerActions from '@/components/darejer/DarejerActions.vue'
+import DarejerComponent from '@/components/darejer/DarejerComponent.vue'
 import ReportResults from '@/components/darejer/ReportResults.vue'
-import {
-  type ReportColumn,
-  buildCsv,
-  deriveColumns,
-  downloadFile,
-  slugify,
-} from '@/lib/reportTable'
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useDarejerForm } from '@/composables/useDarejerForm'
 import { evaluateDependOn } from '@/composables/useDependOn'
 import useTranslation from '@/composables/useTranslation'
-import type {
-  ScreenProps,
-  ScreenSection,
-  ScreenTab,
-  DarejerComponent as DarejerComponentType,
-} from '@/types/darejer'
+import { layouts } from '@/layouts/registry'
+import { type ReportColumn, buildCsv, deriveColumns, downloadFile, slugify } from '@/lib/reportTable'
+import type { ScreenProps, ScreenSection, ScreenTab, DarejerComponent as DarejerComponentType } from '@/types/darejer'
 
 // Layout is picked at runtime from the registry using the `layout` prop sent
 // by Screen::layout('minimal'). Defaults to 'app' (AppLayout) when no layout
@@ -38,9 +27,7 @@ defineOptions({
 
 const { __ } = useTranslation()
 
-const props = defineProps<
-  ScreenProps & { sections?: ScreenSection[] | null; tabs?: ScreenTab[] | null }
->()
+const props = defineProps<ScreenProps & { sections?: ScreenSection[] | null; tabs?: ScreenTab[] | null }>()
 
 // A screen renders as a dialog when the PHP side flagged it via ->dialog(),
 // OR when the current URL has ?_dialog=1 — so any screen can be opened as a
@@ -73,11 +60,7 @@ const {
   cancel,
 } = useDarejerForm({
   url: (saveAction.value?.url as string) ?? '',
-  method: (saveAction.value?.method?.toLowerCase() ?? 'post') as
-    | 'post'
-    | 'put'
-    | 'patch'
-    | 'delete',
+  method: (saveAction.value?.method?.toLowerCase() ?? 'post') as 'post' | 'put' | 'patch' | 'delete',
   components: props.components ?? [],
   record: (props.record ?? {}) as Record<string, unknown>,
   dialog: isDialog.value,
@@ -90,10 +73,7 @@ const {
 watch(
   () => props.record,
   (record) => {
-    syncRecord(
-      (record ?? {}) as Record<string, unknown>,
-      props.components ?? [],
-    )
+    syncRecord((record ?? {}) as Record<string, unknown>, props.components ?? [])
   },
 )
 
@@ -141,9 +121,7 @@ function applyFilters() {
   })
 }
 
-const canExport = computed(
-  () => isReport.value && reportRows.value !== null && reportRows.value.length > 0,
-)
+const canExport = computed(() => isReport.value && reportRows.value !== null && reportRows.value.length > 0)
 
 function exportFilenameStem(): string {
   const today = new Date().toISOString().slice(0, 10)
@@ -245,9 +223,7 @@ function isTabVisible(tab: ScreenTab): boolean {
 }
 
 const collapsed = ref<Record<string, boolean>>(
-  Object.fromEntries(
-    (props.sections ?? []).map((s) => [s.key, s.collapsible ? (s.collapsed ?? false) : false]),
-  ),
+  Object.fromEntries((props.sections ?? []).map((s) => [s.key, s.collapsible ? (s.collapsed ?? false) : false])),
 )
 
 function toggleSection(key: string) {
@@ -327,35 +303,33 @@ const dialogSizeClass: Record<string, string> = {
   <Head :title="title" />
   <!-- ── Full-page mode ──────────────────────────────────────────── -->
   <template v-if="!isDialog">
-    <div class="flex h-full flex-col overflow-hidden bg-paper-100 print:block print:h-auto print:overflow-visible print:bg-white">
+    <div
+      class="bg-paper-100 flex h-full flex-col overflow-hidden print:block print:h-auto print:overflow-visible print:bg-white"
+    >
       <!-- Scrolling content -->
       <div
         :class="[
-          'scrollbar-darejer scrollbar-gutter-stable flex-1 overflow-y-auto print:overflow-visible',
+          'scrollbar-darejer flex-1 scrollbar-gutter-stable overflow-y-auto print:overflow-visible',
           fullWidth ? 'flex flex-col' : '',
         ]"
       >
         <!-- Page title — hero with subtle gradient -->
-        <header class="relative shrink-0 overflow-hidden border-b border-paper-200 bg-card">
+        <header class="border-paper-200 bg-card relative shrink-0 overflow-hidden border-b">
           <div
             class="pointer-events-none absolute inset-0 opacity-[0.35]"
             style="
-              background-image: radial-gradient(
-                circle at 1px 1px,
-                var(--color-paper-200) 1px,
-                transparent 0
-              );
+              background-image: radial-gradient(circle at 1px 1px, var(--color-paper-200) 1px, transparent 0);
               background-size: 20px 20px;
             "
           />
           <div
-            class="pointer-events-none absolute inset-y-0 inset-e-0 w-2/3 bg-linear-to-s from-brand-50/60 via-white/0 to-transparent"
+            class="bg-linear-to-s from-brand-50/60 pointer-events-none absolute inset-y-0 inset-e-0 w-2/3 via-white/0 to-transparent"
           />
 
           <div class="relative flex flex-col gap-4 px-6 pt-5 pb-5">
             <div class="flex min-w-0 flex-col">
               <AppBreadcrumbs class="mb-2 print:hidden" />
-              <h1 class="text-[28px] leading-[1.05] font-semibold tracking-[-0.02em] text-ink-900">
+              <h1 class="text-ink-900 text-[28px] leading-[1.05] font-semibold tracking-[-0.02em]">
                 {{ title }}
               </h1>
             </div>
@@ -363,20 +337,20 @@ const dialogSizeClass: Record<string, string> = {
         </header>
         <!-- Action Pane — under breadcrumbs and title -->
         <div class="flex flex-wrap items-center justify-end gap-1.5 px-6 pt-6 print:hidden">
-           <span
-               v-if="isDirty && !processing && !isReport"
-               class="inline-flex items-center gap-1.5 rounded-full bg-warning-50 px-2 py-0.5 text-2xs font-bold tracking-[0.14em] text-warning-700 uppercase shadow-[0_1px_0_rgba(0,0,0,0.02)] ring-1 ring-warning-100 ring-inset"
-           >
+          <span
+            v-if="isDirty && !processing && !isReport"
+            class="bg-warning-50 text-2xs text-warning-700 ring-warning-100 inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 font-bold tracking-[0.14em] uppercase shadow-[0_1px_0_rgba(0,0,0,0.02)] ring-1 ring-inset"
+          >
             <span class="relative flex h-1.5 w-1.5">
-              <span class="absolute inset-0 animate-ping rounded-full bg-warning-500 opacity-75" />
-              <span class="relative h-1.5 w-1.5 rounded-full bg-warning-500" />
+              <span class="bg-warning-500 absolute inset-0 animate-ping rounded-full opacity-75" />
+              <span class="bg-warning-500 relative h-1.5 w-1.5 rounded-full" />
             </span>
             {{ __('Unsaved changes') }}
           </span>
           <button
             v-if="isReport"
             type="button"
-            class="inline-flex h-8 items-center gap-1.5 rounded-md border border-transparent bg-brand-600 px-3 text-sm font-medium text-white shadow-sm transition-colors hover:bg-brand-700"
+            class="bg-brand-600 hover:bg-brand-700 inline-flex h-8 items-center gap-1.5 rounded-md border border-transparent px-3 text-sm font-medium text-white shadow-sm transition-colors"
             @click="applyFilters"
           >
             <Play class="h-3.5 w-3.5 rtl:rotate-180" />
@@ -385,7 +359,7 @@ const dialogSizeClass: Record<string, string> = {
           <button
             v-if="canExport"
             type="button"
-            class="inline-flex h-8 items-center gap-1.5 rounded-md border border-paper-300 bg-card px-3 text-sm font-medium text-ink-700 shadow-xs transition-colors hover:border-paper-400 hover:bg-paper-100"
+            class="border-paper-300 bg-card text-ink-700 hover:border-paper-400 hover:bg-paper-100 inline-flex h-8 items-center gap-1.5 rounded-md border px-3 text-sm font-medium shadow-xs transition-colors"
             @click="exportCsv"
           >
             <FileSpreadsheet class="h-3.5 w-3.5" />
@@ -394,7 +368,7 @@ const dialogSizeClass: Record<string, string> = {
           <button
             v-if="canExport"
             type="button"
-            class="inline-flex h-8 items-center gap-1.5 rounded-md border border-paper-300 bg-card px-3 text-sm font-medium text-ink-700 shadow-xs transition-colors hover:border-paper-400 hover:bg-paper-100"
+            class="border-paper-300 bg-card text-ink-700 hover:border-paper-400 hover:bg-paper-100 inline-flex h-8 items-center gap-1.5 rounded-md border px-3 text-sm font-medium shadow-xs transition-colors"
             @click="exportPdf"
           >
             <FileText class="h-3.5 w-3.5" />
@@ -409,7 +383,6 @@ const dialogSizeClass: Record<string, string> = {
             :on-save="submit"
             :on-cancel="cancel"
           />
-
         </div>
         <!-- Body content -->
         <div :class="['flex-1', fullWidth ? 'flex min-h-0 flex-col' : `px-6 pt-5 pb-6`]">
@@ -440,29 +413,24 @@ const dialogSizeClass: Record<string, string> = {
                 class="w-full"
               >
                 <TabsList
-                  class="scrollbar-darejer h-auto w-full justify-start gap-0 overflow-x-auto rounded-md border border-paper-200 bg-card p-1 shadow-[0_1px_0_rgba(0,0,0,0.02)]"
+                  class="scrollbar-darejer border-paper-200 bg-card h-auto w-full justify-start gap-0 overflow-x-auto rounded-md border p-1 shadow-[0_1px_0_rgba(0,0,0,0.02)]"
                 >
                   <TabsTrigger
                     v-for="tab in visibleTabs"
                     :key="tab.name"
                     :value="tab.name"
                     :has-error="tabHasError(tab)"
-                    class="px-4 py-2 text-[13px] font-semibold tracking-tight text-ink-600 transition-colors hover:text-ink-900 data-[state=active]:rounded-[2px] data-[state=active]:bg-brand-50 data-[state=active]:text-brand-700 data-[state=active]:shadow-[inset_0_-2px_0_var(--color-brand-500)]"
+                    class="text-ink-600 hover:text-ink-900 data-[state=active]:bg-brand-50 data-[state=active]:text-brand-700 px-4 py-2 text-[13px] font-semibold tracking-tight transition-colors data-[state=active]:rounded-[2px] data-[state=active]:shadow-[inset_0_-2px_0_var(--color-brand-500)]"
                   >
                     {{ tab.title }}
                   </TabsTrigger>
                 </TabsList>
-                <TabsContent
-                  v-for="tab in visibleTabs"
-                  :key="tab.name"
-                  :value="tab.name"
-                  class="mt-0"
-                >
+                <TabsContent v-for="tab in visibleTabs" :key="tab.name" :value="tab.name" class="mt-0">
                   <section
-                    class="relative overflow-hidden rounded-md border border-paper-200 bg-card p-5 shadow-[0_1px_0_rgba(0,0,0,0.02)]"
+                    class="border-paper-200 bg-card relative overflow-hidden rounded-md border p-5 shadow-[0_1px_0_rgba(0,0,0,0.02)]"
                   >
                     <span
-                      class="absolute inset-x-0 top-0 h-0.5 bg-linear-to-e from-brand-500 via-brand-400 to-transparent"
+                      class="bg-linear-to-e from-brand-500 via-brand-400 absolute inset-x-0 top-0 h-0.5 to-transparent"
                     />
                     <div class="grid w-full grid-cols-1 gap-x-5 gap-y-5 sm:grid-cols-2 lg:grid-cols-3">
                       <DarejerComponent
@@ -487,11 +455,9 @@ const dialogSizeClass: Record<string, string> = {
                 v-for="section in sections ?? []"
                 v-show="isSectionVisible(section)"
                 :key="section.key"
-                class="group/section relative overflow-hidden rounded-md border border-paper-200 bg-card shadow-[0_1px_0_rgba(0,0,0,0.02)] transition-all duration-150"
+                class="group/section border-paper-200 bg-card relative overflow-hidden rounded-md border shadow-[0_1px_0_rgba(0,0,0,0.02)] transition-all duration-150"
                 :class="
-                  !collapsed[section.key]
-                    ? `border-paper-300 ring-1 ring-brand-100/50`
-                    : 'hover:border-paper-300'
+                  !collapsed[section.key] ? `border-paper-300 ring-brand-100/50 ring-1` : 'hover:border-paper-300'
                 "
               >
                 <header
@@ -499,24 +465,22 @@ const dialogSizeClass: Record<string, string> = {
                   class="flex items-center justify-between gap-3 px-5 py-3 transition-colors select-none"
                   :class="[
                     !collapsed[section.key]
-                      ? `border-b border-paper-200 bg-linear-to-b from-paper-75 to-card`
+                      ? `border-paper-200 from-paper-75 to-card border-b bg-linear-to-b`
                       : 'bg-card',
-                    section.collapsible ? `cursor-pointer hover:bg-paper-75` : '',
+                    section.collapsible ? `hover:bg-paper-75 cursor-pointer` : '',
                   ]"
                   :role="section.collapsible ? 'button' : undefined"
                   :aria-expanded="section.collapsible ? !collapsed[section.key] : undefined"
                   @click="toggleSection(section.key)"
                 >
                   <div class="flex min-w-0 items-center gap-3">
-                    <h2
-                      class="min-w-0 truncate text-[14px] leading-tight font-semibold tracking-tight text-ink-900"
-                    >
+                    <h2 class="text-ink-900 min-w-0 truncate text-[14px] leading-tight font-semibold tracking-tight">
                       {{ section.title }}
                     </h2>
                   </div>
                   <ChevronDown
                     v-if="section.collapsible"
-                    class="h-4 w-4 shrink-0 text-ink-400 transition-transform duration-150"
+                    class="text-ink-400 h-4 w-4 shrink-0 transition-transform duration-150"
                     :class="collapsed[section.key] ? `-rotate-90 rtl:rotate-90` : `rotate-0`"
                   />
                 </header>
@@ -540,26 +504,26 @@ const dialogSizeClass: Record<string, string> = {
             <!-- Fallback: single FastTab -->
             <template v-if="!hasTabs && !hasSections">
               <section
-                class="relative overflow-hidden rounded-md border border-paper-200 bg-card shadow-[0_1px_0_rgba(0,0,0,0.02)]"
+                class="border-paper-200 bg-card relative overflow-hidden rounded-md border shadow-[0_1px_0_rgba(0,0,0,0.02)]"
                 :class="isReport ? 'print:hidden' : ''"
               >
                 <header
                   class="flex cursor-pointer items-center justify-between gap-3 px-5 py-3 transition-colors select-none"
                   :class="
                     !collapsed['General']
-                      ? `border-b border-paper-200 bg-linear-to-b from-paper-75 to-card`
+                      ? `border-paper-200 from-paper-75 to-card border-b bg-linear-to-b`
                       : 'hover:bg-paper-75'
                   "
                   role="banner"
                   @click="toggleSection('General')"
                 >
                   <div class="flex min-w-0 items-center gap-3">
-                    <h2 class="text-[14px] leading-tight font-semibold tracking-tight text-ink-900">
+                    <h2 class="text-ink-900 text-[14px] leading-tight font-semibold tracking-tight">
                       {{ __('General') }}
                     </h2>
                   </div>
                   <ChevronDown
-                    class="h-4 w-4 text-ink-400 transition-transform duration-150"
+                    class="text-ink-400 h-4 w-4 transition-transform duration-150"
                     :class="collapsed['General'] ? `-rotate-90 rtl:rotate-90` : `rotate-0`"
                   />
                 </header>
@@ -601,17 +565,13 @@ const dialogSizeClass: Record<string, string> = {
         :class="dialogSizeClass[dialogSize ?? 'md'] ?? 'sm:max-w-lg'"
       >
         <DialogHeader
-          class="relative shrink-0 border-b border-paper-200 bg-linear-to-b from-paper-75 to-card px-5 py-4"
+          class="border-paper-200 from-paper-75 to-card relative shrink-0 border-b bg-linear-to-b px-5 py-4"
         >
-          <span
-            class="absolute inset-x-0 top-0 h-0.5 bg-linear-to-e from-brand-500 via-brand-400 to-transparent"
-          />
-          <DialogTitle class="text-[15px] font-semibold tracking-tight text-ink-900">{{
-            title
-          }}</DialogTitle>
+          <span class="bg-linear-to-e from-brand-500 via-brand-400 absolute inset-x-0 top-0 h-0.5 to-transparent" />
+          <DialogTitle class="text-ink-900 text-[15px] font-semibold tracking-tight">{{ title }}</DialogTitle>
         </DialogHeader>
 
-        <div class="scrollbar-darejer scrollbar-gutter-stable min-h-0 flex-1 overflow-y-auto bg-card px-5 py-5">
+        <div class="scrollbar-darejer bg-card min-h-0 flex-1 scrollbar-gutter-stable overflow-y-auto px-5 py-5">
           <div class="grid w-full grid-cols-1 gap-x-5 gap-y-4 sm:grid-cols-2">
             <DarejerComponent
               v-for="component in components"
@@ -626,9 +586,7 @@ const dialogSizeClass: Record<string, string> = {
           </div>
         </div>
 
-        <div
-          class="flex shrink-0 justify-end gap-2 border-t border-paper-200 bg-paper-75 px-5 py-3"
-        >
+        <div class="border-paper-200 bg-paper-75 flex shrink-0 justify-end gap-2 border-t px-5 py-3">
           <DarejerActions
             :actions="actions"
             placement="dialog"

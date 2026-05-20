@@ -1,15 +1,7 @@
 <script setup lang="ts">
-import { computed } from 'vue'
 import { Inbox } from 'lucide-vue-next'
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableFooter,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table'
+import { computed } from 'vue'
+import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import useTranslation from '@/composables/useTranslation'
 import {
   type ReportColumn,
@@ -34,13 +26,9 @@ const props = defineProps<{
 
 const hasSchema = computed(() => Array.isArray(props.columns) && props.columns.length > 0)
 
-const schemaColumns = computed<ReportColumn[]>(() =>
-  hasSchema.value ? visibleColumns(props.columns!) : [],
-)
+const schemaColumns = computed<ReportColumn[]>(() => (hasSchema.value ? visibleColumns(props.columns!) : []))
 
-const derivedColumns = computed<string[]>(() =>
-  hasSchema.value ? [] : deriveColumns(props.rows),
-)
+const derivedColumns = computed<string[]>(() => (hasSchema.value ? [] : deriveColumns(props.rows)))
 
 const numericDerivedSet = computed<Set<string>>(() => {
   const set = new Set<string>()
@@ -64,12 +52,7 @@ function alignClass(align: 'left' | 'right' | 'center' | undefined): string {
 function schemaCellClass(column: ReportColumn): string {
   const numeric = isNumericColumnDef(column)
   const align = column.align ?? (numeric ? 'right' : 'left')
-  return [
-    alignClass(align),
-    numeric ? 'font-mono tabular-nums' : '',
-  ]
-    .filter(Boolean)
-    .join(' ')
+  return [alignClass(align), numeric ? 'font-mono tabular-nums' : ''].filter(Boolean).join(' ')
 }
 
 function schemaHeaderClass(column: ReportColumn): string {
@@ -79,9 +62,7 @@ function schemaHeaderClass(column: ReportColumn): string {
 }
 
 function derivedCellClass(column: string): string {
-  return numericDerivedSet.value.has(column)
-    ? 'text-end font-mono tabular-nums'
-    : ''
+  return numericDerivedSet.value.has(column) ? 'text-end font-mono tabular-nums' : ''
 }
 
 function totalsCellFor(field: string): unknown {
@@ -96,9 +77,7 @@ const hasAnyTotal = computed(() => {
   if (!props.totals) {
     return false
   }
-  const fields = hasSchema.value
-    ? schemaColumns.value.map((c) => c.field)
-    : derivedColumns.value
+  const fields = hasSchema.value ? schemaColumns.value.map((c) => c.field) : derivedColumns.value
   for (const f of fields) {
     const v = totalsCellFor(f)
     if (v !== null && v !== undefined) {
@@ -119,26 +98,23 @@ const rowCount = computed(() => {
 
 <template>
   <section
-    class="relative overflow-hidden rounded-md border border-paper-200 bg-card shadow-[0_1px_0_rgba(0,0,0,0.02)] print:border-0 print:bg-transparent print:shadow-none"
+    class="border-paper-200 bg-card relative overflow-hidden rounded-md border shadow-[0_1px_0_rgba(0,0,0,0.02)] print:border-0 print:bg-transparent print:shadow-none"
   >
     <header
-      class="flex items-center justify-between border-b border-paper-200 bg-linear-to-b from-paper-75 to-card px-5 py-3 print:hidden"
+      class="border-paper-200 from-paper-75 to-card flex items-center justify-between border-b bg-linear-to-b px-5 py-3 print:hidden"
     >
-      <h2 class="text-[14px] leading-tight font-semibold tracking-tight text-ink-900">
+      <h2 class="text-ink-900 text-[14px] leading-tight font-semibold tracking-tight">
         {{ __('Results') }}
       </h2>
       <span
-        class="inline-flex items-center gap-1.5 rounded-full bg-paper-100 px-2 py-0.5 text-2xs font-bold tracking-[0.14em] text-ink-600 uppercase ring-1 ring-paper-200 ring-inset"
+        class="bg-paper-100 text-2xs text-ink-600 ring-paper-200 inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 font-bold tracking-[0.14em] uppercase ring-1 ring-inset"
       >
         {{ rowCount }} {{ __('rows') }}
       </span>
     </header>
 
-    <div
-      v-if="rows.length === 0"
-      class="flex flex-col items-center gap-2 px-5 py-12 text-ink-500 print:hidden"
-    >
-      <Inbox class="h-8 w-8 text-ink-300" />
+    <div v-if="rows.length === 0" class="text-ink-500 flex flex-col items-center gap-2 px-5 py-12 print:hidden">
+      <Inbox class="text-ink-300 h-8 w-8" />
       <p class="text-sm">{{ __('No data — adjust filters and click Apply.') }}</p>
     </div>
 
@@ -158,11 +134,7 @@ const rowCount = computed(() => {
       </TableHeader>
       <TableBody>
         <TableRow v-for="(row, idx) in rows" :key="idx">
-          <TableCell
-            v-for="column in schemaColumns"
-            :key="column.field"
-            :class="schemaCellClass(column)"
-          >
+          <TableCell v-for="column in schemaColumns" :key="column.field" :class="schemaCellClass(column)">
             {{ formatCell(row[column.field], column, row) }}
           </TableCell>
         </TableRow>
@@ -189,22 +161,14 @@ const rowCount = computed(() => {
     <Table v-else class="text-[13px] print:text-[10.5px]">
       <TableHeader>
         <TableRow>
-          <TableHead
-            v-for="column in derivedColumns"
-            :key="column"
-            :class="derivedCellClass(column)"
-          >
+          <TableHead v-for="column in derivedColumns" :key="column" :class="derivedCellClass(column)">
             {{ __(humanize(column)) }}
           </TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
         <TableRow v-for="(row, idx) in rows" :key="idx">
-          <TableCell
-            v-for="column in derivedColumns"
-            :key="column"
-            :class="derivedCellClass(column)"
-          >
+          <TableCell v-for="column in derivedColumns" :key="column" :class="derivedCellClass(column)">
             {{ formatDisplay(row[column], numericDerivedSet.has(column)) }}
           </TableCell>
         </TableRow>

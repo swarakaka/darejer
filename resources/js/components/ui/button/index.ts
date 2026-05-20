@@ -8,16 +8,11 @@ export const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default:
-          'border border-transparent bg-brand-500 text-white hover:bg-brand-600 active:bg-brand-700',
-        destructive:
-          'border border-transparent bg-danger-500 text-white hover:bg-danger-600 active:bg-danger-700',
-        outline:
-          'border border-ink-700 bg-white text-ink-900 hover:bg-paper-100 active:bg-paper-150',
-        secondary:
-          'border border-transparent bg-paper-150 text-ink-900 hover:bg-paper-200 active:bg-paper-300',
-        ghost:
-          'border border-transparent bg-transparent text-ink-900 hover:bg-paper-150 active:bg-paper-200',
+        default: 'border border-transparent bg-brand-500 text-white hover:bg-brand-600 active:bg-brand-700',
+        destructive: 'border border-transparent bg-danger-500 text-white hover:bg-danger-600 active:bg-danger-700',
+        outline: 'border border-ink-700 bg-white text-ink-900 hover:bg-paper-100 active:bg-paper-150',
+        secondary: 'border border-transparent bg-paper-150 text-ink-900 hover:bg-paper-200 active:bg-paper-300',
+        ghost: 'border border-transparent bg-transparent text-ink-900 hover:bg-paper-150 active:bg-paper-200',
         link: 'border border-transparent text-brand-600 underline-offset-2 hover:text-brand-700 hover:underline',
       },
       size: {

@@ -1,31 +1,16 @@
 <script setup lang="ts">
-import { computed, watch } from 'vue'
 import { router } from '@inertiajs/vue3'
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-} from '@/components/ui/sheet'
-import {
-  BellOff,
-  CheckCheck,
-  CircleCheck,
-  CircleX,
-  Info,
-  Trash2,
-  TriangleAlert,
-} from 'lucide-vue-next'
-import useTranslation from '@/composables/useTranslation'
+import { BellOff, CheckCheck, CircleCheck, CircleX, Info, Trash2, TriangleAlert } from 'lucide-vue-next'
+import { computed, watch } from 'vue'
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@/components/ui/sheet'
 import { useAlerts, type AlertLevel, type AlertRecord } from '@/composables/useAlerts'
+import useTranslation from '@/composables/useTranslation'
 
 const props = defineProps<{ open: boolean }>()
 const emit = defineEmits<{ (e: 'update:open', value: boolean): void }>()
 
 const { __ } = useTranslation()
-const { items, unreadCount, loading, loaded, loadList, markRead, markAllRead, destroy, clearAll } =
-  useAlerts()
+const { items, unreadCount, loading, loaded, loadList, markRead, markAllRead, destroy, clearAll } = useAlerts()
 
 const isOpen = computed({
   get: () => props.open,
@@ -84,34 +69,34 @@ function onClick(alert: AlertRecord): void {
 <template>
   <Sheet v-model:open="isOpen">
     <SheetContent side="right" class="flex w-full flex-col gap-0 p-0 sm:max-w-md">
-      <SheetHeader class="border-b border-paper-200 bg-paper-50 px-5 py-4">
-        <SheetTitle class="flex items-center gap-2 text-base font-semibold text-ink-900">
+      <SheetHeader class="border-paper-200 bg-paper-50 border-b px-5 py-4">
+        <SheetTitle class="text-ink-900 flex items-center gap-2 text-base font-semibold">
           {{ __('Notifications') }}
           <span
             v-if="unreadCount > 0"
-            class="inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-brand-600 px-1.5 text-[10px] font-semibold text-white tabular-nums"
+            class="bg-brand-600 inline-flex h-5 min-w-5 items-center justify-center rounded-full px-1.5 text-[10px] font-semibold text-white tabular-nums"
           >
             {{ unreadCount }}
           </span>
         </SheetTitle>
-        <SheetDescription class="text-xs text-ink-500">
+        <SheetDescription class="text-ink-500 text-xs">
           {{ __('Recent alerts and updates for your account.') }}
         </SheetDescription>
 
         <div class="mt-2 flex items-center gap-2">
           <button
             type="button"
-            class="inline-flex h-7 items-center gap-1.5 rounded-md px-2 text-xs font-medium text-ink-600 transition-colors hover:bg-paper-100 hover:text-ink-900 disabled:cursor-not-allowed disabled:opacity-50"
+            class="text-ink-600 hover:bg-paper-100 hover:text-ink-900 inline-flex h-7 items-center gap-1.5 rounded-md px-2 text-xs font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50"
             :disabled="unreadCount === 0"
             @click="markAllRead"
           >
             <CheckCheck class="h-3.5 w-3.5" />
             {{ __('Mark all read') }}
           </button>
-          <span class="h-4 w-px bg-paper-300" />
+          <span class="bg-paper-300 h-4 w-px" />
           <button
             type="button"
-            class="inline-flex h-7 items-center gap-1.5 rounded-md px-2 text-xs font-medium text-ink-600 transition-colors hover:bg-danger-50 hover:text-danger-600 disabled:cursor-not-allowed disabled:opacity-50"
+            class="text-ink-600 hover:bg-danger-50 hover:text-danger-600 inline-flex h-7 items-center gap-1.5 rounded-md px-2 text-xs font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50"
             :disabled="items.length === 0"
             @click="clearAll"
           >
@@ -121,14 +106,10 @@ function onClick(alert: AlertRecord): void {
         </div>
       </SheetHeader>
 
-      <div class="flex-1 overflow-y-auto bg-paper-50">
+      <div class="bg-paper-50 flex-1 overflow-y-auto">
         <!-- Skeleton -->
         <div v-if="loading && !loaded" class="space-y-3 p-4">
-          <div
-            v-for="i in 4"
-            :key="i"
-            class="h-16 animate-pulse rounded-md border border-paper-200 bg-card"
-          />
+          <div v-for="i in 4" :key="i" class="border-paper-200 bg-card h-16 animate-pulse rounded-md border" />
         </div>
 
         <!-- Empty -->
@@ -137,48 +118,38 @@ function onClick(alert: AlertRecord): void {
           class="flex flex-col items-center justify-center px-6 py-16 text-center"
         >
           <div
-            class="mb-3 flex h-14 w-14 items-center justify-center rounded-full border border-paper-200 bg-card shadow-xs"
+            class="border-paper-200 bg-card mb-3 flex h-14 w-14 items-center justify-center rounded-full border shadow-xs"
           >
-            <BellOff class="h-5 w-5 text-ink-400" />
+            <BellOff class="text-ink-400 h-5 w-5" />
           </div>
-          <p class="text-sm font-semibold text-ink-700">{{ __("You're all caught up") }}</p>
-          <p class="mt-1 text-xs text-ink-400">{{ __('New notifications will appear here.') }}</p>
+          <p class="text-ink-700 text-sm font-semibold">{{ __("You're all caught up") }}</p>
+          <p class="text-ink-400 mt-1 text-xs">{{ __('New notifications will appear here.') }}</p>
         </div>
 
         <!-- List -->
-        <ul v-else class="divide-y divide-paper-200">
+        <ul v-else class="divide-paper-200 divide-y">
           <li
             v-for="alert in items"
             :key="alert.id"
-            class="group relative cursor-pointer bg-card px-5 py-3 transition-colors hover:bg-paper-100/70"
+            class="group bg-card hover:bg-paper-100/70 relative cursor-pointer px-5 py-3 transition-colors"
             :class="alert.read_at ? '' : `bg-brand-50/60 hover:bg-brand-50`"
             @click="onClick(alert)"
           >
             <div class="flex items-start gap-3">
-              <span
-                class="flex h-7 w-7 shrink-0 items-center justify-center rounded-md"
-                :class="levelBg[alert.level]"
-              >
-                <component
-                  :is="levelIcon[alert.level]"
-                  class="h-3.5 w-3.5"
-                  :class="levelClass[alert.level]"
-                />
+              <span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-md" :class="levelBg[alert.level]">
+                <component :is="levelIcon[alert.level]" class="h-3.5 w-3.5" :class="levelClass[alert.level]" />
               </span>
               <div class="min-w-0 flex-1">
-                <p
-                  class="text-sm leading-snug text-ink-800"
-                  :class="alert.read_at ? 'font-normal' : `font-semibold`"
-                >
+                <p class="text-ink-800 text-sm leading-snug" :class="alert.read_at ? 'font-normal' : `font-semibold`">
                   {{ alert.message }}
                 </p>
-                <div class="mt-1 text-2xs text-ink-400 tabular-nums">
+                <div class="text-2xs text-ink-400 mt-1 tabular-nums">
                   {{ timeAgo(alert.created_at) }}
                 </div>
               </div>
               <button
                 type="button"
-                class="rounded-md p-1 text-ink-400 transition-colors hover:bg-danger-50 hover:text-danger-600"
+                class="text-ink-400 hover:bg-danger-50 hover:text-danger-600 rounded-md p-1 transition-colors"
                 :aria-label="__('Delete notification')"
                 @click.stop="destroy(alert.id)"
               >
@@ -187,7 +158,7 @@ function onClick(alert: AlertRecord): void {
             </div>
             <span
               v-if="!alert.read_at"
-              class="absolute start-2 top-1/2 h-1.5 w-1.5 -translate-y-1/2 rounded-full bg-brand-600"
+              class="bg-brand-600 absolute start-2 top-1/2 h-1.5 w-1.5 -translate-y-1/2 rounded-full"
             />
           </li>
         </ul>

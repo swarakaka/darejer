@@ -34,10 +34,26 @@ interface Invoice {
   status: string
   posting_status: string
   payment_status: string
-  company: { code: string; name: Translatable; legal_name: Translatable; address: Translatable; tax_id: string | null; mobile: string | null; email: string | null } | null
+  company: {
+    code: string
+    name: Translatable
+    legal_name: Translatable
+    address: Translatable
+    tax_id: string | null
+    mobile: string | null
+    email: string | null
+  } | null
   branch: { code: string; name: Translatable } | null
   department: { code: string; name: Translatable } | null
-  supplier_account: { code: string; name: Translatable; legal_name: Translatable; tax_id: string | null; vat_id: string | null; email: string | null; mobile: string | null } | null
+  supplier_account: {
+    code: string
+    name: Translatable
+    legal_name: Translatable
+    tax_id: string | null
+    vat_id: string | null
+    email: string | null
+    mobile: string | null
+  } | null
   purchase_order: { voucher_no: string } | null
   goods_receipt: { voucher_no: string } | null
   currency: { code: string; symbol: string | null; minor_units: number } | null
@@ -75,12 +91,16 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="invoice mx-auto my-6 max-w-[210mm] bg-white p-10 text-[12px] text-black shadow print:my-0 print:shadow-none">
+  <div
+    class="invoice mx-auto my-6 max-w-[210mm] bg-white p-10 text-[12px] text-black shadow print:my-0 print:shadow-none"
+  >
     <header class="flex items-start justify-between border-b-2 border-black pb-4">
       <div class="space-y-0.5">
         <div class="text-[20px] font-bold">{{ localized(invoice.company?.name) }}</div>
         <div v-if="invoice.company?.legal_name" class="text-[11px]">{{ localized(invoice.company?.legal_name) }}</div>
-        <div v-if="invoice.company?.address" class="whitespace-pre-line text-[11px]">{{ localized(invoice.company?.address) }}</div>
+        <div v-if="invoice.company?.address" class="text-[11px] whitespace-pre-line">
+          {{ localized(invoice.company?.address) }}
+        </div>
         <div v-if="invoice.company?.mobile || invoice.company?.email" class="text-[11px]">
           <span v-if="invoice.company?.mobile">{{ invoice.company?.mobile }}</span>
           <span v-if="invoice.company?.mobile && invoice.company?.email"> · </span>
@@ -91,26 +111,40 @@ onMounted(() => {
       <div class="text-end">
         <div class="text-[24px] font-bold tracking-wide">{{ __('PURCHASE INVOICE') }}</div>
         <div class="mt-2 text-[11px]">
-          <div><span class="font-semibold">{{ __('No.') }}:</span> {{ invoice.voucher_no }}</div>
-          <div><span class="font-semibold">{{ __('Date') }}:</span> {{ invoice.voucher_date }}</div>
-          <div v-if="invoice.due_date"><span class="font-semibold">{{ __('Due date') }}:</span> {{ invoice.due_date }}</div>
+          <div>
+            <span class="font-semibold">{{ __('No.') }}:</span> {{ invoice.voucher_no }}
+          </div>
+          <div>
+            <span class="font-semibold">{{ __('Date') }}:</span> {{ invoice.voucher_date }}
+          </div>
+          <div v-if="invoice.due_date">
+            <span class="font-semibold">{{ __('Due date') }}:</span> {{ invoice.due_date }}
+          </div>
         </div>
       </div>
     </header>
 
     <section class="mt-5 grid grid-cols-2 gap-6">
       <div>
-        <div class="mb-1 text-[10px] font-semibold uppercase tracking-wide text-gray-600">{{ __('Supplier') }}</div>
+        <div class="mb-1 text-[10px] font-semibold tracking-wide text-gray-600 uppercase">{{ __('Supplier') }}</div>
         <div class="font-semibold">{{ localized(invoice.supplier_account?.name) }}</div>
-        <div v-if="invoice.supplier_account?.legal_name" class="text-[11px]">{{ localized(invoice.supplier_account?.legal_name) }}</div>
-        <div v-if="invoice.supplier_account?.code" class="text-[11px]">{{ __('Code') }}: {{ invoice.supplier_account?.code }}</div>
-        <div v-if="invoice.supplier_account?.tax_id" class="text-[11px]">{{ __('Tax ID') }}: {{ invoice.supplier_account?.tax_id }}</div>
-        <div v-if="invoice.supplier_account?.vat_id" class="text-[11px]">{{ __('VAT ID') }}: {{ invoice.supplier_account?.vat_id }}</div>
+        <div v-if="invoice.supplier_account?.legal_name" class="text-[11px]">
+          {{ localized(invoice.supplier_account?.legal_name) }}
+        </div>
+        <div v-if="invoice.supplier_account?.code" class="text-[11px]">
+          {{ __('Code') }}: {{ invoice.supplier_account?.code }}
+        </div>
+        <div v-if="invoice.supplier_account?.tax_id" class="text-[11px]">
+          {{ __('Tax ID') }}: {{ invoice.supplier_account?.tax_id }}
+        </div>
+        <div v-if="invoice.supplier_account?.vat_id" class="text-[11px]">
+          {{ __('VAT ID') }}: {{ invoice.supplier_account?.vat_id }}
+        </div>
         <div v-if="invoice.supplier_account?.email" class="text-[11px]">{{ invoice.supplier_account?.email }}</div>
         <div v-if="invoice.supplier_account?.mobile" class="text-[11px]">{{ invoice.supplier_account?.mobile }}</div>
       </div>
       <div>
-        <div class="mb-1 text-[10px] font-semibold uppercase tracking-wide text-gray-600">{{ __('Details') }}</div>
+        <div class="mb-1 text-[10px] font-semibold tracking-wide text-gray-600 uppercase">{{ __('Details') }}</div>
         <table class="w-full text-[11px]">
           <tbody>
             <tr v-if="invoice.branch">
@@ -135,7 +169,9 @@ onMounted(() => {
             </tr>
             <tr>
               <td class="py-0.5 pe-3 text-gray-600">{{ __('Currency') }}</td>
-              <td class="py-0.5">{{ invoice.currency?.code }}<span v-if="Number(invoice.fx_rate) !== 1"> @ {{ invoice.fx_rate }}</span></td>
+              <td class="py-0.5">
+                {{ invoice.currency?.code }}<span v-if="Number(invoice.fx_rate) !== 1"> @ {{ invoice.fx_rate }}</span>
+              </td>
             </tr>
           </tbody>
         </table>
@@ -211,8 +247,8 @@ onMounted(() => {
     </section>
 
     <section v-if="invoice.notes && localized(invoice.notes)" class="mt-6 border-t border-gray-300 pt-3">
-      <div class="mb-1 text-[10px] font-semibold uppercase tracking-wide text-gray-600">{{ __('Notes') }}</div>
-      <div class="whitespace-pre-line text-[11px]">{{ localized(invoice.notes) }}</div>
+      <div class="mb-1 text-[10px] font-semibold tracking-wide text-gray-600 uppercase">{{ __('Notes') }}</div>
+      <div class="text-[11px] whitespace-pre-line">{{ localized(invoice.notes) }}</div>
     </section>
 
     <footer class="mt-12 grid grid-cols-2 gap-10 text-[11px]">
@@ -228,8 +264,17 @@ onMounted(() => {
 
 <style>
 @media print {
-  @page { margin: 12mm; size: A4; }
-  body { background: white; }
-  .invoice { box-shadow: none !important; padding: 0 !important; margin: 0 !important; }
+  @page {
+    margin: 12mm;
+    size: A4;
+  }
+  body {
+    background: white;
+  }
+  .invoice {
+    box-shadow: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
 }
 </style>

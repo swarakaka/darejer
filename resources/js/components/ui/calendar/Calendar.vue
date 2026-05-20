@@ -1,8 +1,8 @@
 <script lang="ts" setup>
-import type { CalendarRootEmits, CalendarRootProps } from 'reka-ui'
-import type { HTMLAttributes } from 'vue'
 import { reactiveOmit } from '@vueuse/core'
+import type { CalendarRootEmits, CalendarRootProps } from 'reka-ui'
 import { CalendarRoot, useForwardPropsEmits } from 'reka-ui'
+import type { HTMLAttributes } from 'vue'
 import { cn } from '@/lib/utils'
 import {
   CalendarCell,
@@ -45,11 +45,7 @@ const forwarded = useForwardPropsEmits(delegatedProps, emits)
           </CalendarGridRow>
         </CalendarGridHead>
         <CalendarGridBody>
-          <CalendarGridRow
-            v-for="(weekDates, index) in month.rows"
-            :key="`weekDate-${index}`"
-            class="mt-2 w-full"
-          >
+          <CalendarGridRow v-for="(weekDates, index) in month.rows" :key="`weekDate-${index}`" class="mt-2 w-full">
             <CalendarCell v-for="weekDate in weekDates" :key="weekDate.toString()" :date="weekDate">
               <CalendarCellTrigger :day="weekDate" :month="month.value" />
             </CalendarCell>

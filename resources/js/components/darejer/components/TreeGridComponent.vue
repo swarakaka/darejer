@@ -1,23 +1,9 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
 import { router } from '@inertiajs/vue3'
-import { useDataUrl } from '@/composables/useDataUrl'
-import {
-  ChevronRight,
-  ChevronDown,
-  Loader2,
-  Inbox,
-  Pencil,
-  Eye,
-  Trash2,
-  MoreHorizontal,
-} from 'lucide-vue-next'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
+import { ChevronRight, ChevronDown, Loader2, Inbox, Pencil, Eye, Trash2, MoreHorizontal } from 'lucide-vue-next'
+import { ref, computed, onMounted } from 'vue'
+import FieldWrapper from '@/components/darejer/FieldWrapper.vue'
+import { Button } from '@/components/ui/button'
 import {
   Dialog,
   DialogContent,
@@ -26,8 +12,8 @@ import {
   DialogDescription,
   DialogFooter,
 } from '@/components/ui/dialog'
-import { Button } from '@/components/ui/button'
-import FieldWrapper from '@/components/darejer/FieldWrapper.vue'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
+import { useDataUrl } from '@/composables/useDataUrl'
 import useTranslation from '@/composables/useTranslation'
 import type { DarejerComponent } from '@/types/darejer'
 
@@ -85,19 +71,7 @@ const keyField = computed(() => (props.component.keyField as string) ?? 'id')
 // Tree depth → logical inline-start padding class (RTL-safe).
 // Extends the original `${depth * 1.25}rem` rule using only static Tailwind
 // spacing utilities so the JIT can pre-generate the classes at build time.
-const indentMap = [
-  '',
-  'ps-5',
-  'ps-10',
-  'ps-14',
-  'ps-20',
-  'ps-24',
-  'ps-28',
-  'ps-32',
-  'ps-40',
-  'ps-48',
-  'ps-56',
-]
+const indentMap = ['', 'ps-5', 'ps-10', 'ps-14', 'ps-20', 'ps-24', 'ps-28', 'ps-32', 'ps-40', 'ps-48', 'ps-56']
 function indentClass(depth: number): string {
   return indentMap[Math.min(depth, indentMap.length - 1)] ?? 'ps-56'
 }
@@ -232,25 +206,16 @@ function badgeLabel(col: TreeCol, value: unknown): string {
 </script>
 
 <template>
-  <FieldWrapper
-    :component="component"
-    :record="record"
-    :errors="errors"
-    :form-data="formData"
-    class="px-6 py-6"
-  >
+  <FieldWrapper :component="component" :record="record" :errors="errors" :form-data="formData" class="px-6 py-6">
     <template #default>
-      <div class="overflow-x-auto rounded-md border border-paper-200 bg-card">
+      <div class="border-paper-200 bg-card overflow-x-auto rounded-md border">
         <!-- Loading -->
-        <div v-if="http.processing" class="flex items-center justify-center py-10 text-ink-400">
+        <div v-if="http.processing" class="text-ink-400 flex items-center justify-center py-10">
           <Loader2 class="h-5 w-5 animate-spin" />
         </div>
 
         <!-- Empty -->
-        <div
-          v-else-if="flatRows.length === 0"
-          class="flex flex-col items-center gap-2 py-10 text-ink-400"
-        >
+        <div v-else-if="flatRows.length === 0" class="text-ink-400 flex flex-col items-center gap-2 py-10">
           <Inbox class="h-8 w-8" />
           <span class="text-sm">{{ emptyMsg }}</span>
         </div>
@@ -258,17 +223,15 @@ function badgeLabel(col: TreeCol, value: unknown): string {
         <!-- Table -->
         <table v-else class="w-full border-collapse">
           <thead>
-            <tr class="sticky top-0 z-10 border-b border-paper-200 bg-paper-75">
+            <tr class="border-paper-200 bg-paper-75 sticky top-0 z-10 border-b">
               <th
                 v-for="col in columns"
                 :key="col.field"
                 class="h-9 px-3 text-start whitespace-nowrap"
-                :class="
-                  col.align === 'right' ? 'text-end' : col.align === 'center' ? `text-center` : ''
-                "
+                :class="col.align === 'right' ? 'text-end' : col.align === 'center' ? `text-center` : ''"
                 :style="col.width ? { width: col.width } : {}"
               >
-                <span class="text-[10px] font-semibold tracking-[0.08em] text-ink-400 uppercase">
+                <span class="text-ink-400 text-[10px] font-semibold tracking-[0.08em] uppercase">
                   {{ col.label }}
                 </span>
               </th>
@@ -280,29 +243,19 @@ function badgeLabel(col: TreeCol, value: unknown): string {
             <tr
               v-for="{ row, depth, hasChildren } in flatRows"
               :key="String(row[keyField])"
-              class="border-b border-paper-100 transition-colors duration-75 last:border-b-0 hover:bg-paper-50"
+              class="border-paper-100 hover:bg-paper-50 border-b transition-colors duration-75 last:border-b-0"
             >
               <td
                 v-for="col in columns"
                 :key="col.field"
-                class="h-9 px-3 text-sm text-ink-800"
-                :class="
-                  col.align === 'right'
-                    ? `text-end tabular-nums`
-                    : col.align === 'center'
-                      ? `text-center`
-                      : ''
-                "
+                class="text-ink-800 h-9 px-3 text-sm"
+                :class="col.align === 'right' ? `text-end tabular-nums` : col.align === 'center' ? `text-center` : ''"
               >
-                <div
-                  v-if="col.field === treeCol?.field"
-                  class="flex items-center gap-1"
-                  :class="indentClass(depth)"
-                >
+                <div v-if="col.field === treeCol?.field" class="flex items-center gap-1" :class="indentClass(depth)">
                   <button
                     v-if="hasChildren"
                     type="button"
-                    class="flex h-4 w-4 shrink-0 items-center justify-center text-ink-400 transition-colors hover:text-ink-700"
+                    class="text-ink-400 hover:text-ink-700 flex h-4 w-4 shrink-0 items-center justify-center transition-colors"
                     @click="toggleExpand(row[keyField])"
                   >
                     <ChevronDown v-if="expanded.has(row[keyField])" class="h-3.5 w-3.5" />
@@ -339,11 +292,7 @@ function badgeLabel(col: TreeCol, value: unknown): string {
                       :title="rowActions[0].label"
                       @click="handleAction(rowActions[0], row)"
                     >
-                      <component
-                        :is="resolveIcon(rowActions[0].icon)"
-                        v-if="rowActions[0].icon"
-                        class="h-3.5 w-3.5"
-                      />
+                      <component :is="resolveIcon(rowActions[0].icon)" v-if="rowActions[0].icon" class="h-3.5 w-3.5" />
                     </button>
                   </template>
                   <template v-else>
@@ -351,7 +300,7 @@ function badgeLabel(col: TreeCol, value: unknown): string {
                       <DropdownMenuTrigger as-child>
                         <button
                           type="button"
-                          class="flex h-7 w-7 items-center justify-center rounded-sm text-ink-400 transition-colors hover:bg-paper-100 hover:text-ink-700"
+                          class="text-ink-400 hover:bg-paper-100 hover:text-ink-700 flex h-7 w-7 items-center justify-center rounded-sm transition-colors"
                         >
                           <MoreHorizontal class="h-4 w-4" />
                         </button>
@@ -361,18 +310,10 @@ function badgeLabel(col: TreeCol, value: unknown): string {
                           v-for="action in rowActions"
                           :key="action.label"
                           class="flex cursor-pointer items-center gap-2 text-sm"
-                          :class="
-                            action.variant === 'destructive'
-                              ? `text-danger-700 focus:text-danger-700`
-                              : ''
-                          "
+                          :class="action.variant === 'destructive' ? `text-danger-700 focus:text-danger-700` : ''"
                           @click="handleAction(action, row)"
                         >
-                          <component
-                            :is="resolveIcon(action.icon)"
-                            v-if="action.icon"
-                            class="h-3.5 w-3.5 shrink-0"
-                          />
+                          <component :is="resolveIcon(action.icon)" v-if="action.icon" class="h-3.5 w-3.5 shrink-0" />
                           {{ action.label }}
                         </DropdownMenuItem>
                       </DropdownMenuContent>
@@ -390,18 +331,16 @@ function badgeLabel(col: TreeCol, value: unknown): string {
   <!-- Confirm dialog -->
   <Dialog :open="confirmOpen" @update:open="confirmOpen = $event">
     <DialogContent class="max-w-sm overflow-hidden p-0">
-      <DialogHeader class="border-b border-paper-200 bg-paper-75 px-4 py-3">
+      <DialogHeader class="border-paper-200 bg-paper-75 border-b px-4 py-3">
         <DialogTitle class="text-lg">{{ __('Confirm') }}</DialogTitle>
       </DialogHeader>
       <div class="px-4 py-4">
-        <DialogDescription class="text-sm text-ink-600">{{ confirmMsg }}</DialogDescription>
+        <DialogDescription class="text-ink-600 text-sm">{{ confirmMsg }}</DialogDescription>
       </div>
-      <DialogFooter class="flex justify-end gap-2 border-t border-paper-200 bg-paper-75 px-4 py-3">
-        <Button variant="outline" class="h-8 text-sm" @click="confirmOpen = false">{{
-          __('Cancel')
-        }}</Button>
+      <DialogFooter class="border-paper-200 bg-paper-75 flex justify-end gap-2 border-t px-4 py-3">
+        <Button variant="outline" class="h-8 text-sm" @click="confirmOpen = false">{{ __('Cancel') }}</Button>
         <Button
-          class="h-8 border-transparent bg-danger-600 text-sm text-white hover:bg-danger-700"
+          class="bg-danger-600 hover:bg-danger-700 h-8 border-transparent text-sm text-white"
           @click="executeConfirmed"
         >
           {{ confirmAction?.label }}

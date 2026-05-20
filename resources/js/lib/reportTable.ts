@@ -14,13 +14,7 @@
 export type Row = Record<string, unknown>
 export type Totals = Record<string, unknown>
 
-export type ReportColumnDisplay =
-  | 'date'
-  | 'datetime'
-  | 'number'
-  | 'money'
-  | 'boolean'
-  | 'plain'
+export type ReportColumnDisplay = 'date' | 'datetime' | 'number' | 'money' | 'boolean' | 'plain'
 
 export type ReportColumn = {
   field: string
@@ -50,9 +44,7 @@ export function deriveColumns(rows: Row[]): string[] {
 }
 
 export function humanize(key: string): string {
-  return key
-    .replace(/_/g, ' ')
-    .replace(/\b\w/g, (c) => c.toUpperCase())
+  return key.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())
 }
 
 /**
@@ -213,19 +205,11 @@ function escapeCsv(value: unknown): string {
  * strings) — that way Excel parses them as numbers. Display formatting is
  * for the screen; the file should be machine-friendly.
  */
-export function buildCsv(
-  rows: Row[],
-  columns: string[] | ReportColumn[],
-  totals?: Totals | null,
-): string {
+export function buildCsv(rows: Row[], columns: string[] | ReportColumn[], totals?: Totals | null): string {
   const isSchema = columns.length > 0 && typeof columns[0] !== 'string'
   const schema = isSchema ? (columns as ReportColumn[]).filter((c) => !c.hidden) : null
-  const fields: string[] = schema
-    ? schema.map((c) => c.field)
-    : (columns as string[])
-  const headers: string[] = schema
-    ? schema.map((c) => c.label)
-    : (columns as string[]).map((c) => humanize(c))
+  const fields: string[] = schema ? schema.map((c) => c.field) : (columns as string[])
+  const headers: string[] = schema ? schema.map((c) => c.label) : (columns as string[]).map((c) => humanize(c))
 
   const lines: string[] = []
   lines.push(headers.map((h) => escapeCsv(h)).join(','))
@@ -262,9 +246,10 @@ export function downloadFile(filename: string, mime: string, data: string): void
 }
 
 export function slugify(value: string): string {
-  return value
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '')
-    || 'report'
+  return (
+    value
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '') || 'report'
+  )
 }

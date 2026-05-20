@@ -1,16 +1,9 @@
 <script setup lang="ts">
-import { ref, computed, watch, onMounted } from 'vue'
-import { useDataUrl } from '@/composables/useDataUrl'
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from '@/components/ui/command'
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { ChevronsUpDown, Loader2, ImageIcon } from 'lucide-vue-next'
+import { ref, computed, watch, onMounted } from 'vue'
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import { useDataUrl } from '@/composables/useDataUrl'
 import useTranslation from '@/composables/useTranslation'
 
 const { __ } = useTranslation()
@@ -200,25 +193,21 @@ function pick(record: Record_) {
       <button
         type="button"
         :disabled="disabled"
-        class="flex h-full w-full items-center justify-between border-none bg-transparent px-2.5 text-start text-sm transition-colors duration-100 outline-none focus:bg-brand-50 disabled:cursor-not-allowed disabled:opacity-50"
+        class="focus:bg-brand-50 flex h-full w-full items-center justify-between border-none bg-transparent px-2.5 text-start text-sm transition-colors duration-100 outline-none disabled:cursor-not-allowed disabled:opacity-50"
       >
         <span class="truncate" :class="selectedKey ? 'text-ink-900' : `text-ink-400`">
           {{ triggerLabel }}
         </span>
-        <ChevronsUpDown class="ms-1 h-3.5 w-3.5 shrink-0 text-ink-300" />
+        <ChevronsUpDown class="text-ink-300 ms-1 h-3.5 w-3.5 shrink-0" />
       </button>
     </PopoverTrigger>
 
     <PopoverContent class="w-80 p-0" align="start">
       <Command :should-filter="false">
-        <CommandInput
-          v-model="search"
-          :placeholder="__('Search…')"
-          class="h-8 border-b border-paper-200 text-sm"
-        />
+        <CommandInput v-model="search" :placeholder="__('Search…')" class="border-paper-200 h-8 border-b text-sm" />
 
         <CommandList class="max-h-72 overflow-y-auto">
-          <CommandEmpty class="py-4 text-center text-sm text-ink-400">
+          <CommandEmpty class="text-ink-400 py-4 text-center text-sm">
             <span v-if="http.processing" class="flex items-center justify-center gap-2">
               <Loader2 class="h-3.5 w-3.5 animate-spin" /> {{ __('Loading…') }}
             </span>
@@ -236,7 +225,7 @@ function pick(record: Record_) {
               <!-- Image / placeholder -->
               <div
                 v-if="imageField"
-                class="flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-sm bg-paper-100"
+                class="bg-paper-100 flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-sm"
               >
                 <img
                   v-if="record[imageField]"
@@ -244,11 +233,11 @@ function pick(record: Record_) {
                   :alt="String(record[labelField] ?? '')"
                   class="h-full w-full object-cover"
                 />
-                <ImageIcon v-else class="h-3.5 w-3.5 text-ink-300" />
+                <ImageIcon v-else class="text-ink-300 h-3.5 w-3.5" />
               </div>
 
               <div class="min-w-0 flex-1">
-                <div class="truncate font-medium text-ink-900">
+                <div class="text-ink-900 truncate font-medium">
                   {{ composeLabel(record) }}
                 </div>
                 <div
@@ -258,7 +247,7 @@ function pick(record: Record_) {
                     record[subLabelField] !== null &&
                     record[subLabelField] !== ''
                   "
-                  class="truncate text-[11px] text-ink-400"
+                  class="text-ink-400 truncate text-[11px]"
                 >
                   {{ record[subLabelField] }}
                 </div>
@@ -268,7 +257,7 @@ function pick(record: Record_) {
             <CommandItem
               v-if="hasMore"
               value="__load_more__"
-              class="h-7 cursor-pointer justify-center px-2.5 text-xs text-ink-400"
+              class="text-ink-400 h-7 cursor-pointer justify-center px-2.5 text-xs"
               @select="fetchOptions(false)"
             >
               {{ __('Load more…') }}

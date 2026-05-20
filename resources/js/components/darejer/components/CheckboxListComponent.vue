@@ -1,10 +1,10 @@
 <script setup lang="ts">
+import { Search, Loader2 } from 'lucide-vue-next'
 import { ref, computed, onMounted } from 'vue'
+import FieldWrapper from '@/components/darejer/FieldWrapper.vue'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Input } from '@/components/ui/input'
-import { Search, Loader2 } from 'lucide-vue-next'
 import { useDataUrl } from '@/composables/useDataUrl'
-import FieldWrapper from '@/components/darejer/FieldWrapper.vue'
 import useTranslation from '@/composables/useTranslation'
 import type { DarejerComponent } from '@/types/darejer'
 
@@ -26,8 +26,7 @@ const options = ref<Option[]>([])
 const loading = ref(false)
 const search = ref('')
 
-const rawValue =
-  (props.formData ?? props.record)[props.component.name] ?? props.component.default ?? []
+const rawValue = (props.formData ?? props.record)[props.component.name] ?? props.component.default ?? []
 
 const selected = ref<string[]>(
   Array.isArray(rawValue) ? rawValue.map(String) : rawValue != null ? [String(rawValue)] : [],
@@ -35,22 +34,17 @@ const selected = ref<string[]>(
 
 const selectedSet = computed(() => new Set(selected.value))
 
-const staticOptions = computed(
-  () => (props.component.staticOptions as Option[] | undefined) ?? null,
-)
+const staticOptions = computed(() => (props.component.staticOptions as Option[] | undefined) ?? null)
 
 const subtitleField = computed(() => (props.component.subtitleField as string | null) ?? null)
 
-const { load } = useDataUrl<Record<string, unknown>>(
-  props.component.dataUrl as string | undefined,
-  {
-    perPage: 500,
-    combobox: true,
-    keyField: (props.component.keyField as string) ?? 'id',
-    labelField: (props.component.labelField as string) ?? 'name',
-    subtitleField: subtitleField.value ?? undefined,
-  },
-)
+const { load } = useDataUrl<Record<string, unknown>>(props.component.dataUrl as string | undefined, {
+  perPage: 500,
+  combobox: true,
+  keyField: (props.component.keyField as string) ?? 'id',
+  labelField: (props.component.labelField as string) ?? 'name',
+  subtitleField: subtitleField.value ?? undefined,
+})
 
 function normalize(items: Record<string, unknown>[]): Option[] {
   const keyField = (props.component.keyField as string) ?? 'id'
@@ -58,9 +52,7 @@ function normalize(items: Record<string, unknown>[]): Option[] {
   const subField = subtitleField.value
   return items.map((row) => {
     const label = String(row.label ?? row[labelField] ?? '')
-    const subtitleRaw = subField
-      ? String(row.subtitle ?? row[subField] ?? '')
-      : ''
+    const subtitleRaw = subField ? String(row.subtitle ?? row[subField] ?? '') : ''
     return {
       value: String(row.value ?? row[keyField] ?? ''),
       label: label || subtitleRaw,
@@ -92,9 +84,7 @@ const filteredOptions = computed<Option[]>(() => {
   const term = search.value.trim().toLowerCase()
   if (!term) return options.value
   return options.value.filter(
-    (o) =>
-      o.label.toLowerCase().includes(term) ||
-      (o.subtitle ? o.subtitle.toLowerCase().includes(term) : false),
+    (o) => o.label.toLowerCase().includes(term) || (o.subtitle ? o.subtitle.toLowerCase().includes(term) : false),
   )
 })
 
@@ -188,66 +178,48 @@ const disabled = computed(() => !!props.component.disabled)
   <FieldWrapper :component="component" :record="record" :errors="errors" :form-data="formData">
     <template #default="{ hasError }">
       <div
-        class="flex flex-col gap-3 rounded-md border bg-card p-3"
+        class="bg-card flex flex-col gap-3 rounded-md border p-3"
         :class="hasError ? 'border-danger-600' : 'border-ink-200'"
       >
         <div class="flex flex-wrap items-center justify-between gap-2">
-          <div v-if="component.searchable" class="relative flex-1 min-w-[180px]">
-            <Search class="absolute left-2 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-ink-400" />
-            <Input
-              v-model="search"
-              :placeholder="__('Search...')"
-              class="h-8 pl-7 text-xs"
-              :disabled="disabled"
-            />
+          <div v-if="component.searchable" class="relative min-w-[180px] flex-1">
+            <Search class="text-ink-400 absolute top-1/2 left-2 h-3.5 w-3.5 -translate-y-1/2" />
+            <Input v-model="search" :placeholder="__('Search...')" class="h-8 pl-7 text-xs" :disabled="disabled" />
           </div>
-          <p class="text-xs text-ink-500">
-            {{ totalSelected }} / {{ totalVisible }} {{ __('selected') }}
-          </p>
+          <p class="text-ink-500 text-xs">{{ totalSelected }} / {{ totalVisible }} {{ __('selected') }}</p>
         </div>
 
-        <div v-if="loading" class="flex items-center gap-2 text-xs text-ink-500">
+        <div v-if="loading" class="text-ink-500 flex items-center gap-2 text-xs">
           <Loader2 class="h-3.5 w-3.5 animate-spin" />
           {{ __('Loading...') }}
         </div>
 
-        <p v-else-if="filteredOptions.length === 0" class="text-xs text-ink-400">
+        <p v-else-if="filteredOptions.length === 0" class="text-ink-400 text-xs">
           {{ __('No options available.') }}
         </p>
 
         <div v-else class="flex flex-col gap-4">
           <div v-for="group in groups" :key="group.key" class="flex flex-col gap-2">
-            <div
-              v-if="group.label"
-              class="flex items-center gap-2 border-b border-ink-100 pb-1.5"
-            >
+            <div v-if="group.label" class="border-ink-100 flex items-center gap-2 border-b pb-1.5">
               <Checkbox
                 :id="`${component.name}-grp-${group.key}`"
                 :model-value="
-                  groupState(group) === 'all'
-                    ? true
-                    : groupState(group) === 'some'
-                      ? 'indeterminate'
-                      : false
+                  groupState(group) === 'all' ? true : groupState(group) === 'some' ? 'indeterminate' : false
                 "
                 :disabled="disabled"
                 @update:model-value="(v) => toggleGroup(group, v)"
               />
               <label
                 :for="`${component.name}-grp-${group.key}`"
-                class="cursor-pointer text-xs font-semibold tracking-tight text-ink-700 select-none"
+                class="text-ink-700 cursor-pointer text-xs font-semibold tracking-tight select-none"
               >
                 {{ group.label }}
               </label>
-              <span class="text-xs text-ink-400">({{ group.options.length }})</span>
+              <span class="text-ink-400 text-xs">({{ group.options.length }})</span>
             </div>
 
             <div class="grid gap-x-4 gap-y-2" :class="gridClass">
-              <div
-                v-for="option in group.options"
-                :key="option.value"
-                class="flex items-start gap-2"
-              >
+              <div v-for="option in group.options" :key="option.value" class="flex items-start gap-2">
                 <Checkbox
                   :id="`${component.name}-${option.value}`"
                   :model-value="isChecked(option.value)"
@@ -259,11 +231,8 @@ const disabled = computed(() => !!props.component.disabled)
                   :for="`${component.name}-${option.value}`"
                   class="flex cursor-pointer flex-col leading-tight select-none"
                 >
-                  <span class="text-xs text-ink-700">{{ option.label }}</span>
-                  <span
-                    v-if="option.subtitle"
-                    class="font-mono text-[10px] text-ink-400"
-                  >
+                  <span class="text-ink-700 text-xs">{{ option.label }}</span>
+                  <span v-if="option.subtitle" class="text-ink-400 font-mono text-[10px]">
                     {{ option.subtitle }}
                   </span>
                 </label>

@@ -1,6 +1,6 @@
-import vue from '@vitejs/plugin-vue'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
+import vue from '@vitejs/plugin-vue'
 
 const __filename = fileURLToPath(import.meta.url)
 const packageRoot = path.dirname(__filename)

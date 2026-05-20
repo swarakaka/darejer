@@ -1,20 +1,14 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
 import { router, usePage } from '@inertiajs/vue3'
+import { CalendarDate, DateFormatter, getLocalTimeZone, parseDate } from '@internationalized/date'
 import { X, CalendarIcon } from 'lucide-vue-next'
+import { ref, computed } from 'vue'
 import { Button } from '@/components/ui/button'
+import { Calendar } from '@/components/ui/calendar'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import { Calendar } from '@/components/ui/calendar'
-import { CalendarDate, DateFormatter, getLocalTimeZone, parseDate } from '@internationalized/date'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import useTranslation from '@/composables/useTranslation'
 import type { DarejerComponent } from '@/types/darejer'
 
@@ -54,9 +48,7 @@ const values = ref<Record<string, string>>(
   Object.fromEntries(filters.value.map((f) => [f.field, String(f.default ?? '')])),
 )
 
-const activeCount = computed(
-  () => Object.values(values.value).filter((v) => v !== '' && v !== null).length,
-)
+const activeCount = computed(() => Object.values(values.value).filter((v) => v !== '' && v !== null).length)
 
 function apply() {
   router.get(
@@ -128,10 +120,7 @@ function clearField(field: string) {
 <template>
   <div class="col-span-full">
     <!-- Bar layout -->
-    <div
-      v-if="isBar"
-      class="mb-3 flex flex-wrap items-end gap-3 rounded-md border border-paper-200 bg-paper-75 p-3"
-    >
+    <div v-if="isBar" class="border-paper-200 bg-paper-75 mb-3 flex flex-wrap items-end gap-3 rounded-md border p-3">
       <div v-for="filter in filters" :key="filter.field" class="flex min-w-[10rem] flex-col gap-1">
         <Label :for="filter.field">{{ filter.label }}</Label>
 
@@ -170,7 +159,7 @@ function clearField(field: string) {
             <button
               :id="filter.field"
               type="button"
-              class="flex h-8 w-full items-center justify-between rounded-[2px] border bg-card px-2.5 text-start text-[13px] text-ink-900 transition-colors duration-100 hover:border-ink-700 focus:border-brand-500 focus:ring-0 focus:outline-none"
+              class="bg-card text-ink-900 hover:border-ink-700 focus:border-brand-500 flex h-8 w-full items-center justify-between rounded-[2px] border px-2.5 text-start text-[13px] transition-colors duration-100 focus:ring-0 focus:outline-none"
               :class="[datePopoverOpen[filter.field] ? `border-brand-500` : `border-paper-300`]"
             >
               <span :class="values[filter.field] ? 'text-ink-900' : `text-ink-400`">
@@ -180,12 +169,12 @@ function clearField(field: string) {
                 <button
                   v-if="values[filter.field]"
                   type="button"
-                  class="text-ink-300 transition-colors hover:text-ink-500"
+                  class="text-ink-300 hover:text-ink-500 transition-colors"
                   @click.stop="clearField(filter.field)"
                 >
                   <X class="h-3 w-3" />
                 </button>
-                <CalendarIcon class="h-3.5 w-3.5 text-ink-400" />
+                <CalendarIcon class="text-ink-400 h-3.5 w-3.5" />
               </div>
             </button>
           </PopoverTrigger>
@@ -219,7 +208,7 @@ function clearField(field: string) {
       <Button
         v-if="activeCount > 0"
         variant="ghost"
-        class="h-8 gap-1.5 text-sm text-ink-500 hover:text-ink-800"
+        class="text-ink-500 hover:text-ink-800 h-8 gap-1.5 text-sm"
         @click="reset"
       >
         <X class="h-3.5 w-3.5" />
@@ -231,16 +220,14 @@ function clearField(field: string) {
     <div v-else class="flex gap-4">
       <div
         v-if="isOpen"
-        class="flex w-52 shrink-0 flex-col gap-3 self-start rounded-md border border-paper-200 bg-paper-75 p-3"
+        class="border-paper-200 bg-paper-75 flex w-52 shrink-0 flex-col gap-3 self-start rounded-md border p-3"
       >
         <div class="flex items-center justify-between">
-          <span class="text-xs font-semibold tracking-wide text-ink-600 uppercase">{{
-            __('Filters')
-          }}</span>
+          <span class="text-ink-600 text-xs font-semibold tracking-wide uppercase">{{ __('Filters') }}</span>
           <Button
             v-if="activeCount > 0"
             variant="link"
-            class="h-auto p-0 text-xs text-brand-600 hover:text-brand-700"
+            class="text-brand-600 hover:text-brand-700 h-auto p-0 text-xs"
             @click="reset"
           >
             {{ __('Clear all') }}

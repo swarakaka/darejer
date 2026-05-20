@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { Switch } from '@/components/ui/switch'
 import FieldWrapper from '@/components/darejer/FieldWrapper.vue'
+import { Switch } from '@/components/ui/switch'
 import useTranslation from '@/composables/useTranslation'
 import type { DarejerComponent } from '@/types/darejer'
 
@@ -16,11 +16,7 @@ const props = defineProps<{
 
 const emit = defineEmits<{ (e: 'update', name: string, value: unknown): void }>()
 
-const checked = ref(
-  Boolean(
-    (props.formData ?? props.record)[props.component.name] ?? props.component.default ?? false,
-  ),
-)
+const checked = ref(Boolean((props.formData ?? props.record)[props.component.name] ?? props.component.default ?? false))
 
 function onChange(val: boolean) {
   checked.value = val
@@ -38,12 +34,8 @@ function onChange(val: boolean) {
           :disabled="component.disabled as boolean"
           @update:model-value="onChange"
         />
-        <label :for="component.name" class="cursor-pointer text-sm text-ink-700 select-none">
-          {{
-            checked
-              ? ((component.onLabel as string) ?? __('Yes'))
-              : ((component.offLabel as string) ?? __('No'))
-          }}
+        <label :for="component.name" class="text-ink-700 cursor-pointer text-sm select-none">
+          {{ checked ? ((component.onLabel as string) ?? __('Yes')) : ((component.offLabel as string) ?? __('No')) }}
         </label>
       </div>
     </template>

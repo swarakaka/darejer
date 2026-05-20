@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { computed, watchEffect } from 'vue'
 import { usePage, Link } from '@inertiajs/vue3'
 import { ConfigProvider } from 'reka-ui'
+import { computed, watchEffect } from 'vue'
 import FlashMessage from '@/components/darejer/FlashMessage.vue'
 import type { DarejerSharedProps } from '@/types/darejer'
 
@@ -36,7 +36,7 @@ watchEffect(() => {
 
 <template>
   <ConfigProvider :dir="direction" :locale="locale">
-    <div class="flex h-screen flex-col overflow-hidden bg-paper-100 text-ink-900 antialiased">
+    <div class="bg-paper-100 text-ink-900 flex h-screen flex-col overflow-hidden antialiased">
       <header
         class="sticky top-0 z-20 flex h-(--topbar-height) shrink-0 items-center gap-2 border-b border-(--topbar-border) bg-(--topbar-bg) px-3 text-(--topbar-foreground) print:hidden"
       >

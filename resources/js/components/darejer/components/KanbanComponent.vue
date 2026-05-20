@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
 import { router, useHttp } from '@inertiajs/vue3'
-import { handleHttpException } from '@/lib/handleHttpException'
-import { useDataUrl } from '@/composables/useDataUrl'
-import { VueDraggable } from 'vue-draggable-plus'
 import { Loader2, GripVertical } from 'lucide-vue-next'
+import { ref, computed, onMounted } from 'vue'
+import { VueDraggable } from 'vue-draggable-plus'
 import FieldWrapper from '@/components/darejer/FieldWrapper.vue'
+import { useDataUrl } from '@/composables/useDataUrl'
 import useTranslation from '@/composables/useTranslation'
+import { handleHttpException } from '@/lib/handleHttpException'
 import type { DarejerComponent } from '@/types/darejer'
 
 const { __ } = useTranslation()
@@ -41,19 +41,16 @@ const allCards = ref<CardRecord[]>([])
 const updating = ref<Set<unknown>>(new Set())
 
 // Shared data-loading composable; dedicated useHttp for PATCHing moves.
-const { load, http: httpFetch } = useDataUrl<CardRecord>(
-  props.component.dataUrl as string | undefined,
-  { perPage: 500 },
-)
+const { load, http: httpFetch } = useDataUrl<CardRecord>(props.component.dataUrl as string | undefined, {
+  perPage: 500,
+})
 const httpUpdate = useHttp<{ field: string; value: string | number | boolean | null }>({
   field: '',
   value: null,
 })
 
 const columns = computed((): KanbanCol[] => (props.component.kanbanColumns as KanbanCol[]) ?? [])
-const cardTpl = computed(
-  (): CardTemplate => (props.component.cardTemplate as CardTemplate) ?? { titleField: 'name' },
-)
+const cardTpl = computed((): CardTemplate => (props.component.cardTemplate as CardTemplate) ?? { titleField: 'name' })
 const statusField = computed(() => (props.component.statusField as string) ?? 'status')
 const editUrl = computed(() => props.component.editUrl as string | undefined)
 const editDialog = computed(() => !!props.component.editDialog)
@@ -113,9 +110,7 @@ function onCardMoved(card: CardRecord, fromColumn: string, toColumn: string) {
       if (!columnCards.value[fromColumn].some((c) => (c.id as unknown) === id)) {
         columnCards.value[fromColumn].push(card)
       }
-      columnCards.value[toColumn] = columnCards.value[toColumn].filter(
-        (c) => (c.id as unknown) !== id,
-      )
+      columnCards.value[toColumn] = columnCards.value[toColumn].filter((c) => (c.id as unknown) !== id)
     },
     onHttpException: (response: { status: number }) => {
       handleHttpException(response)
@@ -197,8 +192,7 @@ function cardDate(card: CardRecord): string | null {
   return new Date(String(val)).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
 }
 
-const ISO_DATE_RE =
-  /^\d{4}-\d{2}-\d{2}(?:[T ]\d{2}:\d{2}(?::\d{2})?(?:\.\d+)?(?:Z|[+-]\d{2}:?\d{2})?)?$/
+const ISO_DATE_RE = /^\d{4}-\d{2}-\d{2}(?:[T ]\d{2}:\d{2}(?::\d{2})?(?:\.\d+)?(?:Z|[+-]\d{2}:?\d{2})?)?$/
 
 function formatMetaValue(value: unknown): string {
   if (value === null || value === undefined || value === '') return '—'
@@ -240,16 +234,10 @@ function onDragEnd(col: KanbanCol) {
 </script>
 
 <template>
-  <FieldWrapper
-    :component="component"
-    :record="record"
-    :errors="errors"
-    :form-data="formData"
-    class="col-span-full"
-  >
+  <FieldWrapper :component="component" :record="record" :errors="errors" :form-data="formData" class="col-span-full">
     <template #default>
       <!-- Loading -->
-      <div v-if="httpFetch.processing" class="flex h-40 items-center justify-center text-ink-400">
+      <div v-if="httpFetch.processing" class="text-ink-400 flex h-40 items-center justify-center">
         <Loader2 class="h-5 w-5 animate-spin" />
       </div>
 
@@ -258,14 +246,11 @@ function onDragEnd(col: KanbanCol) {
         <div
           v-for="col in columns"
           :key="col.value"
-          class="flex min-w-[16rem] flex-1 flex-col overflow-hidden rounded-md border bg-card"
+          class="bg-card flex min-w-[16rem] flex-1 flex-col overflow-hidden rounded-md border"
           :class="isOverLimit(col) ? 'border-danger-300' : `border-paper-200`"
         >
           <!-- Column header -->
-          <div
-            class="flex items-center justify-between border-b px-3 py-2"
-            :class="colHeaderClass(col.color)"
-          >
+          <div class="flex items-center justify-between border-b px-3 py-2" :class="colHeaderClass(col.color)">
             <span class="text-xs font-semibold tracking-wide uppercase">{{ col.label }}</span>
             <div class="flex items-center gap-1.5">
               <span
@@ -290,7 +275,7 @@ function onDragEnd(col: KanbanCol) {
             v-model="columnCards[col.value]"
             group="kanban"
             :disabled="isDisabled || col.locked"
-            class="flex min-h-[8rem] flex-1 flex-col gap-2 bg-paper-50/60 p-2"
+            class="bg-paper-50/60 flex min-h-[8rem] flex-1 flex-col gap-2 p-2"
             ghost-class="opacity-40"
             chosen-class="rotate-1 scale-[1.02]"
             drag-class="opacity-90"
@@ -299,11 +284,11 @@ function onDragEnd(col: KanbanCol) {
             <div
               v-for="card in columnCards[col.value] ?? []"
               :key="String(card.id ?? card)"
-              class="group relative rounded-md border border-paper-200 bg-card p-2.5 transition-all duration-100"
+              class="group border-paper-200 bg-card relative rounded-md border p-2.5 transition-all duration-100"
               :class="[
                 isDisabled || col.locked
                   ? 'cursor-default'
-                  : `cursor-grab hover:border-paper-300 active:cursor-grabbing`,
+                  : `hover:border-paper-300 cursor-grab active:cursor-grabbing`,
                 updating.has(card.id ?? card) ? 'opacity-50' : '',
               ]"
               @click="onCardClick(card)"
@@ -311,22 +296,19 @@ function onDragEnd(col: KanbanCol) {
               <!-- Title + drag handle -->
               <div class="mb-1 flex items-start justify-between gap-2">
                 <p
-                  class="line-clamp-2 text-sm leading-tight font-medium text-ink-800"
-                  :class="editUrl ? `cursor-pointer group-hover:text-brand-600` : ''"
+                  class="text-ink-800 line-clamp-2 text-sm leading-tight font-medium"
+                  :class="editUrl ? `group-hover:text-brand-600 cursor-pointer` : ''"
                 >
                   {{ cardTitle(card) }}
                 </p>
                 <GripVertical
                   v-if="!isDisabled && !col.locked"
-                  class="mt-0.5 h-3.5 w-3.5 shrink-0 text-ink-300 opacity-0 transition-opacity group-hover:opacity-100"
+                  class="text-ink-300 mt-0.5 h-3.5 w-3.5 shrink-0 opacity-0 transition-opacity group-hover:opacity-100"
                 />
               </div>
 
               <!-- Subtitle -->
-              <p
-                v-if="cardSubtitle(card)"
-                class="mb-1.5 line-clamp-1 text-xs text-ink-500 tabular-nums"
-              >
+              <p v-if="cardSubtitle(card)" class="text-ink-500 mb-1.5 line-clamp-1 text-xs tabular-nums">
                 {{ cardSubtitle(card) }}
               </p>
 
@@ -335,9 +317,9 @@ function onDragEnd(col: KanbanCol) {
                 <div
                   v-for="meta in cardTpl.metaFields"
                   :key="meta.field"
-                  class="flex items-center gap-1 text-xs text-ink-500"
+                  class="text-ink-500 flex items-center gap-1 text-xs"
                 >
-                  <span class="shrink-0 text-ink-400">{{ meta.label }}:</span>
+                  <span class="text-ink-400 shrink-0">{{ meta.label }}:</span>
                   <span class="truncate">{{ formatMetaValue(card[meta.field]) }}</span>
                 </div>
               </div>
@@ -347,19 +329,19 @@ function onDragEnd(col: KanbanCol) {
                 <div class="flex items-center gap-1">
                   <span
                     v-if="cardBadge(card)"
-                    class="inline-flex items-center rounded-sm border border-paper-200 bg-paper-100 px-1.5 py-0.5 text-[10px] font-semibold tracking-wide text-ink-600 uppercase"
+                    class="border-paper-200 bg-paper-100 text-ink-600 inline-flex items-center rounded-sm border px-1.5 py-0.5 text-[10px] font-semibold tracking-wide uppercase"
                   >
                     {{ cardBadge(card) }}
                   </span>
 
-                  <span v-if="cardDate(card)" class="text-[10px] text-ink-400 tabular-nums">
+                  <span v-if="cardDate(card)" class="text-ink-400 text-[10px] tabular-nums">
                     {{ cardDate(card) }}
                   </span>
                 </div>
 
                 <div
                   v-if="cardTpl.avatarField && card[cardTpl.avatarField]"
-                  class="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-brand-100 text-[9px] font-bold text-brand-700"
+                  class="bg-brand-100 text-brand-700 flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[9px] font-bold"
                 >
                   {{ avatarInitials(card) }}
                 </div>
@@ -370,14 +352,14 @@ function onDragEnd(col: KanbanCol) {
                 v-if="updating.has(card.id ?? card)"
                 class="absolute inset-0 flex items-center justify-center rounded-md bg-white/60"
               >
-                <Loader2 class="h-4 w-4 animate-spin text-brand-600" />
+                <Loader2 class="text-brand-600 h-4 w-4 animate-spin" />
               </div>
             </div>
 
             <!-- Empty column placeholder -->
             <div
               v-if="!columnCards[col.value]?.length"
-              class="flex h-16 items-center justify-center rounded-md border border-dashed border-paper-300 text-xs text-ink-300"
+              class="border-paper-300 text-ink-300 flex h-16 items-center justify-center rounded-md border border-dashed text-xs"
             >
               {{ __('Drop cards here') }}
             </div>

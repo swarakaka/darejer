@@ -1,11 +1,11 @@
 <script setup lang="ts">
+import { HelpCircle, AlertCircle } from 'lucide-vue-next'
 import { computed, type HTMLAttributes, watch } from 'vue'
 import { Label } from '@/components/ui/label'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
-import { HelpCircle, AlertCircle } from 'lucide-vue-next'
 import { evaluateDependOn } from '@/composables/useDependOn'
-import type { DarejerComponent } from '@/types/darejer'
 import { cn } from '@/lib/utils'
+import type { DarejerComponent } from '@/types/darejer'
 
 const props = defineProps<{
   component: DarejerComponent
@@ -51,10 +51,7 @@ const hasError = computed(() => !!fieldError.value)
 </script>
 
 <template>
-  <div
-    v-if="isVisible"
-    :class="cn('flex flex-col gap-1.5', props.class, { 'col-span-full': component.fullWidth })"
-  >
+  <div v-if="isVisible" :class="cn('flex flex-col gap-1.5', props.class, { 'col-span-full': component.fullWidth })">
     <!-- Label row -->
     <div v-if="component.label" class="flex min-h-3.5 items-center gap-1.5">
       <Label
@@ -63,13 +60,13 @@ const hasError = computed(() => !!fieldError.value)
         :class="hasError ? 'text-danger-600' : 'text-ink-700'"
       >
         <span>{{ component.label }}</span>
-        <span v-if="component.required" class="leading-none text-danger-600">*</span>
+        <span v-if="component.required" class="text-danger-600 leading-none">*</span>
       </Label>
 
       <TooltipProvider v-if="component.tooltip" :delay-duration="0">
         <Tooltip>
           <TooltipTrigger as-child>
-            <button type="button" class="text-ink-300 transition-colors hover:text-ink-600">
+            <button type="button" class="text-ink-300 hover:text-ink-600 transition-colors">
               <HelpCircle class="h-3 w-3" />
             </button>
           </TooltipTrigger>
@@ -84,13 +81,13 @@ const hasError = computed(() => !!fieldError.value)
     <slot :error="fieldError" :has-error="hasError" />
 
     <!-- Error -->
-    <p v-if="hasError" class="flex items-start gap-1 text-xs leading-snug text-danger-600">
+    <p v-if="hasError" class="text-danger-600 flex items-start gap-1 text-xs leading-snug">
       <AlertCircle class="mt-[2px] h-3 w-3 shrink-0" />
       <span>{{ fieldError }}</span>
     </p>
 
     <!-- Hint -->
-    <p v-else-if="component.hint" class="text-xs leading-snug text-ink-400">
+    <p v-else-if="component.hint" class="text-ink-400 text-xs leading-snug">
       {{ component.hint }}
     </p>
   </div>

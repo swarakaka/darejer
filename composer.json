@@ -3,7 +3,14 @@
     "description": "Darejer — Laravel admin platform package. Write only PHP, get a complete enterprise frontend powered by Vue 3, Inertia v3, shadcn-vue, and Tailwind CSS v4.",
     "type": "library",
     "license": "MIT",
-    "keywords": ["laravel", "admin", "inertia", "vue", "crud", "erp"],
+    "keywords": [
+        "laravel",
+        "admin",
+        "inertia",
+        "vue",
+        "crud",
+        "erp"
+    ],
     "authors": [
         {
             "name": "Swarakaka",

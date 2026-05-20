@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { computed, watch } from 'vue'
 import { usePage } from '@inertiajs/vue3'
+import { computed, watch } from 'vue'
 import { toast } from 'vue-sonner'
 import { Toaster } from '@/components/ui/sonner'
 import type { DarejerSharedProps, FlashProps } from '@/types/darejer'
@@ -15,9 +15,7 @@ const page = usePage<DarejerSharedProps>()
 const direction = computed(() => page.props.darejer?.direction ?? 'ltr')
 
 // Toast tray sits in the inline-end corner regardless of language direction.
-const toasterPosition = computed<'top-right' | 'top-left'>(() =>
-  direction.value === 'rtl' ? 'top-left' : 'top-right',
-)
+const toasterPosition = computed<'top-right' | 'top-left'>(() => (direction.value === 'rtl' ? 'top-left' : 'top-right'))
 
 watch(
   () => (page as unknown as { flash?: FlashProps | null }).flash,

@@ -1,22 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
 import { router, Link } from '@inertiajs/vue3'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-  DropdownMenuSeparator,
-} from '@/components/ui/dropdown-menu'
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter,
-} from '@/components/ui/dialog'
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import {
   Save,
   X,
@@ -33,7 +16,24 @@ import {
   Download,
   AlertTriangle,
 } from 'lucide-vue-next'
+import { ref, computed } from 'vue'
 import ModalFormDialog from '@/components/darejer/ModalFormDialog.vue'
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from '@/components/ui/dialog'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuSeparator,
+} from '@/components/ui/dropdown-menu'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { evaluateDependOn } from '@/composables/useDependOn'
 import useTranslation from '@/composables/useTranslation'
 import type { DarejerAction } from '@/types/darejer'
@@ -57,9 +57,7 @@ const props = defineProps<{
   onBulkSuccess?: () => void
 }>()
 
-const visibleActions = computed(() =>
-  props.actions.filter((a) => evaluateDependOn(a.dependOn, props.formData ?? {})),
-)
+const visibleActions = computed(() => props.actions.filter((a) => evaluateDependOn(a.dependOn, props.formData ?? {})))
 
 const confirmOpen = ref(false)
 const confirmAction = ref<DarejerAction | null>(null)
@@ -141,9 +139,7 @@ function executeAction(action: DarejerAction, skipConfirm = false) {
       props.onCancel(action.url)
       return
     }
-    const inDialog =
-      typeof window !== 'undefined' &&
-      new URL(window.location.href).searchParams.get('_dialog') === '1'
+    const inDialog = typeof window !== 'undefined' && new URL(window.location.href).searchParams.get('_dialog') === '1'
     if (inDialog) {
       window.history.back()
       return
@@ -215,7 +211,7 @@ const placementClass = computed(() => {
               :href="action.url ?? '#'"
               target="_blank"
               rel="noopener"
-              class="inline-flex h-8 items-center gap-1.5 px-2 text-sm text-brand-600 no-underline hover:text-brand-700"
+              class="text-brand-600 hover:text-brand-700 inline-flex h-8 items-center gap-1.5 px-2 text-sm no-underline"
             >
               <component :is="resolveIcon(action.icon)" v-if="action.icon" class="h-3.5 w-3.5" />
               {{ __(action.label) }}
@@ -224,7 +220,7 @@ const placementClass = computed(() => {
             <Link
               v-else
               :href="action.url ?? '#'"
-              class="inline-flex h-8 items-center gap-1.5 px-2 text-sm text-brand-600 no-underline hover:text-brand-700"
+              class="text-brand-600 hover:text-brand-700 inline-flex h-8 items-center gap-1.5 px-2 text-sm no-underline"
             >
               <component :is="resolveIcon(action.icon)" v-if="action.icon" class="h-3.5 w-3.5" />
               {{ __(action.label) }}
@@ -276,11 +272,7 @@ const placementClass = computed(() => {
                 v-if="action.type === 'Save' && processing"
                 class="inline-block h-3.5 w-3.5 animate-spin rounded-full border-2 border-white/40 border-t-white"
               />
-              <component
-                :is="resolveIcon(action.icon)"
-                v-else-if="action.icon"
-                class="h-3.5 w-3.5"
-              />
+              <component :is="resolveIcon(action.icon)" v-else-if="action.icon" class="h-3.5 w-3.5" />
               {{ action.type === 'Save' && processing ? __('Saving') : __(action.label) }}
             </button>
           </TooltipTrigger>
@@ -295,15 +287,15 @@ const placementClass = computed(() => {
         <DialogHeader>
           <div class="flex items-start gap-3">
             <div
-              class="flex h-9 w-9 shrink-0 items-center justify-center rounded-sm border border-danger-100 bg-danger-50"
+              class="border-danger-100 bg-danger-50 flex h-9 w-9 shrink-0 items-center justify-center rounded-sm border"
             >
-              <AlertTriangle class="h-4 w-4 text-danger-600" />
+              <AlertTriangle class="text-danger-600 h-4 w-4" />
             </div>
             <div class="flex-1">
               <DialogTitle class="text-xl leading-tight">
                 {{ __('Confirm action') }}
               </DialogTitle>
-              <DialogDescription class="mt-1.5 text-sm leading-relaxed text-ink-500">
+              <DialogDescription class="text-ink-500 mt-1.5 text-sm leading-relaxed">
                 {{ confirmAction?.confirm ? __(confirmAction.confirm) : '' }}
               </DialogDescription>
             </div>
@@ -312,14 +304,14 @@ const placementClass = computed(() => {
         <DialogFooter class="flex justify-end gap-2">
           <button
             type="button"
-            class="inline-flex h-8 items-center rounded-sm border border-paper-300 bg-card px-3 text-sm text-ink-700 transition-colors hover:bg-paper-100"
+            class="border-paper-300 bg-card text-ink-700 hover:bg-paper-100 inline-flex h-8 items-center rounded-sm border px-3 text-sm transition-colors"
             @click="confirmOpen = false"
           >
             {{ __('Cancel') }}
           </button>
           <button
             type="button"
-            class="inline-flex h-8 items-center rounded-sm border border-transparent bg-danger-600 px-3 text-sm text-white transition-colors hover:bg-danger-700"
+            class="bg-danger-600 hover:bg-danger-700 inline-flex h-8 items-center rounded-sm border border-transparent px-3 text-sm text-white transition-colors"
             @click="executeConfirmed"
           >
             {{ confirmAction?.label ? __(confirmAction.label) : '' }}

@@ -1,12 +1,11 @@
 <script setup lang="ts">
-import { useEditor, EditorContent } from '@tiptap/vue-3'
-import StarterKit from '@tiptap/starter-kit'
-import Underline from '@tiptap/extension-underline'
-import TextAlign from '@tiptap/extension-text-align'
+import CharacterCount from '@tiptap/extension-character-count'
 import Link from '@tiptap/extension-link'
 import Placeholder from '@tiptap/extension-placeholder'
-import CharacterCount from '@tiptap/extension-character-count'
-import { ref, computed, onBeforeUnmount } from 'vue'
+import TextAlign from '@tiptap/extension-text-align'
+import Underline from '@tiptap/extension-underline'
+import StarterKit from '@tiptap/starter-kit'
+import { useEditor, EditorContent } from '@tiptap/vue-3'
 import {
   Bold,
   Italic,
@@ -26,6 +25,7 @@ import {
   Undo,
   Redo,
 } from 'lucide-vue-next'
+import { ref, computed, onBeforeUnmount } from 'vue'
 import FieldWrapper from '@/components/darejer/FieldWrapper.vue'
 import useTranslation from '@/composables/useTranslation'
 import type { DarejerComponent } from '@/types/darejer'
@@ -41,9 +41,7 @@ const props = defineProps<{
 
 const emit = defineEmits<{ (e: 'update', name: string, value: unknown): void }>()
 
-const rawValue = String(
-  (props.formData ?? props.record)[props.component.name] ?? props.component.default ?? '',
-)
+const rawValue = String((props.formData ?? props.record)[props.component.name] ?? props.component.default ?? '')
 
 const maxChars = computed(() => props.component.maxCharacters as number | undefined)
 const minHeight = computed(() => `${(props.component.minHeight as number) ?? 200}px`)
@@ -102,20 +100,11 @@ const isOverLimit = computed(() => (maxChars.value ? charCount.value > maxChars.
 </script>
 
 <template>
-  <FieldWrapper
-    :component="component"
-    :record="record"
-    :errors="errors"
-    :form-data="formData"
-    class="col-span-full"
-  >
+  <FieldWrapper :component="component" :record="record" :errors="errors" :form-data="formData" class="col-span-full">
     <template #default="{ hasError }">
       <div
         class="darejer-rte"
-        :class="[
-          hasError ? '!border-danger-600' : '',
-          component.disabled || component.readonly ? 'is-disabled' : '',
-        ]"
+        :class="[hasError ? '!border-danger-600' : '', component.disabled || component.readonly ? 'is-disabled' : '']"
       >
         <!-- Toolbar -->
         <div v-if="!component.readonly" class="darejer-rte-toolbar">
@@ -332,26 +321,26 @@ const isOverLimit = computed(() => (maxChars.value ? charCount.value > maxChars.
         class="fixed inset-0 z-50 flex items-center justify-center bg-black/20"
         @click.self="linkDialogOpen = false"
       >
-        <div class="flex w-80 flex-col gap-3 rounded-md border border-paper-200 bg-card p-4">
-          <p class="text-sm font-semibold text-ink-800">{{ __('Insert link') }}</p>
+        <div class="border-paper-200 bg-card flex w-80 flex-col gap-3 rounded-md border p-4">
+          <p class="text-ink-800 text-sm font-semibold">{{ __('Insert link') }}</p>
           <input
             v-model="linkUrl"
             type="url"
             placeholder="https://example.com"
-            class="h-8 w-full rounded-sm border border-paper-300 px-2.5 text-sm"
+            class="border-paper-300 h-8 w-full rounded-sm border px-2.5 text-sm"
             @keydown.enter="applyLink"
           />
           <div class="flex justify-end gap-2">
             <button
               type="button"
-              class="h-8 rounded-sm border border-paper-300 px-3 text-sm hover:bg-paper-100"
+              class="border-paper-300 hover:bg-paper-100 h-8 rounded-sm border px-3 text-sm"
               @click="linkDialogOpen = false"
             >
               {{ __('Cancel') }}
             </button>
             <button
               type="button"
-              class="h-8 rounded-sm bg-brand-600 px-3 text-sm text-white hover:bg-brand-700"
+              class="bg-brand-600 hover:bg-brand-700 h-8 rounded-sm px-3 text-sm text-white"
               @click="applyLink"
             >
               {{ __('Apply') }}

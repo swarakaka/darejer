@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { Badge } from '@/components/ui/badge'
 import FieldWrapper from '@/components/darejer/FieldWrapper.vue'
+import { Badge } from '@/components/ui/badge'
 import useTranslation from '@/composables/useTranslation'
 import type { DarejerComponent } from '@/types/darejer'
 
@@ -52,8 +52,7 @@ function resolvePath(obj: unknown, path: string): unknown {
   return path
     .split('.')
     .reduce<unknown>(
-      (acc, key) =>
-        acc && typeof acc === 'object' ? (acc as Record<string, unknown>)[key] : undefined,
+      (acc, key) => (acc && typeof acc === 'object' ? (acc as Record<string, unknown>)[key] : undefined),
       obj,
     )
 }
@@ -162,13 +161,10 @@ function renderCell(col: TableCol, row: Record<string, unknown>): Cell {
     const truthy =
       value === true ||
       value === 1 ||
-      (typeof value === 'string' &&
-        ['1', 'true', 'yes', 'on'].includes(value.toLowerCase()))
+      (typeof value === 'string' && ['1', 'true', 'yes', 'on'].includes(value.toLowerCase()))
     return {
       kind: 'text',
-      text: truthy
-        ? (col.booleanTrueLabel ?? __('Yes'))
-        : (col.booleanFalseLabel ?? __('No')),
+      text: truthy ? (col.booleanTrueLabel ?? __('Yes')) : (col.booleanFalseLabel ?? __('No')),
       alignRight,
     }
   }
@@ -212,9 +208,7 @@ function renderCell(col: TableCol, row: Record<string, unknown>): Cell {
   return { kind: 'text', text: String(value), alignRight }
 }
 
-const gridTemplate = computed(() =>
-  columns.value.map((c) => c.width ?? 'minmax(8rem, 1fr)').join(' '),
-)
+const gridTemplate = computed(() => columns.value.map((c) => c.width ?? 'minmax(8rem, 1fr)').join(' '))
 
 const AGGREGATORS = ['sum', 'avg', 'min', 'max', 'count'] as const
 type Aggregator = (typeof AGGREGATORS)[number]
@@ -232,9 +226,7 @@ function compileRowExpression(expr: string, fieldSet: Set<string>): ((row: Recor
   const tokens = trimmed.match(/\b[a-zA-Z_][a-zA-Z0-9_]*\b/g) ?? []
   const deps = Array.from(new Set(tokens.filter((t) => fieldSet.has(t))))
   try {
-    const fn = new Function(...deps, `"use strict"; return (${trimmed});`) as (
-      ...args: number[]
-    ) => unknown
+    const fn = new Function(...deps, `"use strict"; return (${trimmed});`) as (...args: number[]) => unknown
     return (row) => {
       const args = deps.map((f) => numericRowValue(row, f))
       const result = fn(...args)
@@ -292,9 +284,7 @@ function evaluateFooter(col: TableCol, allRows: Record<string, unknown>[]): numb
 
   try {
     const tokens = replacements.map((r) => r.token)
-    const fn = new Function(...tokens, `"use strict"; return (${placeholderForm});`) as (
-      ...args: number[]
-    ) => unknown
+    const fn = new Function(...tokens, `"use strict"; return (${placeholderForm});`) as (...args: number[]) => unknown
     const result = fn(...replacements.map((r) => r.value))
     const n = typeof result === 'number' ? result : Number(result)
     return Number.isFinite(n) ? n : null
@@ -315,17 +305,13 @@ function renderFooter(col: TableCol): FooterCell | null {
   if (!col.footer) return null
   const n = evaluateFooter(col, rows.value)
   if (n === null) return { text: '—', alignRight: true }
-  const dec = col.decimalsField
-    ? decimalsFor(col, source.value as Record<string, unknown>)
-    : (col.decimals ?? 0)
+  const dec = col.decimalsField ? decimalsFor(col, source.value as Record<string, unknown>) : (col.decimals ?? 0)
   const formatted = new Intl.NumberFormat(undefined, {
     minimumFractionDigits: dec,
     maximumFractionDigits: dec,
   }).format(n)
   if (col.type === 'money') {
-    const code = col.currencyField
-      ? (resolvePath(source.value, col.currencyField) as string | undefined)
-      : null
+    const code = col.currencyField ? (resolvePath(source.value, col.currencyField) as string | undefined) : null
     return { text: code ? `${formatted} ${code}` : formatted, alignRight: true }
   }
   return { text: formatted, alignRight: true }
@@ -333,81 +319,69 @@ function renderFooter(col: TableCol): FooterCell | null {
 </script>
 
 <template>
-  <FieldWrapper
-    :component="component"
-    :record="record"
-    :errors="errors"
-    :form-data="formData"
-    class="col-span-full"
-  >
-    <div class="overflow-x-auto rounded-md border border-paper-200 bg-card">
-     <div class="min-w-max">
-      <!-- Header -->
-      <div
-        class="grid border-b border-paper-200 bg-paper-75"
-        :style="{ gridTemplateColumns: gridTemplate }"
-      >
-        <div
-          v-for="col in columns"
-          :key="col.field"
-          class="flex h-8 items-center border-e border-paper-200 px-2.5 text-[10px] font-semibold tracking-[0.08em] text-ink-400 uppercase last:border-e-0"
-          :class="col.alignRight ? 'justify-end' : 'justify-start'"
-        >
-          {{ col.label }}
+  <FieldWrapper :component="component" :record="record" :errors="errors" :form-data="formData" class="col-span-full">
+    <div class="border-paper-200 bg-card overflow-x-auto rounded-md border">
+      <div class="min-w-max">
+        <!-- Header -->
+        <div class="border-paper-200 bg-paper-75 grid border-b" :style="{ gridTemplateColumns: gridTemplate }">
+          <div
+            v-for="col in columns"
+            :key="col.field"
+            class="border-paper-200 text-ink-400 flex h-8 items-center border-e px-2.5 text-[10px] font-semibold tracking-[0.08em] uppercase last:border-e-0"
+            :class="col.alignRight ? 'justify-end' : 'justify-start'"
+          >
+            {{ col.label }}
+          </div>
         </div>
-      </div>
 
-      <!-- Empty -->
-      <div
-        v-if="rows.length === 0"
-        class="flex h-10 items-center justify-center px-2.5 text-sm text-ink-400"
-      >
-        {{ emptyMessage }}
-      </div>
+        <!-- Empty -->
+        <div v-if="rows.length === 0" class="text-ink-400 flex h-10 items-center justify-center px-2.5 text-sm">
+          {{ emptyMessage }}
+        </div>
 
-      <!-- Rows -->
-      <div
-        v-for="(row, rowIdx) in rows"
-        :key="rowIdx"
-        class="grid border-b border-paper-100 last:border-b-0 hover:bg-paper-50"
-        :style="{ gridTemplateColumns: gridTemplate }"
-      >
+        <!-- Rows -->
         <div
-          v-for="col in columns"
-          :key="col.field"
-          class="flex h-8 items-center border-e border-paper-100 px-2.5 text-sm tabular-nums last:border-e-0"
-          :class="[
-            col.alignRight ? 'justify-end' : 'justify-start',
-            renderCell(col, row).kind === 'empty' ? 'text-ink-400' : 'text-ink-800',
-          ]"
+          v-for="(row, rowIdx) in rows"
+          :key="rowIdx"
+          class="border-paper-100 hover:bg-paper-50 grid border-b last:border-b-0"
+          :style="{ gridTemplateColumns: gridTemplate }"
         >
-          <template v-if="renderCell(col, row).kind === 'badge'">
-            <Badge variant="outline" :class="badgeToneMap[renderCell(col, row).badgeKey ?? 'neutral']">
+          <div
+            v-for="col in columns"
+            :key="col.field"
+            class="border-paper-100 flex h-8 items-center border-e px-2.5 text-sm tabular-nums last:border-e-0"
+            :class="[
+              col.alignRight ? 'justify-end' : 'justify-start',
+              renderCell(col, row).kind === 'empty' ? 'text-ink-400' : 'text-ink-800',
+            ]"
+          >
+            <template v-if="renderCell(col, row).kind === 'badge'">
+              <Badge variant="outline" :class="badgeToneMap[renderCell(col, row).badgeKey ?? 'neutral']">
+                {{ renderCell(col, row).text }}
+              </Badge>
+            </template>
+            <template v-else>
               {{ renderCell(col, row).text }}
-            </Badge>
-          </template>
-          <template v-else>
-            {{ renderCell(col, row).text }}
-          </template>
+            </template>
+          </div>
         </div>
-      </div>
 
-      <!-- Footer -->
-      <div
-        v-if="hasFooter && rows.length > 0"
-        class="grid border-t border-paper-200 bg-paper-75"
-        :style="{ gridTemplateColumns: gridTemplate }"
-      >
+        <!-- Footer -->
         <div
-          v-for="col in columns"
-          :key="col.field"
-          class="flex h-9 items-center border-e border-paper-200 px-2.5 text-sm font-semibold tabular-nums text-ink-800 last:border-e-0"
-          :class="col.alignRight ? 'justify-end' : 'justify-start'"
+          v-if="hasFooter && rows.length > 0"
+          class="border-paper-200 bg-paper-75 grid border-t"
+          :style="{ gridTemplateColumns: gridTemplate }"
         >
-          {{ renderFooter(col)?.text ?? '' }}
+          <div
+            v-for="col in columns"
+            :key="col.field"
+            class="border-paper-200 text-ink-800 flex h-9 items-center border-e px-2.5 text-sm font-semibold tabular-nums last:border-e-0"
+            :class="col.alignRight ? 'justify-end' : 'justify-start'"
+          >
+            {{ renderFooter(col)?.text ?? '' }}
+          </div>
         </div>
       </div>
-     </div>
     </div>
   </FieldWrapper>
 </template>

@@ -1,6 +1,10 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
 import { usePage, router, Link } from '@inertiajs/vue3'
+import { LogOut, Bell, Globe, Menu, ChevronDown, UserCog } from 'lucide-vue-next'
+import { computed, ref } from 'vue'
+import AppGlobalSearch from '@/components/darejer/AppGlobalSearch.vue'
+import AppNotifications from '@/components/darejer/AppNotifications.vue'
+import AppThemeToggle from '@/components/darejer/AppThemeToggle.vue'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import {
   DropdownMenu,
@@ -10,12 +14,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { LogOut, Bell, Globe, Menu, ChevronDown, UserCog } from 'lucide-vue-next'
-import AppNotifications from '@/components/darejer/AppNotifications.vue'
-import AppGlobalSearch from '@/components/darejer/AppGlobalSearch.vue'
-import AppThemeToggle from '@/components/darejer/AppThemeToggle.vue'
-import { useLanguages } from '@/composables/useLanguages'
 import { useAlerts } from '@/composables/useAlerts'
+import { useLanguages } from '@/composables/useLanguages'
 import { useSidebar } from '@/composables/useSidebar'
 import useTranslation from '@/composables/useTranslation'
 import type { DarejerSharedProps } from '@/types/darejer'
@@ -47,11 +47,7 @@ const { unreadCount, hasUnread } = useAlerts()
 const notificationsOpen = ref(false)
 
 function switchLanguage(locale: string) {
-  router.post(
-    route('darejer.locale.update').toString(),
-    { locale },
-    { preserveScroll: true },
-  )
+  router.post(route('darejer.locale.update').toString(), { locale }, { preserveScroll: true })
 }
 
 const initials = (name: string) =>
@@ -110,7 +106,7 @@ function logout() {
         <Bell class="h-4 w-4" />
         <span
           v-if="hasUnread"
-          class="absolute end-1.5 top-1.5 inline-flex h-4 min-w-[1rem] items-center justify-center bg-danger-500 px-1 text-[9px] leading-none font-semibold text-white tabular-nums ring-2 ring-(--topbar-bg)"
+          class="bg-danger-500 absolute end-1.5 top-1.5 inline-flex h-4 min-w-[1rem] items-center justify-center px-1 text-[9px] leading-none font-semibold text-white tabular-nums ring-2 ring-(--topbar-bg)"
         >
           {{ unreadCount > 99 ? '99+' : unreadCount }}
         </span>
@@ -131,20 +127,18 @@ function logout() {
           <ChevronDown class="h-3 w-3 text-white/70" />
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" class="w-44">
-          <DropdownMenuLabel
-            class="px-3 py-1.5 text-[10px] font-semibold tracking-[0.14em] text-ink-500 uppercase"
-          >
+          <DropdownMenuLabel class="text-ink-500 px-3 py-1.5 text-[10px] font-semibold tracking-[0.14em] uppercase">
             {{ __('Language') }}
           </DropdownMenuLabel>
           <DropdownMenuItem
             v-for="locale in languages"
             :key="locale"
             class="flex cursor-pointer items-center gap-2 text-sm"
-            :class="currentLocale === locale ? `font-medium text-brand-600` : ''"
+            :class="currentLocale === locale ? `text-brand-600 font-medium` : ''"
             @click="switchLanguage(locale)"
           >
             <span
-              class="inline-flex h-4 w-7 items-center justify-center border border-paper-200 bg-paper-100 text-[9px] font-bold tracking-wide text-ink-700 uppercase"
+              class="border-paper-200 bg-paper-100 text-ink-700 inline-flex h-4 w-7 items-center justify-center border text-[9px] font-bold tracking-wide uppercase"
             >
               {{ localeLabel(locale) }}
             </span>
@@ -158,17 +152,11 @@ function logout() {
           class="flex h-(--topbar-height) cursor-pointer items-center gap-2.5 rounded-none ps-3 pe-3 text-white transition-colors outline-none hover:bg-white/[0.12]"
         >
           <div class="hidden flex-col items-end leading-tight md:flex">
-            <span class="text-[12px] font-semibold text-white">{{
-              page.props.auth.user.username
-            }}</span>
-            <span class="text-[10px] font-medium tracking-[0.08em] text-white/80 uppercase">{{
-              __('Admin')
-            }}</span>
+            <span class="text-[12px] font-semibold text-white">{{ page.props.auth.user.username }}</span>
+            <span class="text-[10px] font-medium tracking-[0.08em] text-white/80 uppercase">{{ __('Admin') }}</span>
           </div>
           <Avatar class="h-7 w-7 rounded-full">
-            <AvatarFallback
-              class="bg-paper-50 text-[11px] font-semibold tracking-wider text-brand-700 tabular-nums"
-            >
+            <AvatarFallback class="bg-paper-50 text-brand-700 text-[11px] font-semibold tracking-wider tabular-nums">
               {{ initials(page.props.auth.user.username) }}
             </AvatarFallback>
           </Avatar>
@@ -176,16 +164,13 @@ function logout() {
 
         <DropdownMenuContent align="end" class="w-60">
           <DropdownMenuLabel class="px-3 py-2.5 font-normal">
-            <p class="text-sm font-semibold text-ink-900">{{ page.props.auth.user.username }}</p>
-            <p class="mt-0.5 text-xs break-all text-ink-500 tabular-nums">
+            <p class="text-ink-900 text-sm font-semibold">{{ page.props.auth.user.username }}</p>
+            <p class="text-ink-500 mt-0.5 text-xs break-all tabular-nums">
               {{ page.props.auth.user.email }}
             </p>
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
-          <DropdownMenuItem
-            class="flex cursor-pointer items-center gap-2 text-sm"
-            @click="editProfile"
-          >
+          <DropdownMenuItem class="flex cursor-pointer items-center gap-2 text-sm" @click="editProfile">
             <UserCog class="h-3.5 w-3.5" />
             {{ __('Edit Profile') }}
           </DropdownMenuItem>

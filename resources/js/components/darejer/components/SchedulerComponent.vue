@@ -1,16 +1,16 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
-import FullCalendar from '@fullcalendar/vue3'
-import dayGridPlugin from '@fullcalendar/daygrid'
-import timeGridPlugin from '@fullcalendar/timegrid'
-import listPlugin from '@fullcalendar/list'
-import interactionPlugin from '@fullcalendar/interaction'
 import type { CalendarOptions, EventClickArg, DateSelectArg } from '@fullcalendar/core'
+import dayGridPlugin from '@fullcalendar/daygrid'
+import interactionPlugin from '@fullcalendar/interaction'
+import listPlugin from '@fullcalendar/list'
+import timeGridPlugin from '@fullcalendar/timegrid'
+import FullCalendar from '@fullcalendar/vue3'
 import { useHttp, router } from '@inertiajs/vue3'
-import { handleHttpException } from '@/lib/handleHttpException'
 import { Loader2 } from 'lucide-vue-next'
+import { ref, computed, onMounted } from 'vue'
 import FieldWrapper from '@/components/darejer/FieldWrapper.vue'
 import useTranslation from '@/composables/useTranslation'
+import { handleHttpException } from '@/lib/handleHttpException'
 import type { DarejerComponent } from '@/types/darejer'
 
 const { __ } = useTranslation()
@@ -36,13 +36,7 @@ const editDialog = computed(() => !!props.component.editDialog)
 const createDialog = computed(() => !!props.component.createDialog)
 
 const availableViews = computed(
-  () =>
-    (props.component.views as string[]) ?? [
-      'dayGridMonth',
-      'timeGridWeek',
-      'timeGridDay',
-      'listWeek',
-    ],
+  () => (props.component.views as string[]) ?? ['dayGridMonth', 'timeGridWeek', 'timeGridDay', 'listWeek'],
 )
 
 const events = ref<Record<string, unknown>[]>([])
@@ -60,9 +54,7 @@ function loadEvents() {
         title: String(row[titleField.value] ?? __('Untitled')),
         start: String(row[startField.value] ?? ''),
         end: row[endField.value] ? String(row[endField.value]) : undefined,
-        color: colorField.value
-          ? String(row[colorField.value] ?? defaultColor.value)
-          : defaultColor.value,
+        color: colorField.value ? String(row[colorField.value] ?? defaultColor.value) : defaultColor.value,
         extendedProps: row,
       }))
     },
@@ -153,14 +145,14 @@ const calendarOptions = computed(
       <!-- Loading -->
       <div
         v-if="http.processing"
-        class="flex items-center justify-center rounded-md border border-paper-200 bg-paper-50"
+        class="border-paper-200 bg-paper-50 flex items-center justify-center rounded-md border"
         :style="{ height: `${height}px` }"
       >
-        <Loader2 class="h-5 w-5 animate-spin text-ink-400" />
+        <Loader2 class="text-ink-400 h-5 w-5 animate-spin" />
       </div>
 
       <!-- Calendar -->
-      <div v-else class="overflow-hidden rounded-md border border-paper-200 bg-card">
+      <div v-else class="border-paper-200 bg-card overflow-hidden rounded-md border">
         <FullCalendar :options="calendarOptions" />
       </div>
     </template>

@@ -1,5 +1,5 @@
-import { computed } from 'vue'
 import { usePage } from '@inertiajs/vue3'
+import { computed } from 'vue'
 import type { DarejerSharedProps } from '@/types/darejer'
 
 /**
@@ -18,9 +18,7 @@ export function usePermissions() {
 
   const roles = computed((): string[] => user.value?.roles ?? [])
 
-  const isSuperAdmin = computed(
-    () => !!user.value?.isSuperAdmin || roles.value.includes('super-admin'),
-  )
+  const isSuperAdmin = computed(() => !!user.value?.isSuperAdmin || roles.value.includes('super-admin'))
 
   function can(permission: string): boolean {
     if (isSuperAdmin.value) return true

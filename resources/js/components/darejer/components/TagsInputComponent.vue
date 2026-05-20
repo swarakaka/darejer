@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
 import { X } from 'lucide-vue-next'
+import { ref, computed } from 'vue'
 import FieldWrapper from '@/components/darejer/FieldWrapper.vue'
 import useTranslation from '@/composables/useTranslation'
 import type { DarejerComponent } from '@/types/darejer'
@@ -16,8 +16,7 @@ const props = defineProps<{
 
 const emit = defineEmits<{ (e: 'update', name: string, value: unknown): void }>()
 
-const rawValue =
-  (props.formData ?? props.record)[props.component.name] ?? props.component.default ?? []
+const rawValue = (props.formData ?? props.record)[props.component.name] ?? props.component.default ?? []
 
 const tags = ref<string[]>(Array.isArray(rawValue) ? rawValue.map(String) : [])
 
@@ -32,9 +31,7 @@ const freeform = computed(() => props.component.freeform !== false)
 const maxTags = computed(() => props.component.max as number | undefined)
 
 const filtered = computed(() =>
-  suggestions.value.filter(
-    (s) => s.toLowerCase().includes(input.value.toLowerCase()) && !tags.value.includes(s),
-  ),
+  suggestions.value.filter((s) => s.toLowerCase().includes(input.value.toLowerCase()) && !tags.value.includes(s)),
 )
 
 function addTag(tag: string) {
@@ -80,7 +77,7 @@ const atMax = computed(() => (maxTags.value ? tags.value.length >= maxTags.value
       <div class="relative">
         <!-- Tag container -->
         <div
-          class="flex min-h-[2.125rem] cursor-text flex-wrap items-center gap-1 rounded border bg-card px-2 py-1 transition-colors duration-100 focus-within:border-brand-500 focus-within:ring-1 focus-within:ring-brand-500/20"
+          class="bg-card focus-within:border-brand-500 focus-within:ring-brand-500/20 flex min-h-[2.125rem] cursor-text flex-wrap items-center gap-1 rounded border px-2 py-1 transition-colors duration-100 focus-within:ring-1"
           :class="hasError ? 'border-danger-600' : 'border-slate-300'"
           @click="inputEl?.focus()"
         >
@@ -88,12 +85,12 @@ const atMax = computed(() => (maxTags.value ? tags.value.length >= maxTags.value
           <span
             v-for="(tag, i) in tags"
             :key="tag"
-            class="inline-flex h-5 items-center gap-1 rounded border border-brand-200 bg-brand-50 px-1.5 text-xs font-medium text-brand-700"
+            class="border-brand-200 bg-brand-50 text-brand-700 inline-flex h-5 items-center gap-1 rounded border px-1.5 text-xs font-medium"
           >
             {{ tag }}
             <button
               type="button"
-              class="text-brand-400 transition-colors hover:text-brand-700"
+              class="text-brand-400 hover:text-brand-700 transition-colors"
               :disabled="component.disabled as boolean"
               @click.stop="removeTag(i)"
             >
@@ -107,9 +104,7 @@ const atMax = computed(() => (maxTags.value ? tags.value.length >= maxTags.value
             ref="inputEl"
             v-model="input"
             type="text"
-            :placeholder="
-              tags.length === 0 ? ((component.placeholder as string) ?? __('Add tags…')) : ''
-            "
+            :placeholder="tags.length === 0 ? ((component.placeholder as string) ?? __('Add tags…')) : ''"
             :disabled="component.disabled as boolean"
             class="h-5 min-w-[8rem] flex-1 border-none bg-transparent text-sm outline-none placeholder:text-slate-400"
             @keydown="onKeydown"
@@ -121,7 +116,7 @@ const atMax = computed(() => (maxTags.value ? tags.value.length >= maxTags.value
         <!-- Suggestions dropdown -->
         <div
           v-if="showSuggest && filtered.length > 0"
-          class="absolute start-0 end-0 top-full z-50 mt-1 overflow-hidden rounded border border-slate-200 bg-card"
+          class="bg-card absolute start-0 end-0 top-full z-50 mt-1 overflow-hidden rounded border border-slate-200"
         >
           <button
             v-for="s in filtered.slice(0, 8)"

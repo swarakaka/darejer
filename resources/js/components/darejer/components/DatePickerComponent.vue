@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import { Calendar } from '@/components/ui/calendar'
-import { CalendarIcon, X } from 'lucide-vue-next'
-import FieldWrapper from '@/components/darejer/FieldWrapper.vue'
-import useTranslation from '@/composables/useTranslation'
-import type { DarejerComponent } from '@/types/darejer'
 import { CalendarDate, getLocalTimeZone, parseDate, type DateValue } from '@internationalized/date'
+import { CalendarIcon, X } from 'lucide-vue-next'
+import { ref, computed, watch } from 'vue'
+import FieldWrapper from '@/components/darejer/FieldWrapper.vue'
+import { Calendar } from '@/components/ui/calendar'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import useTranslation from '@/composables/useTranslation'
 import { formatPhpDate } from '@/lib/phpDate'
+import type { DarejerComponent } from '@/types/darejer'
 
 const { __ } = useTranslation()
 
@@ -108,11 +108,8 @@ function clear() {
           <button
             type="button"
             :disabled="component.disabled as boolean"
-            class="flex h-8 w-full items-center justify-between rounded-sm border bg-card px-2.5 text-start text-sm text-ink-900 transition-colors duration-100 focus:ring-0 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
-            :class="[
-              hasError ? 'border-danger-600' : 'border-paper-300',
-              open ? 'border-brand-500' : '',
-            ]"
+            class="bg-card text-ink-900 flex h-8 w-full items-center justify-between rounded-sm border px-2.5 text-start text-sm transition-colors duration-100 focus:ring-0 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+            :class="[hasError ? 'border-danger-600' : 'border-paper-300', open ? 'border-brand-500' : '']"
           >
             <span :class="selected ? 'text-ink-900' : 'text-ink-400'">
               {{ displayValue ?? placeholder }}
@@ -121,12 +118,12 @@ function clear() {
               <button
                 v-if="selected"
                 type="button"
-                class="text-ink-300 transition-colors hover:text-ink-500"
+                class="text-ink-300 hover:text-ink-500 transition-colors"
                 @click.stop="clear"
               >
                 <X class="h-3 w-3" />
               </button>
-              <CalendarIcon class="h-3.5 w-3.5 text-ink-400" />
+              <CalendarIcon class="text-ink-400 h-3.5 w-3.5" />
             </div>
           </button>
         </PopoverTrigger>

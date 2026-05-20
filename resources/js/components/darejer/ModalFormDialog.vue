@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { computed, ref, watch, shallowRef } from 'vue'
 import { router } from '@inertiajs/vue3'
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
-import DarejerComponent from '@/components/darejer/DarejerComponent.vue'
+import { computed, ref, watch, shallowRef } from 'vue'
 import DarejerActions from '@/components/darejer/DarejerActions.vue'
+import DarejerComponent from '@/components/darejer/DarejerComponent.vue'
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import useTranslation from '@/composables/useTranslation'
 import type { DarejerComponent as DarejerComponentType, DarejerAction } from '@/types/darejer'
 
@@ -42,16 +42,12 @@ const errors = ref<Record<string, string>>({})
 const processing = shallowRef(false)
 const isDirty = shallowRef(false)
 
-const saveAction = computed<DarejerAction | undefined>(() =>
-  props.form.actions.find((a) => a.type === 'Save'),
-)
+const saveAction = computed<DarejerAction | undefined>(() => props.form.actions.find((a) => a.type === 'Save'))
 
 // Drop Save/Cancel from the rendered footer toolbar — DarejerActions wires
 // them through onSave/onCancel, and we want the dialog buttons (not the
 // raw action buttons) to drive submit/close.
-const footerActions = computed<DarejerAction[]>(() =>
-  props.form.actions.filter((a) => a.type !== 'Delete'),
-)
+const footerActions = computed<DarejerAction[]>(() => props.form.actions.filter((a) => a.type !== 'Delete'))
 
 function buildInitial(): Record<string, unknown> {
   const data: Record<string, unknown> = {}
@@ -80,11 +76,7 @@ function updateField(name: string, value: unknown) {
 
 function submit() {
   const url = (saveAction.value?.url as string) ?? ''
-  const method = (saveAction.value?.method ?? 'POST').toLowerCase() as
-    | 'post'
-    | 'put'
-    | 'patch'
-    | 'delete'
+  const method = (saveAction.value?.method ?? 'POST').toLowerCase() as 'post' | 'put' | 'patch' | 'delete'
   if (!url) return
 
   processing.value = true
@@ -148,18 +140,14 @@ const dialogSizeClass: Record<string, string> = {
       class="flex max-h-[calc(100dvh-2rem)] w-[calc(100vw-2rem)] flex-col overflow-hidden rounded-md p-0 shadow-[0_24px_64px_-12px_rgba(0,0,0,0.25)]"
       :class="dialogSizeClass[modalSize ?? 'md'] ?? 'sm:max-w-lg'"
     >
-      <DialogHeader
-        class="relative shrink-0 border-b border-paper-200 bg-linear-to-b from-paper-75 to-card px-5 py-4"
-      >
-        <span
-          class="absolute inset-x-0 top-0 h-0.5 bg-linear-to-e from-brand-500 via-brand-400 to-transparent"
-        />
-        <DialogTitle class="text-[15px] font-semibold tracking-tight text-ink-900">
+      <DialogHeader class="border-paper-200 from-paper-75 to-card relative shrink-0 border-b bg-linear-to-b px-5 py-4">
+        <span class="bg-linear-to-e from-brand-500 via-brand-400 absolute inset-x-0 top-0 h-0.5 to-transparent" />
+        <DialogTitle class="text-ink-900 text-[15px] font-semibold tracking-tight">
           {{ __(form.title) }}
         </DialogTitle>
       </DialogHeader>
 
-      <div class="min-h-0 flex-1 overflow-y-auto bg-card px-5 py-5">
+      <div class="bg-card min-h-0 flex-1 overflow-y-auto px-5 py-5">
         <div class="grid w-full grid-cols-1 gap-x-5 gap-y-4 sm:grid-cols-2">
           <DarejerComponent
             v-for="component in form.components"
@@ -173,7 +161,7 @@ const dialogSizeClass: Record<string, string> = {
         </div>
       </div>
 
-      <div class="flex shrink-0 justify-end gap-2 border-t border-paper-200 bg-paper-75 px-5 py-3">
+      <div class="border-paper-200 bg-paper-75 flex shrink-0 justify-end gap-2 border-t px-5 py-3">
         <DarejerActions
           :actions="footerActions"
           placement="dialog"

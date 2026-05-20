@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import type { LabelProps } from 'reka-ui'
-import type { HTMLAttributes } from 'vue'
 import { reactiveOmit } from '@vueuse/core'
+import type { LabelProps } from 'reka-ui'
 import { Label } from 'reka-ui'
+import type { HTMLAttributes } from 'vue'
 import { cn } from '@/lib/utils'
 
 const props = defineProps<LabelProps & { class?: HTMLAttributes['class'] }>()
@@ -15,7 +15,7 @@ const delegatedProps = reactiveOmit(props, 'class')
     v-bind="delegatedProps"
     :class="
       cn(
-        `text-xs leading-none font-medium text-ink-500 peer-disabled:cursor-not-allowed peer-disabled:opacity-70`,
+        `text-ink-500 text-xs leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70`,
         props.class,
       )
     "

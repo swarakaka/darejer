@@ -1,22 +1,15 @@
 <script setup lang="ts">
-import { ref, computed, watch, onMounted } from 'vue'
 import { useHttp } from '@inertiajs/vue3'
-import { handleHttpException } from '@/lib/handleHttpException'
-import { useDataUrl } from '@/composables/useDataUrl'
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from '@/components/ui/command'
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import { Badge } from '@/components/ui/badge'
 import { Check, ChevronsUpDown, Plus, X, Loader2 } from 'lucide-vue-next'
-import FieldWrapper from '@/components/darejer/FieldWrapper.vue'
+import { ref, computed, watch, onMounted } from 'vue'
 import CreateInDialog from '@/components/darejer/CreateInDialog.vue'
+import FieldWrapper from '@/components/darejer/FieldWrapper.vue'
+import { Badge } from '@/components/ui/badge'
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import { useDataUrl } from '@/composables/useDataUrl'
 import useTranslation from '@/composables/useTranslation'
+import { handleHttpException } from '@/lib/handleHttpException'
 import type { DarejerComponent } from '@/types/darejer'
 
 const { __ } = useTranslation()
@@ -84,8 +77,7 @@ const derivedFilters = computed<Record<string, string>>(() => {
   return out
 })
 
-const rawValue =
-  (props.formData ?? props.record)[props.component.name] ?? props.component.default ?? null
+const rawValue = (props.formData ?? props.record)[props.component.name] ?? props.component.default ?? null
 
 const selected = ref<string[]>(
   Array.isArray(rawValue) ? rawValue.map(String) : rawValue != null ? [String(rawValue)] : [],
@@ -93,9 +85,7 @@ const selected = ref<string[]>(
 
 const isMultiple = computed(() => !!props.component.multiple)
 
-const staticOptions = computed(
-  () => (props.component.staticOptions as Option[] | undefined) ?? null,
-)
+const staticOptions = computed(() => (props.component.staticOptions as Option[] | undefined) ?? null)
 
 async function fetchOptions(reset = false): Promise<void> {
   // Static options: filter locally, no network.
@@ -214,11 +204,7 @@ function toggle(value: string) {
   const picked = options.value.find((o) => o.value === value)
   if (picked) labelMap.value[value] = picked.label
 
-  emit(
-    'update',
-    props.component.name,
-    isMultiple.value ? selected.value : (selected.value[0] ?? null),
-  )
+  emit('update', props.component.name, isMultiple.value ? selected.value : (selected.value[0] ?? null))
 
   maybePrefillFromUrl(selected.value[0] ?? null)
 }
@@ -330,9 +316,7 @@ async function onCreateDialogSaved(payload: { url: string | null; flash: unknown
   const flash = payload.flash as { created_id?: string | number } | null
   const flashId = flash?.created_id
   const candidate =
-    flashId != null
-      ? String(flashId)
-      : (extractIdFromUrl(payload.url) ?? options.value[0]?.value ?? null)
+    flashId != null ? String(flashId) : (extractIdFromUrl(payload.url) ?? options.value[0]?.value ?? null)
 
   if (candidate && !isSelected(candidate)) {
     toggle(candidate)
@@ -349,7 +333,7 @@ async function onCreateDialogSaved(payload: { url: string | null; flash: unknown
             <button
               type="button"
               :disabled="component.disabled as boolean"
-              class="flex h-8 w-full items-center justify-between rounded-sm border bg-input px-2.5 text-start text-sm text-ink-900 transition-colors duration-100 focus:ring-0 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+              class="bg-input text-ink-900 flex h-8 w-full items-center justify-between rounded-sm border px-2.5 text-start text-sm transition-colors duration-100 focus:ring-0 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
               :class="[
                 hasError ? 'border-danger-600' : `border-paper-300`,
                 open ? 'border-brand-500' : '',
@@ -375,15 +359,10 @@ async function onCreateDialogSaved(payload: { url: string | null; flash: unknown
                 >
                   {{ label }}
                 </Badge>
-                <span v-if="selected.length > 3" class="text-xs text-slate-400">
-                  +{{ selected.length - 3 }}
-                </span>
+                <span v-if="selected.length > 3" class="text-xs text-slate-400"> +{{ selected.length - 3 }} </span>
               </div>
 
-              <ChevronsUpDown
-                v-if="!canShowClear"
-                class="ms-1 h-3.5 w-3.5 shrink-0 text-slate-400"
-              />
+              <ChevronsUpDown v-if="!canShowClear" class="ms-1 h-3.5 w-3.5 shrink-0 text-slate-400" />
             </button>
           </PopoverTrigger>
 
@@ -394,7 +373,7 @@ async function onCreateDialogSaved(payload: { url: string | null; flash: unknown
             v-if="canShowClear"
             type="button"
             :aria-label="__('Clear')"
-            class="absolute end-2 top-1/2 -translate-y-1/2 rounded-sm p-0.5 text-ink-400 transition-colors hover:bg-paper-100 hover:text-ink-700 focus:outline-none"
+            class="text-ink-400 hover:bg-paper-100 hover:text-ink-700 absolute end-2 top-1/2 -translate-y-1/2 rounded-sm p-0.5 transition-colors focus:outline-none"
             @mousedown.stop.prevent
             @click.stop.prevent="clear"
           >
@@ -428,7 +407,7 @@ async function onCreateDialogSaved(payload: { url: string | null; flash: unknown
                   @select="toggle(option.value)"
                 >
                   <Check
-                    class="h-3.5 w-3.5 shrink-0 text-brand-600 transition-opacity"
+                    class="text-brand-600 h-3.5 w-3.5 shrink-0 transition-opacity"
                     :class="isSelected(option.value) ? `opacity-100` : `opacity-0`"
                   />
                   {{ option.label }}
@@ -449,7 +428,7 @@ async function onCreateDialogSaved(payload: { url: string | null; flash: unknown
             <button
               v-if="component.addable"
               type="button"
-              class="flex h-8 w-full shrink-0 cursor-pointer items-center gap-2 border-t border-(--border) bg-popover px-2.5 text-start text-sm font-medium text-brand-600 hover:bg-accent focus:outline-none"
+              class="bg-popover text-brand-600 hover:bg-accent flex h-8 w-full shrink-0 cursor-pointer items-center gap-2 border-t border-(--border) px-2.5 text-start text-sm font-medium focus:outline-none"
               @click="openAddDialog"
             >
               <Plus class="h-3.5 w-3.5" />

@@ -1,5 +1,5 @@
-import { ref } from 'vue'
 import { useHttp } from '@inertiajs/vue3'
+import { ref } from 'vue'
 import { handleHttpException } from '@/lib/handleHttpException'
 
 export interface DataUrlOptions {
@@ -40,10 +40,7 @@ export interface DataUrlResult<T = Record<string, unknown>> {
  * merges per-call overrides so callers can just re-call with the latest
  * reactive search / sort / filter / page values.
  */
-export function useDataUrl<T = Record<string, unknown>>(
-  dataUrl: string | undefined,
-  defaults: DataUrlOptions = {},
-) {
+export function useDataUrl<T = Record<string, unknown>>(dataUrl: string | undefined, defaults: DataUrlOptions = {}) {
   const http = useHttp<Record<string, never>, DataUrlResult<T> & Record<string, unknown>>()
 
   const result = ref<DataUrlResult<T>>({

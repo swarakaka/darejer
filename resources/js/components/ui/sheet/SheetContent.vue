@@ -1,17 +1,11 @@
 <script setup lang="ts">
-import type { DialogContentEmits, DialogContentProps } from 'reka-ui'
-import type { HTMLAttributes } from 'vue'
-import type { SheetVariants } from '.'
 import { reactiveOmit } from '@vueuse/core'
 import { X } from 'lucide-vue-next'
-import {
-  DialogClose,
-  DialogContent,
-  DialogOverlay,
-  DialogPortal,
-  useForwardPropsEmits,
-} from 'reka-ui'
+import type { DialogContentEmits, DialogContentProps } from 'reka-ui'
+import { DialogClose, DialogContent, DialogOverlay, DialogPortal, useForwardPropsEmits } from 'reka-ui'
+import type { HTMLAttributes } from 'vue'
 import { cn } from '@/lib/utils'
+import type { SheetVariants } from '.'
 import { sheetVariants } from '.'
 
 interface SheetContentProps extends DialogContentProps {
@@ -35,16 +29,13 @@ const forwarded = useForwardPropsEmits(delegatedProps, emits)
 <template>
   <DialogPortal>
     <DialogOverlay
-      class="fixed inset-0 z-50 bg-ink-900/55 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:animate-in data-[state=open]:fade-in-0"
+      class="bg-ink-900/55 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:animate-in data-[state=open]:fade-in-0 fixed inset-0 z-50"
     />
-    <DialogContent
-      :class="cn(sheetVariants({ side }), props.class)"
-      v-bind="{ ...forwarded, ...$attrs }"
-    >
+    <DialogContent :class="cn(sheetVariants({ side }), props.class)" v-bind="{ ...forwarded, ...$attrs }">
       <slot />
 
       <DialogClose
-        class="absolute end-3 top-3 inline-flex h-7 w-7 items-center justify-center rounded-[2px] text-ink-700 transition-colors hover:bg-paper-150 hover:text-ink-900 focus:outline-none focus-visible:outline-1 focus-visible:outline-brand-500 disabled:pointer-events-none"
+        class="text-ink-700 hover:bg-paper-150 hover:text-ink-900 focus-visible:outline-brand-500 absolute end-3 top-3 inline-flex h-7 w-7 items-center justify-center rounded-[2px] transition-colors focus:outline-none focus-visible:outline-1 disabled:pointer-events-none"
       >
         <X class="h-4 w-4" />
       </DialogClose>

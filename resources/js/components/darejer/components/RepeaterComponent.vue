@@ -1,9 +1,9 @@
 <script setup lang="ts">
+import { ChevronDown, ChevronRight, Plus, Trash2, GripVertical } from 'lucide-vue-next'
 import { ref, computed } from 'vue'
 import { VueDraggable } from 'vue-draggable-plus'
-import { ChevronDown, ChevronRight, Plus, Trash2, GripVertical } from 'lucide-vue-next'
-import FieldWrapper from '@/components/darejer/FieldWrapper.vue'
 import DarejerComponent from '@/components/darejer/DarejerComponent.vue'
+import FieldWrapper from '@/components/darejer/FieldWrapper.vue'
 import useTranslation from '@/composables/useTranslation'
 import type { DarejerComponent as DarejerComponentType } from '@/types/darejer'
 
@@ -20,9 +20,7 @@ const emit = defineEmits<{ (e: 'update', name: string, value: unknown): void }>(
 
 type ItemRow = Record<string, unknown> & { _id: number }
 
-const schema = computed(
-  (): DarejerComponentType[] => (props.component.schema as DarejerComponentType[]) ?? [],
-)
+const schema = computed((): DarejerComponentType[] => (props.component.schema as DarejerComponentType[]) ?? [])
 const isAddable = computed(() => props.component.addable !== false)
 const isDeletable = computed(() => props.component.deletable !== false)
 const isSortable = computed(() => !!props.component.sortable)
@@ -36,8 +34,7 @@ const defaultItem = computed(() => (props.component.defaultItem as Record<string
 
 let nextId = 0
 
-const rawValue =
-  (props.formData ?? props.record)[props.component.name] ?? props.component.default ?? []
+const rawValue = (props.formData ?? props.record)[props.component.name] ?? props.component.default ?? []
 
 function parseInitial(): ItemRow[] {
   const arr = Array.isArray(rawValue) ? (rawValue as Record<string, unknown>[]) : []
@@ -45,9 +42,7 @@ function parseInitial(): ItemRow[] {
 }
 
 const items = ref<ItemRow[]>(parseInitial())
-const collapsed = ref<Set<number>>(
-  startCollapsed.value ? new Set(items.value.map((i) => i._id)) : new Set(),
-)
+const collapsed = ref<Set<number>>(startCollapsed.value ? new Set(items.value.map((i) => i._id)) : new Set())
 
 function emitValue() {
   const cleaned = items.value.map(({ _id, ...rest }) => rest)
@@ -120,13 +115,7 @@ const atMin = computed(() => (minItems.value ? items.value.length <= minItems.va
 </script>
 
 <template>
-  <FieldWrapper
-    :component="component"
-    :record="record"
-    :errors="errors"
-    :form-data="formData"
-    class="col-span-full"
-  >
+  <FieldWrapper :component="component" :record="record" :errors="errors" :form-data="formData" class="col-span-full">
     <template #default>
       <div class="flex flex-col gap-2">
         <!-- Items — vue-draggable-plus uses a default slot with v-for,
@@ -143,33 +132,30 @@ const atMin = computed(() => (minItems.value ? items.value.length <= minItems.va
           <div
             v-for="(item, index) in items"
             :key="item._id"
-            class="overflow-hidden rounded-md border border-paper-200 bg-card"
+            class="border-paper-200 bg-card overflow-hidden rounded-md border"
           >
             <!-- Item header -->
             <div
-              class="flex cursor-pointer items-center gap-2 border-b border-paper-200 bg-paper-75 px-3 py-2 select-none"
+              class="border-paper-200 bg-paper-75 flex cursor-pointer items-center gap-2 border-b px-3 py-2 select-none"
               @click="toggleCollapse(item._id)"
             >
               <GripVertical
                 v-if="isSortable"
-                class="repeater-drag-handle h-3.5 w-3.5 shrink-0 cursor-grab text-ink-300 hover:text-ink-500"
+                class="repeater-drag-handle text-ink-300 hover:text-ink-500 h-3.5 w-3.5 shrink-0 cursor-grab"
                 @click.stop
               />
 
-              <ChevronDown
-                v-if="!collapsed.has(item._id)"
-                class="h-3.5 w-3.5 shrink-0 text-ink-400"
-              />
-              <ChevronRight v-else class="h-3.5 w-3.5 shrink-0 text-ink-400" />
+              <ChevronDown v-if="!collapsed.has(item._id)" class="text-ink-400 h-3.5 w-3.5 shrink-0" />
+              <ChevronRight v-else class="text-ink-400 h-3.5 w-3.5 shrink-0" />
 
-              <span class="flex-1 text-sm font-medium text-ink-700">
+              <span class="text-ink-700 flex-1 text-sm font-medium">
                 {{ headerLabel(item, index) }}
               </span>
 
               <button
                 v-if="isDeletable && !atMin"
                 type="button"
-                class="flex h-6 w-6 shrink-0 items-center justify-center rounded-sm text-ink-300 transition-colors hover:bg-danger-50 hover:text-danger-600"
+                class="text-ink-300 hover:bg-danger-50 hover:text-danger-600 flex h-6 w-6 shrink-0 items-center justify-center rounded-sm transition-colors"
                 @click.stop="removeItem(item._id)"
               >
                 <Trash2 class="h-3.5 w-3.5" />
@@ -196,7 +182,7 @@ const atMin = computed(() => (minItems.value ? items.value.length <= minItems.va
         <!-- Empty state -->
         <div
           v-if="items.length === 0"
-          class="flex items-center justify-center rounded-md border border-dashed border-paper-300 py-8 text-sm text-ink-400"
+          class="border-paper-300 text-ink-400 flex items-center justify-center rounded-md border border-dashed py-8 text-sm"
         >
           {{ __('No items yet. Click ":label" to add one.', { label: addLabel }) }}
         </div>
@@ -205,7 +191,7 @@ const atMin = computed(() => (minItems.value ? items.value.length <= minItems.va
         <button
           v-if="isAddable && !atMax"
           type="button"
-          class="flex h-8 items-center gap-1.5 self-start rounded-md border border-dashed border-brand-200 px-3 text-sm font-medium text-brand-600 transition-colors hover:border-brand-300 hover:bg-brand-50"
+          class="border-brand-200 text-brand-600 hover:border-brand-300 hover:bg-brand-50 flex h-8 items-center gap-1.5 self-start rounded-md border border-dashed px-3 text-sm font-medium transition-colors"
           @click="addItem"
         >
           <Plus class="h-3.5 w-3.5" />
@@ -213,7 +199,7 @@ const atMin = computed(() => (minItems.value ? items.value.length <= minItems.va
         </button>
 
         <!-- Max notice -->
-        <p v-if="atMax && maxItems" class="text-xs text-ink-400">
+        <p v-if="atMax && maxItems" class="text-ink-400 text-xs">
           {{ __('Maximum :max items reached.', { max: maxItems }) }}
         </p>
       </div>

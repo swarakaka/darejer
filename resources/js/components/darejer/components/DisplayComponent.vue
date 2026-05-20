@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { computed } from 'vue'
 import { Link } from '@inertiajs/vue3'
-import { Badge } from '@/components/ui/badge'
+import { computed } from 'vue'
 import FieldWrapper from '@/components/darejer/FieldWrapper.vue'
+import { Badge } from '@/components/ui/badge'
 import useTranslation from '@/composables/useTranslation'
 import type { DarejerComponent } from '@/types/darejer'
 
@@ -23,9 +23,7 @@ const { __, resolveTranslatable } = useTranslation()
 // `supplier_account.name` never resolve through it — useDarejerForm stores
 // them as a literal key with a null value. For dot paths fall back to the
 // nested record so eager-loaded relations render correctly.
-const source = computed(() =>
-  props.component.name.includes('.') ? props.record : (props.formData ?? props.record),
-)
+const source = computed(() => (props.component.name.includes('.') ? props.record : (props.formData ?? props.record)))
 
 // Translatable fields go through the shared resolver (locale → default →
 // first non-empty); non-translatable values pass straight through so that
@@ -39,13 +37,9 @@ const rawValue = computed<unknown>(() => {
   return props.component.translatable ? resolveTranslatable(v) : v
 })
 
-const displayType = computed<DisplayType>(
-  () => (props.component.displayType as DisplayType) ?? 'text',
-)
+const displayType = computed<DisplayType>(() => (props.component.displayType as DisplayType) ?? 'text')
 
-const isEmpty = computed(
-  () => rawValue.value === null || rawValue.value === undefined || rawValue.value === '',
-)
+const isEmpty = computed(() => rawValue.value === null || rawValue.value === undefined || rawValue.value === '')
 
 const emptyText = computed<string>(() => (props.component.emptyText as string | undefined) ?? '—')
 
@@ -79,9 +73,7 @@ function formatPhpDate(date: Date, format: string): string {
   return format.replace(/Y|y|m|n|d|j|H|G|h|g|i|s|a|A/g, (t) => tokens[t] ?? t)
 }
 
-const dateFormat = computed<string | null>(
-  () => (props.component.dateFormat as string | undefined) ?? null,
-)
+const dateFormat = computed<string | null>(() => (props.component.dateFormat as string | undefined) ?? null)
 
 const dateFormatted = computed(() => {
   if (isEmpty.value) return ''
@@ -113,8 +105,7 @@ function resolvePath(obj: Record<string, unknown>, path: string): unknown {
   return path
     .split('.')
     .reduce<unknown>(
-      (acc, key) =>
-        acc && typeof acc === 'object' ? (acc as Record<string, unknown>)[key] : undefined,
+      (acc, key) => (acc && typeof acc === 'object' ? (acc as Record<string, unknown>)[key] : undefined),
       obj,
     )
 }
@@ -225,9 +216,7 @@ const linkTag = computed<typeof Link | 'a' | 'span'>(() => {
 const linkAttrs = computed<Partial<Record<'href' | 'target' | 'rel', string>>>(() => {
   if (!props.component.url) return {}
   const href = String(props.component.url)
-  return props.component.external
-    ? { href, target: '_blank', rel: 'noopener noreferrer' }
-    : { href }
+  return props.component.external ? { href, target: '_blank', rel: 'noopener noreferrer' } : { href }
 })
 
 const linkClass = computed<string | undefined>(() =>
@@ -237,7 +226,7 @@ const linkClass = computed<string | undefined>(() =>
 
 <template>
   <FieldWrapper :component="component" :record="record" :errors="errors" :form-data="formData">
-    <div class="flex min-h-9 items-center text-sm text-ink-800">
+    <div class="text-ink-800 flex min-h-9 items-center text-sm">
       <!-- Empty -->
       <span v-if="isEmpty && displayType !== 'boolean'" class="text-ink-400">
         {{ emptyText }}
@@ -288,9 +277,9 @@ const linkClass = computed<string | undefined>(() =>
         v-bind="linkAttrs"
         :class="['tabular-nums', linkClass]"
       >
-        <span v-if="component.prefix" class="me-1 text-ink-500">{{ component.prefix }}</span>
+        <span v-if="component.prefix" class="text-ink-500 me-1">{{ component.prefix }}</span>
         {{ numberFormatted }}
-        <span v-if="component.suffix" class="ms-1 text-ink-500">{{ component.suffix }}</span>
+        <span v-if="component.suffix" class="text-ink-500 ms-1">{{ component.suffix }}</span>
       </component>
 
       <!-- Money -->
@@ -300,17 +289,17 @@ const linkClass = computed<string | undefined>(() =>
         v-bind="linkAttrs"
         :class="['tabular-nums', linkClass]"
       >
-        <span v-if="component.prefix" class="me-1 text-ink-500">{{ component.prefix }}</span>
+        <span v-if="component.prefix" class="text-ink-500 me-1">{{ component.prefix }}</span>
         {{ numberFormatted }}
-        <span v-if="moneyCurrencyCode" class="ms-1 text-ink-500">{{ moneyCurrencyCode }}</span>
-        <span v-else-if="component.suffix" class="ms-1 text-ink-500">{{ component.suffix }}</span>
+        <span v-if="moneyCurrencyCode" class="text-ink-500 ms-1">{{ moneyCurrencyCode }}</span>
+        <span v-else-if="component.suffix" class="text-ink-500 ms-1">{{ component.suffix }}</span>
       </component>
 
       <!-- Plain text (default) -->
       <component :is="linkTag" v-else v-bind="linkAttrs" :class="linkClass">
-        <span v-if="component.prefix" class="me-1 text-ink-500">{{ component.prefix }}</span>
+        <span v-if="component.prefix" class="text-ink-500 me-1">{{ component.prefix }}</span>
         {{ rawValue }}
-        <span v-if="component.suffix" class="ms-1 text-ink-500">{{ component.suffix }}</span>
+        <span v-if="component.suffix" class="text-ink-500 ms-1">{{ component.suffix }}</span>
       </component>
     </div>
   </FieldWrapper>

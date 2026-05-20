@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
 import { Plus, Trash2, GripVertical } from 'lucide-vue-next'
+import { ref, computed, watch } from 'vue'
 import { VueDraggable } from 'vue-draggable-plus'
-import FieldWrapper from '@/components/darejer/FieldWrapper.vue'
 import EditableTableComboboxCell from '@/components/darejer/components/EditableTableComboboxCell.vue'
 import EditableTableDateCell from '@/components/darejer/components/EditableTableDateCell.vue'
+import FieldWrapper from '@/components/darejer/FieldWrapper.vue'
 import useTranslation from '@/composables/useTranslation'
 import type { DarejerComponent } from '@/types/darejer'
 
@@ -107,15 +107,10 @@ const computedColumns = computed((): CompiledCompute[] => {
     const tokens = col.compute.match(/\b[a-zA-Z_][a-zA-Z0-9_]*\b/g) ?? []
     const deps = Array.from(new Set(tokens.filter((t) => fieldSet.has(t))))
     try {
-      const fn = new Function(...deps, `"use strict"; return (${col.compute});`) as (
-        ...args: number[]
-      ) => unknown
+      const fn = new Function(...deps, `"use strict"; return (${col.compute});`) as (...args: number[]) => unknown
       return [{ field: col.field, deps, fn }]
     } catch (e) {
-      console.error(
-        `[EditableTable] failed to compile compute expression for "${col.field}": ${col.compute}`,
-        e,
-      )
+      console.error(`[EditableTable] failed to compile compute expression for "${col.field}": ${col.compute}`, e)
       return []
     }
   })
@@ -133,8 +128,7 @@ function applyComputed(row: TableRow): void {
     } catch {
       result = ''
     }
-    row[c.field] =
-      typeof result === 'number' && Number.isFinite(result) ? result : (result ?? '')
+    row[c.field] = typeof result === 'number' && Number.isFinite(result) ? result : (result ?? '')
   }
 }
 
@@ -290,11 +284,7 @@ watch(
 )
 
 const gridTemplate = computed(() =>
-  [
-    isSortable.value ? '2rem' : '',
-    ...columns.value.map((c) => c.width ?? '1fr'),
-    isDeletable.value ? '2.5rem' : '',
-  ]
+  [isSortable.value ? '2rem' : '', ...columns.value.map((c) => c.width ?? '1fr'), isDeletable.value ? '2.5rem' : '']
     .filter(Boolean)
     .join(' '),
 )
@@ -346,9 +336,7 @@ function compileFooterRowExpression(
   const tokens = trimmed.match(/\b[a-zA-Z_][a-zA-Z0-9_]*\b/g) ?? []
   const deps = Array.from(new Set(tokens.filter((t) => fieldSet.has(t))))
   try {
-    const fn = new Function(...deps, `"use strict"; return (${trimmed});`) as (
-      ...args: number[]
-    ) => unknown
+    const fn = new Function(...deps, `"use strict"; return (${trimmed});`) as (...args: number[]) => unknown
     return (row) => {
       const args = deps.map((f) => numericRowValue(row, f))
       const result = fn(...args)
@@ -370,9 +358,7 @@ function aggregate(kind: Aggregator, values: number[]): number {
   return Math.max(...values)
 }
 
-const aggregableRows = computed<Record<string, unknown>[]>(() =>
-  rows.value.filter((r) => !isRowBlank(r)),
-)
+const aggregableRows = computed<Record<string, unknown>[]>(() => rows.value.filter((r) => !isRowBlank(r)))
 
 function evaluateFooter(col: TableCol): number | null {
   const raw = col.footer
@@ -396,9 +382,7 @@ function evaluateFooter(col: TableCol): number | null {
 
   try {
     const tokens = replacements.map((r) => r.token)
-    const fn = new Function(...tokens, `"use strict"; return (${placeholderForm});`) as (
-      ...args: number[]
-    ) => unknown
+    const fn = new Function(...tokens, `"use strict"; return (${placeholderForm});`) as (...args: number[]) => unknown
     const result = fn(...replacements.map((r) => r.value))
     const n = typeof result === 'number' ? result : Number(result)
     return Number.isFinite(n) ? n : null
@@ -423,28 +407,19 @@ function renderFooter(col: TableCol): string {
 </script>
 
 <template>
-  <FieldWrapper
-    :component="component"
-    :record="record"
-    :errors="errors"
-    :form-data="formData"
-    class="col-span-full"
-  >
+  <FieldWrapper :component="component" :record="record" :errors="errors" :form-data="formData" class="col-span-full">
     <template #default="{ hasError }">
       <div
-        class="overflow-hidden rounded-md border bg-card"
+        class="bg-card overflow-hidden rounded-md border"
         :class="hasError ? 'border-danger-600' : 'border-paper-200'"
       >
         <!-- Header -->
-        <div
-          class="grid border-b border-paper-200 bg-paper-75"
-          :style="{ gridTemplateColumns: gridTemplate }"
-        >
+        <div class="border-paper-200 bg-paper-75 grid border-b" :style="{ gridTemplateColumns: gridTemplate }">
           <div v-if="isSortable" class="h-8" />
           <div
             v-for="col in columns"
             :key="col.field"
-            class="flex h-8 items-center border-e border-paper-200 px-2.5 text-[10px] font-semibold tracking-[0.08em] text-ink-400 uppercase last:border-e-0"
+            class="border-paper-200 text-ink-400 flex h-8 items-center border-e px-2.5 text-[10px] font-semibold tracking-[0.08em] uppercase last:border-e-0"
           >
             {{ col.label }}
           </div>
@@ -464,27 +439,24 @@ function renderFooter(col: TableCol): string {
           <div
             v-for="row in rows"
             :key="row._id"
-            class="grid border-b border-paper-100 last:border-b-0 hover:bg-paper-50"
+            class="border-paper-100 hover:bg-paper-50 grid border-b last:border-b-0"
             :style="{ gridTemplateColumns: gridTemplate }"
           >
-            <div
-              v-if="isSortable"
-              class="drag-handle flex h-8 cursor-grab items-center justify-center"
-            >
-              <GripVertical class="h-3.5 w-3.5 text-ink-300" />
+            <div v-if="isSortable" class="drag-handle flex h-8 cursor-grab items-center justify-center">
+              <GripVertical class="text-ink-300 h-3.5 w-3.5" />
             </div>
 
             <div
               v-for="col in columns"
               :key="col.field"
-              class="flex h-8 items-center border-e border-paper-100 last:border-e-0"
+              class="border-paper-100 flex h-8 items-center border-e last:border-e-0"
             >
               <input
                 v-if="col.type === 'text' || col.type === 'number'"
                 :type="col.type === 'number' ? 'number' : 'text'"
                 :value="formatCellValue(row[col.field], col)"
                 :disabled="isDisabled || col.disabled"
-                class="h-full w-full border-none bg-transparent px-2.5 text-sm transition-colors duration-100 outline-none focus:bg-brand-50 focus:ring-0 disabled:cursor-not-allowed disabled:opacity-50"
+                class="focus:bg-brand-50 h-full w-full border-none bg-transparent px-2.5 text-sm transition-colors duration-100 outline-none focus:ring-0 disabled:cursor-not-allowed disabled:opacity-50"
                 @input="onCellInput(row, col.field, $event)"
               />
 
@@ -494,7 +466,7 @@ function renderFooter(col: TableCol): string {
                 inputmode="decimal"
                 :value="formatCellValue(row[col.field], col)"
                 :disabled="isDisabled || col.disabled"
-                class="h-full w-full border-none bg-transparent px-2.5 text-right text-sm transition-colors duration-100 outline-none focus:bg-brand-50 focus:ring-0 disabled:cursor-not-allowed disabled:opacity-50"
+                class="focus:bg-brand-50 h-full w-full border-none bg-transparent px-2.5 text-right text-sm transition-colors duration-100 outline-none focus:ring-0 disabled:cursor-not-allowed disabled:opacity-50"
                 @input="onMoneyInput(row, col.field, $event)"
               />
 
@@ -522,7 +494,7 @@ function renderFooter(col: TableCol): string {
                 v-else-if="col.type === 'select'"
                 :value="String(row[col.field] ?? '')"
                 :disabled="isDisabled || col.disabled"
-                class="h-full w-full cursor-pointer border-none bg-transparent px-2.5 text-sm outline-none focus:bg-brand-50 disabled:cursor-not-allowed disabled:opacity-50"
+                class="focus:bg-brand-50 h-full w-full cursor-pointer border-none bg-transparent px-2.5 text-sm outline-none disabled:cursor-not-allowed disabled:opacity-50"
                 @change="onCellChange(row, col.field, $event)"
               >
                 <option value="">—</option>
@@ -531,15 +503,12 @@ function renderFooter(col: TableCol): string {
                 </option>
               </select>
 
-              <div
-                v-else-if="col.type === 'checkbox'"
-                class="flex h-full w-full items-center justify-center"
-              >
+              <div v-else-if="col.type === 'checkbox'" class="flex h-full w-full items-center justify-center">
                 <input
                   type="checkbox"
                   :checked="!!row[col.field]"
                   :disabled="isDisabled || col.disabled"
-                  class="h-4 w-4 cursor-pointer accent-brand-600 disabled:cursor-not-allowed disabled:opacity-50"
+                  class="accent-brand-600 h-4 w-4 cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
                   @change="onCheckChange(row, col.field, $event)"
                 />
               </div>
@@ -549,7 +518,7 @@ function renderFooter(col: TableCol): string {
               <button
                 type="button"
                 :disabled="isDisabled"
-                class="flex h-7 w-7 items-center justify-center rounded-sm text-ink-300 transition-colors duration-100 hover:bg-danger-50 hover:text-danger-600 disabled:opacity-40"
+                class="text-ink-300 hover:bg-danger-50 hover:text-danger-600 flex h-7 w-7 items-center justify-center rounded-sm transition-colors duration-100 disabled:opacity-40"
                 @click="deleteRow(row._id)"
               >
                 <Trash2 class="h-3.5 w-3.5" />
@@ -561,19 +530,15 @@ function renderFooter(col: TableCol): string {
         <!-- Footer -->
         <div
           v-if="hasFooter && aggregableRows.length > 0"
-          class="grid border-t border-paper-200 bg-paper-75"
+          class="border-paper-200 bg-paper-75 grid border-t"
           :style="{ gridTemplateColumns: gridTemplate }"
         >
           <div v-if="isSortable" class="h-9" />
           <div
             v-for="col in columns"
             :key="col.field"
-            class="flex h-9 items-center border-e border-paper-200 px-2.5 text-sm font-semibold tabular-nums text-ink-800 last:border-e-0"
-            :class="
-              col.footer && (col.type === 'money' || col.type === 'number')
-                ? 'justify-end'
-                : 'justify-start'
-            "
+            class="border-paper-200 text-ink-800 flex h-9 items-center border-e px-2.5 text-sm font-semibold tabular-nums last:border-e-0"
+            :class="col.footer && (col.type === 'money' || col.type === 'number') ? 'justify-end' : 'justify-start'"
           >
             {{ renderFooter(col) }}
           </div>
@@ -583,18 +548,18 @@ function renderFooter(col: TableCol): string {
         <!-- Add row -->
         <div
           v-if="isAddable && !isDisabled"
-          class="flex items-center border-t border-paper-100 bg-paper-75 px-2.5 py-1.5"
+          class="border-paper-100 bg-paper-75 flex items-center border-t px-2.5 py-1.5"
         >
           <button
             type="button"
             :disabled="!!(maxRows && rows.length >= maxRows)"
-            class="flex items-center gap-1.5 text-xs font-medium text-brand-600 transition-colors hover:text-brand-700 disabled:cursor-not-allowed disabled:opacity-40"
+            class="text-brand-600 hover:text-brand-700 flex items-center gap-1.5 text-xs font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-40"
             @click="addRow"
           >
             <Plus class="h-3 w-3" />
             {{ __('Add row') }}
           </button>
-          <span v-if="maxRows" class="ms-auto text-xs text-ink-400 tabular-nums">
+          <span v-if="maxRows" class="text-ink-400 ms-auto text-xs tabular-nums">
             {{ rows.length }}/{{ maxRows }}
           </span>
         </div>

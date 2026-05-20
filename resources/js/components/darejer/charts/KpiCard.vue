@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { computed } from 'vue'
 import { Link } from '@inertiajs/vue3'
 import { ArrowUpRight, ArrowDownRight, Minus } from 'lucide-vue-next'
+import { computed } from 'vue'
 import useTranslation from '@/composables/useTranslation'
 
 interface Props {
@@ -32,9 +32,7 @@ const localizedEyebrow = computed(() => (props.eyebrow ? resolveTranslatable(pro
 const formatted = computed(() => {
   const v = props.value
   if (props.format === 'count') {
-    return typeof v === 'number'
-      ? v.toLocaleString()
-      : (parseInt(String(v), 10) || 0).toLocaleString()
+    return typeof v === 'number' ? v.toLocaleString() : (parseInt(String(v), 10) || 0).toLocaleString()
   }
   if (props.format === 'amount') {
     const n = typeof v === 'number' ? v : parseFloat(String(v))
@@ -92,7 +90,7 @@ const railColor = computed(() => {
   <component
     :is="href ? Link : 'div'"
     :href="href ?? undefined"
-    class="group relative isolate flex flex-col overflow-hidden rounded-md border border-paper-200 bg-card no-underline shadow-[0_1px_0_rgba(0,0,0,0.02)] transition-all duration-150 hover:border-paper-300 hover:shadow-[0_4px_12px_-4px_rgba(0,0,0,0.08),0_1px_0_rgba(0,0,0,0.02)]"
+    class="group border-paper-200 bg-card hover:border-paper-300 relative isolate flex flex-col overflow-hidden rounded-md border no-underline shadow-[0_1px_0_rgba(0,0,0,0.02)] transition-all duration-150 hover:shadow-[0_4px_12px_-4px_rgba(0,0,0,0.08),0_1px_0_rgba(0,0,0,0.02)]"
   >
     <!-- Top accent rail — bleeds in on hover -->
     <span
@@ -102,10 +100,10 @@ const railColor = computed(() => {
 
     <!-- Background sheen — radial gradient that fades on hover -->
     <div
-      class="absolute inset-0 -z-10 bg-linear-to-be from-card via-card to-paper-75/60 opacity-100 transition-opacity duration-200 group-hover:opacity-0"
+      class="bg-linear-to-be from-card via-card to-paper-75/60 absolute inset-0 -z-10 opacity-100 transition-opacity duration-200 group-hover:opacity-0"
     />
     <div
-      class="absolute inset-0 -z-10 bg-linear-to-be from-card via-brand-50/30 to-paper-75/40 opacity-0 transition-opacity duration-200 group-hover:opacity-100"
+      class="bg-linear-to-be from-card via-brand-50/30 to-paper-75/40 absolute inset-0 -z-10 opacity-0 transition-opacity duration-200 group-hover:opacity-100"
     />
 
     <div class="flex flex-col gap-3 p-4">
@@ -114,13 +112,11 @@ const railColor = computed(() => {
         <div class="flex min-w-0 flex-col gap-1">
           <div
             v-if="localizedEyebrow"
-            class="truncate text-[9px] font-bold tracking-[0.18em] text-brand-700 uppercase tabular-nums"
+            class="text-brand-700 truncate text-[9px] font-bold tracking-[0.18em] uppercase tabular-nums"
           >
             {{ localizedEyebrow }}
           </div>
-          <div
-            class="truncate text-[10.5px] font-semibold tracking-[0.12em] text-ink-500 uppercase"
-          >
+          <div class="text-ink-500 truncate text-[10.5px] font-semibold tracking-[0.12em] uppercase">
             {{ localizedLabel }}
           </div>
         </div>
@@ -136,16 +132,14 @@ const railColor = computed(() => {
 
       <!-- Value -->
       <div
-        class="text-[26px] leading-none font-semibold tracking-tight text-ink-900 tabular-nums transition-colors duration-150 group-hover:text-brand-700"
+        class="text-ink-900 group-hover:text-brand-700 text-[26px] leading-none font-semibold tracking-tight tabular-nums transition-colors duration-150"
       >
         {{ formatted }}
       </div>
     </div>
 
     <!-- Footer rail — adds visual weight at the base -->
-    <div
-      class="mt-auto h-[3px] bg-paper-100 transition-colors duration-150 group-hover:bg-paper-150"
-    >
+    <div class="bg-paper-100 group-hover:bg-paper-150 mt-auto h-[3px] transition-colors duration-150">
       <span
         class="block h-full origin-left scale-x-0 transition-transform duration-300 ease-out group-hover:scale-x-100"
         :class="railColor"

@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import { useHttp } from '@inertiajs/vue3'
 import { Loader2 } from 'lucide-vue-next'
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import FieldWrapper from '@/components/darejer/FieldWrapper.vue'
 import useTranslation from '@/composables/useTranslation'
-import type { DarejerComponent } from '@/types/darejer'
 import { handleHttpException } from '@/lib/handleHttpException'
+import type { DarejerComponent } from '@/types/darejer'
 
 const { __ } = useTranslation()
 
@@ -57,9 +57,7 @@ function configureGantt() {
       width: 90,
       template: (task: Record<string, unknown>) => {
         const val = task[startField.value] ?? task.start_date
-        return val
-          ? new Date(String(val)).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
-          : ''
+        return val ? new Date(String(val)).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : ''
       },
     },
     {
@@ -160,10 +158,10 @@ onBeforeUnmount(() => {
       <!-- Loading -->
       <div
         v-if="http.processing"
-        class="flex items-center justify-center rounded-md border border-paper-200 bg-paper-50"
+        class="border-paper-200 bg-paper-50 flex items-center justify-center rounded-md border"
         :style="{ height: `${height}px` }"
       >
-        <Loader2 class="h-5 w-5 animate-spin text-ink-400" />
+        <Loader2 class="text-ink-400 h-5 w-5 animate-spin" />
       </div>
 
       <!-- Gantt container -->

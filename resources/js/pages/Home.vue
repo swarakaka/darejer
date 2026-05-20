@@ -1,7 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue'
 import { usePage, Link } from '@inertiajs/vue3'
-import HomeLayout from '@/layouts/HomeLayout.vue'
 import {
   Archive,
   BarChart2,
@@ -36,7 +34,9 @@ import {
   Users,
   Wrench,
 } from 'lucide-vue-next'
+import { computed } from 'vue'
 import useTranslation from '@/composables/useTranslation'
+import HomeLayout from '@/layouts/HomeLayout.vue'
 import type { DarejerSharedProps, NavItem } from '@/types/darejer'
 
 defineOptions({ layout: HomeLayout })
@@ -102,10 +102,7 @@ function tileHref(item: NavItem): string {
 <template>
   <div class="flex h-full flex-col overflow-y-auto">
     <div class="mx-auto w-full max-w-3xl px-6 py-10">
-      <div
-        v-if="tiles.length"
-        class="grid grid-cols-2 gap-x-6 gap-y-8 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5"
-      >
+      <div v-if="tiles.length" class="grid grid-cols-2 gap-x-6 gap-y-8 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
         <Link
           v-for="item in tiles"
           :key="item.label"
@@ -113,12 +110,12 @@ function tileHref(item: NavItem): string {
           class="group flex flex-col items-center gap-2 text-center no-underline outline-none"
         >
           <span
-            class="inline-flex h-14 w-14 items-center justify-center rounded-md bg-brand-500 text-white shadow-[0_1px_2px_rgba(0,0,0,0.08)] ring-1 ring-brand-600/30 ring-inset transition-all duration-150 group-hover:-translate-y-0.5 group-hover:bg-brand-600 group-hover:shadow-[0_6px_14px_-6px_rgba(0,120,212,0.55)]"
+            class="bg-brand-500 ring-brand-600/30 group-hover:bg-brand-600 inline-flex h-14 w-14 items-center justify-center rounded-md text-white shadow-[0_1px_2px_rgba(0,0,0,0.08)] ring-1 transition-all duration-150 ring-inset group-hover:-translate-y-0.5 group-hover:shadow-[0_6px_14px_-6px_rgba(0,120,212,0.55)]"
           >
             <component :is="getIcon(item.icon)" class="h-6 w-6" />
           </span>
           <span
-            class="text-[13px] font-semibold tracking-tight text-ink-900 transition-colors group-hover:text-brand-700"
+            class="text-ink-900 group-hover:text-brand-700 text-[13px] font-semibold tracking-tight transition-colors"
           >
             {{ item.label }}
           </span>
@@ -130,17 +127,17 @@ function tileHref(item: NavItem): string {
            list for the admin role. -->
       <div
         v-else
-        class="flex flex-col items-center justify-center gap-3 rounded-md border border-dashed border-paper-300 bg-card px-6 py-20 text-center"
+        class="border-paper-300 bg-card flex flex-col items-center justify-center gap-3 rounded-md border border-dashed px-6 py-20 text-center"
       >
         <span
-          class="inline-flex h-12 w-12 items-center justify-center rounded-md bg-paper-100 text-ink-400 ring-1 ring-paper-200"
+          class="bg-paper-100 text-ink-400 ring-paper-200 inline-flex h-12 w-12 items-center justify-center rounded-md ring-1"
         >
           <LayoutDashboard class="h-5 w-5" />
         </span>
-        <p class="text-[13px] font-semibold text-ink-700">
+        <p class="text-ink-700 text-[13px] font-semibold">
           {{ __('Nothing to show here yet') }}
         </p>
-        <p class="max-w-sm text-[12px] text-ink-500">
+        <p class="text-ink-500 max-w-sm text-[12px]">
           {{ __('Ask an administrator to grant you access to a module.') }}
         </p>
       </div>

@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
 import { Download, ZoomIn, ZoomOut, RotateCw, Maximize2, FileText } from 'lucide-vue-next'
+import { ref, computed } from 'vue'
 import FieldWrapper from '@/components/darejer/FieldWrapper.vue'
 import useTranslation from '@/composables/useTranslation'
 import type { DarejerComponent } from '@/types/darejer'
@@ -83,7 +83,7 @@ const iframeSrc = computed(() => {
       <!-- No PDF -->
       <div
         v-if="!pdfSrc"
-        class="flex flex-col items-center justify-center gap-2 rounded-md border border-dashed border-paper-300 bg-paper-50 text-ink-400"
+        class="border-paper-300 bg-paper-50 text-ink-400 flex flex-col items-center justify-center gap-2 rounded-md border border-dashed"
         :style="{ height: height }"
       >
         <FileText class="h-8 w-8" />
@@ -91,16 +91,12 @@ const iframeSrc = computed(() => {
       </div>
 
       <!-- PDF viewer -->
-      <div
-        v-else
-        ref="containerEl"
-        class="flex flex-col overflow-hidden rounded-md border border-paper-200 bg-card"
-      >
+      <div v-else ref="containerEl" class="border-paper-200 bg-card flex flex-col overflow-hidden rounded-md border">
         <!-- Toolbar -->
-        <div class="flex items-center gap-1 border-b border-paper-200 bg-paper-75 px-3 py-1.5">
+        <div class="border-paper-200 bg-paper-75 flex items-center gap-1 border-b px-3 py-1.5">
           <button
             type="button"
-            class="flex h-7 w-7 items-center justify-center rounded-sm text-ink-500 transition-colors hover:bg-paper-200 disabled:opacity-40"
+            class="text-ink-500 hover:bg-paper-200 flex h-7 w-7 items-center justify-center rounded-sm transition-colors disabled:opacity-40"
             :disabled="zoom <= minZoom"
             :title="__('Zoom out')"
             @click="zoomOut"
@@ -108,13 +104,11 @@ const iframeSrc = computed(() => {
             <ZoomOut class="h-3.5 w-3.5" />
           </button>
 
-          <span class="w-10 text-center font-mono text-xs text-ink-500 tabular-nums select-none">
-            {{ zoom }}%
-          </span>
+          <span class="text-ink-500 w-10 text-center font-mono text-xs tabular-nums select-none"> {{ zoom }}% </span>
 
           <button
             type="button"
-            class="flex h-7 w-7 items-center justify-center rounded-sm text-ink-500 transition-colors hover:bg-paper-200 disabled:opacity-40"
+            class="text-ink-500 hover:bg-paper-200 flex h-7 w-7 items-center justify-center rounded-sm transition-colors disabled:opacity-40"
             :disabled="zoom >= maxZoom"
             :title="__('Zoom in')"
             @click="zoomIn"
@@ -124,18 +118,18 @@ const iframeSrc = computed(() => {
 
           <button
             type="button"
-            class="flex h-7 w-7 items-center justify-center rounded-sm text-xs text-ink-500 transition-colors hover:bg-paper-200"
+            class="text-ink-500 hover:bg-paper-200 flex h-7 w-7 items-center justify-center rounded-sm text-xs transition-colors"
             :title="__('Reset zoom')"
             @click="resetZoom"
           >
             <RotateCw class="h-3 w-3" />
           </button>
 
-          <div class="mx-1 h-4 w-px bg-paper-300" />
+          <div class="bg-paper-300 mx-1 h-4 w-px" />
 
           <button
             type="button"
-            class="flex h-7 w-7 items-center justify-center rounded-sm text-ink-500 transition-colors hover:bg-paper-200"
+            class="text-ink-500 hover:bg-paper-200 flex h-7 w-7 items-center justify-center rounded-sm transition-colors"
             :title="__('Fullscreen')"
             @click="toggleFullscreen"
           >
@@ -145,7 +139,7 @@ const iframeSrc = computed(() => {
           <button
             v-if="canDownload"
             type="button"
-            class="ms-auto flex h-7 items-center gap-1.5 rounded-sm px-2.5 text-xs font-medium text-brand-600 transition-colors hover:bg-brand-50"
+            class="text-brand-600 hover:bg-brand-50 ms-auto flex h-7 items-center gap-1.5 rounded-sm px-2.5 text-xs font-medium transition-colors"
             @click="download"
           >
             <Download class="h-3.5 w-3.5" />
@@ -154,7 +148,7 @@ const iframeSrc = computed(() => {
         </div>
 
         <!-- PDF iframe -->
-        <div class="overflow-auto bg-paper-100" :style="{ height: height }">
+        <div class="bg-paper-100 overflow-auto" :style="{ height: height }">
           <div
             class="origin-top-left transition-transform duration-150"
             :style="{

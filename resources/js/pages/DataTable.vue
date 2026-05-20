@@ -1,9 +1,6 @@
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
 import { Head, router, usePage } from '@inertiajs/vue3'
-import AppLayout from '@/layouts/AppLayout.vue'
-import AppBreadcrumbs from '@/components/darejer/AppBreadcrumbs.vue'
-import DarejerActions from '@/components/darejer/DarejerActions.vue'
+import { CalendarDate, DateFormatter, getLocalTimeZone, parseDate } from '@internationalized/date'
 import {
   ChevronUp,
   ChevronDown,
@@ -23,13 +20,11 @@ import {
   CheckCircle2,
   CalendarIcon,
 } from 'lucide-vue-next'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
+import { ref, computed, watch } from 'vue'
+import AppBreadcrumbs from '@/components/darejer/AppBreadcrumbs.vue'
+import DarejerActions from '@/components/darejer/DarejerActions.vue'
+import { Button } from '@/components/ui/button'
+import { Calendar } from '@/components/ui/calendar'
 import {
   Dialog,
   DialogContent,
@@ -38,22 +33,16 @@ import {
   DialogDescription,
   DialogFooter,
 } from '@/components/ui/dialog'
-import { Button } from '@/components/ui/button'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import { Calendar } from '@/components/ui/calendar'
-import { CalendarDate, DateFormatter, getLocalTimeZone, parseDate } from '@internationalized/date'
-import type { DarejerAction, DependOnRule } from '@/types/darejer'
-import useTranslation from '@/composables/useTranslation'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { evaluateDependOn } from '@/composables/useDependOn'
+import useTranslation from '@/composables/useTranslation'
+import AppLayout from '@/layouts/AppLayout.vue'
+import type { DarejerAction, DependOnRule } from '@/types/darejer'
 
 defineOptions({ layout: AppLayout })
 
@@ -170,14 +159,10 @@ const visibleColumns = computed(() => props.columns.filter((c) => !c.hidden))
 const hasFooter = computed(() => visibleColumns.value.some((c) => !!c.footer))
 
 const allSelected = computed(
-  () =>
-    props.tableData.data.length > 0 &&
-    props.tableData.data.every((r) => selected.value.has(r.id ?? r)),
+  () => props.tableData.data.length > 0 && props.tableData.data.every((r) => selected.value.has(r.id ?? r)),
 )
 
-const selectedIds = computed<(string | number)[]>(
-  () => Array.from(selected.value) as (string | number)[],
-)
+const selectedIds = computed<(string | number)[]>(() => Array.from(selected.value) as (string | number)[])
 
 const hasBulkActions = computed(() => (props.bulkActions?.length ?? 0) > 0)
 const hasSelection = computed(() => selected.value.size > 0)
@@ -190,9 +175,7 @@ const someSelected = computed(
   () => !allSelected.value && props.tableData.data.some((r) => selected.value.has(r.id ?? r)),
 )
 
-const activeFilterCount = computed(
-  () => Object.values(filterValues.value).filter(isFilterActive).length,
-)
+const activeFilterCount = computed(() => Object.values(filterValues.value).filter(isFilterActive).length)
 
 function navigate(extra: Record<string, unknown> = {}) {
   const filterParams: Record<string, unknown> = {}
@@ -249,9 +232,7 @@ function onFilterChange() {
 }
 
 function resetFilters() {
-  filterValues.value = Object.fromEntries(
-    props.filters.map((f) => [f.field, defaultFilterValue(f)]),
-  )
+  filterValues.value = Object.fromEntries(props.filters.map((f) => [f.field, defaultFilterValue(f)]))
   navigate({ page: 1 })
 }
 
@@ -445,10 +426,12 @@ function badgeKey(value: unknown): string {
 // or look up keys. Legacy array-form callers still send a raw primitive.
 type ResolvedBadge = { label: string; variant: string }
 function isResolvedBadge(value: unknown): value is ResolvedBadge {
-  return typeof value === 'object'
-    && value !== null
-    && typeof (value as Record<string, unknown>).label === 'string'
-    && typeof (value as Record<string, unknown>).variant === 'string'
+  return (
+    typeof value === 'object' &&
+    value !== null &&
+    typeof (value as Record<string, unknown>).label === 'string' &&
+    typeof (value as Record<string, unknown>).variant === 'string'
+  )
 }
 
 // Resolve a badge map entry for the cell value. Booleans accept either
@@ -504,11 +487,12 @@ function badgeLabel(col: GridColumn, value: unknown): string {
 }
 
 function readRowPath(row: Record<string, unknown>, path: string): unknown {
-  return path.split('.').reduce<unknown>(
-    (acc, segment) =>
-      acc && typeof acc === 'object' ? (acc as Record<string, unknown>)[segment] : undefined,
-    row,
-  )
+  return path
+    .split('.')
+    .reduce<unknown>(
+      (acc, segment) => (acc && typeof acc === 'object' ? (acc as Record<string, unknown>)[segment] : undefined),
+      row,
+    )
 }
 
 function textColorClass(col: GridColumn, row: Record<string, unknown>): string {
@@ -572,29 +556,25 @@ function clearFilter(field: string) {
 
 <template>
   <Head :title="title" />
-  <div class="flex h-full flex-col overflow-hidden bg-paper-100">
+  <div class="bg-paper-100 flex h-full flex-col overflow-hidden">
     <!-- Page header — refined hero with subtle gradient -->
-    <header class="relative shrink-0 overflow-hidden border-b border-paper-200 bg-card">
+    <header class="border-paper-200 bg-card relative shrink-0 overflow-hidden border-b">
       <div
         class="pointer-events-none absolute inset-0 opacity-[0.35]"
         style="
-          background-image: radial-gradient(
-            circle at 1px 1px,
-            var(--color-paper-200) 1px,
-            transparent 0
-          );
+          background-image: radial-gradient(circle at 1px 1px, var(--color-paper-200) 1px, transparent 0);
           background-size: 20px 20px;
         "
       />
       <div
-        class="pointer-events-none absolute inset-y-0 inset-e-0 w-2/3 bg-linear-to-s from-brand-50/60 via-white/0 to-transparent"
+        class="bg-linear-to-s from-brand-50/60 pointer-events-none absolute inset-y-0 inset-e-0 w-2/3 via-white/0 to-transparent"
       />
 
       <div class="relative flex items-start justify-between gap-6 px-6 pt-5 pb-5">
         <div class="flex min-w-0 items-start gap-3">
           <div class="flex min-w-0 flex-col">
             <AppBreadcrumbs class="mb-2" />
-            <h1 class="text-[28px] leading-[1.05] font-semibold tracking-[-0.02em] text-ink-900">
+            <h1 class="text-ink-900 text-[28px] leading-[1.05] font-semibold tracking-[-0.02em]">
               {{ title }}
             </h1>
           </div>
@@ -616,7 +596,7 @@ function clearFilter(field: string) {
             {{ __('Filters') }}
             <span
               v-if="activeFilterCount > 0"
-              class="inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-brand-600 px-1 text-[9px] font-bold text-white tabular-nums"
+              class="bg-brand-600 inline-flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[9px] font-bold text-white tabular-nums"
             >
               {{ activeFilterCount }}
             </span>
@@ -624,14 +604,14 @@ function clearFilter(field: string) {
 
           <div class="flex items-center gap-2">
             <span
-              class="inline-flex items-center gap-1.5 rounded-sm bg-paper-100 px-2 py-0.5 text-[10.5px] font-bold tracking-[0.12em] text-ink-600 uppercase tabular-nums ring-1 ring-paper-200 ring-inset"
+              class="bg-paper-100 text-ink-600 ring-paper-200 inline-flex items-center gap-1.5 rounded-sm px-2 py-0.5 text-[10.5px] font-bold tracking-[0.12em] uppercase tabular-nums ring-1 ring-inset"
             >
               {{ tableData.total.toLocaleString() }}
-              <span class="font-semibold text-ink-400">{{ __('records') }}</span>
+              <span class="text-ink-400 font-semibold">{{ __('records') }}</span>
             </span>
             <span
               v-if="hasSelection"
-              class="inline-flex items-center gap-1 rounded-sm bg-brand-50 px-2 py-0.5 text-[10.5px] font-bold tracking-[0.12em] text-brand-700 uppercase tabular-nums ring-1 ring-brand-100 ring-inset"
+              class="bg-brand-50 text-brand-700 ring-brand-100 inline-flex items-center gap-1 rounded-sm px-2 py-0.5 text-[10.5px] font-bold tracking-[0.12em] uppercase tabular-nums ring-1 ring-inset"
             >
               <CheckCircle2 class="h-3 w-3" />
               {{ selected.size }} {{ __('selected') }}
@@ -642,32 +622,27 @@ function clearFilter(field: string) {
     </header>
 
     <!-- Action Pane — under breadcrumbs and title -->
-    <div
-      v-if="headerActions.length"
-      class="flex flex-wrap items-center justify-end gap-1.5 px-6 pt-6 print:hidden"
-    >
+    <div v-if="headerActions.length" class="flex flex-wrap items-center justify-end gap-1.5 px-6 pt-6 print:hidden">
       <DarejerActions :actions="headerActions" placement="header" />
     </div>
 
     <!-- Content -->
-    <div class="scrollbar-darejer scrollbar-gutter-stable flex-1 overflow-y-auto px-6 py-5">
+    <div class="scrollbar-darejer flex-1 scrollbar-gutter-stable overflow-y-auto px-6 py-5">
       <!-- Active filter chips -->
       <div v-if="activeFilterEntries.length" class="mb-3 flex flex-wrap items-center gap-2">
-        <span class="text-[10.5px] font-bold tracking-[0.12em] text-ink-500 uppercase">
+        <span class="text-ink-500 text-[10.5px] font-bold tracking-[0.12em] uppercase">
           {{ __('Active filters') }}
         </span>
         <span
           v-for="entry in activeFilterEntries"
           :key="entry.field"
-          class="inline-flex h-6 items-center gap-1.5 rounded-full bg-card ps-2 pe-1 text-[11px] font-semibold text-brand-800 shadow-[0_1px_0_rgba(0,0,0,0.02)] ring-1 ring-brand-200 ring-inset"
+          class="bg-card text-brand-800 ring-brand-200 inline-flex h-6 items-center gap-1.5 rounded-full ps-2 pe-1 text-[11px] font-semibold shadow-[0_1px_0_rgba(0,0,0,0.02)] ring-1 ring-inset"
         >
-          <span class="text-[10px] font-bold tracking-[0.1em] text-brand-500 uppercase"
-            >{{ entry.label }}:</span
-          >
-          <span class="font-medium text-ink-700 tabular-nums">{{ entry.display }}</span>
+          <span class="text-brand-500 text-[10px] font-bold tracking-[0.1em] uppercase">{{ entry.label }}:</span>
+          <span class="text-ink-700 font-medium tabular-nums">{{ entry.display }}</span>
           <button
             type="button"
-            class="inline-flex h-4 w-4 items-center justify-center rounded-full text-brand-600 transition-colors hover:bg-brand-100"
+            class="text-brand-600 hover:bg-brand-100 inline-flex h-4 w-4 items-center justify-center rounded-full transition-colors"
             :title="__('Clear')"
             @click="clearFilter(entry.field)"
           >
@@ -676,7 +651,7 @@ function clearFilter(field: string) {
         </span>
         <button
           type="button"
-          class="text-[11px] font-semibold text-ink-500 underline-offset-2 transition-colors hover:text-ink-800 hover:underline"
+          class="text-ink-500 hover:text-ink-800 text-[11px] font-semibold underline-offset-2 transition-colors hover:underline"
           @click="resetFilters"
         >
           {{ __('Clear all') }}
@@ -686,19 +661,15 @@ function clearFilter(field: string) {
       <!-- Filter bar -->
       <div
         v-if="showFilters && filters.length"
-        class="relative mb-4 flex flex-wrap items-end gap-3 rounded-md border border-paper-200 bg-card p-4 shadow-[0_1px_0_rgba(0,0,0,0.02)]"
+        class="border-paper-200 bg-card relative mb-4 flex flex-wrap items-end gap-3 rounded-md border p-4 shadow-[0_1px_0_rgba(0,0,0,0.02)]"
       >
         <span
-          class="absolute inset-x-0 top-0 h-0.5 rounded-t-md bg-linear-to-e from-brand-500 via-brand-300 to-transparent"
+          class="bg-linear-to-e from-brand-500 via-brand-300 absolute inset-x-0 top-0 h-0.5 rounded-t-md to-transparent"
         />
-        <div
-          v-for="filter in filters"
-          :key="filter.field"
-          class="flex min-w-[10rem] flex-col gap-1.5"
-        >
+        <div v-for="filter in filters" :key="filter.field" class="flex min-w-[10rem] flex-col gap-1.5">
           <Label
             :for="`filter-${filter.field}`"
-            class="text-[10.5px] font-bold tracking-[0.12em] text-ink-500 uppercase"
+            class="text-ink-500 text-[10.5px] font-bold tracking-[0.12em] uppercase"
           >
             {{ filter.label }}
           </Label>
@@ -770,26 +741,22 @@ function clearFilter(field: string) {
               <button
                 :id="`filter-${filter.field}`"
                 type="button"
-                class="flex h-8 w-full items-center justify-between rounded-[2px] border bg-card px-2.5 text-start text-[13px] text-ink-900 transition-colors duration-100 hover:border-ink-700 focus:border-brand-500 focus:shadow-[inset_0_0_0_1px_var(--color-brand-500)] focus:ring-0 focus:outline-none"
+                class="bg-card text-ink-900 hover:border-ink-700 focus:border-brand-500 flex h-8 w-full items-center justify-between rounded-[2px] border px-2.5 text-start text-[13px] transition-colors duration-100 focus:shadow-[inset_0_0_0_1px_var(--color-brand-500)] focus:ring-0 focus:outline-none"
                 :class="[datePopoverOpen[filter.field] ? 'border-brand-500' : `border-paper-300`]"
               >
                 <span :class="stringValue(filter.field) ? 'text-ink-900' : `text-ink-400`">
-                  {{
-                    formatDate(stringValue(filter.field)) ??
-                    filter.placeholder ??
-                    __('Pick a date…')
-                  }}
+                  {{ formatDate(stringValue(filter.field)) ?? filter.placeholder ?? __('Pick a date…') }}
                 </span>
                 <div class="flex items-center gap-1">
                   <button
                     v-if="stringValue(filter.field)"
                     type="button"
-                    class="text-ink-300 transition-colors hover:text-ink-500"
+                    class="text-ink-300 hover:text-ink-500 transition-colors"
                     @click.stop="clearFilter(filter.field)"
                   >
                     <X class="h-3 w-3" />
                   </button>
-                  <CalendarIcon class="h-3.5 w-3.5 text-ink-400" />
+                  <CalendarIcon class="text-ink-400 h-3.5 w-3.5" />
                 </div>
               </button>
             </PopoverTrigger>
@@ -812,12 +779,8 @@ function clearFilter(field: string) {
                 <button
                   :id="`filter-${filter.field}-from`"
                   type="button"
-                  class="flex h-8 min-w-[8.5rem] items-center justify-between rounded-[2px] border bg-card px-2.5 text-start text-[13px] text-ink-900 transition-colors duration-100 hover:border-ink-700 focus:border-brand-500 focus:shadow-[inset_0_0_0_1px_var(--color-brand-500)] focus:ring-0 focus:outline-none"
-                  :class="[
-                    datePopoverOpen[`${filter.field}:from`]
-                      ? 'border-brand-500'
-                      : 'border-paper-300',
-                  ]"
+                  class="bg-card text-ink-900 hover:border-ink-700 focus:border-brand-500 flex h-8 min-w-[8.5rem] items-center justify-between rounded-[2px] border px-2.5 text-start text-[13px] transition-colors duration-100 focus:shadow-[inset_0_0_0_1px_var(--color-brand-500)] focus:ring-0 focus:outline-none"
+                  :class="[datePopoverOpen[`${filter.field}:from`] ? 'border-brand-500' : 'border-paper-300']"
                 >
                   <span :class="getRangeFrom(filter.field) ? 'text-ink-900' : 'text-ink-400'">
                     {{ formatDate(getRangeFrom(filter.field)) ?? __('From…') }}
@@ -826,12 +789,12 @@ function clearFilter(field: string) {
                     <button
                       v-if="getRangeFrom(filter.field)"
                       type="button"
-                      class="text-ink-300 transition-colors hover:text-ink-500"
+                      class="text-ink-300 hover:text-ink-500 transition-colors"
                       @click.stop="setRangeFrom(filter.field, '')"
                     >
                       <X class="h-3 w-3" />
                     </button>
-                    <CalendarIcon class="h-3.5 w-3.5 text-ink-400" />
+                    <CalendarIcon class="text-ink-400 h-3.5 w-3.5" />
                   </div>
                 </button>
               </PopoverTrigger>
@@ -845,7 +808,7 @@ function clearFilter(field: string) {
               </PopoverContent>
             </Popover>
 
-            <span class="text-[12px] text-ink-400">→</span>
+            <span class="text-ink-400 text-[12px]">→</span>
 
             <Popover
               :open="datePopoverOpen[`${filter.field}:to`] ?? false"
@@ -855,10 +818,8 @@ function clearFilter(field: string) {
                 <button
                   :id="`filter-${filter.field}-to`"
                   type="button"
-                  class="flex h-8 min-w-[8.5rem] items-center justify-between rounded-[2px] border bg-card px-2.5 text-start text-[13px] text-ink-900 transition-colors duration-100 hover:border-ink-700 focus:border-brand-500 focus:shadow-[inset_0_0_0_1px_var(--color-brand-500)] focus:ring-0 focus:outline-none"
-                  :class="[
-                    datePopoverOpen[`${filter.field}:to`] ? 'border-brand-500' : 'border-paper-300',
-                  ]"
+                  class="bg-card text-ink-900 hover:border-ink-700 focus:border-brand-500 flex h-8 min-w-[8.5rem] items-center justify-between rounded-[2px] border px-2.5 text-start text-[13px] transition-colors duration-100 focus:shadow-[inset_0_0_0_1px_var(--color-brand-500)] focus:ring-0 focus:outline-none"
+                  :class="[datePopoverOpen[`${filter.field}:to`] ? 'border-brand-500' : 'border-paper-300']"
                 >
                   <span :class="getRangeTo(filter.field) ? 'text-ink-900' : 'text-ink-400'">
                     {{ formatDate(getRangeTo(filter.field)) ?? __('To…') }}
@@ -867,12 +828,12 @@ function clearFilter(field: string) {
                     <button
                       v-if="getRangeTo(filter.field)"
                       type="button"
-                      class="text-ink-300 transition-colors hover:text-ink-500"
+                      class="text-ink-300 hover:text-ink-500 transition-colors"
                       @click.stop="setRangeTo(filter.field, '')"
                     >
                       <X class="h-3 w-3" />
                     </button>
-                    <CalendarIcon class="h-3.5 w-3.5 text-ink-400" />
+                    <CalendarIcon class="text-ink-400 h-3.5 w-3.5" />
                   </div>
                 </button>
               </PopoverTrigger>
@@ -891,7 +852,7 @@ function clearFilter(field: string) {
         <button
           v-if="activeFilterCount > 0"
           type="button"
-          class="ms-auto flex h-9 items-center gap-1.5 rounded-md px-3 text-[12.5px] font-semibold text-ink-500 transition-colors hover:bg-paper-100 hover:text-ink-800"
+          class="text-ink-500 hover:bg-paper-100 hover:text-ink-800 ms-auto flex h-9 items-center gap-1.5 rounded-md px-3 text-[12.5px] font-semibold transition-colors"
           @click="resetFilters"
         >
           <X class="h-3.5 w-3.5" />
@@ -901,21 +862,21 @@ function clearFilter(field: string) {
 
       <!-- Table card -->
       <div
-        class="relative overflow-hidden rounded-md border border-paper-200 bg-card shadow-[0_1px_0_rgba(0,0,0,0.02)]"
+        class="border-paper-200 bg-card relative overflow-hidden rounded-md border shadow-[0_1px_0_rgba(0,0,0,0.02)]"
       >
         <!-- Bulk-action strip -->
         <div
           v-if="hasBulkActions && hasSelection"
-          class="relative flex items-center gap-3 border-b border-brand-100 bg-linear-to-e from-brand-50 to-brand-50/60 px-4 py-2.5"
+          class="border-brand-100 bg-linear-to-e from-brand-50 to-brand-50/60 relative flex items-center gap-3 border-b px-4 py-2.5"
         >
-          <span class="absolute inset-y-0 inset-s-0 w-0.5 bg-brand-500" />
-          <CheckCircle2 class="h-4 w-4 text-brand-600" />
-          <span class="text-[12px] font-bold text-brand-800 tabular-nums">
+          <span class="bg-brand-500 absolute inset-y-0 inset-s-0 w-0.5" />
+          <CheckCircle2 class="text-brand-600 h-4 w-4" />
+          <span class="text-brand-800 text-[12px] font-bold tabular-nums">
             {{ __(':count selected', { count: selected.size }) }}
           </span>
           <button
             type="button"
-            class="text-[11.5px] font-semibold text-brand-700 underline-offset-2 transition-colors hover:text-brand-900 hover:underline"
+            class="text-brand-700 hover:text-brand-900 text-[11.5px] font-semibold underline-offset-2 transition-colors hover:underline"
             @click="clearSelection"
           >
             {{ __('Clear') }}
@@ -933,22 +894,18 @@ function clearFilter(field: string) {
 
         <!-- Table toolbar -->
         <div
-          class="flex items-center gap-3 border-b border-paper-200 bg-gradient-to-b from-paper-75 to-card px-3 py-2.5"
+          class="border-paper-200 from-paper-75 to-card flex items-center gap-3 border-b bg-gradient-to-b px-3 py-2.5"
         >
           <div class="relative max-w-xs flex-1">
-            <Search
-              class="pointer-events-none absolute start-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-ink-400"
-            />
+            <Search class="text-ink-400 pointer-events-none absolute start-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2" />
             <input
               v-model="globalSearch"
               type="search"
               :placeholder="__('Search…')"
-              class="h-8 w-full rounded-md border border-paper-300 bg-card ps-9 pe-3 text-[13px] transition-colors placeholder:text-ink-400 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/15 focus:outline-none"
+              class="border-paper-300 bg-card placeholder:text-ink-400 focus:border-brand-500 focus:ring-brand-500/15 h-8 w-full rounded-md border ps-9 pe-3 text-[13px] transition-colors focus:ring-2 focus:outline-none"
             />
           </div>
-          <span
-            class="ms-auto inline-flex items-center gap-1.5 text-[11px] font-semibold text-ink-500 tabular-nums"
-          >
+          <span class="text-ink-500 ms-auto inline-flex items-center gap-1.5 text-[11px] font-semibold tabular-nums">
             <span class="text-ink-700">{{ tableData.from }}–{{ tableData.to }}</span>
             <span class="text-ink-300">/</span>
             <span>{{ tableData.total.toLocaleString() }}</span>
@@ -959,13 +916,13 @@ function clearFilter(field: string) {
         <div class="scrollbar-darejer overflow-x-auto">
           <table class="w-full border-collapse">
             <thead>
-              <tr class="sticky top-0 z-10 border-b border-paper-200 bg-paper-75">
+              <tr class="border-paper-200 bg-paper-75 sticky top-0 z-10 border-b">
                 <th v-if="selectable" class="h-10 w-10 px-3">
                   <input
                     type="checkbox"
                     :checked="allSelected"
                     :indeterminate.prop="someSelected"
-                    class="h-3.5 w-3.5 cursor-pointer rounded-sm align-middle accent-brand-600"
+                    class="accent-brand-600 h-3.5 w-3.5 cursor-pointer rounded-sm align-middle"
                     @change="toggleAll"
                   />
                 </th>
@@ -974,9 +931,7 @@ function clearFilter(field: string) {
                   :key="col.field"
                   class="h-10 px-3 text-start whitespace-nowrap"
                   :class="[
-                    col.sortable
-                      ? `cursor-pointer transition-colors select-none hover:bg-paper-100`
-                      : '',
+                    col.sortable ? `hover:bg-paper-100 cursor-pointer transition-colors select-none` : '',
                     col.align === 'right' ? 'text-end' : '',
                     col.align === 'center' ? 'text-center' : '',
                   ]"
@@ -985,13 +940,7 @@ function clearFilter(field: string) {
                 >
                   <div
                     class="flex items-center gap-1.5"
-                    :class="
-                      col.align === 'right'
-                        ? 'justify-end'
-                        : col.align === 'center'
-                          ? `justify-center`
-                          : ''
-                    "
+                    :class="col.align === 'right' ? 'justify-end' : col.align === 'center' ? `justify-center` : ''"
                   >
                     <span
                       class="text-[10.5px] font-bold tracking-[0.12em] uppercase"
@@ -1000,15 +949,12 @@ function clearFilter(field: string) {
                       {{ col.label }}
                     </span>
                     <template v-if="col.sortable">
-                      <ChevronUp
-                        v-if="sortField === col.field && sortOrder === 'asc'"
-                        class="h-3 w-3 text-brand-600"
-                      />
+                      <ChevronUp v-if="sortField === col.field && sortOrder === 'asc'" class="text-brand-600 h-3 w-3" />
                       <ChevronDown
                         v-else-if="sortField === col.field && sortOrder === 'desc'"
-                        class="h-3 w-3 text-brand-600"
+                        class="text-brand-600 h-3 w-3"
                       />
-                      <ChevronsUpDown v-else class="h-3 w-3 text-ink-300" />
+                      <ChevronsUpDown v-else class="text-ink-300 h-3 w-3" />
                     </template>
                   </div>
                 </th>
@@ -1019,31 +965,25 @@ function clearFilter(field: string) {
             <tbody>
               <tr v-if="tableData.data.length === 0">
                 <td
-                  :colspan="
-                    visibleColumns.length + (selectable ? 1 : 0) + (rowActions.length ? 1 : 0)
-                  "
+                  :colspan="visibleColumns.length + (selectable ? 1 : 0) + (rowActions.length ? 1 : 0)"
                   class="px-3 py-16"
                 >
                   <div class="relative flex flex-col items-center gap-3 text-center">
                     <div
                       class="pointer-events-none absolute inset-0 -m-6 rounded-md opacity-[0.5]"
                       style="
-                        background-image: radial-gradient(
-                          circle at 1px 1px,
-                          var(--color-paper-200) 1px,
-                          transparent 0
-                        );
+                        background-image: radial-gradient(circle at 1px 1px, var(--color-paper-200) 1px, transparent 0);
                         background-size: 16px 16px;
                         mask-image: radial-gradient(ellipse at center, black 0%, transparent 70%);
                       "
                     />
                     <div
-                      class="relative inline-flex h-14 w-14 items-center justify-center rounded-md bg-gradient-to-br from-paper-75 to-paper-100 shadow-[0_2px_6px_-2px_rgba(0,0,0,0.05)] ring-1 ring-paper-200"
+                      class="from-paper-75 to-paper-100 ring-paper-200 relative inline-flex h-14 w-14 items-center justify-center rounded-md bg-gradient-to-br shadow-[0_2px_6px_-2px_rgba(0,0,0,0.05)] ring-1"
                     >
-                      <Inbox class="h-6 w-6 text-ink-400" />
+                      <Inbox class="text-ink-400 h-6 w-6" />
                     </div>
                     <div class="relative flex flex-col gap-1">
-                      <span class="text-[14px] font-semibold tracking-tight text-ink-800">
+                      <span class="text-ink-800 text-[14px] font-semibold tracking-tight">
                         {{ emptyMessage ?? __('No records found.') }}
                       </span>
                     </div>
@@ -1054,12 +994,8 @@ function clearFilter(field: string) {
               <tr
                 v-for="row in tableData.data"
                 :key="String(row.id ?? row)"
-                class="group/row relative border-b border-paper-100 transition-colors duration-75 last:border-b-0"
-                :class="
-                  selected.has(row.id ?? row)
-                    ? `bg-brand-50/70 hover:bg-brand-50`
-                    : 'hover:bg-paper-75'
-                "
+                class="group/row border-paper-100 relative border-b transition-colors duration-75 last:border-b-0"
+                :class="selected.has(row.id ?? row) ? `bg-brand-50/70 hover:bg-brand-50` : 'hover:bg-paper-75'"
               >
                 <!-- Leading rail on hover/selection -->
                 <td v-if="selectable" class="relative h-10 px-3">
@@ -1074,7 +1010,7 @@ function clearFilter(field: string) {
                   <input
                     type="checkbox"
                     :checked="selected.has(row.id ?? row)"
-                    class="h-3.5 w-3.5 cursor-pointer rounded-sm align-middle accent-brand-600"
+                    class="accent-brand-600 h-3.5 w-3.5 cursor-pointer rounded-sm align-middle"
                     @change="toggleRow(row.id ?? row)"
                   />
                 </td>
@@ -1082,7 +1018,7 @@ function clearFilter(field: string) {
                 <td
                   v-for="(col, ci) in visibleColumns"
                   :key="col.field"
-                  class="relative h-10 px-3 text-[13px] text-ink-800"
+                  class="text-ink-800 relative h-10 px-3 text-[13px]"
                   :class="[
                     col.align === 'right' ? 'text-end tabular-nums' : '',
                     col.align === 'center' ? 'text-center' : '',
@@ -1092,7 +1028,7 @@ function clearFilter(field: string) {
                   <!-- If no selectable, the first column gets the rail -->
                   <span
                     v-if="!selectable && ci === 0"
-                    class="absolute inset-y-0 start-0 w-0.5 bg-brand-500 opacity-0 transition-opacity group-hover/row:opacity-60"
+                    class="bg-brand-500 absolute inset-y-0 start-0 w-0.5 opacity-0 transition-opacity group-hover/row:opacity-60"
                   />
                   <span
                     v-if="col.badge"
@@ -1104,10 +1040,7 @@ function clearFilter(field: string) {
                   <span
                     v-else
                     class="block max-w-xs truncate"
-                    :class="[
-                      ci === 0 ? 'font-medium text-ink-900' : '',
-                      textColorClass(col, row),
-                    ]"
+                    :class="[ci === 0 ? 'text-ink-900 font-medium' : '', textColorClass(col, row)]"
                   >
                     {{ formatCell(row[col.field], col) ?? '—' }}
                   </span>
@@ -1120,7 +1053,7 @@ function clearFilter(field: string) {
                         <DropdownMenuTrigger as-child>
                           <button
                             type="button"
-                            class="flex h-8 w-8 items-center justify-center rounded-md text-ink-400 opacity-60 transition-colors group-hover/row:opacity-100 hover:bg-brand-50 hover:text-brand-700"
+                            class="text-ink-400 hover:bg-brand-50 hover:text-brand-700 flex h-8 w-8 items-center justify-center rounded-md opacity-60 transition-colors group-hover/row:opacity-100"
                           >
                             <MoreHorizontal class="h-4 w-4" />
                           </button>
@@ -1130,18 +1063,10 @@ function clearFilter(field: string) {
                             v-for="action in rowActionsFor(row)"
                             :key="action.label"
                             class="flex cursor-pointer items-center gap-2 text-sm"
-                            :class="
-                              action.variant === 'destructive'
-                                ? `text-danger-700 focus:text-danger-700`
-                                : ''
-                            "
+                            :class="action.variant === 'destructive' ? `text-danger-700 focus:text-danger-700` : ''"
                             @click="handleRowAction(action, row)"
                           >
-                            <component
-                              :is="resolveIcon(action.icon)"
-                              v-if="action.icon"
-                              class="h-3.5 w-3.5 shrink-0"
-                            />
+                            <component :is="resolveIcon(action.icon)" v-if="action.icon" class="h-3.5 w-3.5 shrink-0" />
                             {{ __(action.label) }}
                           </DropdownMenuItem>
                         </DropdownMenuContent>
@@ -1162,14 +1087,8 @@ function clearFilter(field: string) {
                               :aria-label="__(action.label)"
                               @click="handleRowAction(action, row)"
                             >
-                              <component
-                                :is="resolveIcon(action.icon)"
-                                v-if="action.icon"
-                                class="h-3.5 w-3.5"
-                              />
-                              <span v-else class="text-[11px] font-semibold">{{
-                                __(action.label)
-                              }}</span>
+                              <component :is="resolveIcon(action.icon)" v-if="action.icon" class="h-3.5 w-3.5" />
+                              <span v-else class="text-[11px] font-semibold">{{ __(action.label) }}</span>
                             </button>
                           </TooltipTrigger>
                           <TooltipContent>{{ __(action.label) }}</TooltipContent>
@@ -1182,12 +1101,12 @@ function clearFilter(field: string) {
             </tbody>
 
             <tfoot v-if="hasFooter && tableData.data.length > 0">
-              <tr class="border-t border-paper-200 bg-paper-75">
+              <tr class="border-paper-200 bg-paper-75 border-t">
                 <td v-if="selectable" class="h-10 px-3" />
                 <td
                   v-for="col in visibleColumns"
                   :key="col.field"
-                  class="h-10 px-3 text-[13px] font-semibold text-ink-800"
+                  class="text-ink-800 h-10 px-3 text-[13px] font-semibold"
                   :class="[
                     col.align === 'right' ? 'text-end tabular-nums' : '',
                     col.align === 'center' ? 'text-center' : '',
@@ -1204,37 +1123,33 @@ function clearFilter(field: string) {
         <!-- Pagination -->
         <div
           v-if="tableData.total > tableData.per_page"
-          class="flex items-center justify-between border-t border-paper-200 bg-gradient-to-b from-card to-paper-75 px-4 py-3"
+          class="border-paper-200 from-card to-paper-75 flex items-center justify-between border-t bg-gradient-to-b px-4 py-3"
         >
-          <span class="text-[11.5px] text-ink-500 tabular-nums">
+          <span class="text-ink-500 text-[11.5px] tabular-nums">
             {{ __('Showing') }}
-            <span class="font-bold text-ink-800">{{ tableData.from }}–{{ tableData.to }}</span>
+            <span class="text-ink-800 font-bold">{{ tableData.from }}–{{ tableData.to }}</span>
             {{ __('of') }}
-            <span class="font-bold text-ink-800">{{ tableData.total.toLocaleString() }}</span>
+            <span class="text-ink-800 font-bold">{{ tableData.total.toLocaleString() }}</span>
             {{ __('records') }}
           </span>
           <div class="flex items-center gap-1">
             <button
               type="button"
               :disabled="tableData.current_page <= 1"
-              class="flex h-8 w-8 items-center justify-center rounded-md border border-paper-300 bg-card text-ink-500 transition-colors hover:border-brand-200 hover:bg-brand-50 hover:text-brand-700 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:border-paper-300 disabled:hover:bg-card disabled:hover:text-ink-500 rtl:rotate-180"
+              class="border-paper-300 bg-card text-ink-500 hover:border-brand-200 hover:bg-brand-50 hover:text-brand-700 disabled:hover:border-paper-300 disabled:hover:bg-card disabled:hover:text-ink-500 flex h-8 w-8 items-center justify-center rounded-md border transition-colors disabled:cursor-not-allowed disabled:opacity-40 rtl:rotate-180"
               @click="goToPage(tableData.current_page - 1)"
             >
               <ChevronLeft class="h-3.5 w-3.5" />
             </button>
             <template v-for="(p, idx) in pages" :key="`${idx}-${p}`">
-              <span
-                v-if="p === '...'"
-                class="flex h-8 w-8 items-center justify-center text-xs text-ink-300"
-                >…</span
-              >
+              <span v-if="p === '...'" class="text-ink-300 flex h-8 w-8 items-center justify-center text-xs">…</span>
               <button
                 v-else
                 type="button"
                 class="flex h-8 w-8 items-center justify-center rounded-md border text-[12px] font-semibold tabular-nums transition-all"
                 :class="
                   tableData.current_page === p
-                    ? `border-brand-600 bg-gradient-to-b from-brand-500 to-brand-600 text-white shadow-[0_1px_2px_rgba(0,120,212,0.4)]`
+                    ? `border-brand-600 from-brand-500 to-brand-600 bg-gradient-to-b text-white shadow-[0_1px_2px_rgba(0,120,212,0.4)]`
                     : `border-paper-300 bg-card text-ink-600 hover:border-brand-200 hover:bg-brand-50 hover:text-brand-700`
                 "
                 @click="goToPage(p as number)"
@@ -1245,7 +1160,7 @@ function clearFilter(field: string) {
             <button
               type="button"
               :disabled="tableData.current_page >= tableData.last_page"
-              class="flex h-8 w-8 items-center justify-center rounded-md border border-paper-300 bg-card text-ink-500 transition-colors hover:border-brand-200 hover:bg-brand-50 hover:text-brand-700 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:border-paper-300 disabled:hover:bg-card disabled:hover:text-ink-500 rtl:rotate-180"
+              class="border-paper-300 bg-card text-ink-500 hover:border-brand-200 hover:bg-brand-50 hover:text-brand-700 disabled:hover:border-paper-300 disabled:hover:bg-card disabled:hover:text-ink-500 flex h-8 w-8 items-center justify-center rounded-md border transition-colors disabled:cursor-not-allowed disabled:opacity-40 rtl:rotate-180"
               @click="goToPage(tableData.current_page + 1)"
             >
               <ChevronRight class="h-3.5 w-3.5" />
@@ -1259,24 +1174,16 @@ function clearFilter(field: string) {
   <!-- Confirm dialog -->
   <Dialog :open="confirmOpen" @update:open="confirmOpen = $event">
     <DialogContent class="max-w-sm overflow-hidden p-0">
-      <DialogHeader
-        class="border-b border-paper-200 bg-gradient-to-b from-paper-75 to-card px-5 py-4"
-      >
-        <DialogTitle class="text-base font-semibold tracking-tight text-ink-900">{{
-          __('Confirm')
-        }}</DialogTitle>
+      <DialogHeader class="border-paper-200 from-paper-75 to-card border-b bg-gradient-to-b px-5 py-4">
+        <DialogTitle class="text-ink-900 text-base font-semibold tracking-tight">{{ __('Confirm') }}</DialogTitle>
       </DialogHeader>
       <div class="px-5 py-5">
-        <DialogDescription class="text-sm leading-relaxed text-ink-700">{{
-          confirmMsg
-        }}</DialogDescription>
+        <DialogDescription class="text-ink-700 text-sm leading-relaxed">{{ confirmMsg }}</DialogDescription>
       </div>
-      <DialogFooter class="flex justify-end gap-2 border-t border-paper-200 bg-paper-75 px-5 py-3">
-        <Button variant="outline" class="h-9 text-sm" @click="confirmOpen = false">{{
-          __('Cancel')
-        }}</Button>
+      <DialogFooter class="border-paper-200 bg-paper-75 flex justify-end gap-2 border-t px-5 py-3">
+        <Button variant="outline" class="h-9 text-sm" @click="confirmOpen = false">{{ __('Cancel') }}</Button>
         <Button
-          class="h-9 border-transparent bg-danger-600 text-sm text-white hover:bg-danger-700"
+          class="bg-danger-600 hover:bg-danger-700 h-9 border-transparent text-sm text-white"
           @click="executeConfirmed"
         >
           {{ confirmAction?.label }}

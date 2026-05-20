@@ -1,9 +1,9 @@
 <script setup lang="ts">
+import { Eye, EyeOff } from 'lucide-vue-next'
 import { ref, computed } from 'vue'
 import type { HTMLAttributes } from 'vue'
-import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-import { Eye, EyeOff } from 'lucide-vue-next'
+import { Input } from '@/components/ui/input'
 import useTranslation from '@/composables/useTranslation'
 
 // Reusable password input with built-in show/hide toggle.
@@ -53,7 +53,7 @@ function onUpdate(value: string) {
       :aria-label="revealed ? __('Hide password') : __('Show password')"
       :aria-pressed="revealed"
       :disabled="disabled || readonly"
-      class="absolute inset-y-0 inset-e-0.5 my-auto text-ink-500 hover:text-ink-700"
+      class="text-ink-500 hover:text-ink-700 absolute inset-y-0 inset-e-0.5 my-auto"
       @click="revealed = !revealed"
     >
       <component :is="revealed ? EyeOff : Eye" />

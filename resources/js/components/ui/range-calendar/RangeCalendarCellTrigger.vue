@@ -1,10 +1,10 @@
 <script lang="ts" setup>
-import type { RangeCalendarCellTriggerProps } from 'reka-ui'
-import type { HTMLAttributes } from 'vue'
 import { reactiveOmit } from '@vueuse/core'
+import type { RangeCalendarCellTriggerProps } from 'reka-ui'
 import { RangeCalendarCellTrigger, useForwardProps } from 'reka-ui'
-import { cn } from '@/lib/utils'
+import type { HTMLAttributes } from 'vue'
 import { buttonVariants } from '@/components/ui/button'
+import { cn } from '@/lib/utils'
 
 const props = defineProps<RangeCalendarCellTriggerProps & { class?: HTMLAttributes['class'] }>()
 
@@ -25,7 +25,7 @@ const forwardedProps = useForwardProps(delegatedProps)
         // Selection End
         `data-[selection-end]:bg-primary data-[selection-end]:text-primary-foreground data-[selection-end]:hover:bg-primary data-[selection-end]:hover:text-primary-foreground data-[selection-end]:focus:bg-primary data-[selection-end]:focus:text-primary-foreground`,
         // Outside months
-        `data-[outside-view]:text-muted-foreground data-[outside-view]:opacity-50 [&[data-outside-view][data-selected]]:bg-accent/50 [&[data-outside-view][data-selected]]:text-muted-foreground [&[data-outside-view][data-selected]]:opacity-30`,
+        `data-[outside-view]:text-muted-foreground [&[data-outside-view][data-selected]]:bg-accent/50 [&[data-outside-view][data-selected]]:text-muted-foreground data-[outside-view]:opacity-50 [&[data-outside-view][data-selected]]:opacity-30`,
         // Disabled
         'data-[disabled]:text-muted-foreground data-[disabled]:opacity-50',
         // Unavailable

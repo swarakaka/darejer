@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { computed, shallowRef } from 'vue'
 import { useHttp } from '@inertiajs/vue3'
-import { handleHttpException } from '@/lib/handleHttpException'
-import DarejerComponent from '@/components/darejer/DarejerComponent.vue'
+import { computed, shallowRef } from 'vue'
 import DarejerActions from '@/components/darejer/DarejerActions.vue'
+import DarejerComponent from '@/components/darejer/DarejerComponent.vue'
+import { handleHttpException } from '@/lib/handleHttpException'
 import type { DarejerComponent as DarejerComponentType, DarejerAction } from '@/types/darejer'
 
 const props = defineProps<{
@@ -19,13 +19,9 @@ const emit = defineEmits<{
 }>()
 
 // Drop Delete from the inline create dialog — record doesn't exist yet.
-const visibleActions = computed<DarejerAction[]>(() =>
-  props.actions.filter((a) => a.type !== 'Delete'),
-)
+const visibleActions = computed<DarejerAction[]>(() => props.actions.filter((a) => a.type !== 'Delete'))
 
-const saveAction = computed<DarejerAction | undefined>(() =>
-  props.actions.find((a) => a.type === 'Save'),
-)
+const saveAction = computed<DarejerAction | undefined>(() => props.actions.find((a) => a.type === 'Save'))
 
 // Build initial form data from components × record. The shape is fully
 // dynamic, so we don't try to type the bag — useHttp handles the runtime
@@ -81,11 +77,7 @@ type SaveResponse = {
 
 function submit() {
   const url = (saveAction.value?.url as string) ?? ''
-  const method = (saveAction.value?.method?.toLowerCase() ?? 'post') as
-    | 'post'
-    | 'put'
-    | 'patch'
-    | 'delete'
+  const method = (saveAction.value?.method?.toLowerCase() ?? 'post') as 'post' | 'put' | 'patch' | 'delete'
   if (!url) return
 
   http[method](url, {
@@ -98,12 +90,9 @@ function submit() {
       //   • `extractIdFromUrl(url)` → fallback when no flash
       // If the controller still returns Inertia page JSON, those fields
       // pass through unchanged.
-      const data =
-        response?.data && typeof response.data === 'object' ? response.data : null
+      const data = response?.data && typeof response.data === 'object' ? response.data : null
       const createdId = (data as { id?: string | number } | null)?.id
-      const flash =
-        response?.flash ??
-        (createdId != null ? { created_id: createdId } : null)
+      const flash = response?.flash ?? (createdId != null ? { created_id: createdId } : null)
 
       emit('created', {
         url: response?.redirect ?? response?.url ?? null,
@@ -132,7 +121,7 @@ function submit() {
     </div>
   </div>
 
-  <div class="flex shrink-0 justify-end gap-2 border-t border-paper-200 bg-paper-75 px-5 py-3">
+  <div class="border-paper-200 bg-paper-75 flex shrink-0 justify-end gap-2 border-t px-5 py-3">
     <DarejerActions
       :actions="visibleActions"
       placement="dialog"

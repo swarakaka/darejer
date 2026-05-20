@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { Line } from 'vue-chartjs'
-import { brand, baseOptions } from './chartSetup'
 import useTranslation from '@/composables/useTranslation'
+import { brand, baseOptions } from './chartSetup'
 
 interface Series {
   label: string

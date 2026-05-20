@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import { Calendar } from '@/components/ui/calendar'
-import { CalendarIcon, X } from 'lucide-vue-next'
-import useTranslation from '@/composables/useTranslation'
 import { CalendarDate, DateFormatter, getLocalTimeZone, parseDate } from '@internationalized/date'
+import { CalendarIcon, X } from 'lucide-vue-next'
+import { ref, computed, watch } from 'vue'
+import { Calendar } from '@/components/ui/calendar'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import useTranslation from '@/composables/useTranslation'
 
 const { __ } = useTranslation()
 
@@ -50,9 +50,7 @@ watch(
 
 const df = new DateFormatter('en-US', { dateStyle: 'medium' })
 
-const displayValue = computed(() =>
-  selected.value ? df.format(selected.value.toDate(getLocalTimeZone())) : null,
-)
+const displayValue = computed(() => (selected.value ? df.format(selected.value.toDate(getLocalTimeZone())) : null))
 
 const placeholderText = computed(() => props.placeholder ?? __('Pick a date…'))
 
@@ -75,7 +73,7 @@ function clear() {
       <button
         type="button"
         :disabled="disabled"
-        class="flex h-full w-full items-center justify-between border-none bg-transparent px-2.5 text-start text-sm transition-colors duration-100 outline-none focus:bg-brand-50 disabled:cursor-not-allowed disabled:opacity-50"
+        class="focus:bg-brand-50 flex h-full w-full items-center justify-between border-none bg-transparent px-2.5 text-start text-sm transition-colors duration-100 outline-none disabled:cursor-not-allowed disabled:opacity-50"
       >
         <span class="truncate" :class="selected ? 'text-ink-900' : `text-ink-400`">
           {{ displayValue ?? placeholderText }}
@@ -84,23 +82,18 @@ function clear() {
           <button
             v-if="selected && !disabled"
             type="button"
-            class="text-ink-300 transition-colors hover:text-ink-500"
+            class="text-ink-300 hover:text-ink-500 transition-colors"
             @click.stop="clear"
           >
             <X class="h-3 w-3" />
           </button>
-          <CalendarIcon class="h-3.5 w-3.5 text-ink-300" />
+          <CalendarIcon class="text-ink-300 h-3.5 w-3.5" />
         </div>
       </button>
     </PopoverTrigger>
 
     <PopoverContent class="w-auto p-0" align="start">
-      <Calendar
-        :model-value="selected as any"
-        initial-focus
-        class="border-none"
-        @update:model-value="onSelect"
-      />
+      <Calendar :model-value="selected as any" initial-focus class="border-none" @update:model-value="onSelect" />
     </PopoverContent>
   </Popover>
 </template>

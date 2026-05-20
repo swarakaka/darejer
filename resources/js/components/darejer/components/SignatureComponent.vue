@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
-import SignaturePad from 'signature_pad'
 import { Eraser, Download } from 'lucide-vue-next'
+import SignaturePad from 'signature_pad'
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import FieldWrapper from '@/components/darejer/FieldWrapper.vue'
 import useTranslation from '@/composables/useTranslation'
 import type { DarejerComponent } from '@/types/darejer'
@@ -25,8 +25,7 @@ const penColor = computed(() => (props.component.penColor as string) ?? '#000000
 const bgColor = computed(() => (props.component.bgColor as string) ?? '#ffffff')
 const showGuide = computed(() => props.component.showGuide !== false)
 
-const rawValue =
-  (props.formData ?? props.record)[props.component.name] ?? props.component.default ?? null
+const rawValue = (props.formData ?? props.record)[props.component.name] ?? props.component.default ?? null
 
 const hasSignature = ref(!!rawValue)
 
@@ -103,20 +102,11 @@ function download() {
 </script>
 
 <template>
-  <FieldWrapper
-    :component="component"
-    :record="record"
-    :errors="errors"
-    :form-data="formData"
-    class="col-span-full"
-  >
+  <FieldWrapper :component="component" :record="record" :errors="errors" :form-data="formData" class="col-span-full">
     <template #default="{ hasError }">
-      <div
-        class="overflow-hidden rounded-md border"
-        :class="hasError ? 'border-danger-600' : 'border-paper-300'"
-      >
+      <div class="overflow-hidden rounded-md border" :class="hasError ? 'border-danger-600' : 'border-paper-300'">
         <!-- Canvas -->
-        <div class="relative bg-card" :style="{ height: height + 'px' }">
+        <div class="bg-card relative" :style="{ height: height + 'px' }">
           <canvas
             ref="canvasEl"
             class="block h-full w-full"
@@ -124,12 +114,9 @@ function download() {
           />
 
           <!-- "Sign here" guide line -->
-          <div
-            v-if="showGuide && !hasSignature"
-            class="pointer-events-none absolute start-6 end-6 bottom-8"
-          >
-            <div class="border-b border-dashed border-paper-300" />
-            <p class="mt-1 text-xs tracking-wider text-ink-300 uppercase">{{ __('Sign here') }}</p>
+          <div v-if="showGuide && !hasSignature" class="pointer-events-none absolute start-6 end-6 bottom-8">
+            <div class="border-paper-300 border-b border-dashed" />
+            <p class="text-ink-300 mt-1 text-xs tracking-wider uppercase">{{ __('Sign here') }}</p>
           </div>
 
           <!-- Empty state hint -->
@@ -137,22 +124,20 @@ function download() {
             v-if="!hasSignature && !showGuide"
             class="pointer-events-none absolute inset-0 flex items-center justify-center"
           >
-            <p class="text-sm text-ink-300">{{ __('Draw your signature') }}</p>
+            <p class="text-ink-300 text-sm">{{ __('Draw your signature') }}</p>
           </div>
         </div>
 
         <!-- Footer controls -->
-        <div
-          class="flex items-center justify-between border-t border-paper-200 bg-paper-75 px-3 py-1.5"
-        >
-          <p class="text-xs text-ink-400">
+        <div class="border-paper-200 bg-paper-75 flex items-center justify-between border-t px-3 py-1.5">
+          <p class="text-ink-400 text-xs">
             {{ hasSignature ? __('Signature captured') : __('No signature yet') }}
           </p>
           <div class="flex items-center gap-1">
             <button
               v-if="hasSignature"
               type="button"
-              class="flex h-6 items-center gap-1 rounded-sm px-2 text-xs text-ink-500 transition-colors hover:bg-paper-100 hover:text-brand-600"
+              class="text-ink-500 hover:bg-paper-100 hover:text-brand-600 flex h-6 items-center gap-1 rounded-sm px-2 text-xs transition-colors"
               @click="download"
             >
               <Download class="h-3 w-3" />
@@ -161,7 +146,7 @@ function download() {
             <button
               v-if="!(component.disabled as boolean)"
               type="button"
-              class="flex h-6 items-center gap-1 rounded-sm px-2 text-xs text-ink-500 transition-colors hover:bg-paper-100 hover:text-danger-600"
+              class="text-ink-500 hover:bg-paper-100 hover:text-danger-600 flex h-6 items-center gap-1 rounded-sm px-2 text-xs transition-colors"
               @click="clear"
             >
               <Eraser class="h-3 w-3" />

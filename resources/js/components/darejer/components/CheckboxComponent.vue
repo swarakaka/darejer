@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { Checkbox } from '@/components/ui/checkbox'
 import FieldWrapper from '@/components/darejer/FieldWrapper.vue'
+import { Checkbox } from '@/components/ui/checkbox'
 import type { DarejerComponent } from '@/types/darejer'
 
 const props = defineProps<{
@@ -13,11 +13,7 @@ const props = defineProps<{
 
 const emit = defineEmits<{ (e: 'update', name: string, value: unknown): void }>()
 
-const checked = ref(
-  Boolean(
-    (props.formData ?? props.record)[props.component.name] ?? props.component.default ?? false,
-  ),
-)
+const checked = ref(Boolean((props.formData ?? props.record)[props.component.name] ?? props.component.default ?? false))
 
 function onChange(val: boolean | 'indeterminate') {
   const v = val === 'indeterminate' ? false : val
@@ -40,7 +36,7 @@ function onChange(val: boolean | 'indeterminate') {
         <label
           v-if="component.checkboxLabel"
           :for="component.name"
-          class="cursor-pointer text-sm text-ink-700 select-none"
+          class="text-ink-700 cursor-pointer text-sm select-none"
         >
           {{ component.checkboxLabel }}
         </label>
