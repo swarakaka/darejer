@@ -1,5 +1,6 @@
 import { useHttp, router } from '@inertiajs/vue3'
 import { shallowReactive, shallowRef, computed } from 'vue'
+import { toast } from 'vue-sonner'
 import { handleHttpException } from '@/lib/handleHttpException'
 import type { DarejerComponent } from '@/types/darejer'
 
@@ -114,6 +115,14 @@ export function useDarejerForm(options: DarejerFormOptions) {
       preserveScroll: true,
       onSuccess: (response: DarejerJsonResponse) => {
         isDirty.value = false
+
+        // The controller answers with a JSON envelope, not an Inertia page
+        // response, so `page.flash` never fires. Surface the envelope's
+        // `message` here. The Toaster lives in the persistent layout, so the
+        // toast survives the `router.visit()` redirect that follows.
+        if (response?.message) {
+          toast.success(response.message)
+        }
 
         if (options.dialog && typeof window !== 'undefined') {
           // Broadcast for parent screens (e.g. a Combobox that opened
