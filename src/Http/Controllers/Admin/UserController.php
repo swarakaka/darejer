@@ -26,7 +26,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
-use Inertia\Inertia;
 use Inertia\Response;
 use Spatie\Permission\Models\Role as SpatieRole;
 
@@ -218,10 +217,10 @@ class UserController extends DarejerController
             $user->syncRoles($this->resolveRoleNames($data['role_ids'] ?? []));
         }
 
-        Inertia::flash('success', __darejer('User created.'));
-
-        return redirect()
-            ->route('darejer.admin.users.index');
+        return $this->jsonRedirect(
+            route('darejer.admin.users.index'),
+            __darejer('User created.'),
+        );
     }
 
     public function update(Request $request, int $user)
@@ -249,10 +248,10 @@ class UserController extends DarejerController
             $record->syncRoles($this->resolveRoleNames($data['role_ids'] ?? []));
         }
 
-        Inertia::flash('success', __darejer('User updated.'));
-
-        return redirect()
-            ->route('darejer.admin.users.index');
+        return $this->jsonRedirect(
+            route('darejer.admin.users.index'),
+            __darejer('User updated.'),
+        );
     }
 
     public function destroy(int $user)
@@ -267,10 +266,10 @@ class UserController extends DarejerController
 
         $record->delete();
 
-        Inertia::flash('success', __darejer('User deleted.'));
-
-        return redirect()
-            ->route('darejer.admin.users.index');
+        return $this->jsonRedirect(
+            route('darejer.admin.users.index'),
+            __darejer('User deleted.'),
+        );
     }
 
     public function form(): Form

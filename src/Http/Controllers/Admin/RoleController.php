@@ -18,7 +18,6 @@ use Darejer\Routing\RoutePattern;
 use Darejer\Screen\Section;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
-use Inertia\Inertia;
 use Inertia\Response;
 use Spatie\Permission\Models\Permission as SpatiePermission;
 use Spatie\Permission\Models\Role as SpatieRole;
@@ -140,10 +139,10 @@ class RoleController extends DarejerController
 
         app(PermissionRegistrar::class)->forgetCachedPermissions();
 
-        Inertia::flash('success', __darejer('Role created.'));
-
-        return redirect()
-            ->route('darejer.admin.roles.index');
+        return $this->jsonRedirect(
+            route('darejer.admin.roles.index'),
+            __darejer('Role created.'),
+        );
     }
 
     public function update(Request $request, int $role)
@@ -170,10 +169,10 @@ class RoleController extends DarejerController
 
         app(PermissionRegistrar::class)->forgetCachedPermissions();
 
-        Inertia::flash('success', __darejer('Role updated.'));
-
-        return redirect()
-            ->route('darejer.admin.roles.index');
+        return $this->jsonRedirect(
+            route('darejer.admin.roles.index'),
+            __darejer('Role updated.'),
+        );
     }
 
     public function destroy(int $role)
@@ -189,10 +188,10 @@ class RoleController extends DarejerController
         $record->delete();
         app(PermissionRegistrar::class)->forgetCachedPermissions();
 
-        Inertia::flash('success', __darejer('Role deleted.'));
-
-        return redirect()
-            ->route('darejer.admin.roles.index');
+        return $this->jsonRedirect(
+            route('darejer.admin.roles.index'),
+            __darejer('Role deleted.'),
+        );
     }
 
     public function form(): Form
