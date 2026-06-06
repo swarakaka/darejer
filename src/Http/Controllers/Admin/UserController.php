@@ -7,6 +7,7 @@ namespace Darejer\Http\Controllers\Admin;
 use Darejer\Actions\BulkAction;
 use Darejer\Actions\ButtonAction;
 use Darejer\Actions\DeleteAction;
+use Darejer\Components\BaseComponent;
 use Darejer\Components\Combobox;
 use Darejer\Components\Display;
 use Darejer\Components\TextInput;
@@ -181,7 +182,7 @@ class UserController extends DarejerController
             ->record(array_merge($record->toArray(), [
                 'role_ids' => $record->roles->pluck('id')->all(),
                 'password' => '',
-            ]))
+            ], $this->hostRecordData($record)))
             ->save(route('darejer.admin.users.update', $record->id), 'PUT')
             ->cancel(route('darejer.admin.users.index'))
             ->addActions([
@@ -217,6 +218,8 @@ class UserController extends DarejerController
             $user->syncRoles($this->resolveRoleNames($data['role_ids'] ?? []));
         }
 
+        $this->afterUserSaved($user, $data, false);
+
         return $this->jsonRedirect(
             route('darejer.admin.users.index'),
             __darejer('User created.'),
@@ -247,6 +250,8 @@ class UserController extends DarejerController
         if ($this->canAssignRoles() && array_key_exists('role_ids', $data)) {
             $record->syncRoles($this->resolveRoleNames($data['role_ids'] ?? []));
         }
+
+        $this->afterUserSaved($record, $data, true);
 
         return $this->jsonRedirect(
             route('darejer.admin.users.index'),
@@ -300,13 +305,15 @@ class UserController extends DarejerController
                 ->canSee('system.user.assign-roles');
         }
 
+        $components = array_merge($components, $this->hostFormComponents());
+
         return Form::make('default')
             ->breadcrumbs([
                 ['label' => __darejer('Administration')],
                 ['label' => __darejer('Users'), 'url' => route('darejer.admin.users.index')],
             ])
             ->components($components)
-            ->sections([
+            ->sections(array_values(array_filter([
                 Section::make('identity')->title(__darejer('Identity'))->components(['username', 'email']),
                 Section::make('password')->title(__darejer('Password'))->components(['password', 'password_confirmation']),
                 Section::make('access')->title(__darejer('Access'))
@@ -314,8 +321,60 @@ class UserController extends DarejerController
                         $this->canAssignRoles() ? 'role_ids' : null,
                         $hasSuperAdmin ? 'is_super_admin' : null,
                     ]))),
-            ]);
+                $this->hostFormSection(),
+            ])));
     }
+
+    /**
+     * Extra form components contributed by the host application (e.g. an
+     * "active company" selector). No-op by default so the package stays
+     * host-agnostic; override in a host subclass.
+     *
+     * @return array<int, BaseComponent>
+     */
+    protected function hostFormComponents(): array
+    {
+        return [];
+    }
+
+    /**
+     * Optional extra form section grouping the host components. Returning
+     * null omits it from the form.
+     */
+    protected function hostFormSection(): ?Section
+    {
+        return null;
+    }
+
+    /**
+     * Extra validation rules contributed by the host for its components.
+     *
+     * @return array<string, mixed>
+     */
+    protected function hostValidationRules(bool $isUpdate): array
+    {
+        return [];
+    }
+
+    /**
+     * Extra record data the host wants prefilled into the edit form (for
+     * values not present on the model's own columns, e.g. pivot data).
+     *
+     * @return array<string, mixed>
+     */
+    protected function hostRecordData(Model $record): array
+    {
+        return [];
+    }
+
+    /**
+     * Hook invoked after a user is created or updated and roles are synced.
+     * Lets the host persist its own fields (e.g. company membership). No-op
+     * by default.
+     *
+     * @param  array<string, mixed>  $data
+     */
+    protected function afterUserSaved(Model $user, array $data, bool $isUpdate): void {}
 
     /**
      * @return array<string, mixed>
@@ -327,7 +386,7 @@ class UserController extends DarejerController
         $userId = $existing?->getKey();
         $isUpdate = $existing !== null;
 
-        return $request->validate([
+        return $request->validate(array_merge([
             'username' => [
                 'required', 'string', 'min:3', 'max:191', 'regex:/^[A-Za-z]+$/',
                 Rule::unique($table, 'username')->ignore($userId)->whereNull('deleted_at'),
@@ -345,7 +404,7 @@ class UserController extends DarejerController
             'role_ids' => ['sometimes', 'array'],
             'role_ids.*' => ['integer', 'exists:'.config('permission.table_names.roles', 'roles').',id'],
             'is_super_admin' => ['sometimes', 'boolean'],
-        ], [
+        ], $this->hostValidationRules($isUpdate)), [
             'username.regex' => __darejer('The username may only contain English letters.'),
         ]);
     }

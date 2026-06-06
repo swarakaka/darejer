@@ -6,6 +6,9 @@ use Darejer\Console\Commands\InstallCommand;
 use Darejer\Console\Commands\LanguageCommand;
 use Darejer\Console\Commands\LanguageExportCommand;
 use Darejer\Data\ModelRegistry;
+use Darejer\Http\Controllers\Admin\PermissionController;
+use Darejer\Http\Controllers\Admin\RoleController;
+use Darejer\Http\Controllers\Admin\UserController;
 use Darejer\Http\Middleware\HandleInertiaRequests;
 use Darejer\Http\Middleware\SecurityHeaders;
 use Darejer\Http\Middleware\ThrottlePasswordReset;
@@ -140,10 +143,17 @@ class DarejerServiceProvider extends ServiceProvider
             ControllerRouteRegistrar::discover($mapping)->register();
 
             // The package ships its own Admin controllers (Users, Roles,
-            // Permissions) and Governance controllers (Audit Log). Discover
+            // Permissions) and Governance controllers (Audit Log). Register
             // them after the host so host-defined routes win on conflict.
+            // The user controller is config-overridable so hosts can extend
+            // the user form (see `darejer.user_controller`).
+            ControllerRouteRegistrar::forClasses([
+                config('darejer.user_controller', UserController::class),
+                RoleController::class,
+                PermissionController::class,
+            ])->register();
+
             ControllerRouteRegistrar::discover([
-                __DIR__.'/Http/Controllers/Admin' => 'Darejer\\Http\\Controllers\\Admin',
                 __DIR__.'/Http/Controllers/Governance' => 'Darejer\\Http\\Controllers\\Governance',
             ])->register();
         }

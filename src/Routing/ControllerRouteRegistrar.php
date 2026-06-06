@@ -36,6 +36,34 @@ class ControllerRouteRegistrar
         return $instance;
     }
 
+    /**
+     * Build a registrar for an explicit list of controller classes (rather
+     * than scanning directories). Used for config-overridable controllers
+     * such as the Admin user screen, where the host may swap the class via
+     * `config('darejer.user_controller')`.
+     *
+     * @param  array<int, string>  $classes  Controller FQCNs
+     */
+    public static function forClasses(array $classes): static
+    {
+        $instance = new static;
+
+        foreach ($classes as $class) {
+            if (! is_string($class) || ! class_exists($class)) {
+                continue;
+            }
+
+            $reflection = new ReflectionClass($class);
+            if ($reflection->isAbstract() || ! $reflection->isSubclassOf(DarejerController::class)) {
+                continue;
+            }
+
+            $instance->controllers[] = $class;
+        }
+
+        return $instance;
+    }
+
     public function register(): void
     {
         foreach ($this->controllers as $class) {
@@ -77,6 +105,15 @@ class ControllerRouteRegistrar
         $instance = app()->make($class);
 
         if (! $instance->darejerAutoRoute()) {
+            return;
+        }
+
+        // Skip when another controller already claimed this route name.
+        // Host controllers are discovered before the package's own, so the
+        // host wins on conflict and a config-overridden controller does not
+        // collide with the default it replaces.
+        $name = $instance->darejerRouteName();
+        if ($name && RouteFacade::has("{$name}.index")) {
             return;
         }
 

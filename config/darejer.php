@@ -1,5 +1,8 @@
 <?php
 
+use Darejer\Http\Controllers\Admin\UserController;
+use Darejer\Http\Controllers\DashboardController;
+
 return [
 
     /*
@@ -92,7 +95,21 @@ return [
     |
     | Default: the package's bundled placeholder dashboard.
     */
-    'dashboard_controller' => [\Darejer\Http\Controllers\DashboardController::class, 'index'],
+    'dashboard_controller' => [DashboardController::class, 'index'],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Admin User Controller
+    |--------------------------------------------------------------------------
+    | The controller backing the Admin → Users screen. Host apps that need
+    | extra fields on the user form (e.g. an "active company" selector) point
+    | this at their own subclass of the package's controller. The subclass
+    | inherits all CRUD behaviour and only fills in the host hooks
+    | (`hostFormComponents()`, `hostValidationRules()`, `afterUserSaved()`...).
+    |
+    | Default: the package's bundled user controller.
+    */
+    'user_controller' => UserController::class,
 
     /*
     |--------------------------------------------------------------------------
