@@ -384,4 +384,6 @@ return [
     'Token' => 'Token',
     'Field' => 'Field',
     'Where' => 'Where',
+    'Current file' => 'Current file',
+    'Leave empty to keep the current file. Uploading replaces it.' => 'Leave empty to keep the current file. Uploading replaces it.',
 ];

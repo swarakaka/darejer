@@ -381,4 +381,6 @@ return [
     'Token' => 'تۆکن',
     'Field' => 'خانە',
     'Where' => 'شوێن',
+    'Current file' => 'فایلی ئێستا',
+    'Leave empty to keep the current file. Uploading replaces it.' => 'بۆ هێشتنەوەی فایلی ئێستا بەتاڵی بهێڵە. بارکردن جێگۆڕکێی پێدەکات.',
 ];

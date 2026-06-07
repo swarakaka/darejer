@@ -382,4 +382,6 @@ return [
     'Token' => 'الرمز',
     'Field' => 'حقل',
     'Where' => 'الموضع',
+    'Current file' => 'الملف الحالي',
+    'Leave empty to keep the current file. Uploading replaces it.' => 'اترك الحقل فارغًا للإبقاء على الملف الحالي. سيؤدي الرفع إلى استبداله.',
 ];

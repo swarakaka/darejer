@@ -6,6 +6,7 @@ namespace Darejer\Http\Controllers\Documents;
 
 use Darejer\Actions\ButtonAction;
 use Darejer\Actions\DeleteAction;
+use Darejer\Components\Display;
 use Darejer\Components\FileUpload;
 use Darejer\Components\SelectComponent;
 use Darejer\Components\Table;
@@ -27,6 +28,7 @@ use Darejer\Screen\Screen;
 use Darejer\Screen\Section;
 use Darejer\Table\Column as TableColumn;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use Inertia\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -105,10 +107,11 @@ class DocumentTemplateController extends DarejerController
 
         $record = DocumentTemplate::query()->findOrFail($template);
 
-        return $this->form(creating: false)
+        return $this->form(creating: false, currentFileUrl: route('darejer.documents.templates.download', $record->id))
             ->title(__darejer('Edit Document Template'))
             ->record(array_merge($record->toArray(), [
                 'name' => $record->getFullTranslations('name'),
+                'current_file' => basename((string) $record->file_path),
             ]))
             ->save(route('darejer.documents.templates.update', $record->id), 'PUT')
             ->cancel(route('darejer.documents.templates.index'))
@@ -189,6 +192,25 @@ class DocumentTemplateController extends DarejerController
     }
 
     /**
+     * Download the currently-stored `.docx` for a template. Linked from the
+     * edit screen so users can see/retrieve what is attached.
+     */
+    #[Route('GET', '{template}/download', name: 'download')]
+    public function download(int $template): StreamedResponse
+    {
+        $this->authorizePermission('system.document_template.viewAny');
+
+        $record = DocumentTemplate::query()->findOrFail($template);
+        $disk = $record->disk();
+
+        abort_unless(Storage::disk($disk)->exists($record->file_path), 404);
+
+        $name = $record->getTranslationWithFallback('name') ?: 'template';
+
+        return Storage::disk($disk)->download($record->file_path, $name.'.docx');
+    }
+
+    /**
      * On-screen reference of every `${token}` available per document type.
      * Scalars render as plain placeholders; group tokens belong inside a
      * repeating Word table row.
@@ -249,45 +271,59 @@ class DocumentTemplateController extends DarejerController
             ->render();
     }
 
-    public function form(bool $creating = true): Form
+    public function form(bool $creating = true, ?string $currentFileUrl = null): Form
     {
+        $components = [
+            SelectComponent::make('document_type')
+                ->label(__darejer('Document Type'))
+                ->required()
+                ->searchable()
+                ->options($this->typeOptions()),
+            TranslatableInput::make('name')
+                ->label(__darejer('Name'))
+                ->required(),
+            FileUpload::make('file')
+                ->label(__darejer('Word template (.docx)'))
+                ->accept(['.docx', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'])
+                ->maxSize(10240)
+                ->disk($this->uploadDisk())
+                ->path($this->uploadPath())
+                ->hint($creating
+                    ? __darejer('Use ${token} placeholders. Download a starter template from the list page for the full field list.')
+                    : __darejer('Leave empty to keep the current file. Uploading replaces it.')),
+            SelectComponent::make('paper_size')
+                ->label(__darejer('Paper Size'))
+                ->options([
+                    'A4' => 'A4',
+                    'A5' => 'A5',
+                    'Letter' => 'Letter',
+                    '80mm' => '80mm (receipt)',
+                ]),
+            Toggle::make('is_default')->label(__darejer('Default for this type')),
+            Toggle::make('is_active')->label(__darejer('Active')),
+        ];
+
+        $generalFields = ['document_type', 'name', 'file', 'paper_size'];
+
+        // On edit, surface the currently-stored file (the upload widget only
+        // shows newly-picked files) as a download link.
+        if (! $creating && $currentFileUrl !== null) {
+            $components[] = Display::make('current_file')
+                ->label(__darejer('Current file'))
+                ->link($currentFileUrl, true)
+                ->emptyText('—');
+            $generalFields = ['document_type', 'name', 'file', 'current_file', 'paper_size'];
+        }
+
         return Form::make('default')
             ->breadcrumbs([
                 ['label' => __darejer('Setup')],
                 ['label' => __darejer('Document Templates'), 'url' => route('darejer.documents.templates.index')],
             ])
-            ->components([
-                SelectComponent::make('document_type')
-                    ->label(__darejer('Document Type'))
-                    ->required()
-                    ->searchable()
-                    ->options($this->typeOptions()),
-                TranslatableInput::make('name')
-                    ->label(__darejer('Name'))
-                    ->required(),
-                FileUpload::make('file')
-                    ->label(__darejer('Word template (.docx)'))
-                    ->accept(['.docx', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'])
-                    ->maxSize(10240)
-                    ->disk($this->uploadDisk())
-                    ->path($this->uploadPath())
-                    ->hint(__darejer('Use ${token} placeholders. Download a starter template from the list page for the full field list.')),
-                SelectComponent::make('paper_size')
-                    ->label(__darejer('Paper Size'))
-                    ->options([
-                        'A4' => 'A4',
-                        'A5' => 'A5',
-                        'Letter' => 'Letter',
-                        '80mm' => '80mm (receipt)',
-                    ]),
-                Toggle::make('is_default')->label(__darejer('Default for this type')),
-                Toggle::make('is_active')->label(__darejer('Active')),
-            ])
+            ->components($components)
             ->sections([
-                Section::make('general')->title(__darejer('Template'))
-                    ->components(['document_type', 'name', 'file', 'paper_size']),
-                Section::make('status')->title(__darejer('Status'))
-                    ->components(['is_default', 'is_active']),
+                Section::make('general')->title(__darejer('Template'))->components($generalFields),
+                Section::make('status')->title(__darejer('Status'))->components(['is_default', 'is_active']),
             ]);
     }
 
