@@ -8,6 +8,7 @@ use Darejer\Actions\ButtonAction;
 use Darejer\Actions\DeleteAction;
 use Darejer\Components\FileUpload;
 use Darejer\Components\SelectComponent;
+use Darejer\Components\Table;
 use Darejer\Components\Toggle;
 use Darejer\Components\TranslatableInput;
 use Darejer\DataGrid\Column;
@@ -22,7 +23,9 @@ use Darejer\Http\Controllers\DarejerController;
 use Darejer\Models\DocumentTemplate;
 use Darejer\Routing\Route;
 use Darejer\Routing\RoutePattern;
+use Darejer\Screen\Screen;
 use Darejer\Screen\Section;
+use Darejer\Table\Column as TableColumn;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Inertia\Response;
@@ -182,7 +185,68 @@ class DocumentTemplateController extends DarejerController
         abort_unless(DocumentTemplateRegistry::has($type), 404);
 
         return app(StarterTemplateWriter::class)
-            ->download($type, DocumentTemplateRegistry::label($type));
+            ->download($type, __(DocumentTemplateRegistry::label($type)));
+    }
+
+    /**
+     * On-screen reference of every `${token}` available per document type.
+     * Scalars render as plain placeholders; group tokens belong inside a
+     * repeating Word table row.
+     */
+    #[Route('GET', 'tokens', name: 'tokens')]
+    public function tokens(): Response
+    {
+        $this->authorizePermission('system.document_template.viewAny');
+
+        $record = [];
+        $components = [];
+        $sections = [];
+
+        foreach (DocumentTemplateRegistry::all() as $type => $definition) {
+            $catalog = $definition['provider']::catalog();
+            $rows = [];
+
+            foreach ($catalog['scalars'] ?? [] as $token => $label) {
+                $rows[] = [
+                    'token' => '${'.$token.'}',
+                    'field' => __($label),
+                    'where' => __darejer('Field'),
+                ];
+            }
+
+            foreach ($catalog['groups'] ?? [] as $group => $tokens) {
+                foreach ($tokens as $token => $label) {
+                    $rows[] = [
+                        'token' => '${'.$token.'}',
+                        'field' => __($label),
+                        'where' => __darejer('Table').': '.$group,
+                    ];
+                }
+            }
+
+            $record[$type] = $rows;
+
+            $components[] = Table::make($type)
+                ->label(__($definition['label']))
+                ->columns([
+                    TableColumn::make('token')->label(__darejer('Token'))->width('20rem'),
+                    TableColumn::make('field')->label(__darejer('Field')),
+                    TableColumn::make('where')->label(__darejer('Where'))->width('16rem'),
+                ]);
+
+            $sections[] = Section::make($type)->title(__($definition['label']))->components([$type]);
+        }
+
+        return Screen::make(__darejer('Field Reference'))
+            ->record($record)
+            ->breadcrumbs([
+                ['label' => __darejer('Setup')],
+                ['label' => __darejer('Document Templates'), 'url' => route('darejer.documents.templates.index')],
+                ['label' => __darejer('Field Reference')],
+            ])
+            ->components($components)
+            ->sections($sections)
+            ->render();
     }
 
     public function form(bool $creating = true): Form
@@ -238,6 +302,10 @@ class DocumentTemplateController extends DarejerController
                 ->url(route('darejer.documents.templates.create'))
                 ->icon('Plus')
                 ->canSee('system.document_template.update'),
+            ButtonAction::make(__darejer('Field Reference'))
+                ->url(route('darejer.documents.templates.tokens'))
+                ->icon('BookOpen')
+                ->canSee('system.document_template.viewAny'),
         ];
 
         foreach (DocumentTemplateRegistry::all() as $type => $definition) {

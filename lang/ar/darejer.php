@@ -378,4 +378,8 @@ return [
     'Fields' => 'الحقول',
     'Table' => 'جدول',
     'Edit the design freely — keep the ${placeholders} intact. They are replaced with live data on print.' => 'عدّل التصميم بحرية — مع الإبقاء على ${placeholders} كما هي. تُستبدل ببيانات حية عند الطباعة.',
+    'Field Reference' => 'مرجع الحقول',
+    'Token' => 'الرمز',
+    'Field' => 'حقل',
+    'Where' => 'الموضع',
 ];

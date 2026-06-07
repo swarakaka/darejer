@@ -377,4 +377,8 @@ return [
     'Fields' => 'خانەکان',
     'Table' => 'خشتە',
     'Edit the design freely — keep the ${placeholders} intact. They are replaced with live data on print.' => 'دیزاینەکە بە ئازادی دەستکاری بکە — ${placeholders}ەکان وەک خۆیان بهێڵەرەوە. لە کاتی چاپکردندا بە داتای زیندوو دەگۆڕدرێن.',
+    'Field Reference' => 'سەرچاوەی خانەکان',
+    'Token' => 'تۆکن',
+    'Field' => 'خانە',
+    'Where' => 'شوێن',
 ];

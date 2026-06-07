@@ -380,4 +380,8 @@ return [
     'Fields' => 'Fields',
     'Table' => 'Table',
     'Edit the design freely — keep the ${placeholders} intact. They are replaced with live data on print.' => 'Edit the design freely — keep the ${placeholders} intact. They are replaced with live data on print.',
+    'Field Reference' => 'Field Reference',
+    'Token' => 'Token',
+    'Field' => 'Field',
+    'Where' => 'Where',
 ];
