@@ -60,20 +60,6 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | LibreOffice (document → PDF rendering)
-    |--------------------------------------------------------------------------
-    | DocumentRenderer converts filled .docx templates to PDF with headless
-    | LibreOffice for full fidelity (alignment, fonts, borders, RTL). Leave
-    | `binary` null to auto-detect `soffice`/`libreoffice` on the PATH and the
-    | common install locations; set LIBREOFFICE_BINARY to pin an exact path.
-    | When no binary is found it falls back to the pure-PHP mpdf renderer.
-    */
-    'libreoffice' => [
-        'binary' => env('LIBREOFFICE_BINARY'),
-    ],
-
-    /*
-    |--------------------------------------------------------------------------
     | Package Route Prefix
     |--------------------------------------------------------------------------
     */
