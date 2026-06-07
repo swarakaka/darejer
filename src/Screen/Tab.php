@@ -64,7 +64,7 @@ class Tab
     }
 
     /**
-     * @return array<string, mixed>|null  null when a visible() rule denies access.
+     * @return array<string, mixed>|null null when a visible() rule denies access.
      */
     public function toArray(): ?array
     {
