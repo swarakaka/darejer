@@ -41,6 +41,13 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
  */
 class DocumentTemplateController extends DarejerController
 {
+    /**
+     * Sentinel for the "All languages" Select option. shadcn-vue's Select
+     * rejects an empty-string value, so we use a non-empty token and map it
+     * back to a null `locale` on save.
+     */
+    private const LOCALE_ANY = '__all__';
+
     protected ?string $resource = 'templates';
 
     protected ?string $routeName = 'darejer.documents.templates';
@@ -96,7 +103,7 @@ class DocumentTemplateController extends DarejerController
         return $this->form()
             ->title(__darejer('New Document Template'))
             ->record([
-                'locale' => '',
+                'locale' => self::LOCALE_ANY,
                 'paper_size' => 'A4',
                 'is_default' => false,
                 'is_active' => true,
@@ -115,7 +122,7 @@ class DocumentTemplateController extends DarejerController
         return $this->form(creating: false, currentFileUrl: route('darejer.documents.templates.download', $record->id))
             ->title(__darejer('Edit Document Template'))
             ->record(array_merge($record->toArray(), [
-                'locale' => $record->locale ?? '',
+                'locale' => $record->locale ?? self::LOCALE_ANY,
                 'name' => $record->getFullTranslations('name'),
                 'current_file' => basename((string) $record->file_path),
             ]))
@@ -301,7 +308,7 @@ class DocumentTemplateController extends DarejerController
                 ->options($this->typeOptions()),
             SelectComponent::make('locale')
                 ->label(__darejer('Language'))
-                ->options(['' => __darejer('All languages')] + $this->languageOptions())
+                ->options([self::LOCALE_ANY => __darejer('All languages')] + $this->languageOptions())
                 ->hint(__darejer('Pick a language for a layout specific to it (e.g. an RTL Arabic/Kurdish design). "All languages" is the fallback.')),
             TranslatableInput::make('name')
                 ->label(__darejer('Name'))
@@ -392,9 +399,9 @@ class DocumentTemplateController extends DarejerController
      */
     protected function validateRequest(Request $request, bool $creating): array
     {
-        return $request->validate([
+        $validated = $request->validate([
             'document_type' => ['required', 'string', Rule::in(array_keys(DocumentTemplateRegistry::all()))],
-            'locale' => ['nullable', 'string', Rule::in(array_keys($this->languageOptions()))],
+            'locale' => ['nullable', 'string', Rule::in([self::LOCALE_ANY, ...array_keys($this->languageOptions())])],
             'name' => ['required', 'array'],
             'name.*' => ['nullable', 'string', 'max:255'],
             'paper_size' => ['nullable', 'string', 'max:16'],
@@ -404,6 +411,13 @@ class DocumentTemplateController extends DarejerController
             'is_active' => ['boolean'],
             'file' => [$creating ? 'required' : 'nullable', 'file', 'extensions:docx', 'max:10240'],
         ]);
+
+        // "All languages" sentinel → null locale.
+        if (($validated['locale'] ?? null) === self::LOCALE_ANY) {
+            $validated['locale'] = null;
+        }
+
+        return $validated;
     }
 
     /**
