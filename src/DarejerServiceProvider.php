@@ -155,6 +155,7 @@ class DarejerServiceProvider extends ServiceProvider
 
             ControllerRouteRegistrar::discover([
                 __DIR__.'/Http/Controllers/Governance' => 'Darejer\\Http\\Controllers\\Governance',
+                __DIR__.'/Http/Controllers/Documents' => 'Darejer\\Http\\Controllers\\Documents',
             ])->register();
         }
 
