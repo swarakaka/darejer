@@ -150,11 +150,18 @@ class DocumentTemplateController extends DarejerController
 
         $data = $this->validateRequest($request, creating: false);
 
+        $oldPath = $record->file_path;
+
         if ($request->hasFile('file')) {
             $data['file_path'] = $request->file('file')->store($this->uploadPath(), $this->uploadDisk());
         }
 
         $record->update($data);
+
+        // Replacing the file: remove the previous physical .docx.
+        if ($request->hasFile('file') && $oldPath && $oldPath !== $record->file_path) {
+            Storage::disk($this->uploadDisk())->delete($oldPath);
+        }
 
         $this->enforceSingleDefault($record);
 
@@ -169,7 +176,14 @@ class DocumentTemplateController extends DarejerController
     {
         $this->authorizePermission('system.document_template.delete');
 
-        DocumentTemplate::query()->findOrFail($template)->delete();
+        $record = DocumentTemplate::query()->findOrFail($template);
+
+        // Remove the stored .docx, then the record.
+        if ($record->file_path) {
+            Storage::disk($record->disk())->delete($record->file_path);
+        }
+
+        $record->delete();
 
         return redirect()->route('darejer.documents.templates.index');
     }

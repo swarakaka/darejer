@@ -6,21 +6,18 @@ namespace Darejer\Documents;
 
 use Darejer\Models\DocumentTemplate;
 use Illuminate\Support\Facades\Storage;
-use PhpOffice\PhpWord\IOFactory;
-use PhpOffice\PhpWord\Settings;
 use PhpOffice\PhpWord\TemplateProcessor;
 use RuntimeException;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 /**
  * Fills an uploaded `.docx` template with voucher data (PHPWord
- * `TemplateProcessor`) and, optionally, converts the result to PDF using a
- * pure-PHP renderer (mpdf) — no LibreOffice / headless Chrome required.
- *
- * Fidelity note: the `.docx` output is faithful to the user's Word design.
- * The PDF path goes `.docx → HTML → PDF` inside PHPWord and loses advanced
- * Word formatting; it is best-effort, with mpdf chosen for its RTL/Arabic
- * support.
+ * `TemplateProcessor`), then converts it to PDF with headless LibreOffice
+ * (`soffice --convert-to pdf`). LibreOffice renders the `.docx` natively, so
+ * alignment, column widths, fonts, borders and RTL (Arabic/Kurdish) match Word
+ * exactly. PDF rendering requires a LibreOffice binary; when none is found
+ * `renderPdf()` throws (the faithful `.docx` is always available via
+ * `download(..., 'docx')`).
  */
 class DocumentRenderer
 {
@@ -59,21 +56,96 @@ class DocumentRenderer
     }
 
     /**
-     * Fill, then render to PDF. Returns the absolute path to a temporary PDF.
+     * Fill, then render to PDF with LibreOffice. Returns the absolute path to a
+     * temporary PDF. Throws when no LibreOffice binary is available.
      */
     public function renderPdf(DocumentTemplate $template, DocumentTemplateData $data): string
     {
         $docx = $this->fill($template, $data);
 
-        $this->configurePdfRenderer();
+        try {
+            $binary = $this->libreOfficeBinary();
 
-        $phpWord = IOFactory::load($docx);
-        $pdf = $this->tempFile('pdf');
-        IOFactory::createWriter($phpWord, 'PDF')->save($pdf);
+            if ($binary === null) {
+                throw new RuntimeException(
+                    'PDF rendering requires LibreOffice. Install libreoffice-writer or set '.
+                    'LIBREOFFICE_BINARY. The .docx output is available via the docx format.'
+                );
+            }
 
-        @unlink($docx);
+            return $this->convertWithLibreOffice($binary, $docx);
+        } finally {
+            @unlink($docx);
+        }
+    }
 
-        return $pdf;
+    /**
+     * Convert a `.docx` to PDF with headless LibreOffice. Returns the PDF path;
+     * throws on conversion failure.
+     */
+    protected function convertWithLibreOffice(string $binary, string $docx): string
+    {
+        $outDir = $this->tempDir();
+        $profileDir = $this->tempDir();
+
+        $command = implode(' ', [
+            escapeshellarg($binary),
+            '--headless', '--nologo', '--nofirststartwizard', '--norestore',
+            '--convert-to', escapeshellarg('pdf:writer_pdf_Export'),
+            '--outdir', escapeshellarg($outDir),
+            '-env:UserInstallation=file://'.$profileDir,
+            escapeshellarg($docx),
+            '2>&1',
+        ]);
+
+        @exec($command, $output, $exitCode);
+
+        $produced = $outDir.'/'.pathinfo($docx, PATHINFO_FILENAME).'.pdf';
+
+        try {
+            if ($exitCode === 0 && is_file($produced)) {
+                $pdf = $this->tempFile('pdf');
+                rename($produced, $pdf);
+
+                return $pdf;
+            }
+
+            throw new RuntimeException('LibreOffice failed to convert the document to PDF: '.implode("\n", (array) $output));
+        } finally {
+            $this->removeDir($outDir);
+            $this->removeDir($profileDir);
+        }
+    }
+
+    /** Locate a usable LibreOffice binary, or null. Configurable via env. */
+    protected function libreOfficeBinary(): ?string
+    {
+        $candidates = array_filter([
+            config('darejer.libreoffice.binary'),
+            'soffice',
+            'libreoffice',
+            '/usr/bin/soffice',
+            '/usr/bin/libreoffice',
+            '/opt/libreoffice/program/soffice',
+            '/Applications/LibreOffice.app/Contents/MacOS/soffice',
+        ]);
+
+        foreach ($candidates as $candidate) {
+            if (str_contains((string) $candidate, '/')) {
+                if (is_executable($candidate)) {
+                    return $candidate;
+                }
+
+                continue;
+            }
+
+            $resolved = trim((string) @shell_exec('command -v '.escapeshellarg($candidate).' 2>/dev/null'));
+            if ($resolved !== '') {
+                return $resolved;
+            }
+        }
+
+        return null;
     }
 
     /**
@@ -138,12 +210,6 @@ class DocumentRenderer
         $processor->cloneRowAndSetValues($anchor, $normalized);
     }
 
-    protected function configurePdfRenderer(): void
-    {
-        Settings::setPdfRendererName(Settings::PDF_RENDERER_MPDF);
-        Settings::setPdfRendererPath(base_path('vendor/mpdf/mpdf'));
-    }
-
     protected function tempFile(string $extension): string
     {
         $path = tempnam(sys_get_temp_dir(), 'darejer_doc_');
@@ -156,6 +222,40 @@ class DocumentRenderer
         rename($path, $withExt);
 
         return $withExt;
+    }
+
+    /** Create a unique temporary directory. */
+    protected function tempDir(): string
+    {
+        $path = tempnam(sys_get_temp_dir(), 'darejer_lo_');
+
+        if ($path === false) {
+            throw new RuntimeException('Unable to allocate a temporary directory for document rendering.');
+        }
+
+        @unlink($path);
+        @mkdir($path, 0775, true);
+
+        return $path;
+    }
+
+    /** Recursively remove a temporary directory. */
+    protected function removeDir(string $dir): void
+    {
+        if (! is_dir($dir)) {
+            return;
+        }
+
+        foreach (scandir($dir) ?: [] as $entry) {
+            if ($entry === '.' || $entry === '..') {
+                continue;
+            }
+
+            $path = $dir.'/'.$entry;
+            is_dir($path) ? $this->removeDir($path) : @unlink($path);
+        }
+
+        @rmdir($dir);
     }
 
     protected function stringify(mixed $value): string

@@ -23,7 +23,6 @@
         "inertiajs/inertia-laravel": "^3.0",
         "laravel/fortify": "^1.37",
         "laravel/framework": "^13.0",
-        "mpdf/mpdf": "^8.2",
         "phpoffice/phpword": "^1.4",
         "spatie/laravel-permission": "^6.0",
         "spatie/laravel-translatable": "^6.0",
