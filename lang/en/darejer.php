@@ -386,4 +386,7 @@ return [
     'Where' => 'Where',
     'Current file' => 'Current file',
     'Leave empty to keep the current file. Uploading replaces it.' => 'Leave empty to keep the current file. Uploading replaces it.',
+    'Language' => 'Language',
+    'All languages' => 'All languages',
+    'Pick a language for a layout specific to it (e.g. an RTL Arabic/Kurdish design). "All languages" is the fallback.' => 'Pick a language for a layout specific to it (e.g. an RTL Arabic/Kurdish design). "All languages" is the fallback.',
 ];

@@ -61,6 +61,8 @@ class DocumentTemplateController extends DarejerController
                 Column::make('id')->label('#')->width('80px')->sortable(),
                 Column::make('document_type')->label(__darejer('Type'))->sortable()
                     ->displayUsing(fn (DocumentTemplate $t): string => __(DocumentTemplateRegistry::label($t->document_type))),
+                Column::make('locale')->label(__darejer('Language'))
+                    ->displayUsing(fn (DocumentTemplate $t): string => $t->locale ? strtoupper($t->locale) : __darejer('All languages')),
                 Column::make('name')->label(__darejer('Name'))->searchable()
                     ->displayUsing(fn (DocumentTemplate $t): string => $t->getTranslationWithFallback('name')),
                 Column::make('paper_size')->label(__darejer('Paper')),
@@ -71,6 +73,8 @@ class DocumentTemplateController extends DarejerController
             ->filters([
                 Filter::select('document_type')->label(__darejer('Type'))
                     ->options($this->typeOptions()),
+                Filter::select('locale')->label(__darejer('Language'))
+                    ->options($this->languageOptions()),
                 Filter::boolean('is_active')->label(__darejer('Active')),
                 Filter::trashed(),
             ])
@@ -92,6 +96,7 @@ class DocumentTemplateController extends DarejerController
         return $this->form()
             ->title(__darejer('New Document Template'))
             ->record([
+                'locale' => '',
                 'paper_size' => 'A4',
                 'is_default' => false,
                 'is_active' => true,
@@ -110,6 +115,7 @@ class DocumentTemplateController extends DarejerController
         return $this->form(creating: false, currentFileUrl: route('darejer.documents.templates.download', $record->id))
             ->title(__darejer('Edit Document Template'))
             ->record(array_merge($record->toArray(), [
+                'locale' => $record->locale ?? '',
                 'name' => $record->getFullTranslations('name'),
                 'current_file' => basename((string) $record->file_path),
             ]))
@@ -293,6 +299,10 @@ class DocumentTemplateController extends DarejerController
                 ->required()
                 ->searchable()
                 ->options($this->typeOptions()),
+            SelectComponent::make('locale')
+                ->label(__darejer('Language'))
+                ->options(['' => __darejer('All languages')] + $this->languageOptions())
+                ->hint(__darejer('Pick a language for a layout specific to it (e.g. an RTL Arabic/Kurdish design). "All languages" is the fallback.')),
             TranslatableInput::make('name')
                 ->label(__darejer('Name'))
                 ->required(),
@@ -317,7 +327,7 @@ class DocumentTemplateController extends DarejerController
             Toggle::make('is_active')->label(__darejer('Active')),
         ];
 
-        $generalFields = ['document_type', 'name', 'file', 'paper_size'];
+        $generalFields = ['document_type', 'locale', 'name', 'file', 'paper_size'];
 
         // On edit, surface the currently-stored file (the upload widget only
         // shows newly-picked files) as a download link.
@@ -326,7 +336,7 @@ class DocumentTemplateController extends DarejerController
                 ->label(__darejer('Current file'))
                 ->link($currentFileUrl, true)
                 ->emptyText('—');
-            $generalFields = ['document_type', 'name', 'file', 'current_file', 'paper_size'];
+            $generalFields = ['document_type', 'locale', 'name', 'file', 'current_file', 'paper_size'];
         }
 
         return Form::make('default')
@@ -384,6 +394,7 @@ class DocumentTemplateController extends DarejerController
     {
         return $request->validate([
             'document_type' => ['required', 'string', Rule::in(array_keys(DocumentTemplateRegistry::all()))],
+            'locale' => ['nullable', 'string', Rule::in(array_keys($this->languageOptions()))],
             'name' => ['required', 'array'],
             'name.*' => ['nullable', 'string', 'max:255'],
             'paper_size' => ['nullable', 'string', 'max:16'],
@@ -407,8 +418,25 @@ class DocumentTemplateController extends DarejerController
         DocumentTemplate::query()
             ->where('document_type', $record->document_type)
             ->where('company_id', $record->company_id)
+            ->where('locale', $record->locale)
             ->where('id', '!=', $record->id)
             ->update(['is_default' => false]);
+    }
+
+    /**
+     * Configured UI languages as Select/Filter options (code => uppercased code).
+     *
+     * @return array<string, string>
+     */
+    protected function languageOptions(): array
+    {
+        $options = [];
+
+        foreach (config('darejer.languages', ['en']) as $lang) {
+            $options[$lang] = strtoupper((string) $lang);
+        }
+
+        return $options;
     }
 
     protected function uploadDisk(): string

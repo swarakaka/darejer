@@ -383,4 +383,7 @@ return [
     'Where' => 'شوێن',
     'Current file' => 'فایلی ئێستا',
     'Leave empty to keep the current file. Uploading replaces it.' => 'بۆ هێشتنەوەی فایلی ئێستا بەتاڵی بهێڵە. بارکردن جێگۆڕکێی پێدەکات.',
+    'Language' => 'زمان',
+    'All languages' => 'هەموو زمانەکان',
+    'Pick a language for a layout specific to it (e.g. an RTL Arabic/Kurdish design). "All languages" is the fallback.' => 'زمانێک هەڵبژێرە بۆ ڕووکارێکی تایبەت بەو زمانە (وەک دیزاینی RTL ی عەرەبی/کوردی). «هەموو زمانەکان» گریمانەیە.',
 ];

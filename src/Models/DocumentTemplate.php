@@ -28,6 +28,7 @@ class DocumentTemplate extends Model
 
     protected $fillable = [
         'document_type',
+        'locale',
         'name',
         'file_path',
         'paper_size',
@@ -61,11 +62,13 @@ class DocumentTemplate extends Model
     }
 
     /**
-     * Resolve the template that should render a given document type. Prefers a
-     * company-scoped match over a global one, and a default over a non-default,
-     * falling back to any active template for the type.
+     * Resolve the template that should render a given document type. Preference
+     * order: exact locale match over a language-agnostic template; company-scoped
+     * over global; default over non-default; newest last. A language-specific
+     * template (e.g. an RTL Kurdish layout) wins for that locale, while a
+     * `null`-locale template applies to every language.
      */
-    public static function resolveFor(string $documentType, ?int $companyId = null): ?self
+    public static function resolveFor(string $documentType, ?int $companyId = null, ?string $locale = null): ?self
     {
         return static::query()
             ->active()
@@ -77,7 +80,14 @@ class DocumentTemplate extends Model
                 ),
                 fn (Builder $q) => $q->whereNull('company_id'),
             )
-            ->orderByRaw('company_id is null')
+            ->when(
+                $locale !== null,
+                fn (Builder $q) => $q
+                    ->where(fn (Builder $w) => $w->where('locale', $locale)->orWhereNull('locale'))
+                    ->orderByRaw('case when locale = ? then 0 else 1 end', [$locale]),
+                fn (Builder $q) => $q->orderByRaw('case when locale is null then 0 else 1 end'),
+            )
+            ->orderByRaw('case when company_id is null then 1 else 0 end')
             ->orderByDesc('is_default')
             ->orderByDesc('id')
             ->first();

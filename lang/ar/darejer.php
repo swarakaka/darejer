@@ -384,4 +384,7 @@ return [
     'Where' => 'الموضع',
     'Current file' => 'الملف الحالي',
     'Leave empty to keep the current file. Uploading replaces it.' => 'اترك الحقل فارغًا للإبقاء على الملف الحالي. سيؤدي الرفع إلى استبداله.',
+    'Language' => 'اللغة',
+    'All languages' => 'كل اللغات',
+    'Pick a language for a layout specific to it (e.g. an RTL Arabic/Kurdish design). "All languages" is the fallback.' => 'اختر لغة لتصميم خاص بها (مثل تصميم عربي/كردي باتجاه RTL). «كل اللغات» هو الخيار الاحتياطي.',
 ];
