@@ -268,7 +268,6 @@ class DocumentTemplateController extends DarejerController
                 FileUpload::make('file')
                     ->label(__darejer('Word template (.docx)'))
                     ->accept(['.docx', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'])
-                    ->maxFiles(1)
                     ->maxSize(10240)
                     ->disk($this->uploadDisk())
                     ->path($this->uploadPath())
