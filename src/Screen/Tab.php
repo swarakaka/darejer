@@ -2,8 +2,12 @@
 
 namespace Darejer\Screen;
 
+use Darejer\Concerns\HasVisibility;
+
 class Tab
 {
+    use HasVisibility;
+
     /** @var string[] */
     protected array $components = [];
 
@@ -60,10 +64,14 @@ class Tab
     }
 
     /**
-     * @return array<string, mixed>
+     * @return array<string, mixed>|null  null when a visible() rule denies access.
      */
-    public function toArray(): array
+    public function toArray(): ?array
     {
+        if (! $this->passesVisibility()) {
+            return null;
+        }
+
         return array_filter([
             'name' => $this->name ?? $this->autoName(),
             'title' => $this->title,

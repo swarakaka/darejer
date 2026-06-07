@@ -142,6 +142,35 @@ class Screen
 
     // ── Serialization ────────────────────────────────────────────────────────
 
+    /**
+     * Serialize tabs, injecting the parent record for closure-based visible()
+     * checks and stripping any tab a visibility rule denies (toArray() => null).
+     *
+     * @return array<int, array<string, mixed>>|null
+     */
+    protected function serializeTabs(): ?array
+    {
+        if (! $this->tabs) {
+            return null;
+        }
+
+        $record = method_exists($this, 'getRecord') ? $this->getRecord() : null;
+
+        $serialized = [];
+
+        foreach ($this->tabs as $tab) {
+            $tab->withVisibilityRecord($record);
+
+            $arr = $tab->toArray();
+
+            if ($arr !== null) {
+                $serialized[] = $arr;
+            }
+        }
+
+        return array_values($serialized);
+    }
+
     public function toArray(): array
     {
         return array_merge([
@@ -153,7 +182,7 @@ class Screen
             'actions' => $this->serializeActions(),
             'breadcrumbs' => $this->breadcrumbs,
             'sections' => $this->sections ? array_map(fn (Section $s) => $s->toArray(), $this->sections) : null,
-            'tabs' => $this->tabs ? array_map(fn (Tab $t) => $t->toArray(), $this->tabs) : null,
+            'tabs' => $this->serializeTabs(),
             'reportColumns' => $this->reportColumns ? array_map(fn (ReportColumn $c) => $c->toArray(), $this->reportColumns) : null,
             'fullWidth' => $this->fullWidth ?: null,
             'layout' => $this->layout,
