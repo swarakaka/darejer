@@ -13,7 +13,7 @@ interface InvoiceLine {
   discount_amount: string | null
   tax_amount: string | null
   item: { code: string; name: Translatable } | null
-  uom: { name: Translatable } | null
+  uom: { name: Translatable; decimals: number | null } | null
   warehouse: { name: Translatable } | null
   tax_code: { code: string; rate: string | null } | null
 }
@@ -80,9 +80,32 @@ function fmt(value: string | number | null | undefined): string {
   return Number.isFinite(n) ? moneyFormatter.value.format(n) : String(value)
 }
 
-function qty(value: string | number | null | undefined): string {
+function qty(value: string | number | null | undefined, decimals: number | null | undefined = null): string {
   const n = Number(value ?? 0)
-  return Number.isFinite(n) ? n.toFixed(2) : String(value)
+  if (!Number.isFinite(n)) {
+    return String(value ?? '')
+  }
+  const d = decimals ?? 2
+  return new Intl.NumberFormat(undefined, {
+    minimumFractionDigits: d,
+    maximumFractionDigits: d,
+  }).format(n)
+}
+
+function num(value: string | number | null | undefined): string {
+  const n = Number(value ?? 0)
+  if (!Number.isFinite(n)) {
+    return String(value ?? '')
+  }
+  return new Intl.NumberFormat(undefined, { maximumFractionDigits: 2 }).format(n)
+}
+
+function fmtDate(value: string | null | undefined): string {
+  if (!value) {
+    return ''
+  }
+  const match = String(value).match(/^\d{4}-\d{2}-\d{2}/)
+  return match ? match[0] : String(value)
 }
 
 onMounted(() => {
@@ -102,7 +125,7 @@ onMounted(() => {
           {{ localized(invoice.company?.address) }}
         </div>
         <div v-if="invoice.company?.mobile || invoice.company?.email" class="text-[11px]">
-          <span v-if="invoice.company?.mobile">{{ invoice.company?.mobile }}</span>
+          <span v-if="invoice.company?.mobile" dir="ltr" class="inline-block">{{ invoice.company?.mobile }}</span>
           <span v-if="invoice.company?.mobile && invoice.company?.email"> · </span>
           <span v-if="invoice.company?.email">{{ invoice.company?.email }}</span>
         </div>
@@ -115,10 +138,12 @@ onMounted(() => {
             <span class="font-semibold">{{ __('No.') }}:</span> {{ invoice.voucher_no }}
           </div>
           <div>
-            <span class="font-semibold">{{ __('Date') }}:</span> {{ invoice.voucher_date }}
+            <span class="font-semibold">{{ __('Date') }}:</span>
+            <span dir="ltr" class="inline-block">{{ fmtDate(invoice.voucher_date) }}</span>
           </div>
           <div v-if="invoice.due_date">
-            <span class="font-semibold">{{ __('Due date') }}:</span> {{ invoice.due_date }}
+            <span class="font-semibold">{{ __('Due date') }}:</span>
+            <span dir="ltr" class="inline-block">{{ fmtDate(invoice.due_date) }}</span>
           </div>
         </div>
       </div>
@@ -141,7 +166,9 @@ onMounted(() => {
           {{ __('VAT ID') }}: {{ invoice.supplier_account?.vat_id }}
         </div>
         <div v-if="invoice.supplier_account?.email" class="text-[11px]">{{ invoice.supplier_account?.email }}</div>
-        <div v-if="invoice.supplier_account?.mobile" class="text-[11px]">{{ invoice.supplier_account?.mobile }}</div>
+        <div v-if="invoice.supplier_account?.mobile" class="text-[11px]">
+          <span dir="ltr" class="inline-block">{{ invoice.supplier_account?.mobile }}</span>
+        </div>
       </div>
       <div>
         <div class="mb-1 text-[10px] font-semibold tracking-wide text-gray-600 uppercase">{{ __('Details') }}</div>
@@ -201,10 +228,10 @@ onMounted(() => {
               <div v-if="line.item?.code" class="text-[10px] text-gray-600">{{ line.item?.code }}</div>
             </td>
             <td class="py-1.5 pe-2">{{ localized(line.warehouse?.name) }}</td>
-            <td class="py-1.5 pe-2 text-end tabular-nums">{{ qty(line.qty) }}</td>
+            <td class="py-1.5 pe-2 text-end tabular-nums">{{ qty(line.qty, line.uom?.decimals) }}</td>
             <td class="py-1.5 pe-2">{{ localized(line.uom?.name) }}</td>
             <td class="py-1.5 pe-2 text-end tabular-nums">{{ fmt(line.rate) }}</td>
-            <td class="py-1.5 pe-2 text-end tabular-nums">{{ qty(line.discount_pct) }}</td>
+            <td class="py-1.5 pe-2 text-end tabular-nums">{{ num(line.discount_pct) }}</td>
             <td class="py-1.5 pe-2">{{ line.tax_code?.code || '—' }}</td>
             <td class="py-1.5 pe-1 text-end tabular-nums">{{ fmt(line.amount) }}</td>
           </tr>
