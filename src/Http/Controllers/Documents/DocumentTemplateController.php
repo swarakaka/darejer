@@ -55,7 +55,7 @@ class DocumentTemplateController extends DarejerController
             ->columns([
                 Column::make('id')->label('#')->width('80px')->sortable(),
                 Column::make('document_type')->label(__darejer('Type'))->sortable()
-                    ->displayUsing(fn (DocumentTemplate $t): string => DocumentTemplateRegistry::label($t->document_type)),
+                    ->displayUsing(fn (DocumentTemplate $t): string => __(DocumentTemplateRegistry::label($t->document_type))),
                 Column::make('name')->label(__darejer('Name'))->searchable()
                     ->displayUsing(fn (DocumentTemplate $t): string => $t->getTranslationWithFallback('name')),
                 Column::make('paper_size')->label(__darejer('Paper')),
@@ -65,7 +65,7 @@ class DocumentTemplateController extends DarejerController
             ])
             ->filters([
                 Filter::select('document_type')->label(__darejer('Type'))
-                    ->options(DocumentTemplateRegistry::options()),
+                    ->options($this->typeOptions()),
                 Filter::boolean('is_active')->label(__darejer('Active')),
                 Filter::trashed(),
             ])
@@ -197,7 +197,7 @@ class DocumentTemplateController extends DarejerController
                     ->label(__darejer('Document Type'))
                     ->required()
                     ->searchable()
-                    ->options(DocumentTemplateRegistry::options()),
+                    ->options($this->typeOptions()),
                 TranslatableInput::make('name')
                     ->label(__darejer('Name'))
                     ->required(),
@@ -241,13 +241,23 @@ class DocumentTemplateController extends DarejerController
         ];
 
         foreach (DocumentTemplateRegistry::all() as $type => $definition) {
-            $actions[] = ButtonAction::make(__darejer('Starter').': '.$definition['label'])
+            $actions[] = ButtonAction::make(__darejer('Starter').': '.__($definition['label']))
                 ->url(route('darejer.documents.templates.starter', ['type' => $type]))
                 ->icon('Download')
                 ->canSee('system.document_template.update');
         }
 
         return $actions;
+    }
+
+    /**
+     * Document-type options with labels resolved in the current locale.
+     *
+     * @return array<string, string>
+     */
+    protected function typeOptions(): array
+    {
+        return array_map(fn (string $label): string => __($label), DocumentTemplateRegistry::options());
     }
 
     /**
