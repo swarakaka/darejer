@@ -72,12 +72,14 @@ const moneyFormatter = computed(
       maximumFractionDigits: decimals.value,
     }),
 )
+const currencySymbol = computed(() => props.invoice.currency?.symbol || props.invoice.currency?.code || '')
 function fmt(value: string | number | null | undefined): string {
+  const prefix = currencySymbol.value ? `${currencySymbol.value} ` : ''
   if (value === null || value === undefined || value === '') {
-    return moneyFormatter.value.format(0)
+    return `${prefix}${moneyFormatter.value.format(0)}`
   }
   const n = Number(value)
-  return Number.isFinite(n) ? moneyFormatter.value.format(n) : String(value)
+  return Number.isFinite(n) ? `${prefix}${moneyFormatter.value.format(n)}` : String(value)
 }
 
 function qty(value: string | number | null | undefined, decimals: number | null | undefined = null): string {
@@ -269,7 +271,7 @@ onMounted(() => {
           </tr>
           <tr class="border-t-2 border-black text-[14px] font-bold">
             <td class="py-2 pe-3">{{ __('Grand Total') }}</td>
-            <td class="py-2 text-end tabular-nums">{{ invoice.currency?.code }} {{ fmt(invoice.grand_total) }}</td>
+            <td class="py-2 text-end tabular-nums">{{ fmt(invoice.grand_total) }}</td>
           </tr>
           <tr v-if="Number(invoice.paid_amount) > 0">
             <td class="py-1 pe-3 text-gray-600">{{ __('Paid') }}</td>
