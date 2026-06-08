@@ -37,11 +37,19 @@ class Column
 
     protected ?string $textColorMap = null;
 
+    /** @var array<string, string>|null */
+    protected ?array $signColorMap = null;
+
+    /** Prefix for the synthetic per-row field that carries a value's sign. */
+    private const SIGN_FIELD_PREFIX = '__sign_';
+
     protected ?string $displayType = null;   // 'date' | 'datetime' | 'boolean' | 'money' | 'plain' | …
 
     protected ?string $dateFormat = null;   // PHP date() format string
 
     protected int $decimals = 2;
+
+    protected bool $absolute = false;
 
     protected ?string $currencyField = null;
 
@@ -264,6 +272,59 @@ class Column
     }
 
     /**
+     * Render the column's `number`/`money` value as an unsigned magnitude —
+     * the leading minus is dropped so a negative amount or quantity shows as
+     * its absolute value. Use when direction is conveyed another way (row
+     * color, a sibling state badge) instead of a `-` sign, per accounting
+     * presentation. No-op for non-numeric display types.
+     */
+    public function absolute(bool $absolute = true): static
+    {
+        $this->absolute = $absolute;
+
+        return $this;
+    }
+
+    /**
+     * Color this column's own cell by the SIGN of its numeric value, resolved
+     * server-side from the raw amount before any `absolute()`/`money()`
+     * formatting. Map keys are `negative`, `zero`, `positive`; values are
+     * color variants (strings or backed-enum cases like `Color::Danger`).
+     *
+     * Pairs naturally with `absolute()`: show the magnitude, let the color
+     * carry the sign — the international "red = negative" convention. Internally
+     * reuses the `textColorBy` mechanism against a synthetic sign field, so it
+     * overrides any `textColorBy()` set on the same column.
+     *
+     * @param  array<string, string|BackedEnum>  $map
+     */
+    public function colorBySign(array $map): static
+    {
+        $this->signColorMap = EnumOptions::colors($map);
+        $this->textColorBy = $this->getSignField();
+        $this->textColorMap = json_encode($this->signColorMap);
+
+        return $this;
+    }
+
+    /**
+     * Name of the synthetic per-row field carrying this column's value sign,
+     * or null when sign coloring isn't enabled.
+     */
+    public function getSignField(): ?string
+    {
+        return $this->signColorMap === null
+            ? null
+            : self::SIGN_FIELD_PREFIX.str_replace('.', '_', $this->field);
+    }
+
+    /** @return array<string, string>|null */
+    public function getSignColorMap(): ?array
+    {
+        return $this->signColorMap;
+    }
+
+    /**
      * Render the column value as a boolean. The raw value is coerced to bool
      * server-side and replaced with the corresponding label so the frontend
      * receives a ready-to-display string.
@@ -344,6 +405,11 @@ class Column
     public function getDecimals(): int
     {
         return $this->decimals;
+    }
+
+    public function isAbsolute(): bool
+    {
+        return $this->absolute;
     }
 
     public function getCurrencyField(): ?string

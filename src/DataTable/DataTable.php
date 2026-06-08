@@ -327,6 +327,16 @@ class DataTable
             ->mapWithKeys(fn (Column $c) => [$c->getField() => $c->getDecimals()])
             ->all();
 
+        $absoluteColumns = collect($this->columns)
+            ->filter(fn (Column $c) => $c->isAbsolute())
+            ->mapWithKeys(fn (Column $c) => [$c->getField() => true])
+            ->all();
+
+        $signColumns = collect($this->columns)
+            ->filter(fn (Column $c) => $c->getSignColorMap() !== null)
+            ->mapWithKeys(fn (Column $c) => [$c->getField() => $c->getSignField()])
+            ->all();
+
         $moneyColumns = collect($this->columns)
             ->filter(fn (Column $c) => $c->getDisplayType() === 'money')
             ->mapWithKeys(fn (Column $c) => [$c->getField() => [
@@ -373,7 +383,7 @@ class DataTable
         $rowColorMap = $this->rowColorMap ?? [];
         $rowBgField = $this->rowBgField;
         $rowBgMap = $this->rowBgMap ?? [];
-        $data = collect($paginated->items())->values()->map(function ($item, $index) use ($dateColumns, $booleanColumns, $numberColumns, $moneyColumns, $displayUsingColumns, $formatColumns, $badgeEnumColumns, $numeric, $rowColorField, $rowColorMap, $rowBgField, $rowBgMap, $startIndex) {
+        $data = collect($paginated->items())->values()->map(function ($item, $index) use ($dateColumns, $booleanColumns, $numberColumns, $moneyColumns, $absoluteColumns, $signColumns, $displayUsingColumns, $formatColumns, $badgeEnumColumns, $numeric, $rowColorField, $rowColorMap, $rowBgField, $rowBgMap, $startIndex) {
             $arr = $item->toArray();
 
             if ($numeric) {
@@ -418,6 +428,9 @@ class DataTable
                 if ($value === null) {
                     continue;
                 }
+                if (isset($absoluteColumns[$field])) {
+                    $value = abs($value);
+                }
                 $arr[$field] = number_format($value, $decimals, '.', ',');
             }
 
@@ -428,6 +441,9 @@ class DataTable
                 $value = self::coerceNumeric($arr[$field]);
                 if ($value === null) {
                     continue;
+                }
+                if (isset($absoluteColumns[$field])) {
+                    $value = abs($value);
                 }
                 $decimals = $config['decimals'];
                 if ($config['decimalsField']) {
@@ -474,6 +490,16 @@ class DataTable
                 } catch (\Throwable) {
                     // Keep the raw value when callback mapping fails.
                 }
+            }
+
+            foreach ($signColumns as $field => $signField) {
+                $raw = self::coerceNumeric(data_get($item, $field));
+                $arr[$signField] = match (true) {
+                    $raw === null => 'zero',
+                    $raw < 0 => 'negative',
+                    $raw > 0 => 'positive',
+                    default => 'zero',
+                };
             }
 
             if ($rowColorField !== null) {
