@@ -48,13 +48,13 @@ final class EnumOptions
     }
 
     /**
-     * @param  class-string<BackedEnum>|array<string, string>  $source
+     * @param  class-string<BackedEnum>|array<string, string|BackedEnum>  $source
      * @return array<string, string>
      */
     public static function colors(string|array $source): array
     {
         if (is_array($source)) {
-            return $source;
+            return self::normalizeMap($source);
         }
 
         if (! is_subclass_of($source, BackedEnum::class)) {
@@ -70,6 +70,26 @@ final class EnumOptions
             if (method_exists($case, 'color')) {
                 $out[(string) $case->value] = $case->color();
             }
+        }
+
+        return $out;
+    }
+
+    /**
+     * Normalise a hand-written `[value => variant]` map so both keys and
+     * values may be passed as backed-enum cases, e.g.
+     * `['debit' => Color::Ink]` becomes `['debit' => 'ink']`.
+     *
+     * @param  array<string|int|BackedEnum, string|BackedEnum>  $map
+     * @return array<string, string>
+     */
+    private static function normalizeMap(array $map): array
+    {
+        $out = [];
+        foreach ($map as $key => $value) {
+            $key = $key instanceof BackedEnum ? $key->value : $key;
+            $value = $value instanceof BackedEnum ? $value->value : $value;
+            $out[(string) $key] = (string) $value;
         }
 
         return $out;

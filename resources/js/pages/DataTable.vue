@@ -505,14 +505,28 @@ function textColorClass(col: GridColumn, row: Record<string, unknown>): string {
   }
   const variant = lookupBadge(map, readRowPath(row, col.textColorBy))
   if (!variant) return ''
-  const classes: Record<string, string> = {
-    success: 'text-success-700',
-    warning: 'text-warning-700',
-    danger: 'text-danger-700',
-    info: 'text-brand-700',
-    neutral: 'text-ink-600',
-  }
-  return classes[variant] ?? ''
+  return textVariantClasses[variant as string] ?? ''
+}
+
+const textVariantClasses: Record<string, string> = {
+  success: 'text-success-700',
+  warning: 'text-warning-700',
+  danger: 'text-danger-700',
+  info: 'text-brand-700',
+  neutral: 'text-ink-600',
+  muted: 'text-ink-600',
+  ink: 'text-ink-900',
+}
+
+/**
+ * Resolve the per-row text color from the server-emitted `__row_variant`
+ * field (set by DataTable::rowColorBy). Applies to every value cell so the
+ * whole row reads in one color.
+ */
+function rowColorClass(row: Record<string, unknown>): string {
+  const variant = row['__row_variant']
+  if (typeof variant !== 'string') return ''
+  return textVariantClasses[variant] ?? ''
 }
 
 const iconMap: Record<string, unknown> = {
@@ -1040,7 +1054,11 @@ function clearFilter(field: string) {
                   <span
                     v-else
                     class="block max-w-xs truncate"
-                    :class="[ci === 0 ? 'text-ink-900 font-medium' : '', textColorClass(col, row)]"
+                    :class="[
+                      ci === 0 ? (rowColorClass(row) ? 'font-medium' : 'text-ink-900 font-medium') : '',
+                      rowColorClass(row),
+                      textColorClass(col, row),
+                    ]"
                   >
                     {{ formatCell(row[col.field], col) ?? '—' }}
                   </span>

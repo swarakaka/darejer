@@ -8,6 +8,7 @@ use Darejer\DataGrid\Column;
 use Darejer\DataGrid\Filter;
 use Darejer\DataGrid\RowAction;
 use Darejer\Screen\Contracts\Actionable;
+use Darejer\Support\EnumOptions;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\Request;
@@ -55,11 +56,26 @@ class DataTable
     protected bool $numeric = false;
 
     /**
+     * Dot-notated path whose per-row value selects a row color variant.
+     */
+    protected ?string $rowColorField = null;
+
+    /** @var array<string, string>|null */
+    protected ?array $rowColorMap = null;
+
+    /**
      * Field name used by the synthetic row-number column.
      *
      * Underscored prefix avoids collisions with real model attributes.
      */
     protected const NUMERIC_FIELD = '__row_number';
+
+    /**
+     * Field carrying the resolved per-row color variant for the frontend.
+     *
+     * Underscored prefix avoids collisions with real model attributes.
+     */
+    protected const ROW_VARIANT_FIELD = '__row_variant';
 
     protected function __construct(string $modelClass)
     {
@@ -223,6 +239,28 @@ class DataTable
     }
 
     /**
+     * Color every cell in a row based on a field's value — the row-level
+     * analogue of `Column::textColorBy()`.
+     *
+     * `$field` is a dot-notated path on the record whose value selects the
+     * variant from `$colorMap`. Accepts either a `[value => variant]` array or
+     * a backed-enum class string that exposes per-case colors via `color()`
+     * methods or a static `colors()` helper — same resolution as `badge()`.
+     *
+     * Variants follow the `success`/`warning`/`danger`/`info`/`neutral`/
+     * `muted`/`ink` palette. Unmapped values leave the row at its default ink.
+     *
+     * @param  array<string, string>|class-string<BackedEnum>  $colorMap
+     */
+    public function rowColorBy(string $field, array|string $colorMap): static
+    {
+        $this->rowColorField = $field;
+        $this->rowColorMap = EnumOptions::colors($colorMap);
+
+        return $this;
+    }
+
+    /**
      * Handle the request and return an Inertia response.
      */
     public function render(Request $request): Response
@@ -296,7 +334,9 @@ class DataTable
             ->all();
 
         $numeric = $this->numeric;
-        $data = collect($paginated->items())->values()->map(function ($item, $index) use ($dateColumns, $booleanColumns, $numberColumns, $moneyColumns, $displayUsingColumns, $formatColumns, $badgeEnumColumns, $numeric, $startIndex) {
+        $rowColorField = $this->rowColorField;
+        $rowColorMap = $this->rowColorMap ?? [];
+        $data = collect($paginated->items())->values()->map(function ($item, $index) use ($dateColumns, $booleanColumns, $numberColumns, $moneyColumns, $displayUsingColumns, $formatColumns, $badgeEnumColumns, $numeric, $rowColorField, $rowColorMap, $startIndex) {
             $arr = $item->toArray();
 
             if ($numeric) {
@@ -396,6 +436,13 @@ class DataTable
                     $arr[$field] = $callback($item->{$field} ?? null, $item);
                 } catch (\Throwable) {
                     // Keep the raw value when callback mapping fails.
+                }
+            }
+
+            if ($rowColorField !== null) {
+                $variant = $rowColorMap[(string) data_get($item, $rowColorField)] ?? null;
+                if ($variant !== null) {
+                    $arr[self::ROW_VARIANT_FIELD] = $variant;
                 }
             }
 
