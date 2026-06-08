@@ -286,6 +286,26 @@
   --topbar-bg: var(--color-paper-100);
   --topbar-border: #1f232b;
   --topbar-foreground: #f3f2f1;
+
+  /*
+     * Accent tints adapted for dark surfaces. The light/dark accent scales
+     * aren't symmetric like paper/ink, so the tint steps used by badges, row
+     * coloring (rowColorBy / rowBackgroundBy) and textColorBy are remapped:
+     * the `-50` fill darkens toward the page and the `-100` ring strengthens,
+     * while the `-700` text lightens for contrast. Every utility built on
+     * these tokens flips automatically — no `dark:` variants needed.
+     */
+  --color-success-50: color-mix(in srgb, var(--color-success-500) 20%, var(--color-paper-50));
+  --color-success-100: color-mix(in srgb, var(--color-success-500) 34%, var(--color-paper-50));
+  --color-success-700: color-mix(in srgb, var(--color-success-500) 55%, #ffffff);
+
+  --color-warning-50: color-mix(in srgb, var(--color-warning-500) 20%, var(--color-paper-50));
+  --color-warning-100: color-mix(in srgb, var(--color-warning-500) 34%, var(--color-paper-50));
+  --color-warning-700: color-mix(in srgb, var(--color-warning-500) 58%, #ffffff);
+
+  --color-danger-50: color-mix(in srgb, var(--color-danger-500) 20%, var(--color-paper-50));
+  --color-danger-100: color-mix(in srgb, var(--color-danger-500) 34%, var(--color-paper-50));
+  --color-danger-700: color-mix(in srgb, var(--color-danger-500) 58%, #ffffff);
 }
 
 /*

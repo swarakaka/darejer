@@ -529,6 +529,26 @@ function rowColorClass(row: Record<string, unknown>): string {
   return textVariantClasses[variant] ?? ''
 }
 
+const rowBgVariantClasses: Record<string, string> = {
+  success: 'bg-success-50',
+  warning: 'bg-warning-50',
+  danger: 'bg-danger-50',
+  info: 'bg-brand-50',
+  neutral: 'bg-paper-100',
+  muted: 'bg-paper-100',
+  ink: '',
+}
+
+/**
+ * Resolve the per-row background tint from the server-emitted
+ * `__row_bg_variant` field (set by DataTable::rowBackgroundBy).
+ */
+function rowBackgroundClass(row: Record<string, unknown>): string {
+  const variant = row['__row_bg_variant']
+  if (typeof variant !== 'string') return ''
+  return rowBgVariantClasses[variant] ?? ''
+}
+
 const iconMap: Record<string, unknown> = {
   Pencil,
   Eye,
@@ -1009,7 +1029,11 @@ function clearFilter(field: string) {
                 v-for="row in tableData.data"
                 :key="String(row.id ?? row)"
                 class="group/row border-paper-100 relative border-b transition-colors duration-75 last:border-b-0"
-                :class="selected.has(row.id ?? row) ? `bg-brand-50/70 hover:bg-brand-50` : 'hover:bg-paper-75'"
+                :class="
+                  selected.has(row.id ?? row)
+                    ? `bg-brand-50/70 hover:bg-brand-50`
+                    : rowBackgroundClass(row) || 'hover:bg-paper-75'
+                "
               >
                 <!-- Leading rail on hover/selection -->
                 <td v-if="selectable" class="relative h-10 px-3">

@@ -56,12 +56,20 @@ class DataTable
     protected bool $numeric = false;
 
     /**
-     * Dot-notated path whose per-row value selects a row color variant.
+     * Dot-notated path whose per-row value selects a row text-color variant.
      */
     protected ?string $rowColorField = null;
 
     /** @var array<string, string>|null */
     protected ?array $rowColorMap = null;
+
+    /**
+     * Dot-notated path whose per-row value selects a row background variant.
+     */
+    protected ?string $rowBgField = null;
+
+    /** @var array<string, string>|null */
+    protected ?array $rowBgMap = null;
 
     /**
      * Field name used by the synthetic row-number column.
@@ -76,6 +84,13 @@ class DataTable
      * Underscored prefix avoids collisions with real model attributes.
      */
     protected const ROW_VARIANT_FIELD = '__row_variant';
+
+    /**
+     * Field carrying the resolved per-row background variant for the frontend.
+     *
+     * Underscored prefix avoids collisions with real model attributes.
+     */
+    protected const ROW_BG_VARIANT_FIELD = '__row_bg_variant';
 
     protected function __construct(string $modelClass)
     {
@@ -261,6 +276,26 @@ class DataTable
     }
 
     /**
+     * Tint a whole row's background based on a field's value — the background
+     * companion to `rowColorBy()`. Both may be combined on the same table.
+     *
+     * `$field` is a dot-notated path on the record whose value selects the
+     * variant from `$colorMap` (a `[value => variant]` array or a backed-enum
+     * class string). Variants follow the `success`/`warning`/`danger`/`info`/
+     * `neutral`/`muted` palette and render as a subtle tinted background.
+     * Unmapped values leave the row at its default background.
+     *
+     * @param  array<string, string>|class-string<BackedEnum>  $colorMap
+     */
+    public function rowBackgroundBy(string $field, array|string $colorMap): static
+    {
+        $this->rowBgField = $field;
+        $this->rowBgMap = EnumOptions::colors($colorMap);
+
+        return $this;
+    }
+
+    /**
      * Handle the request and return an Inertia response.
      */
     public function render(Request $request): Response
@@ -336,7 +371,9 @@ class DataTable
         $numeric = $this->numeric;
         $rowColorField = $this->rowColorField;
         $rowColorMap = $this->rowColorMap ?? [];
-        $data = collect($paginated->items())->values()->map(function ($item, $index) use ($dateColumns, $booleanColumns, $numberColumns, $moneyColumns, $displayUsingColumns, $formatColumns, $badgeEnumColumns, $numeric, $rowColorField, $rowColorMap, $startIndex) {
+        $rowBgField = $this->rowBgField;
+        $rowBgMap = $this->rowBgMap ?? [];
+        $data = collect($paginated->items())->values()->map(function ($item, $index) use ($dateColumns, $booleanColumns, $numberColumns, $moneyColumns, $displayUsingColumns, $formatColumns, $badgeEnumColumns, $numeric, $rowColorField, $rowColorMap, $rowBgField, $rowBgMap, $startIndex) {
             $arr = $item->toArray();
 
             if ($numeric) {
@@ -443,6 +480,13 @@ class DataTable
                 $variant = $rowColorMap[(string) data_get($item, $rowColorField)] ?? null;
                 if ($variant !== null) {
                     $arr[self::ROW_VARIANT_FIELD] = $variant;
+                }
+            }
+
+            if ($rowBgField !== null) {
+                $variant = $rowBgMap[(string) data_get($item, $rowBgField)] ?? null;
+                if ($variant !== null) {
+                    $arr[self::ROW_BG_VARIANT_FIELD] = $variant;
                 }
             }
 
