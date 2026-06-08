@@ -503,14 +503,14 @@ class DataTable
             }
 
             if ($rowColorField !== null) {
-                $variant = $rowColorMap[(string) data_get($item, $rowColorField)] ?? null;
+                $variant = $rowColorMap[self::scalarKey(data_get($item, $rowColorField))] ?? null;
                 if ($variant !== null) {
                     $arr[self::ROW_VARIANT_FIELD] = $variant;
                 }
             }
 
             if ($rowBgField !== null) {
-                $variant = $rowBgMap[(string) data_get($item, $rowBgField)] ?? null;
+                $variant = $rowBgMap[self::scalarKey(data_get($item, $rowBgField))] ?? null;
                 if ($variant !== null) {
                     $arr[self::ROW_BG_VARIANT_FIELD] = $variant;
                 }
@@ -728,6 +728,20 @@ class DataTable
      * as objects in the array; `is_numeric()` rejects objects, so we must
      * stringify them first. Returns null for non-numeric/empty values.
      */
+    /**
+     * Normalise a row value into a string map key, unwrapping backed enums
+     * (e.g. an enum-cast `direction` column) to their scalar value so it
+     * matches the keys produced by EnumOptions::colors().
+     */
+    protected static function scalarKey(mixed $value): string
+    {
+        if ($value instanceof BackedEnum) {
+            return (string) $value->value;
+        }
+
+        return (string) $value;
+    }
+
     protected static function coerceNumeric(mixed $value): ?float
     {
         if ($value === null || $value === '') {
