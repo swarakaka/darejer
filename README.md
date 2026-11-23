@@ -1,3 +1,10 @@
+> [!WARNING]
+> **This repository has been moved.**
+>
+> ➡️ New location: **https://github.com/swarakaka/bridge**
+>
+> Please use the new repository going forward. This one is archived and will no longer receive updates.
+
 # Darejer
 
 > Write only PHP. Get a complete enterprise frontend.
